@@ -5,6 +5,14 @@ document.addEventListener('alpine:init', () => {
     onlinePlayers: 0
   });
 
+  Alpine.store('i18n', {
+    locale: 'de',
+    messages: {},
+    t(key) {
+      return this.messages[key] || key;
+    }
+  });
+
   Alpine.store('modals', {
     config: { open: false, data: {} },
     install: { 

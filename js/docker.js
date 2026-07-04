@@ -150,8 +150,8 @@ export const DOCKER_CONTAINERS = [
 
 export function dockerApp() {
   return {
-    containers: [], // Empty initially for skeletons
-    isLoading: true,
+    containers: [...DOCKER_CONTAINERS], // Initialized immediately
+    isLoading: false,
     searchQuery: '',
     sortCol: 'name',
     sortAsc: true,
@@ -187,11 +187,7 @@ export function dockerApp() {
         });
       }
       
-      // Simulate API loading
-      setTimeout(() => {
-        this.containers = [...DOCKER_CONTAINERS];
-        this.isLoading = false;
-      }, 1500);
+
 
       // Watch for selection changes to update selectAll
       this.$watch('selected', (value) => {

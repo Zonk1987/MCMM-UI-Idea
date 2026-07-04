@@ -1,7 +1,7 @@
 /**
  * @file i18n.js
  * @description Handles internationalization (i18n) by loading .json language files
- * and applying translations to the DOM and providing a global translation function.
+ * and applying translations to the Alpine global store.
  */
 
 export const I18N = {
@@ -27,32 +27,17 @@ export async function loadLanguage(langCode) {
     I18N.translations = await response.json();
     I18N.currentLang = langCode;
     
-    applyTranslations();
+    if (window.Alpine) {
+      const store = Alpine.store('i18n');
+      if (store) {
+        store.locale = langCode;
+        store.messages = I18N.translations;
+      }
+    }
   } catch (error) {
     console.error(`Failed to load language: ${langCode}`, error);
     // If it fails, fallback to empty/keys so we at least don't crash
   }
-}
-
-/**
- * Applies the loaded translations to all DOM elements with the [data-i18n] attribute.
- */
-export function applyTranslations() {
-  const elements = document.querySelectorAll('[data-i18n]');
-  elements.forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const targetAttr = el.getAttribute('data-i18n-attr'); // e.g. "title", "placeholder"
-    
-    if (I18N.translations[key]) {
-      if (targetAttr) {
-        el.setAttribute(targetAttr, I18N.translations[key]);
-      } else if ((el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'number')) || el.type === 'search') {
-        el.placeholder = I18N.translations[key];
-      } else {
-        el.innerHTML = I18N.translations[key]; // use innerHTML in case we have span tags inside
-      }
-    }
-  });
 }
 
 /**
@@ -64,7 +49,7 @@ export function t(key) {
   return I18N.translations[key];
 }
 
-// Expose to window for Alpine.js dynamic bindings
+// Expose to window for JS dynamic bindings (outside Alpine context)
 window.t = t;
 
 // Ensure i18n logic is initialized on load

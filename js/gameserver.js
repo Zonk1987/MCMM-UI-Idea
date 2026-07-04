@@ -398,6 +398,15 @@ export const CONSOLE_LOGS = {
 
 export let consoleServerId  = null;
 export let consoleLogTimer  = null;
+export let consoleStreamer  = null;
+
+window.consoleAutoScrollEnabled = true;
+window.toggleAutoScroll = (val) => { window.consoleAutoScrollEnabled = val; };
+window.clearConsole = () => {
+  if (consoleVirtualScroller) {
+    consoleVirtualScroller.setItems([], consoleLineHTML);
+  }
+};
 
 import { toggleModal, formatBytes, formatNum, showToast, pingClass, debounce, throttle, Logger } from './utils.js';
 
@@ -415,7 +424,19 @@ class VirtualScroller {
     this.container.innerHTML = '';
     this.container.appendChild(this.inner);
     
-    this.container.addEventListener('scroll', throttle(() => this.render(), 16));
+    this.container.addEventListener('scroll', throttle(() => {
+      this.render();
+      const isAtBottom = this.container.scrollHeight - this.container.scrollTop <= this.container.clientHeight + 20;
+      const autoScrollCb = document.getElementById('consoleAutoScroll');
+      
+      if (isAtBottom && !window.consoleAutoScrollEnabled) {
+        window.consoleAutoScrollEnabled = true;
+        if (autoScrollCb) autoScrollCb.checked = true;
+      } else if (!isAtBottom && window.consoleAutoScrollEnabled) {
+        window.consoleAutoScrollEnabled = false;
+        if (autoScrollCb) autoScrollCb.checked = false;
+      }
+    }, 16));
     window.addEventListener('resize', debounce(() => this.render(), 100));
   }
 
@@ -430,9 +451,8 @@ class VirtualScroller {
   appendItem(item) {
     this.items.push(item);
     this.inner.style.height = `${this.items.length * this.itemHeight}px`;
-    const isAtBottom = this.container.scrollHeight - this.container.scrollTop <= this.container.clientHeight + 50;
     this.render();
-    if (isAtBottom) this.scrollToBottom();
+    if (window.consoleAutoScrollEnabled) this.scrollToBottom();
   }
 
   render() {
@@ -451,6 +471,52 @@ class VirtualScroller {
 
   scrollToBottom() {
     this.container.scrollTop = this.container.scrollHeight;
+  }
+}
+
+
+class MockLogStreamer {
+  constructor(serverId, onMessage) {
+    this.serverId = serverId;
+    this.onMessage = onMessage;
+    this.interval = null;
+    this.msgCount = 0;
+    
+    setTimeout(() => {
+      this.onMessage(`[System] Verbinde mit Log-Stream für ${serverId}...`);
+      setTimeout(() => {
+        this.onMessage(`[System] Verbunden. Live-Logs werden empfangen...`);
+        this.startStreaming();
+      }, 600);
+    }, 200);
+  }
+  
+  startStreaming() {
+    const templates = [
+      () => `[${timestamp()}] [Server thread/INFO]: Chunk load complete.`,
+      () => `[${timestamp()}] [Server thread/INFO]: Player${Math.floor(Math.random()*100)} joined the game`,
+      () => `[${timestamp()}] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running ${Math.floor(Math.random()*5000)}ms or ${Math.floor(Math.random()*100)} ticks behind`,
+      () => `[${timestamp()}] [Server thread/INFO]: Saving chunks for level 'ServerLevel'...`,
+      () => `[${timestamp()}] [Server thread/CHAT]: <Player${Math.floor(Math.random()*100)}> Hello world!`,
+      () => `[${timestamp()}] [Server thread/ERROR]: Exception in server tick loop`,
+    ];
+    
+    const tick = () => {
+      const template = templates[Math.floor(Math.random() * templates.length)];
+      this.onMessage(template());
+      this.msgCount++;
+      // Stop after 200 messages to prevent memory issues in mock
+      if (this.msgCount < 200) {
+        this.interval = setTimeout(tick, Math.random() * 2000 + 400);
+      }
+    };
+    
+    this.interval = setTimeout(tick, 1000);
+  }
+  
+  stop() {
+    clearTimeout(this.interval);
+    this.onMessage(`[System] Verbindung zum Log-Stream getrennt.`);
   }
 }
 
@@ -476,24 +542,25 @@ export function openConsole(srv) {
     consoleVirtualScroller.container = output;
   }
   
-  const logs = CONSOLE_LOGS[srv.containerId] || [`[Server]: ${t('no_logs') || 'Keine Logs für'} ${srv.serverName} ${t('available') || 'verfügbar'}.`];
+  if (consoleStreamer) {
+    consoleStreamer.stop();
+    consoleStreamer = null;
+  }
+
+  const logs = CONSOLE_LOGS[srv.containerId] ? [...CONSOLE_LOGS[srv.containerId]] : [];
   consoleVirtualScroller.setItems(logs, consoleLineHTML);
 
   toggleModal('consoleModal', true);
   document.getElementById('consoleInput').focus();
 
-  clearInterval(consoleLogTimer);
   if (isOn) {
-    const liveMsgs = [
-      `[${timestamp()}] [Server thread/INFO]: Saving world data...`,
-      `[${timestamp()}] [Server thread/INFO]: World saved.`,
-      `[${timestamp()}] [Server thread/INFO]: Autosave complete.`,
-    ];
-    let i = 0;
-    consoleLogTimer = setInterval(() => {
-      if (i >= liveMsgs.length) { clearInterval(consoleLogTimer); return; }
-      appendConsoleLine(liveMsgs[i++]);
-    }, 3000);
+    consoleStreamer = new MockLogStreamer(srv.containerId, (msg) => {
+      if (consoleVirtualScroller) {
+        consoleVirtualScroller.appendItem(msg);
+      }
+    });
+  } else {
+    consoleVirtualScroller.appendItem(`[Server]: ${t('no_logs') || 'Keine Logs für'} ${srv.serverName} ${t('available') || 'verfügbar'} (Server ist offline).`);
   }
 }
 
@@ -504,12 +571,23 @@ export function openConsole(srv) {
  */
 export function consoleLineHTML(line) {
   let cls = 'log-info';
-  if (line.includes('/WARN')  || line.includes('warn'))  cls = 'log-warn';
-  if (line.includes('/ERROR') || line.includes('error')) cls = 'log-error';
-  if (line.includes('CHAT')   || line.includes('<'))     cls = 'log-chat';
-  if (line.includes('logged in'))                        cls = 'log-join';
-  if (line.includes('logged out') || line.includes('left the game')) cls = 'log-leave';
-  return `<div class="log-line ${cls}" style="margin:0;">${escapeHtml(line)}</div>`;
+  const lowerLine = line.toLowerCase();
+  
+  if (lowerLine.includes('system]')) return `<div class="log-line log-info" style="margin:0; color:var(--text-muted); font-style:italic;">${escapeHtml(line)}</div>`;
+  
+  if (lowerLine.includes('/warn') || lowerLine.includes('warn:')) cls = 'log-warn';
+  else if (lowerLine.includes('/error') || lowerLine.includes('error:') || lowerLine.includes('exception')) cls = 'log-error';
+  else if (lowerLine.includes('chat') || lowerLine.includes('<')) cls = 'log-chat';
+  else if (lowerLine.includes('joined') || lowerLine.includes('logged in')) cls = 'log-join';
+  else if (lowerLine.includes('left') || lowerLine.includes('logged out')) cls = 'log-leave';
+
+  let formatted = escapeHtml(line);
+  // Highlight timestamps like [12:34:56]
+  formatted = formatted.replace(/^(\[\d{2}:\d{2}:\d{2}\])/g, '<span style="color:var(--text-muted)">$1</span>');
+  // Highlight thread info like [Server thread/INFO]:
+  formatted = formatted.replace(/(\[[a-zA-Z0-9 -]+\/(INFO|WARN|ERROR|CHAT)\]:)/g, '<span style="color:var(--blue-dim)">$1</span>');
+
+  return `<div class="log-line ${cls}" style="margin:0;">${formatted}</div>`;
 }
 
 /**
@@ -551,142 +629,68 @@ export function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-/**
- * Bind DOM events for GameServer tab (wizard, console, card actions)
- */
-export function bindGameServerEvents() {
-  // document.getElementById('createServerBtn')?.addEventListener('click', openCreateWizard);
-  document.getElementById('closeCreateModal')?.addEventListener('click', () => toggleModal('createServerModal', false));
-  document.getElementById('closeConsoleModal')?.addEventListener('click', () => {
-    clearInterval(consoleLogTimer);
-    toggleModal('consoleModal', false);
-  });
-  document.getElementById('closeFmModal')?.addEventListener('click', () => toggleModal('fileManagerModal', false));
-  document.getElementById('closeBackupModal')?.addEventListener('click', () => toggleModal('backupModal', false));
-  document.getElementById('consoleModal')?.addEventListener('click', e => {
-    if (e.target === document.getElementById('consoleModal')) {
-      clearInterval(consoleLogTimer);
-      toggleModal('consoleModal', false);
-    }
-  });
 
-  // Console send
-  const consoleSend = () => {
-    const input = document.getElementById('consoleInput');
-    const cmd   = input.value.trim();
-    if (!cmd) return;
-    appendConsoleLine(`[${timestamp()}] [Rcon]: Executing remote command: ${cmd}`);
-    input.value = '';
-    // Fake responses
-    setTimeout(() => {
-      if (cmd.startsWith('list')) {
-        appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: There are 3/20 players online: Steve_Gaming, CreeperSlayer, DiamondMiner99`);
-      } else if (cmd.startsWith('say ')) {
-        appendConsoleLine(`[${timestamp()}] [Server thread/CHAT]: [Server] ${cmd.slice(4)}`);
-      } else if (cmd === 'stop') {
-        appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Stopping the server`);
-        appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Saving players`);
-        appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Saving worlds`);
-      } else {
-        appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Unknown command. Type "help" for help.`);
-      }
-    }, 300);
-  };
-  document.getElementById('consoleSendBtn')?.addEventListener('click', consoleSend);
-  document.getElementById('consoleInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') consoleSend(); });
+// --- UI Bindings for Alpine ---
+window.closeConsole = function() {
+  clearInterval(consoleLogTimer);
+  toggleModal('consoleModal', false);
+};
 
-  // File Manager mockup logic
-  document.getElementById('fmFileTree')?.addEventListener('click', e => {
-    const btn = e.target.closest('.settings-nav-btn');
-    if (!btn) return;
-    
-    document.querySelectorAll('#fmFileTree .settings-nav-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const type = btn.dataset.type;
-    const fileName = btn.textContent.trim().replace(/^folder|description\s*/, '').trim();
-    const editor = document.getElementById('fmEditorTextarea');
-    const headerTitle = document.getElementById('fmCurrentFile');
-    
-    if (headerTitle) headerTitle.textContent = fileName;
-    
-    if (type === 'file') {
-      if (fileName === 'server.properties') {
-        editor.value = "#Minecraft server properties\n#Mon Oct 02 12:00:00 2023\nenable-jmx-monitoring=false\nrcon.port=25575\nlevel-seed=\ngamemode=survival\nenable-command-block=false\nenable-query=false\ngenerator-settings={}\nenforce-secure-profile=true\nlevel-name=world\nmotd=Mein Unraid Minecraft Server\nquery.port=25565\npvp=true\ngenerate-structures=true\nmax-chained-neighbor-updates=1000000\ndifficulty=easy\nnetwork-compression-threshold=256\nmax-tick-time=60000\nrequire-resource-pack=false\nuse-native-transport=true\nmax-players=20\nonline-mode=true\nenable-status=true\nallow-flight=false\ninitial-disabled-packs=";
-      } else if (fileName === 'eula.txt') {
-        editor.value = "#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Mon Oct 02 12:00:00 2023\neula=true";
-      } else if (fileName === 'ops.json') {
-        editor.value = "[\n  {\n    \"uuid\": \"d44...\",\n    \"name\": \"AdminPlayer\",\n    \"level\": 4,\n    \"bypassesPlayerLimit\": false\n  }\n]";
-      } else {
-        editor.value = "// Inhalt von " + fileName + " wird geladen...";
-      }
-      editor.disabled = false;
+window.consoleSend = function() {
+  const input = document.getElementById('consoleInput');
+  if (!input) return;
+  const cmd = input.value.trim();
+  if (!cmd) return;
+  appendConsoleLine(`[${timestamp()}] [Rcon]: Executing remote command: ${cmd}`);
+  input.value = '';
+  setTimeout(() => {
+    if (cmd.startsWith('list')) {
+      appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: There are 3/20 players online: Steve_Gaming, CreeperSlayer, DiamondMiner99`);
+    } else if (cmd.startsWith('say ')) {
+      appendConsoleLine(`[${timestamp()}] [Server thread/CHAT]: [Server] ${cmd.slice(4)}`);
+    } else if (cmd === 'stop') {
+      appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Stopping the server`);
+      appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Saving players`);
+      appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Saving worlds`);
     } else {
-      editor.value = "// Ordner ausgewählt. Bitte wähle eine Datei zum Bearbeiten aus.";
-      editor.disabled = true;
+      appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Unknown command. Type "help" for help.`);
     }
-  });
+  }, 300);
+};
 
-  document.getElementById('fmSaveBtn')?.addEventListener('click', () => {
-    if (typeof showToast === 'function') showToast('Datei erfolgreich gespeichert.', 'success');
-  });
+window.closeFm = function() {
+  toggleModal('fileManagerModal', false);
+};
 
-
-  document.getElementById('gsGrid')?.addEventListener('click', e => {
-    const startBtn   = e.target.closest('.gs-start-btn');
-    const stopBtn    = e.target.closest('.gs-stop-btn');
-    const playersBtn = e.target.closest('.gs-players-btn');
-    const consoleBtn = e.target.closest('.gs-console-btn');
-    const editBtn    = e.target.closest('.gs-edit-btn');
-
-    if (startBtn || stopBtn) {
-      const id   = (startBtn || stopBtn).dataset.id;
-      const srv  = GS_INSTANCES.find(s => s.containerId === id);
-      const cont = DOCKER_CONTAINERS.find(c => c.id === id);
-      if (!srv || !cont) return;
-      const starting = !!startBtn;
-      srv.status  = starting ? 'online'  : 'offline';
-      cont.status = starting ? 'running' : 'stopped';
-      showToast(`${srv.serverName} ${t(starting ? 'is_starting' : 'is_stopping') || (starting ? 'wird gestartet...' : 'wird gestoppt...')}`, 'info');
-      setTimeout(() => {
-        showToast(`${srv.serverName} ${t(starting ? 'is_running' : 'is_stopped') || (starting ? 'läuft' : 'gestoppt')}`, starting ? 'success' : 'info');
-        renderGameServers();
-        if (typeof renderDockerTable === 'function') {
-          renderDockerTable();
-          renderDockerStats();
-        }
-      }, 1500);
-    } else if (consoleBtn) {
-      const srv = GS_INSTANCES.find(s => s.containerId === consoleBtn.dataset.id);
-      if (srv) openConsole(srv);
-    } else if (playersBtn) {
-      const srv = GS_INSTANCES.find(s => s.containerId === playersBtn.dataset.id);
-      if (srv && srv.status === 'online') {
-        switchTab('players');
-        const sel = document.getElementById('playerServerSelect');
-        if (sel) {
-          sel.value = srv.containerId;
-          sel.dispatchEvent(new Event('change'));
-        }
-      }
-    } else if (e.target.closest('.gs-files-btn')) {
-      toggleModal('fileManagerModal', true);
-    } else if (e.target.closest('.gs-backup-btn')) {
-      toggleModal('backupModal', true);
-    } else if (editBtn) {
-      const srv = GS_INSTANCES.find(s => s.containerId === editBtn.dataset.id);
-      if (srv) {
-        if (window.Alpine) {
-          Alpine.store('modals').install.data = {
-            ...Alpine.store('modals').install.data,
-            id: srv.game,
-            name: srv.serverName,
-            author: 'Lokales System',
-            isEdit: true
-          };
-          Alpine.store('modals').install.open = true;
-        }
-      }
+window.fmSelectFile = function(btn) {
+  document.querySelectorAll('#fmFileTree .settings-nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const type = btn.dataset.type;
+  const fileName = btn.textContent.trim().replace(/^folder|description\s*/, '').trim();
+  const editor = document.getElementById('fmEditorTextarea');
+  const headerTitle = document.getElementById('fmCurrentFile');
+  if (headerTitle) headerTitle.textContent = fileName;
+  if (type === 'file') {
+    if (fileName === 'server.properties') {
+      editor.value = "#Minecraft server properties\n#Mon Oct 02 12:00:00 2023\nenable-jmx-monitoring=false\nrcon.port=25575\nlevel-seed=\ngamemode=survival\nenable-command-block=false\nenable-query=false\ngenerator-settings={}\nenforce-secure-profile=true\nlevel-name=world\nmotd=Mein Unraid Minecraft Server\nquery.port=25565\npvp=true\ngenerate-structures=true\nmax-chained-neighbor-updates=1000000\ndifficulty=easy\nnetwork-compression-threshold=256\nmax-tick-time=60000\nrequire-resource-pack=false\nuse-native-transport=true\nmax-players=20\nonline-mode=true\nenable-status=true\nallow-flight=false\ninitial-disabled-packs=";
+    } else if (fileName === 'eula.txt') {
+      editor.value = "#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Mon Oct 02 12:00:00 2023\neula=true";
+    } else if (fileName === 'ops.json') {
+      editor.value = "[\n  {\n    \"uuid\": \"d44...\",\n    \"name\": \"AdminPlayer\",\n    \"level\": 4,\n    \"bypassesPlayerLimit\": false\n  }\n]";
+    } else {
+      editor.value = "// Inhalt von " + fileName + " wird geladen...";
     }
-  });
-}
+    editor.disabled = false;
+  } else {
+    editor.value = "// Ordner ausgewählt. Bitte wähle eine Datei zum Bearbeiten aus.";
+    editor.disabled = true;
+  }
+};
+
+window.closeBackup = function() {
+  toggleModal('backupModal', false);
+};
+
+window.fmSave = function() {
+  if (typeof showToast === 'function') showToast('Datei erfolgreich gespeichert.', 'success');
+};

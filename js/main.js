@@ -3,11 +3,11 @@
    Bootstraps all modules and wires top-level navigation.
 ═══════════════════════════════════════════════════════════ */
 
-import { I18N, loadLanguage, applyTranslations, t, initI18n } from './i18n.js';
+import { I18N, loadLanguage, t, initI18n } from './i18n.js';
 import { toggleModal, showToast, formatNum, formatBytes, playerAvatarError, debounce, switchTab, pingClass, skeletonGrid } from './utils.js';
 import { initSettings, loadSettings, saveSettings, resetSettings, applyVisualSettings, fillSettingsForm, readSettingsForm, toggleSettingsPanel, bindSettingsEvents, appSettings } from './settings.js';
 import { DOCKER_CONTAINERS, dockerApp } from './docker.js';
-import { GAME_TEMPLATES, GS_INSTANCES, gameserverApp, bindGameServerEvents, openConsole } from './gameserver.js';
+import { GAME_TEMPLATES, GS_INSTANCES, gameserverApp, openConsole } from './gameserver.js';
 import { playersApp } from './players.js';
 import { GameAdditions } from './gameAdditions.js';
 
@@ -52,6 +52,35 @@ window.finishOnboarding = function() {
 
 
 
+async function loadComponents() {
+  const components = [
+    { id: 'panel-docker', url: 'components/docker.html' },
+    { id: 'panel-gameserver', url: 'components/gameservers.html' },
+    { id: 'panel-game-additions', url: 'components/gameAdditions.html' },
+    { id: 'panel-players', url: 'components/players.html' }
+  ];
+  
+  for (const comp of components) {
+    try {
+      const response = await fetch(comp.url + '?v=' + new Date().getTime());
+      if (response.ok) {
+        const html = await response.text();
+        // Insert innerHTML, preserving the outer section tag from the placeholder
+        const el = document.getElementById(comp.id);
+        if (el) {
+          // Because the component files contain the <section> tag itself,
+          // we replace the placeholder's outerHTML with the fetched content.
+          el.outerHTML = html;
+        }
+      } else {
+        console.error(`Failed to load ${comp.url}: ${response.status}`);
+      }
+    } catch (e) {
+      console.error(`Error loading ${comp.url}:`, e);
+    }
+  }
+}
+
 async function initApp() {
   // Load settings first since other modules might depend on them
   initSettings();
@@ -59,10 +88,12 @@ async function initApp() {
   // ── Wait for language to load before rendering anything ──
   await initI18n();
 
+  // ── Load Modular HTML Components ──
+  await loadComponents();
+
   // Modals are handled by Alpine.js natively, do not move them manually.
 
   // ── Initialize all modules ────────────────────────────
-  bindGameServerEvents();
   GameAdditions.init();
 
   // ── Tab navigation ────────────────────────────────────

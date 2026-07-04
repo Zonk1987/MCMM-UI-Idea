@@ -104,3 +104,12 @@ export function skeletonGrid(count = 6) {
     `<div class="skeleton skeleton-card"></div>`
   ).join('');
 }
+
+// Expose to window for Alpine and inline HTML handlers
+window.showToast = showToast;
+window.toggleModal = toggleModal;
+window.switchTab = switchTab;
+window.playerAvatarError = playerAvatarError;
+window.formatNum = formatNum;
+window.formatBytes = formatBytes;
+window.pingClass = pingClass;
