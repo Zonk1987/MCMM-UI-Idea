@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GameServer Hub — Unraid Plugin</title>
+  <meta name="description"
+    content="Erweitertes Unraid Docker-Menü mit GameServer Hub, Minecraft Mod-Browser und Player Management." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/docker.css" />
+  <link rel="stylesheet" href="css/gameserver.css" />
+  <link rel="stylesheet" href="css/gameAdditions.css" />
+  <link rel="stylesheet" href="css/modules/minecraft.css" />
+  <link rel="stylesheet" href="css/modules/palworld.css" />
+  <link rel="stylesheet" href="css/modules/valheim.css" />
+  <link rel="stylesheet" href="css/modules/cs2.css" />
+  <link rel="stylesheet" href="css/players.css" />
+  <link rel="stylesheet" href="css/settings.css" />
+  <link rel="stylesheet" href="css/toast.css" />
+
+  <script type="module" src="js/main.js"></script>
+  <script defer src="js/alpine-store.js"></script>
+</head>
+
+<body>
+
+  <!-- ─── TOP NAV BAR (Unraid-style) ─────────────────────────────────────── -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">
+        <span class="material-icons-round">dns</span>
+      </div>
+      <span class="topbar-title">GameServer <span class="accent">Hub</span></span>
+      <span class="topbar-subtitle" data-i18n="plugin_subtitle">Unraid Plugin v1.0</span>
+    </div>
+
+    <nav class="tab-nav" id="tabNav" role="tablist">
+      <button class="tab-btn active" data-tab="docker" id="tab-docker" role="tab" aria-selected="true"
+        aria-controls="panel-docker">
+        <span class="material-icons-round">view_list</span>
+        <span data-i18n="nav_docker">Docker</span>
+        <span class="tab-badge" id="badge-docker" x-data x-text="$store.global.dockerCount">0</span>
+      </button>
+      <button class="tab-btn" data-tab="gameserver" id="tab-gameserver" role="tab" aria-selected="false"
+        aria-controls="panel-gameserver">
+        <span class="material-icons-round">sports_esports</span>
+        <span data-i18n="nav_gameservers">Game Servers</span>
+        <span class="tab-badge live" id="badge-gameserver" x-data x-text="$store.global.onlineGameservers">0</span>
+      </button>
+      <button class="tab-btn" data-tab="game-additions" id="tab-game-additions" role="tab" aria-selected="false"
+        aria-controls="panel-game-additions">
+        <span class="material-icons-round">extension</span>
+        <span data-i18n="nav_game_additions">Game Additions</span>
+      </button>
+      <button class="tab-btn" data-tab="players" id="tab-players" role="tab" aria-selected="false"
+        aria-controls="panel-players">
+        <span class="material-icons-round">group</span>
+        <span data-i18n="nav_players">Players</span>
+        <span class="tab-badge online" id="badge-players" x-data x-text="$store.global.onlinePlayers">0</span>
+      </button>
+    </nav>
+
+    <div class="topbar-right">
+      <button class="icon-btn" id="refreshBtn" title="Aktualisieren" data-i18n="btn_refresh" data-i18n-attr="title">
+        <span class="material-icons-round">refresh</span>
+      </button>
+      <button class="icon-btn" id="settingsBtn" title="Einstellungen" data-i18n="nav_settings" data-i18n-attr="title">
+        <span class="material-icons-round">settings</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── MAIN CONTENT ─────────────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- ── PANEL: Docker Overview ─── -->
+    <section class="tab-panel active" id="panel-docker" role="tabpanel" aria-labelledby="tab-docker"
+      x-data="dockerApp()">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h1 data-i18n="docker_title">Docker Hub</h1>
+          <p class="panel-subtitle" data-i18n="docker_subtitle">Verwalte deine Docker Container, Updates und
+            Systemauslastung</p>
+        </div>
+        <div class="panel-actions" style="display:flex; align-items:center; gap:16px;">
+          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; white-space:nowrap;"
+            title="Erweiterte Ansicht" data-i18n="advanced_view" data-i18n-attr="title">
+            <span style="font-size:12px; color:var(--text-secondary); font-weight:600;"
+              data-i18n="advanced_view">Advanced View</span>
+            <div class="action-toggle">
+              <input type="checkbox" x-model="advancedView">
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+          </label>
+          <div class="search-box">
+            <label for="dockerSearchInput" style="display:flex; align-items:center; cursor:text; margin:0;"><span
+                class="material-icons-round">search</span></label>
+            <input type="text" id="dockerSearchInput" name="dockerSearch" x-model="searchQuery"
+              placeholder="Container suchen..." aria-label="Container suchen" data-i18n="search_container" />
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row" id="dockerStats">
+        <div class="stat-card">
+          <span class="material-icons-round stat-icon running">play_circle</span>
+          <div>
+            <div class="stat-value" x-text="stats.running">0</div>
+            <div class="stat-label" data-i18n="stat_running">Läuft</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons-round stat-icon stopped">stop_circle</span>
+          <div>
+            <div class="stat-value" x-text="stats.stopped">0</div>
+            <div class="stat-label" data-i18n="stat_stopped">Gestoppt</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons-round stat-icon update">update</span>
+          <div>
+            <div class="stat-value" x-text="stats.updates">0</div>
+            <div class="stat-label" data-i18n="stat_updates">Updates</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons-round stat-icon total">grid_view</span>
+          <div>
+            <div class="stat-value" x-text="stats.total">0</div>
+            <div class="stat-label" data-i18n="stat_total">Gesamt</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docker-table-wrapper">
+        <table class="docker-table" id="dockerTable">
+          <thead>
+            <tr>
+              <th class="col-bulk" style="width:40px; text-align:center;">
+                <input type="checkbox" style="cursor:pointer" x-model="selectAll" @change="toggleSelectAll()"
+                  aria-label="Alle auswählen" />
+              </th>
+              <th class="col-icon"></th>
+              <th class="col-name sortable" @click="toggleSort('name')"><span data-i18n="col_name">Name</span> <span
+                  class="material-icons-round sort-icon">unfold_more</span></th>
+              <th class="col-status sortable" @click="toggleSort('status')"><span data-i18n="col_status">Status</span>
+                <span class="material-icons-round sort-icon">unfold_more</span></th>
+              <th class="col-adv" x-show="advancedView" style="width:80px; text-align:center;"
+                data-i18n="col_autostart">Autostart</th>
+              <th class="col-adv" x-show="advancedView" style="width:180px;" data-i18n="col_cpu_ram">CPU / RAM</th>
+              <th class="col-adv" x-show="advancedView" style="width:160px;" data-i18n="col_uptime">Uptime</th>
+              <th class="col-ports" data-i18n="col_ports">Ports</th>
+              <th class="col-paths" data-i18n="col_paths">Pfade</th>
+              <th class="col-actions" data-i18n="col_actions">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-if="isLoading">
+              <template x-for="i in 5">
+                <tr>
+                  <td></td>
+                  <td>
+                    <div class="skeleton skeleton-avatar"></div>
+                  </td>
+                  <td>
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text" style="width: 40%"></div>
+                  </td>
+                  <td>
+                    <div class="skeleton skeleton-btn"></div>
+                  </td>
+                  <td class="col-adv" x-show="advancedView"></td>
+                  <td class="col-adv" x-show="advancedView">
+                    <div class="skeleton skeleton-text" style="margin-bottom: 8px;"></div>
+                    <div class="skeleton skeleton-text"></div>
+                  </td>
+                  <td class="col-adv" x-show="advancedView"></td>
+                  <td>
+                    <div class="skeleton skeleton-text" style="width: 80%"></div>
+                  </td>
+                  <td>
+                    <div class="skeleton skeleton-text" style="width: 90%"></div>
+                  </td>
+                  <td>
+                    <div style="display:flex;gap:4px;">
+                      <div class="skeleton skeleton-btn" style="width: 40px;"></div>
+                      <div class="skeleton skeleton-btn" style="width: 32px;"></div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </template>
+
+            <template x-if="!isLoading && filteredContainers.length === 0">
+              <tr>
+                <td colspan="10">
+                  <div class="empty-state">
+                    <span class="material-icons-round">inbox</span>
+                    <p data-i18n="no_containers_found">Keine Container gefunden</p>
+                  </div>
+                </td>
+              </tr>
+            </template>
+
+            <template x-if="!isLoading">
+              <template x-for="c in filteredContainers" :key="c.id">
+                <tr :style="selected.includes(c.id) ? 'background: var(--bg-card-hover)' : ''">
+                  <td style="text-align:center;">
+                    <input type="checkbox" style="cursor:pointer" :value="c.id" x-model="selected"
+                      aria-label="Container auswählen" />
+                  </td>
+                  <td>
+                    <template x-if="c.icon">
+                      <div class="container-icon-wrap"><img :src="c.icon" :alt="c.name"
+                          onerror="this.parentElement.className='container-icon-fallback'; this.parentElement.innerHTML='x';" />
+                      </div>
+                    </template>
+                    <template x-if="!c.icon">
+                      <div class="container-icon-fallback" x-text="c.iconFallback"></div>
+                    </template>
+                  </td>
+                  <td>
+                    <div class="container-name" x-text="c.name"></div>
+                    <div class="container-image" x-text="c.image"></div>
+                  </td>
+                  <td>
+                    <div :class="'status-badge ' + c.status">
+                      <span class="dot"></span>
+                      <span x-text="c.status === 'running' ? 'Läuft' : 'Gestoppt'"></span>
+                    </div>
+                    <template x-if="!c.upToDate">
+                      <div class="update-badge">Update verfügbar</div>
+                    </template>
+                  </td>
+                  <td class="col-adv" x-show="advancedView" style="text-align:center; vertical-align:middle;">
+                    <label class="action-toggle" style="margin:0;" title="Autostart">
+                      <input type="checkbox" :checked="c.id==='nginx01' || c.id==='portainer01'">
+                      <div class="toggle-track">
+                        <div class="toggle-thumb"></div>
+                      </div>
+                    </label>
+                  </td>
+                  <td class="col-adv" x-show="advancedView"
+                    style="vertical-align:middle; padding-top:8px; padding-bottom:8px;">
+                    <div style="margin-bottom:8px;">
+                      <div style="font-size:11px; margin-bottom:4px; color:var(--text-secondary);">CPU: <span
+                          x-text="c.status === 'running' ? (Math.random() * 5).toFixed(1) + '%' : '0.0%'"></span></div>
+                      <div style="height:4px; background:var(--bg-surface); border-radius:2px; overflow:hidden;">
+                        <div
+                          :style="`width:${c.status === 'running' ? Math.random()*20+5 : 0}%; background:var(--cyan); height:100%;`">
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div style="font-size:11px; margin-bottom:4px; color:var(--text-secondary);">RAM: <span
+                          x-text="c.status === 'running' ? Math.floor(Math.random() * 400 + 100) + ' MB' : '0 MB'"></span>
+                      </div>
+                      <div style="height:4px; background:var(--bg-surface); border-radius:2px; overflow:hidden;">
+                        <div
+                          :style="`width:${c.status === 'running' ? Math.random()*30+10 : 0}%; background:var(--purple); height:100%;`">
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="col-adv" x-show="advancedView"
+                    style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+                    <span
+                      x-html="c.status === 'running' ? 'Uptime: 5 days (healthy)<br>Created: 14 days ago' : '—'"></span>
+                  </td>
+                  <td>
+                    <div class="port-list">
+                      <template x-for="p in c.ports">
+                        <div class="port-item">
+                          <span class="port-host" x-text="p.host"></span>
+                          <span class="port-arrow">↔</span>
+                          <span x-text="p.container"></span>
+                          <span style="color:var(--text-muted)" x-text="` (${p.proto})`"></span>
+                        </div>
+                      </template>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="path-list">
+                      <template x-for="p in c.paths.slice(0, 3)">
+                        <div class="path-item" :title="`${p.host} → ${p.container}`">
+                          <span x-text="p.host"></span> <span class="path-arrow">→</span> <span
+                            x-text="p.container"></span>
+                        </div>
+                      </template>
+                      <template x-if="c.paths.length > 3">
+                        <div class="path-item" style="color:var(--accent)" x-text="`+${c.paths.length - 3} weitere`">
+                        </div>
+                      </template>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="row-actions">
+                      <label class="action-toggle"
+                        :title="c.status === 'running' ? (t('btn_stop') || 'Stoppen') : (t('btn_start') || 'Starten')">
+                        <input type="checkbox" :checked="c.status === 'running'" @change="toggleContainer(c.id)" />
+                        <div class="toggle-track">
+                          <div class="toggle-thumb"></div>
+                        </div>
+                      </label>
+                      <button class="action-btn" data-i18n="tooltip_logs" data-i18n-attr="title" title="Logs anzeigen"
+                        @click="typeof openTerminal === 'function' ? openTerminal(c.id) : null">
+                        <span class="material-icons-round">terminal</span>
+                      </button>
+                      <button class="action-btn" data-i18n="tooltip_settings" data-i18n-attr="title"
+                        title="Einstellungen"
+                        @click="$store.modals.config.data = {id: c.id, name: c.name, port: (c.ports && c.ports[0]) ? c.ports[0].host : '', ram: 4096}; $store.modals.config.open = true">
+                        <span class="material-icons-round">settings</span>
+                      </button>
+                      <template x-if="!c.upToDate">
+                        <button class="action-btn" style="color:var(--yellow)" data-i18n="tooltip_update"
+                          data-i18n-attr="title" title="Update installieren" @click="updateContainer(c.id)">
+                          <span class="material-icons-round">upgrade</span>
+                        </button>
+                      </template>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Bulk Action Bar -->
+      <div class="bulk-action-bar" :class="selected.length > 0 ? 'active' : ''"
+        style="position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--bg-card); border:1px solid var(--border); box-shadow:0 10px 25px rgba(0,0,0,0.5); padding:12px 24px; border-radius:12px; display:flex; align-items:center; gap:20px; z-index:100; transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity:0;"
+        :style="selected.length > 0 ? 'transform:translateX(-50%) translateY(0); opacity:1;' : ''">
+        <div style="display:flex; align-items:center; gap:8px; color:var(--text-primary); font-weight:600;">
+          <span class="material-icons-round" style="color:var(--accent);">check_circle</span>
+          <span x-text="`${selected.length} ausgewählt`"></span>
+        </div>
+        <div style="width:1px; height:24px; background:var(--border);"></div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-primary" @click="bulkAction('start')"><span
+              class="material-icons-round">play_arrow</span> Starten</button>
+          <button class="btn btn-ghost" @click="bulkAction('stop')"><span class="material-icons-round">stop</span>
+            Stoppen</button>
+          <button class="btn btn-danger" @click="bulkAction('delete')" style="margin-left:8px;"><span
+              class="material-icons-round">delete</span> Löschen</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PANEL: Game Servers ─── -->
+    <section class="tab-panel" id="panel-gameserver" role="tabpanel" aria-labelledby="tab-gameserver"
+      x-data="gameserverApp()">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h1 data-i18n="gs_title">Game Server Hub</h1>
+          <p class="panel-subtitle" data-i18n="gs_subtitle">Verwalte und erstelle Gameserver-Docker-Container</p>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" @click="openCreateWizard()">
+            <span class="material-icons-round">add</span> <span data-i18n="btn_new_server">Neuen Server erstellen</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="gs-grid">
+        <template x-for="srv in instances" :key="srv.containerId">
+          <div class="gs-card">
+            <div class="gs-card-banner">
+              <div class="gs-card-banner-bg"
+                :style="`background:linear-gradient(135deg, ${getTemplate(srv.game).color}44, #1a1e2a);`"></div>
+              <div class="gs-card-banner-content">
+                <div class="gs-game-icon" x-text="getTemplate(srv.game).icon"></div>
+                <div class="gs-card-title">
+                  <div class="gs-server-name" x-text="srv.serverName"></div>
+                  <div class="gs-game-name" x-text="`${getTemplate(srv.game).name} · ${srv.version}`"></div>
+                </div>
+                <div :class="`gs-status-pill ${srv.status === 'online' ? 'online' : 'offline'}`">
+                  <span class="status-dot"></span>
+                  <span
+                    x-text="srv.status === 'online' ? (t('online') || 'Online') : (t('offline') || 'Offline')"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="gs-card-body">
+              <div class="gs-metrics">
+                <div class="gs-metric">
+                  <div class="gs-metric-value"
+                    :style="`color:${srv.status === 'online' ? 'var(--green)' : 'var(--text-muted)'}`"
+                    x-text="`${srv.players.current}/${srv.players.max}`"></div>
+                  <div class="gs-metric-label" data-i18n="players">Spieler</div>
+                </div>
+                <div class="gs-metric">
+                  <div class="gs-metric-value" x-text="`${parseFloat(srv.cpu.toFixed(2))}%`"></div>
+                  <div class="gs-metric-label" data-i18n="cpu">CPU</div>
+                </div>
+                <div class="gs-metric">
+                  <div class="gs-metric-value" x-text="getRamLabel(srv)"></div>
+                  <div class="gs-metric-label" data-i18n="ram">RAM</div>
+                </div>
+              </div>
+
+              <div class="gs-resource-bar">
+                <div class="resource-bar-label">
+                  <span data-i18n="ram">RAM</span>
+                  <span
+                    x-text="`${formatBytesLabel(srv.ram.used * 1024 * 1024)} / ${formatBytesLabel(srv.ram.max * 1024 * 1024)}`"></span>
+                </div>
+                <div class="resource-bar-track"
+                  style="height:28px; background:transparent; border-bottom:1px solid rgba(255,255,255,0.05); border-radius:0;">
+                  <template x-if="srv.status === 'online'">
+                    <div style="height:100%; width:100%;"
+                      x-html="getSparkline(srv.containerId + 'ram', getRamPct(srv), 'var(--blue)')"></div>
+                  </template>
+                  <template x-if="srv.status !== 'online'">
+                    <div class="resource-bar-fill ram" style="width:0%"></div>
+                  </template>
+                </div>
+              </div>
+
+              <div class="gs-resource-bar">
+                <div class="resource-bar-label">
+                  <span data-i18n="cpu">CPU</span>
+                  <span x-text="srv.status === 'online' ? `${parseFloat(srv.cpu.toFixed(2))}%` : '—'"></span>
+                </div>
+                <div class="resource-bar-track"
+                  style="height:28px; background:transparent; border-bottom:1px solid rgba(255,255,255,0.05); border-radius:0;">
+                  <template x-if="srv.status === 'online'">
+                    <div style="height:100%; width:100%;"
+                      x-html="getSparkline(srv.containerId + 'cpu', srv.cpu, 'var(--accent)')"></div>
+                  </template>
+                  <template x-if="srv.status !== 'online'">
+                    <div class="resource-bar-fill cpu" style="width:0%"></div>
+                  </template>
+                </div>
+              </div>
+
+              <div class="gs-resource-bar">
+                <div class="resource-bar-label" style="margin-bottom:0">
+                  <span style="color:var(--text-muted);font-size:11px">Port: <span style="color:var(--cyan)"
+                      x-text="srv.port"></span></span>
+                  <span style="color:var(--text-muted);font-size:11px" x-text="`Uptime: ${srv.uptime}`"></span>
+                </div>
+              </div>
+
+              <div class="gs-card-actions" style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
+                  <template x-if="srv.status === 'online'">
+                    <button class="btn btn-danger gs-stop-btn"
+                      style="height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
+                      @click="toggleServer(srv.containerId)">
+                      <span class="material-icons-round">stop</span> <span x-text="t('btn_stop') || 'Stoppen'"></span>
+                    </button>
+                  </template>
+                  <template x-if="srv.status !== 'online'">
+                    <button class="btn btn-success gs-start-btn"
+                      style="height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
+                      @click="toggleServer(srv.containerId)">
+                      <span class="material-icons-round">play_arrow</span> <span
+                        x-text="t('btn_start') || 'Starten'"></span>
+                    </button>
+                  </template>
+                  <button class="btn btn-ghost gs-players-btn"
+                    style="height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
+                    :disabled="srv.status !== 'online'"
+                    :style="srv.status !== 'online' ? 'opacity:0.4;cursor:not-allowed' : ''"
+                    @click="typeof window.switchTab === 'function' ? window.switchTab('players') : null; typeof window.selectPlayerServer === 'function' ? window.selectPlayerServer(srv.containerId) : null;">
+                    <span class="material-icons-round">group</span> <span data-i18n="players">Spieler</span>
+                  </button>
+                  <button class="btn btn-ghost gs-edit-btn" data-i18n="btn_edit" data-i18n-attr="title"
+                    title="Bearbeiten"
+                    style="height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
+                    @click="$store.modals.install.data = {...$store.modals.install.data, id: srv.game || srv.containerId, name: srv.serverName, author: 'Admin', isEdit: true}; $store.modals.install.open = true">
+                    <span class="material-icons-round">settings</span> Config
+                  </button>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
+                  <button class="btn btn-ghost gs-console-btn" data-i18n="tooltip_terminal" data-i18n-attr="title"
+                    title="Web-RCON Terminal"
+                    style="height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
+                    @click="typeof window.openConsole === 'function' ? window.openConsole(srv) : null">
+                    <span class="material-icons-round">terminal</span> <span data-i18n="btn_terminal">Terminal</span>
+                  </button>
+                  <button class="btn btn-ghost gs-files-btn" data-i18n="tooltip_files" data-i18n-attr="title"
+                    title="File Manager"
+                    style="height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
+                    @click="typeof window.toggleModal === 'function' ? window.toggleModal('fileManagerModal', true) : null">
+                    <span class="material-icons-round">folder</span> <span data-i18n="btn_files">Dateien</span>
+                  </button>
+                  <button class="btn btn-ghost gs-backup-btn" data-i18n="tooltip_backups" data-i18n-attr="title"
+                    title="Backups"
+                    style="height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
+                    @click="typeof window.toggleModal === 'function' ? window.toggleModal('backupModal', true) : null">
+                    <span class="material-icons-round">backup</span> <span data-i18n="btn_backups">Backups</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Create Server Wizard Modal -->
+      <div class="modal-backdrop" id="createServerModal" hidden>
+        <div class="modal glass-card">
+          <div class="modal-header">
+            <h2 data-i18n="btn_new_server">Neuen Server erstellen</h2>
+            <button class="icon-btn" @click="closeCreateWizard()"><span
+                class="material-icons-round">close</span></button>
+          </div>
+          <div class="modal-body">
+
+            <div class="wizard-steps">
+              <div class="wizard-step" :class="wizardStep > 0 ? 'done' : wizardStep === 0 ? 'active' : ''"></div>
+              <div class="wizard-step" :class="wizardStep > 1 ? 'done' : wizardStep === 1 ? 'active' : ''"></div>
+              <div class="wizard-step" :class="wizardStep > 2 ? 'done' : wizardStep === 2 ? 'active' : ''"></div>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
+              <span data-i18n="step">Schritt</span> <span x-text="wizardStep + 1"></span> / 3:
+              <strong style="color:var(--text-primary)"
+                x-text="[t('step_choose_game') || 'Spiel wählen', t('step_config') || 'Konfiguration', t('step_preview') || 'Vorschau'][wizardStep]"></strong>
+            </div>
+
+            <!-- Step 1 -->
+            <template x-if="wizardStep === 0">
+              <div>
+                <div class="wizard-game-grid">
+                  <template x-for="t in templates" :key="t.id">
+                    <div class="wizard-game-card" :class="wizardGame?.id === t.id ? 'selected' : ''"
+                      @click="selectWizardGame(t.id)">
+                      <span class="wizard-game-icon" x-text="t.icon"></span>
+                      <div class="wizard-game-name" x-text="t.name"></div>
+                    </div>
+                  </template>
+                </div>
+                <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                  <button class="btn btn-primary" :disabled="!wizardGame" @click="nextWizardStep()">
+                    <span data-i18n="btn_next">Weiter</span> <span class="material-icons-round">chevron_right</span>
+                  </button>
+                </div>
+              </div>
+            </template>
+
+            <!-- Step 2 -->
+            <template x-if="wizardStep === 1">
+              <div>
+                <div class="form-group">
+                  <label for="wFormName" data-i18n="server_name">Server-Name</label>
+                  <input class="form-input" id="wFormName" x-model="wForm.name" />
+                </div>
+                <div class="form-group">
+                  <label for="wFormImage">Docker Image</label>
+                  <input class="form-input" id="wFormImage" x-model="wForm.image" />
+                </div>
+                <div class="form-group">
+                  <label for="wFormPort">Port (Host)</label>
+                  <input class="form-input" id="wFormPort" type="number" x-model="wForm.port" />
+                </div>
+                <div class="form-group">
+                  <label for="wFormRam" data-i18n="ram">RAM (MB)</label>
+                  <input class="form-input" id="wFormRam" type="number" x-model="wForm.ram" />
+                </div>
+                <div class="form-group">
+                  <label for="wFormPath" data-i18n="data_path">Datenpfad</label>
+                  <input class="form-input" id="wFormPath" x-model="wForm.path" />
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end">
+                  <button class="btn btn-ghost" @click="prevWizardStep()"><span
+                      class="material-icons-round">chevron_left</span> <span data-i18n="btn_back">Zurück</span></button>
+                  <button class="btn btn-primary" @click="nextWizardStep()"><span
+                      data-i18n="step_preview">Vorschau</span> <span
+                      class="material-icons-round">chevron_right</span></button>
+                </div>
+              </div>
+            </template>
+
+            <!-- Step 3 -->
+            <template x-if="wizardStep === 2">
+              <div>
+                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px" data-i18n="docker_cmd_preview">
+                  Der folgende Docker-Befehl wird ausgeführt:
+                </p>
+                <div class="code-preview" x-text="getWizardCmd()" style="white-space:pre-wrap;"></div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+                  <button class="btn btn-ghost" @click="prevWizardStep()"><span
+                      class="material-icons-round">chevron_left</span> <span data-i18n="btn_back">Zurück</span></button>
+                  <button class="btn btn-primary" @click="createWizardServer()">
+                    <span class="material-icons-round">rocket_launch</span> <span data-i18n="btn_create">Server
+                      erstellen</span>
+                  </button>
+                </div>
+              </div>
+            </template>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Console Modal -->
+      <div class="modal-backdrop" id="consoleModal" hidden>
+        <div class="modal modal-large glass-card" style="max-width:860px">
+          <div class="modal-header">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="material-icons-round" style="color:var(--green)">terminal</span>
+              <h2 id="consoleTitle" data-i18n="tooltip_terminal">Web-RCON Terminal</h2>
+              <span class="status-badge running" id="consoleStatus" style="font-size:11px">
+                <span class="dot"></span> Live
+              </span>
+            </div>
+            <button class="icon-btn" id="closeConsoleModal"><span class="material-icons-round">close</span></button>
+          </div>
+          <div class="modal-body" style="padding:0;display:flex;flex-direction:column;height:500px">
+            <div class="console-output" id="consoleOutput"></div>
+            <div class="console-input-bar">
+              <label for="consoleInput" class="console-prompt" style="margin:0; cursor:text;">&gt;</label>
+              <input type="text" id="consoleInput" name="consoleInput" class="console-input"
+                placeholder="Befehl eingeben (z.B. list, say Hallo, stop)..." data-i18n="term_input_placeholder"
+                autocomplete="off" spellcheck="false" />
+              <button class="btn btn-primary" id="consoleSendBtn" style="padding:6px 14px;font-size:12px">
+                <span class="material-icons-round" style="font-size:16px">send</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Manager Modal -->
+      <div class="modal-backdrop" id="fileManagerModal" hidden>
+        <div class="modal modal-large glass-card" style="max-width:900px">
+          <div class="modal-header">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="material-icons-round" style="color:var(--blue)">folder</span>
+              <h2 id="fmTitle" data-i18n="fm_title">Dateimanager</h2>
+              <span class="status-badge"
+                style="background:var(--bg-input);color:var(--text-muted);border:1px solid var(--border)">/data/</span>
+            </div>
+            <button class="icon-btn" id="closeFmModal"><span class="material-icons-round">close</span></button>
+          </div>
+          <div class="modal-body" style="padding:0; display:flex; height:600px;">
+            <!-- Sidebar: File Tree -->
+            <div
+              style="width:240px; border-right:1px solid var(--border); background:var(--bg-base); overflow-y:auto; padding:12px;">
+              <div
+                style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;">
+                Verzeichnis</div>
+              <div id="fmFileTree" style="display:flex; flex-direction:column; gap:4px;">
+                <button class="settings-nav-btn active" data-type="folder"><span class="material-icons-round"
+                    style="color:var(--yellow)">folder</span> root</button>
+                <button class="settings-nav-btn" data-type="folder" style="padding-left:24px"><span
+                    class="material-icons-round" style="color:var(--yellow)">folder</span> plugins</button>
+                <button class="settings-nav-btn" data-type="folder" style="padding-left:24px"><span
+                    class="material-icons-round" style="color:var(--yellow)">folder</span> world</button>
+                <button class="settings-nav-btn" data-type="file" style="padding-left:24px"><span
+                    class="material-icons-round" style="color:var(--text-muted)">description</span>
+                  server.properties</button>
+                <button class="settings-nav-btn" data-type="file" style="padding-left:24px"><span
+                    class="material-icons-round" style="color:var(--text-muted)">description</span> eula.txt</button>
+                <button class="settings-nav-btn" data-type="file" style="padding-left:24px"><span
+                    class="material-icons-round" style="color:var(--text-muted)">description</span> ops.json</button>
+              </div>
+            </div>
+            <!-- Right: Editor -->
+            <div style="flex:1; display:flex; flex-direction:column; background:#0d0f13;">
+              <div
+                style="padding:8px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg-card)">
+                <div id="fmCurrentFile" style="font-size:12px; font-family:monospace; color:var(--text-secondary)">
+                  server.properties</div>
+                <button id="fmSaveBtn" class="btn btn-primary" style="padding:4px 12px; font-size:11px"><span
+                    class="material-icons-round" style="font-size:14px">save</span> <span
+                    data-i18n="btn_save">Speichern</span></button>
+              </div>
+              <textarea id="fmEditorTextarea"
+                style="flex:1; background:transparent; border:none; outline:none; color:#a8b5cc; font-family:'JetBrains Mono', monospace; font-size:13px; padding:16px; resize:none;"
+                spellcheck="false">#Minecraft server properties
+#Mon Oct 02 12:00:00 2023
+enable-jmx-monitoring=false
+rcon.port=25575
+level-seed=
+gamemode=survival
+enable-command-block=false
+enable-query=false
+generator-settings={}
+enforce-secure-profile=true
+level-name=world
+motd=Mein Unraid Minecraft Server
+query.port=25565
+pvp=true
+generate-structures=true
+max-chained-neighbor-updates=1000000
+difficulty=easy
+network-compression-threshold=256
+max-tick-time=60000
+require-resource-pack=false
+use-native-transport=true
+max-players=20
+online-mode=true
+enable-status=true
+allow-flight=false
+initial-disabled-packs=
+broadcast-rcon-to-ops=true
+view-distance=10
+server-ip=
+resource-pack-prompt=
+allow-nether=true
+server-port=25565
+enable-rcon=true
+sync-chunk-writes=true
+op-permission-level=4
+prevent-proxy-connections=false
+hide-online-players=false
+resource-pack=
+entity-broadcast-range-percentage=100
+simulation-distance=10
+rcon.password=secret
+player-idle-timeout=0
+force-gamemode=false
+rate-limit=0
+hardcore=false
+white-list=false
+broadcast-console-to-ops=true
+spawn-npcs=true
+spawn-animals=true
+function-permission-level=2
+initial-enabled-packs=vanilla
+level-type=minecraft\:normal
+text-filtering-config=
+spawn-monsters=true
+enforce-whitelist=false
+spawn-protection=16
+resource-pack-sha1=
+max-world-size=29999984
+            </textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backup Modal -->
+      <div class="modal-backdrop" id="backupModal" hidden>
+        <div class="modal glass-card" style="max-width:700px">
+          <div class="modal-header">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="material-icons-round" style="color:var(--purple)">backup</span>
+              <h2 id="backupTitle" data-i18n="backup_title">Backups</h2>
+            </div>
+            <button class="icon-btn" id="closeBackupModal"><span class="material-icons-round">close</span></button>
+          </div>
+          <div class="modal-body">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <p style="color:var(--text-secondary); font-size:13px; margin:0" data-i18n="backup_desc">Automatische und
+                manuelle Sicherungen von /data.</p>
+              <button class="btn btn-primary" onclick="showToast('Backup wird erstellt...', 'info')"><span
+                  class="material-icons-round">add</span> <span data-i18n="btn_create_backup">Backup
+                  erstellen</span></button>
+            </div>
+
+            <div class="player-table-wrapper">
+              <table class="player-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="col_filename">Dateiname</th>
+                    <th data-i18n="col_date">Datum</th>
+                    <th data-i18n="col_size">Größe</th>
+                    <th style="width:120px" data-i18n="col_actions">Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-family:monospace; font-size:12px; color:var(--text-primary)">
+                      backup_2023-10-02_14-30.tar.gz</td>
+                    <td style="color:var(--text-secondary); font-size:12px"><span data-i18n="backup_today">Heute</span>,
+                      14:30</td>
+                    <td style="color:var(--text-secondary); font-size:12px">485 MB</td>
+                    <td>
+                      <div style="display:flex; gap:6px;">
+                        <button class="action-btn" data-i18n="btn_restore" data-i18n-attr="title"
+                          title="Wiederherstellen" style="color:var(--blue); border-color:var(--blue-dim)"><span
+                            class="material-icons-round">restore</span></button>
+                        <button class="action-btn" data-i18n="btn_download" data-i18n-attr="title" title="Herunterladen"
+                          style="color:var(--text-primary)"><span class="material-icons-round">download</span></button>
+                        <button class="action-btn" data-i18n="btn_delete" data-i18n-attr="title" title="Löschen"
+                          style="color:var(--red)"><span class="material-icons-round">delete</span></button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:monospace; font-size:12px; color:var(--text-primary)">
+                      backup_2023-10-01_14-30.tar.gz</td>
+                    <td style="color:var(--text-secondary); font-size:12px"><span
+                        data-i18n="backup_yesterday">Gestern</span>, 14:30</td>
+                    <td style="color:var(--text-secondary); font-size:12px">480 MB</td>
+                    <td>
+                      <div style="display:flex; gap:6px;">
+                        <button class="action-btn" data-i18n="btn_restore" data-i18n-attr="title"
+                          title="Wiederherstellen" style="color:var(--blue)"><span
+                            class="material-icons-round">restore</span></button>
+                        <button class="action-btn" data-i18n="btn_download" data-i18n-attr="title" title="Herunterladen"
+                          style="color:var(--text-primary)"><span class="material-icons-round">download</span></button>
+                        <button class="action-btn" data-i18n="btn_delete" data-i18n-attr="title" title="Löschen"
+                          style="color:var(--red)"><span class="material-icons-round">delete</span></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── PANEL: Game Additions ─── -->
+    <section class="tab-panel" id="panel-game-additions" role="tabpanel" aria-labelledby="tab-game-additions">
+      <div class="panel-header" style="flex-direction:column; align-items:flex-start; gap:20px;">
+        <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+          <div class="panel-title-group">
+            <h1 data-i18n="ga_title">Game Additions</h1>
+            <p class="panel-subtitle" data-i18n="ga_subtitle">Entdecke Modpacks, Mods und Plugins für deine Server</p>
+          </div>
+          <div class="panel-actions">
+            <div class="source-toggle" id="sourceToggle">
+              <button class="source-btn active" data-source="modrinth">Modrinth</button>
+              <button class="source-btn" data-source="curseforge">CurseForge</button>
+              <button class="source-btn" data-source="ftb">FTB</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-Game Selector (Filled dynamically by gameAdditions.js) -->
+        <div id="hubGameSelector" style="display:flex; gap:12px; width:100%; overflow-x:auto; padding-bottom:4px;">
+        </div>
+      </div>
+
+      <div class="mc-layout">
+        <!-- Sidebar Filter -->
+        <aside class="mc-sidebar" id="mcSidebar">
+          <div class="sidebar-section">
+            <div class="sidebar-label" data-i18n="filter_category">Kategorie</div>
+            <div class="filter-group" id="categoryFilter">
+              <button class="filter-chip active" data-cat="modpacks">📦 <span
+                  data-i18n="filter_modpacks">Modpacks</span></button>
+              <button class="filter-chip" data-cat="mods">🔧 <span data-i18n="filter_mods">Mods</span></button>
+              <button class="filter-chip" data-cat="plugins">🔌 <span data-i18n="filter_plugins">Plugins</span></button>
+              <button class="filter-chip" data-cat="datapacks">📋 Datenpakete</button>
+              <button class="filter-chip" data-cat="resourcepacks">🎨 Resource Packs</button>
+              <button class="filter-chip" data-cat="shaders">✨ Shader</button>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-label">Loader</div>
+            <div class="filter-group" id="loaderFilter">
+              <button class="filter-chip active" data-loader="all" data-i18n="filter_all">Alle</button>
+              <button class="filter-chip" data-loader="fabric">Fabric</button>
+              <button class="filter-chip" data-loader="forge">Forge</button>
+              <button class="filter-chip" data-loader="neoforge">NeoForge</button>
+              <button class="filter-chip" data-loader="quilt">Quilt</button>
+              <button class="filter-chip" data-loader="paper">Paper</button>
+              <button class="filter-chip" data-loader="spigot">Spigot</button>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <label for="versionFilter" class="sidebar-label" data-i18n="filter_version">MC Version</label>
+            <select class="filter-select" id="versionFilter">
+              <option value="" data-i18n="filter_any">Alle Versionen</option>
+              <option value="1.21.4">1.21.4</option>
+              <option value="1.21.1">1.21.1</option>
+              <option value="1.20.6">1.20.6</option>
+              <option value="1.20.4">1.20.4</option>
+              <option value="1.20.1">1.20.1</option>
+              <option value="1.19.4">1.19.4</option>
+              <option value="1.18.2">1.18.2</option>
+              <option value="1.16.5">1.16.5</option>
+            </select>
+          </div>
+
+          <div class="sidebar-section">
+            <label for="sortFilter" class="sidebar-label">Sortierung</label>
+            <select class="filter-select" id="sortFilter">
+              <option value="downloads">Meiste Downloads</option>
+              <option value="updated">Neueste Updates</option>
+              <option value="created">Neu eingestellt</option>
+              <option value="follows">Beliebteste</option>
+            </select>
+          </div>
+        </aside>
+
+        <!-- Content Area -->
+        <div class="mc-content">
+          <div class="mc-search-bar">
+            <label for="mcSearch" style="display:flex; align-items:center; cursor:text; margin:0;"><span
+                class="material-icons-round">search</span></label>
+            <input type="text" id="mcSearch" name="mcSearch" placeholder="Mods, Modpacks, Plugins suchen..."
+              aria-label="Minecraft Inhalte suchen" data-i18n="search_mods" />
+            <div class="mc-search-meta" id="mcSearchMeta">Tippe um zu suchen...</div>
+          </div>
+
+          <div class="mc-grid" id="mcGrid">
+            <!-- Filled by minecraft.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Mod Detail Modal -->
+      <div class="modal-backdrop" id="modDetailModal" hidden>
+        <div class="modal modal-large glass-card">
+          <div class="modal-header">
+            <div class="mod-modal-title">
+              <img src="" alt="" id="modModalIcon" class="mod-modal-icon" />
+              <div>
+                <h2 id="modModalName"></h2>
+                <p id="modModalAuthor"></p>
+              </div>
+            </div>
+            <button class="icon-btn" id="closeModModal"><span class="material-icons-round">close</span></button>
+          </div>
+          <div class="modal-body" id="modModalBody">
+            <!-- Filled dynamically -->
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" id="closeModModalBtn">
+              <span class="material-icons-round">close</span> <span data-i18n="btn_cancel">Schließen</span>
+            </button>
+            <button class="btn btn-primary" id="installModBtn">
+              <span class="material-icons-round">add_box</span> <span data-i18n="btn_install">Installieren</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Docker-Erstellungs-Wizard für Modpacks -->
+      <div class="modal-backdrop" id="dockerCreateModal" hidden>
+        <div class="modal modal-xl glass-card">
+          <div class="modal-header">
+            <div class="mod-modal-title">
+              <span class="material-icons-round" style="font-size:28px;color:var(--accent)">dns</span>
+              <div>
+                <h2 id="dockerModalTitle">Neuen Minecraft-Server erstellen</h2>
+                <p id="dockerModalSubtitle" style="color:var(--text-muted);font-size:12px">itzg/minecraft-server ·
+                  Docker Container</p>
+              </div>
+            </div>
+            <button class="icon-btn" id="closeDockerCreateModal">
+              <span class="material-icons-round">close</span>
+            </button>
+          </div>
+
+          <!-- Wizard body: left form tabs + right preview -->
+          <div class="dc-wizard-body">
+
+            <!-- Left: Tabbed form -->
+            <div class="dc-form-col">
+              <div class="dc-tab-nav" id="dcTabNav">
+                <button class="dc-tab-btn active" data-dctab="docker">🐳 Docker / Java</button>
+                <button class="dc-tab-btn" data-dctab="server">🖥️ Server</button>
+                <button class="dc-tab-btn" data-dctab="gameplay">🎮 Gameplay</button>
+                <button class="dc-tab-btn" data-dctab="advanced">⚙️ Erweitert</button>
+              </div>
+
+              <!-- Tab 1: Docker / Java -->
+              <div class="dc-tab-content active" id="dctab-docker">
+                <div class="dc-section-title">Container</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Container-Name</div>
+                    <div class="setting-desc">Eindeutiger Docker-Name</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcName" placeholder="mc-server-01" style="width:170px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Port (Host)</div>
+                    <div class="setting-desc">Verbindungsport Minecraft</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcPort" value="25565" min="1024" max="65535"
+                    style="width:90px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Datenpfad (Host)</div>
+                    <div class="setting-desc">Bind-Mount /data</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcDataPath" value="/mnt/user/gameservers"
+                    style="width:200px;font-family:monospace;font-size:11px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Restart-Policy</div>
+                  </div>
+                  <select class="setting-select" id="dcRestart">
+                    <option value="unless-stopped" selected>unless-stopped</option>
+                    <option value="always">always</option>
+                    <option value="on-failure">on-failure</option>
+                    <option value="no">no</option>
+                  </select>
+                </div>
+
+                <div class="dc-section-title" style="margin-top:14px">Java / Server-Typ</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Server-Typ (TYPE)</div>
+                    <div class="setting-desc">auto aus Modpack bei CF/Modrinth</div>
+                  </div>
+                  <select class="setting-select" id="dcType">
+                    <option value="AUTO">Auto (aus Modpack)</option>
+                    <option value="VANILLA">Vanilla</option>
+                    <option value="PAPER">Paper</option>
+                    <option value="FABRIC">Fabric</option>
+                    <option value="FORGE">Forge</option>
+                    <option value="NEOFORGE">NeoForge</option>
+                    <option value="QUILT">Quilt</option>
+                    <option value="CURSEFORGE">CurseForge</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">MC-Version (VERSION)</div>
+                    <div class="setting-desc">z.B. LATEST oder 1.21.1</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcVersion" value="LATEST" style="width:100px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">RAM (MEMORY)</div>
+                    <div class="setting-desc">Java-Heap -Xmx</div>
+                  </div>
+                  <div class="setting-input-row">
+                    <input type="number" class="setting-input" id="dcRam" value="4096" min="512" step="512"
+                      style="width:90px" />
+                    <span class="setting-unit">MB</span>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ENABLE_ROLLING_LOGS</div>
+                    <div class="setting-desc">Log-Rotation aktivieren</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcRollingLogs" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">USE_LOG_TIMESTAMP</div>
+                    <div class="setting-desc">Zeitstempel in Logs</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcLogTimestamp" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="dc-section-title" style="margin-top:14px">JVM Optimizations</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">USE_AIKAR_FLAGS</div>
+                    <div class="setting-desc">Empfohlen für die meisten Server (G1GC) - ideal für Paper/Spigot</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcAikarFlags" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ENABLE_MEOWICES_FLAGS</div>
+                    <div class="setting-desc">Für ZGC/Shenandoah (MC 1.15+) - gut bei sehr großen Heaps >12GB</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcMeowices" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">USE_LARGE_PAGES</div>
+                    <div class="setting-desc">Braucht Host-OS HugePages - reduziert TLB Misses</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcLargePages" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">USE_SIMD_FLAGS</div>
+                    <div class="setting-desc">Nutzt Vector API (Java 16+) - höhere Performance bei modernen CPUs</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcSimd" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Tab 2: Server -->
+              <div class="dc-tab-content" id="dctab-server" style="display:none">
+                <div class="dc-section-title">Basis</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">SERVER_NAME (MOTD)</div>
+                    <div class="setting-desc">Angezeigter Name in Serverliste</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcServerName" placeholder="Mein Minecraft-Server"
+                    style="width:200px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">MAX_PLAYERS</div>
+                    <div class="setting-desc">Max. gleichzeitige Spieler</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcMaxPlayers" value="20" min="1" max="1000"
+                    style="width:80px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">DIFFICULTY</div>
+                    <div class="setting-desc">peaceful / easy / normal / hard</div>
+                  </div>
+                  <select class="setting-select" id="dcDifficulty">
+                    <option value="easy">easy</option>
+                    <option value="normal" selected>normal</option>
+                    <option value="hard">hard</option>
+                    <option value="peaceful">peaceful</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ONLINE_MODE</div>
+                    <div class="setting-desc">Mojang-Auth (false = Cracked)</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcOnlineMode" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">VIEW_DISTANCE</div>
+                    <div class="setting-desc">Sichtweite in Chunks</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcViewDistance" value="12" min="2" max="32"
+                    style="width:70px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">SIMULATION_DISTANCE</div>
+                    <div class="setting-desc">Simulationsweite in Chunks</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcSimDistance" value="10" min="2" max="32"
+                    style="width:70px" />
+                </div>
+
+                <div class="dc-section-title" style="margin-top:14px">Whitelist & RCON</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ENABLE_WHITELIST</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcWhitelist" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row" id="dcWhitelistNamesRow" style="display:none">
+                  <div class="setting-info">
+                    <div class="setting-label">WHITELIST</div>
+                    <div class="setting-desc">Spielernamen (kommagetrennt)</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcWhitelistNames" placeholder="Spieler1,Spieler2"
+                    style="width:200px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">OPS</div>
+                    <div class="setting-desc">OP-Spielernamen (kommagetrennt)</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcOps" placeholder="AdminName" style="width:200px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ENABLE_RCON</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcRcon" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">RCON_PORT</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcRconPort" value="25575" style="width:90px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">RCON_PASSWORD</div>
+                  </div>
+                  <input type="password" class="setting-input" id="dcRconPw" placeholder="sicheres Passwort"
+                    style="width:170px" />
+                </div>
+
+                <div class="dc-section-title" style="margin-top:14px">Icon & Textur</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ICON</div>
+                    <div class="setting-desc">URL zu server-icon.png (64×64)</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcIcon" placeholder="https://..." style="width:200px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">RESOURCE_PACK</div>
+                    <div class="setting-desc">URL zum Resource Pack .zip</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcResourcePack" placeholder="https://..."
+                    style="width:200px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">RESOURCE_PACK_ENFORCE</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcResourcePackEnforce" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Tab 3: Gameplay -->
+              <div class="dc-tab-content" id="dctab-gameplay" style="display:none">
+                <div class="dc-section-title">Spielmodus</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">MODE (Gamemode)</div>
+                  </div>
+                  <select class="setting-select" id="dcGamemode">
+                    <option value="survival" selected>survival</option>
+                    <option value="creative">creative</option>
+                    <option value="adventure">adventure</option>
+                    <option value="spectator">spectator</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">FORCE_GAMEMODE</div>
+                    <div class="setting-desc">Spieler immer auf Mode setzen</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcForceGamemode" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">PVP</div>
+                    <div class="setting-desc">Spieler-vs-Spieler Kämpfe</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcPvp" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">HARDCORE</div>
+                    <div class="setting-desc">Hardcore-Modus (1 Leben)</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcHardcore" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ALLOW_FLIGHT</div>
+                    <div class="setting-desc">Fliegen ohne Plugin erlauben</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcAllowFlight" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="dc-section-title" style="margin-top:14px">Welt</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">LEVEL_TYPE</div>
+                    <div class="setting-desc">Weltgenerierung</div>
+                  </div>
+                  <select class="setting-select" id="dcLevelType">
+                    <option value="minecraft:normal" selected>Normal</option>
+                    <option value="minecraft:flat">Flat (Superflat)</option>
+                    <option value="minecraft:large_biomes">Large Biomes</option>
+                    <option value="minecraft:amplified">Amplified</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">SEED</div>
+                    <div class="setting-desc">Welt-Seed (leer = zufällig)</div>
+                  </div>
+                  <input type="text" class="setting-input" id="dcSeed" placeholder="leer = zufällig"
+                    style="width:160px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">SPAWN_PROTECTION</div>
+                    <div class="setting-desc">Spawn-Schutzradius (Chunks)</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcSpawnProtection" value="16" min="0"
+                    style="width:70px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">GENERATE_STRUCTURES</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcGenStructures" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ALLOW_NETHER</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcAllowNether" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Tab 4: Erweitert -->
+              <div class="dc-tab-content" id="dctab-advanced" style="display:none">
+                <div class="dc-section-title">Befehle & Features</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ENABLE_COMMAND_BLOCK</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcCommandBlock" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">SNOOPER_ENABLED</div>
+                    <div class="setting-desc">Mojang Telemetrie</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcSnooper" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">PLAYER_IDLE_TIMEOUT</div>
+                    <div class="setting-desc">Minuten bis AFK-Kick (0=aus)</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcIdleTimeout" value="0" min="0" style="width:70px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">MAX_TICK_TIME</div>
+                    <div class="setting-desc">ms bis Crash-Detektion (-1=aus)</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcMaxTick" value="60000" style="width:90px" />
+                </div>
+
+                <div class="dc-section-title" style="margin-top:14px">Auto-Pause / Auto-Stop</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ENABLE_AUTOPAUSE</div>
+                    <div class="setting-desc">Server pausieren wenn leer</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcAutopause" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">AUTOPAUSE_TIMEOUT_EST</div>
+                    <div class="setting-desc">Sekunden nach letztem Spieler</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcAutopauseTimeout" value="3600" style="width:90px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">ENABLE_AUTOSTOP</div>
+                    <div class="setting-desc">Server stoppen wenn leer</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcAutostop" />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="dc-section-title" style="margin-top:14px">Netzwerk</div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">NETWORK_COMPRESSION_THRESHOLD</div>
+                    <div class="setting-desc">Bytes (256 standard, -1=aus)</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcNetworkCompression" value="256" style="width:80px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">MAX_BUILD_HEIGHT</div>
+                  </div>
+                  <input type="number" class="setting-input" id="dcMaxBuildHeight" value="320" style="width:80px" />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">OVERRIDE_SERVER_PROPERTIES</div>
+                    <div class="setting-desc">Env-Vars immer überschreiben</div>
+                  </div>
+                  <label class="setting-toggle"><input type="checkbox" id="dcOverrideProps" checked />
+                    <div class="toggle-track">
+                      <div class="toggle-thumb"></div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Command Preview -->
+            <div class="dc-preview-col">
+              <div class="dc-section-title">Docker-Befehl Vorschau</div>
+              <pre id="dcCommandPreview">Konfiguration eingeben...</pre>
+
+              <div class="dc-info-box">
+                <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">
+                  <span class="material-icons-round" style="font-size:14px;vertical-align:middle">info</span>
+                  itzg/minecraft-server
+                </div>
+                <p style="font-size:11px;color:var(--text-muted);margin:0;line-height:1.5">
+                  Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert.
+                  Nur geänderte Standardwerte werden ausgegeben.
+                </p>
+              </div>
+
+              <div id="dcCopyStatus" style="display:none;font-size:12px;color:var(--green);margin-top:6px">
+                <span class="material-icons-round" style="font-size:14px;vertical-align:middle">check_circle</span> In
+                Zwischenablage kopiert!
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-ghost" id="dcCopyBtn">
+              <span class="material-icons-round">content_copy</span> Befehl kopieren
+            </button>
+            <button class="btn btn-ghost" id="closeDockerCreateModalBtn">Abbrechen</button>
+            <button class="btn btn-primary" id="dcCreateBtn">
+              <span class="material-icons-round">rocket_launch</span> Container starten
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+
+
+    <!-- ── PANEL: Player Manager ─── -->
+    <section class="tab-panel" id="panel-players" role="tabpanel" aria-labelledby="tab-players" x-data="playersApp()">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h1 data-i18n="pl_title">Player Manager</h1>
+          <p class="panel-subtitle" data-i18n="pl_subtitle">Spieler verwalten, bannen, kicken und Whitelist pflegen</p>
+        </div>
+        <div class="panel-actions">
+          <div class="custom-select-wrap" :class="{ 'open': selectorOpen }" @click.away="selectorOpen = false">
+            <button class="custom-select-trigger" @click="selectorOpen = !selectorOpen" :aria-expanded="selectorOpen">
+              <span class="material-icons-round">dns</span>
+              <span class="custom-select-label" x-text="serverLabel"></span>
+              <span class="material-icons-round custom-select-arrow">expand_more</span>
+            </button>
+            <ul class="custom-select-dropdown" x-show="selectorOpen" x-transition.opacity role="listbox">
+              <li class="custom-select-option" @click="state.server = ''; selectorOpen = false"
+                :class="{'active': state.server === ''}">
+                <span class="cso-dot" style="background:var(--text-muted)"></span>
+                <span data-i18n="server_selector_default">Kein Server</span>
+              </li>
+              <template x-for="s in servers" :key="s.containerId">
+                <li class="custom-select-option" @click="state.server = s.containerId; selectorOpen = false"
+                  :class="{'active': state.server === s.containerId}">
+                  <span class="cso-dot"
+                    :style="{ background: s.status === 'online' ? 'var(--green)' : 'var(--red)' }"></span>
+                  <span x-text="s.serverName"></span>
+                  <span class="cso-status"
+                    x-text="s.status === 'online' ? (t('online') || 'Online') : (t('offline') || 'Offline')"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="player-layout">
+        <!-- Sub-Tabs -->
+        <div class="player-subtabs">
+          <button class="subtab-btn" :class="{ 'active': state.subtab === 'online' }" @click="state.subtab = 'online'">
+            <span class="material-icons-round">sensors</span> <span data-i18n="tab_online">Online</span>
+            <span class="tab-badge online" x-text="onlineCount"></span>
+          </button>
+          <button class="subtab-btn" :class="{ 'active': state.subtab === 'whitelist' }"
+            @click="state.subtab = 'whitelist'">
+            <span class="material-icons-round">playlist_add_check</span> <span
+              data-i18n="tab_whitelist">Whitelist</span>
+          </button>
+          <button class="subtab-btn" :class="{ 'active': state.subtab === 'bans' }" @click="state.subtab = 'bans'">
+            <span class="material-icons-round">gavel</span> <span data-i18n="tab_bans">Bans</span>
+          </button>
+          <button class="subtab-btn" :class="{ 'active': state.subtab === 'chatlog' }"
+            @click="state.subtab = 'chatlog'">
+            <span class="material-icons-round">chat</span> <span data-i18n="tab_chatlog">Chat Log</span>
+          </button>
+        </div>
+
+        <!-- Player Content -->
+        <div class="player-content">
+          <!-- Empty states -->
+          <template x-if="!state.server">
+            <div class="empty-state">
+              <span class="material-icons-round">dns</span>
+              <p data-i18n="no_server_selected">Wähle einen Server aus um Spielerdaten zu sehen.</p>
+            </div>
+          </template>
+          <template x-if="state.server && !activeData">
+            <div class="empty-state">
+              <span class="material-icons-round">error</span>
+              <p data-i18n="no_server_data">Keine Daten für diesen Server verfügbar.</p>
+            </div>
+          </template>
+
+          <!-- Online Tab -->
+          <template x-if="activeData && state.subtab === 'online'">
+            <div>
+              <template x-if="!activeData.online.length">
+                <div class="empty-state"><span class="material-icons-round">person_off</span>
+                  <p data-i18n="no_players_online">Keine Spieler online.</p>
+                </div>
+              </template>
+              <template x-if="activeData.online.length > 0">
+                <div class="player-table-wrapper">
+                  <table class="player-table">
+                    <thead>
+                      <tr>
+                        <th style="width:40px"></th>
+                        <th data-i18n="col_player">Spieler</th>
+                        <th data-i18n="col_ping">Ping</th>
+                        <th data-i18n="col_playtime">Spielzeit</th>
+                        <th data-i18n="col_gamemode">Gamemode</th>
+                        <th data-i18n="col_rank">Rang</th>
+                        <th data-i18n="col_actions">Aktionen</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template x-for="p in activeData.online" :key="p.name">
+                        <tr>
+                          <td><img class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
+                              onerror="playerAvatarError(this)" /></td>
+                          <td>
+                            <div class="player-name" x-text="p.name"></div>
+                            <div class="player-uuid" x-text="p.uuid"></div>
+                          </td>
+                          <td><span class="player-ping" :class="pingClass(p.ping)" x-text="p.ping + 'ms'"></span></td>
+                          <td style="color:var(--text-secondary);font-size:13px" x-text="p.playtime"></td>
+                          <td>
+                            <button class="gamemode-badge" :class="'gm-' + (p.gamemode || 'survival')"
+                              @click="toggleGamemode(p.name)" title="Gamemode wechseln"
+                              x-text="getGmLabel(p.gamemode)"></button>
+                          </td>
+                          <td>
+                            <template x-if="p.isOp"><span class="mc-tag forge" style="font-size:10px"
+                                data-i18n="rank_op">OP</span></template>
+                            <template x-if="!p.isOp"><span class="mc-tag"
+                                data-i18n="rank_player">Spieler</span></template>
+                          </td>
+                          <td>
+                            <div class="player-actions">
+                              <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px"
+                                @click="msgPlayer(p.name)" data-i18n="tooltip_msg" data-i18n-attr="title"
+                                title="Nachricht senden"><span class="material-icons-round"
+                                  style="font-size:14px">chat</span></button>
+                              <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px"
+                                @click="tpPlayer(p.name)" data-i18n="tooltip_tp" data-i18n-attr="title"
+                                title="Teleportieren"><span class="material-icons-round"
+                                  style="font-size:14px">near_me</span></button>
+                              <template x-if="!p.isOp">
+                                <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px"
+                                  @click="opPlayer(p.name)" data-i18n="tooltip_op" data-i18n-attr="title"
+                                  title="OP geben"><span class="material-icons-round"
+                                    style="font-size:14px">admin_panel_settings</span></button>
+                              </template>
+                              <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;color:var(--yellow)"
+                                @click="kickPlayer(p.name)" data-i18n="tooltip_kick" data-i18n-attr="title"
+                                title="Kicken"><span class="material-icons-round"
+                                  style="font-size:14px">logout</span></button>
+                              <button class="btn btn-danger" style="padding:4px 10px;font-size:11px"
+                                @click="openBanModal(p.name)" data-i18n="tooltip_ban" data-i18n-attr="title"
+                                title="Bannen"><span class="material-icons-round"
+                                  style="font-size:14px">gavel</span></button>
+                            </div>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Whitelist Tab -->
+          <template x-if="activeData && state.subtab === 'whitelist'">
+            <div class="player-table-wrapper">
+              <div
+                style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:13px;color:var(--text-secondary)"
+                  x-text="activeData.whitelist.length + ' ' + (t('whitelist_players') || 'Spieler auf der Whitelist')"></span>
+                <button class="btn btn-primary" style="padding:6px 14px;font-size:12px" @click="addWhitelist()">
+                  <span class="material-icons-round">person_add</span> <span data-i18n="btn_add">Hinzufügen</span>
+                </button>
+              </div>
+              <template x-for="p in activeData.whitelist" :key="p.name">
+                <div class="list-entry">
+                  <img class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
+                    onerror="playerAvatarError(this)" />
+                  <div class="list-entry-name" x-text="p.name"></div>
+                  <div class="list-entry-meta" x-text="p.uuid"></div>
+                  <button class="btn btn-danger" style="padding:5px 12px;font-size:11px"
+                    @click="removeWhitelist(p.name)">
+                    <span class="material-icons-round" style="font-size:13px">remove</span> <span
+                      data-i18n="btn_remove">Entfernen</span>
+                  </button>
+                </div>
+              </template>
+              <template x-if="!activeData.whitelist.length">
+                <div class="empty-state" style="padding:40px"><span
+                    class="material-icons-round">playlist_add_check</span>
+                  <p data-i18n="whitelist_empty">Whitelist ist leer.</p>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Bans Tab -->
+          <template x-if="activeData && state.subtab === 'bans'">
+            <div class="player-table-wrapper">
+              <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+                <span style="font-size:13px;color:var(--text-secondary)"
+                  x-text="activeData.bans.length + ' ' + (t('active_bans') || 'aktive Bans')"></span>
+              </div>
+              <template x-for="b in activeData.bans" :key="b.name">
+                <div class="list-entry">
+                  <div class="player-avatar-placeholder">🔨</div>
+                  <div style="flex:1">
+                    <div class="list-entry-name" style="color:var(--red)" x-text="b.name"></div>
+                    <div class="list-entry-meta"
+                      x-text="(t('ban_reason_prefix') || 'Grund: ') + b.reason + ' · ' + b.date + ' · ' + b.duration">
+                    </div>
+                  </div>
+                  <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px" @click="unbanPlayer(b.name)">
+                    <span class="material-icons-round" style="font-size:13px">undo</span> <span
+                      data-i18n="btn_unban">Entbannen</span>
+                  </button>
+                </div>
+              </template>
+              <template x-if="!activeData.bans.length">
+                <div class="empty-state"><span class="material-icons-round">gavel</span>
+                  <p data-i18n="bans_empty">Keine aktiven Bans.</p>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Chat Log Tab -->
+          <template x-if="activeData && state.subtab === 'chatlog'">
+            <div class="chat-log-wrapper" style="display:flex;flex-direction:column;height:100%;min-height:400px;">
+              <div class="chat-container"
+                style="flex:1;overflow-y:auto;padding:12px;border-radius:8px;margin-bottom:12px;">
+                <template x-for="c in activeData.chatlog">
+                  <div class="chat-msg">
+                    <span class="chat-msg-time" x-text="c.time"></span>
+                    <div style="display:flex; align-items:center; gap:6px; margin-top:1px;">
+                      <img :src="'https://mc-heads.net/avatar/' + c.player + '/16'"
+                        style="width:16px;height:16px;border-radius:3px;image-rendering:pixelated;"
+                        onerror="this.style.display='none'" />
+                      <span class="chat-msg-player" :class="{'chat-op': isPlayerOp(c.player)}"
+                        x-text="'<' + c.player + '>'"></span>
+                    </div>
+                    <span class="chat-msg-text" x-text="c.msg"></span>
+                  </div>
+                </template>
+                <template x-if="!activeData.chatlog.length">
+                  <div class="empty-state"><span class="material-icons-round">chat_bubble_outline</span>
+                    <p data-i18n="chat_empty">Keine Nachrichten.</p>
+                  </div>
+                </template>
+              </div>
+              <div class="chat-input-area" style="display:flex;gap:8px;">
+                <label for="chatInput" style="position:absolute; width:1px; height:1px; overflow:hidden;">Chat</label>
+                <input type="text" id="chatInput" name="chatInput" x-model="state.chatInput" @keydown.enter="sendChat()"
+                  class="form-input" style="flex:1;background:var(--bg-input)" placeholder="Nachricht eingeben..."
+                  data-i18n="chat_placeholder" />
+                <button class="btn btn-primary" @click="sendChat()"><span
+                    class="material-icons-round">send</span></button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Ban Modal -->
+      <div class="modal-backdrop" x-show="state.banTarget !== null" style="display: none;"
+        @click.self="state.banTarget = null">
+        <div class="modal glass-card">
+          <div class="modal-header">
+            <h2 data-i18n="ban_modal_title">Spieler bannen</h2>
+            <button class="icon-btn" @click="state.banTarget = null"><span
+                class="material-icons-round">close</span></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="banPlayer" data-i18n="col_player">Spieler</label>
+              <input type="text" id="banPlayer" readonly class="form-input" :value="state.banTarget" />
+            </div>
+            <div class="form-group">
+              <label for="banReason" data-i18n="ban_reason_label">Grund</label>
+              <input type="text" id="banReason" x-model="state.banReason" placeholder="Grund eingeben..."
+                data-i18n="ban_reason_placeholder" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label for="banDuration" data-i18n="ban_duration_label">Dauer</label>
+              <select id="banDuration" x-model="state.banDuration" class="filter-select">
+                <option value="permanent" data-i18n="duration_permanent">Permanent</option>
+                <option value="1d" data-i18n="duration_1d">1 Tag</option>
+                <option value="7d" data-i18n="duration_7d">7 Tage</option>
+                <option value="30d" data-i18n="duration_30d">30 Tage</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" @click="state.banTarget = null" data-i18n="btn_cancel">Abbrechen</button>
+            <button class="btn btn-danger" @click="confirmBan()">
+              <span class="material-icons-round">gavel</span> <span data-i18n="btn_ban">Bannen</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── TOAST NOTIFICATIONS ─────────────────────────────────────────────── -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- ─── SETTINGS PANEL (slide-over) ─────────────────────────────────────── -->
+  <div class="settings-backdrop" id="settingsBackdrop"></div>
+  <aside class="settings-panel" id="settingsPanel" aria-label="Einstellungen">
+    <div class="settings-header">
+      <div class="settings-header-title">
+        <span class="material-icons-round">settings</span>
+        <h2 data-i18n="settings_title">Einstellungen</h2>
+      </div>
+      <button class="icon-btn" id="closeSettingsBtn">
+        <span class="material-icons-round">close</span>
+      </button>
+    </div>
+
+    <nav class="settings-nav" id="settingsNav">
+      <button class="settings-nav-btn active" data-stab="general"><span class="material-icons-round">tune</span> <span
+          data-i18n="settings_general">Allgemein</span></button>
+      <button class="settings-nav-btn" data-stab="docker"><span class="material-icons-round">view_list</span> <span
+          data-i18n="nav_docker">Docker</span></button>
+      <button class="settings-nav-btn" data-stab="gameserver"><span class="material-icons-round">sports_esports</span>
+        <span data-i18n="nav_gameservers">GameServer</span></button>
+      <button class="settings-nav-btn" data-stab="minecraft"><span
+          style="font-size:16px; width:24px; text-align:center; display:inline-block;">&#x26CF;</span>
+        Minecraft</button>
+      <button class="settings-nav-btn" data-stab="modules"><span class="material-icons-round">extension</span>
+        Module</button>
+      <button class="settings-nav-btn" data-stab="notifications"><span class="material-icons-round">notifications</span>
+        <span data-i18n="settings_notifications">Meldungen</span></button>
+    </nav>
+
+    <div class="settings-body" id="settingsBody">
+
+      <!-- Allgemein -->
+      <div class="settings-section active" id="stab-general">
+        <div class="settings-group">
+          <div class="settings-group-title" data-i18n="settings_appearance">Darstellung</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label" data-i18n="settings_accent">Akzentfarbe</div>
+              <div class="setting-desc" data-i18n="settings_accent_desc">Hauptfarbe der Oberfläche</div>
+            </div>
+            <div class="color-swatches" id="accentSwatches">
+              <button class="swatch active" data-color="#f57c00" style="background:#f57c00"
+                title="Unraid Orange"></button>
+              <button class="swatch" data-color="#3b82f6" style="background:#3b82f6" title="Blau"></button>
+              <button class="swatch" data-color="#22c55e" style="background:#22c55e" title="Grün"></button>
+              <button class="swatch" data-color="#a855f7" style="background:#a855f7" title="Lila"></button>
+              <button class="swatch" data-color="#ef4444" style="background:#ef4444" title="Rot"></button>
+              <button class="swatch" data-color="#06b6d4" style="background:#06b6d4" title="Cyan"></button>
+              <input type="color" id="customAccentColor" class="swatch swatch-custom" value="#f57c00"
+                title="Eigene Farbe" />
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label" data-i18n="settings_language">Sprache</div>
+              <div class="setting-desc" data-i18n="settings_language_desc">Anzeigesprache der Benutzeroberfläche</div>
+            </div>
+            <select class="setting-select" id="settingLang">
+              <option value="en">English</option>
+              <option value="de">Deutsch</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="it">Italiano</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label" data-i18n="settings_compact">Kompakter Modus</div>
+              <div class="setting-desc" data-i18n="settings_compact_desc">Weniger Abstände, mehr Inhalt sichtbar</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingCompact" />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-group-title" data-i18n="settings_behavior">Verhalten</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label" data-i18n="settings_refresh">Auto-Refresh-Interval</div>
+              <div class="setting-desc" data-i18n="settings_refresh_desc">Automatische Aktualisierung alle N Sekunden
+              </div>
+            </div>
+            <div class="setting-input-row">
+              <input type="number" class="setting-input" id="settingRefreshInterval" value="5" min="1" max="60"
+                style="width:70px" />
+              <span class="setting-unit">Sek.</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label" data-i18n="settings_animations">Animationen</div>
+              <div class="setting-desc" data-i18n="settings_animations_desc">Übergangsanimationen aktivieren</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingAnimations" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label" data-i18n="settings_debug">Entwicklermodus</div>
+              <div class="setting-desc" data-i18n="settings_debug_desc">Debug-Logs in der Konsole anzeigen</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingDebug" />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Docker -->
+      <div class="settings-section" id="stab-docker">
+        <div class="settings-group">
+          <div class="settings-group-title">Verbindung</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Docker Socket</div>
+              <div class="setting-desc">Pfad zum Docker Unix-Socket</div>
+            </div>
+            <input type="text" class="setting-input" id="settingDockerSocket" value="/var/run/docker.sock"
+              style="width:210px;font-family:monospace;font-size:12px" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Unraid API-URL</div>
+              <div class="setting-desc">Lokale Unraid-API-Adresse</div>
+            </div>
+            <input type="text" class="setting-input" id="settingUnraidApi" value="http://localhost/api"
+              style="width:210px;font-family:monospace;font-size:12px" />
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-group-title">Verhalten</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Standard Restart-Policy</div>
+              <div class="setting-desc">Für neue Container</div>
+            </div>
+            <select class="setting-select" id="settingRestartPolicy">
+              <option value="unless-stopped" selected>unless-stopped</option>
+              <option value="always">always</option>
+              <option value="on-failure">on-failure</option>
+              <option value="no">no</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Update-Check beim Start</div>
+              <div class="setting-desc">Auf neue Image-Versionen prüfen</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingUpdateCheck" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Bestätigung beim Stoppen</div>
+              <div class="setting-desc">Sicherheitsabfrage vor dem Stoppen</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingStopConfirm" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- GameServer -->
+      <div class="settings-section" id="stab-gameserver">
+        <div class="settings-group">
+          <div class="settings-group-title">Standard-Werte (neue Server)</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Datenpfad</div>
+              <div class="setting-desc">Basis-Pfad für Serverdaten auf dem Host</div>
+            </div>
+            <input type="text" class="setting-input" id="settingGsDataPath" value="/mnt/user/gameservers"
+              style="width:210px;font-family:monospace;font-size:12px" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Standard-RAM</div>
+              <div class="setting-desc">Arbeitsspeicher für neue Gameserver</div>
+            </div>
+            <div class="setting-input-row">
+              <input type="number" class="setting-input" id="settingGsRam" value="4096" min="512" step="512"
+                style="width:90px" />
+              <span class="setting-unit">MB</span>
+            </div>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-group-title">RCON</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">RCON aktivieren</div>
+              <div class="setting-desc">Fernsteuerung über RCON</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingRconEnabled" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">RCON-Port</div>
+              <div class="setting-desc">Standard-Port für RCON</div>
+            </div>
+            <input type="number" class="setting-input" id="settingRconPort" value="25575" style="width:90px" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">RCON-Passwort</div>
+              <div class="setting-desc">Wird in neue Container eingetragen</div>
+            </div>
+            <input type="password" class="setting-input" id="settingRconPassword" placeholder="••••••••"
+              style="width:180px" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Minecraft -->
+      <div class="settings-section" id="stab-minecraft">
+        <div class="settings-group">
+          <div class="settings-group-title">APIs</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">CurseForge API-Key</div>
+              <div class="setting-desc">Kostenlos auf curseforge.com erhältlich</div>
+            </div>
+            <input type="password" class="setting-input" id="settingCfApiKey" placeholder="Schlüssel eingeben..."
+              style="width:190px" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Modrinth API</div>
+              <div class="setting-desc">Öffentlich — kein Key erforderlich</div>
+            </div>
+            <span class="setting-badge ok"><span class="material-icons-round" style="font-size:14px">check_circle</span>
+              Verbunden</span>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-group-title">Standard-Werte (neue Minecraft-Server)</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Server-Typ</div>
+              <div class="setting-desc">Vorauswahl im Server-Wizard</div>
+            </div>
+            <select class="setting-select" id="settingMcType">
+              <option value="PAPER" selected>Paper</option>
+              <option value="FABRIC">Fabric</option>
+              <option value="FORGE">Forge</option>
+              <option value="NEOFORGE">NeoForge</option>
+              <option value="VANILLA">Vanilla</option>
+              <option value="SPIGOT">Spigot</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">MC-Version</div>
+              <div class="setting-desc">Vorauswahl im Server-Wizard</div>
+            </div>
+            <select class="setting-select" id="settingMcVersion">
+              <option value="LATEST" selected>Latest</option>
+              <option value="1.21.4">1.21.4</option>
+              <option value="1.21.1">1.21.1</option>
+              <option value="1.20.4">1.20.4</option>
+              <option value="1.20.1">1.20.1</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Max. Spieler</div>
+            </div>
+            <input type="number" class="setting-input" id="settingMcMaxPlayers" value="20" min="1" max="500"
+              style="width:80px" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">EULA automatisch akzeptieren</div>
+              <div class="setting-desc">Fügt EULA=TRUE automatisch hinzu</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingMcEula" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meldungen -->
+      <div class="settings-section" id="stab-notifications">
+        <div class="settings-group">
+          <div class="settings-group-title">Toast-Meldungen</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Meldungen aktivieren</div>
+              <div class="setting-desc">Toast-Benachrichtigungen global an/aus</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="settingToastsEnabled" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Anzeigedauer</div>
+              <div class="setting-desc">Wie lange Meldungen sichtbar bleiben</div>
+            </div>
+            <div class="setting-input-row">
+              <input type="number" class="setting-input" id="settingToastDuration" value="3500" min="1000" max="10000"
+                step="500" style="width:90px" />
+              <span class="setting-unit">ms</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title" style="color: var(--text-muted);">Entwickler-Optionen</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Developer Mode (Debug)</div>
+              <div class="setting-desc">Erweiterte Logs und API-Outputs in der Browser-Konsole ausgeben</div>
+            </div>
+            <label class="setting-toggle">
+              <input type="checkbox" id="developerMode" />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-group-title">Ereignisse</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Container gestartet / gestoppt</div>
+            </div>
+            <label class="setting-toggle"><input type="checkbox" id="notifContainer" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Spieler tritt bei / verlässt</div>
+            </div>
+            <label class="setting-toggle"><input type="checkbox" id="notifPlayer" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Update verfügbar</div>
+            </div>
+            <label class="setting-toggle"><input type="checkbox" id="notifUpdate" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Server-Fehler / Crash</div>
+            </div>
+            <label class="setting-toggle"><input type="checkbox" id="notifCrash" checked />
+              <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Module -->
+      <div class="settings-section" id="stab-modules">
+        <div class="settings-group">
+          <div class="settings-group-title">Installierte Module</div>
+          <p style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">
+            Aktiviere oder deaktiviere installierte Game-Module im Hub. (Das Basis-Modul "Minecraft" ist immer aktiv.)
+          </p>
+          <div id="settingsModuleList">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /settings-body -->
+
+    <div class="settings-footer">
+      <button class="btn btn-ghost" id="resetSettingsBtn">
+        <span class="material-icons-round">restart_alt</span> Zurücksetzen
+      </button>
+      <button class="btn btn-primary" id="saveSettingsBtn">
+        <span class="material-icons-round">save</span> Speichern
+      </button>
+    </div>
+  </aside>
+
+
+  <!-- ── Backup Modal (Mockup) ── -->
+
+
+  <!-- ── Welcome Modal (Onboarding) ── -->
+  <div class="modal-backdrop" id="welcomeModal" hidden x-data="{ step: 1 }">
+    <div class="modal modal-large glass-card" style="max-width: 500px; text-align: center;">
+      <div class="modal-body"
+        style="padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+
+        <!-- Step 1 -->
+        <div x-show="step === 1" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+          <div
+            style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), #ff6d00); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px var(--accent-glow);">
+            <span class="material-icons-round" style="font-size: 40px; color: #fff;">sports_esports</span>
+          </div>
+          <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px;">Willkommen im GameServer Hub</h2>
+          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
+            Dein zentrales Dashboard für alle Docker-basierten Gameserver auf Unraid. Verwalte deine Container,
+            installiere neue Spiele mit einem Klick und bearbeite Dateien direkt im Browser.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div x-show="step === 2" style="display: flex; flex-direction: column; align-items: center; gap: 16px;"
+          style="display: none;">
+          <div
+            style="width: 80px; height: 80px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+            <span class="material-icons-round" style="font-size: 40px;">extension</span>
+          </div>
+          <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px;">Game Additions</h2>
+          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
+            Egal ob Minecraft, CS2 oder Palworld – die Game Additions Module bieten dir maßgeschneiderte Dashboards für
+            jedes Spiel. Lade Mods herunter, verwalte Spieler und passe Server-Properties an.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div x-show="step === 3" style="display: flex; flex-direction: column; align-items: center; gap: 16px;"
+          style="display: none;">
+          <div
+            style="width: 80px; height: 80px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+            <span class="material-icons-round" style="font-size: 40px;">rocket_launch</span>
+          </div>
+          <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px;">Bereit zum Start!</h2>
+          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
+            Alles ist eingerichtet. Du kannst den Hub nach deinen Wünschen über das Zahnrad-Symbol oben rechts anpassen.
+            Viel Spaß beim Hosten!
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <div
+            :style="step === 1 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
+            style="height: 8px; border-radius: 4px; transition: all 0.3s ease;"></div>
+          <div
+            :style="step === 2 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
+            style="height: 8px; border-radius: 4px; transition: all 0.3s ease;"></div>
+          <div
+            :style="step === 3 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
+            style="height: 8px; border-radius: 4px; transition: all 0.3s ease;"></div>
+        </div>
+
+      </div>
+      <div class="modal-footer"
+        style="justify-content: center; border-top: none; padding-bottom: 30px; position: relative;">
+        <button class="btn btn-ghost" x-show="step > 1" @click="step--"
+          style="position: absolute; left: 30px;">Zurück</button>
+        <button class="btn btn-primary" x-show="step < 3" @click="step++" style="width: 200px;">Weiter</button>
+        <button class="btn btn-primary" x-show="step === 3"
+          @click="typeof window.finishOnboarding === 'function' ? window.finishOnboarding() : null"
+          style="width: 200px;">Loslegen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Docker Config Modal (Alpine) -->
+  <div class="modal-backdrop" id="configModalAlpine" x-data x-show="$store.modals.config.open" style="display: none;" x-transition>
+    <div class="modal glass-card" @click.away="$store.modals.config.open = false">
+      <div class="modal-header">
+        <h2 data-i18n="config_title">Einstellungen</h2>
+        <button class="icon-btn" @click="$store.modals.config.open = false"><span class="material-icons-round">close</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label data-i18n="container">Container Name</label>
+          <input type="text" class="form-input" x-model="$store.modals.config.data.name" />
+        </div>
+        <div class="form-group">
+          <label>Port (Host)</label>
+          <input type="number" class="form-input" x-model="$store.modals.config.data.port" />
+        </div>
+        <div class="form-group">
+          <label>Max. RAM (MB)</label>
+          <input type="number" class="form-input" x-model="$store.modals.config.data.ram" />
+        </div>
+        <div class="form-group">
+          <label>Restart Policy</label>
+          <select class="form-input" style="width:100%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:8px; border-radius:6px; outline:none; -webkit-appearance:none; appearance:none;">
+            <option>unless-stopped</option>
+            <option>always</option>
+            <option>no</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top:20px;">
+        <button class="btn btn-ghost" @click="$store.modals.config.open = false"><span data-i18n="btn_cancel">Abbrechen</span></button>
+        <button class="btn btn-primary" @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings_saved') || 'Einstellungen gespeichert!') : 'Einstellungen gespeichert!', 'success');">
+          <span class="material-icons-round">save</span> <span data-i18n="btn_save">Speichern</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Server Install Modal (Alpine) -->
+  <div class="modal-backdrop" id="installModalAlpine" 
+       x-data="{ activeTab: 'config' }"  
+       x-show="$store.modals.install.open" style="display: none;" x-transition>
+    <div class="modal-content" @click.away="$store.modals.install.open = false" style="max-width:1050px; padding:0; overflow:hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.6); background: var(--bg-base); backdrop-filter: none;">
+      <!-- Header -->
+      <div class="modal-header" style="background:var(--bg-card); padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; gap:16px;">
+        <div style="background:var(--orange-dim); color:var(--orange); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <span class="material-icons-round" style="font-size:24px;">dns</span>
+        </div>
+        <div style="flex:1;">
+          <h2 style="margin:0; font-size:18px; color:#fff;"><span x-text="$store.modals.install.data.isEdit ? 'Einstellungen' : 'Neuen Server'"></span>: <span x-text="$store.modals.install.data.name"></span></h2>
+          <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">itzg/minecraft-server · von <span x-text="$store.modals.install.data.author"></span></div>
+        </div>
+        <button class="icon-btn" @click="$store.modals.install.open = false"><span class="material-icons-round">close</span></button>
+      </div>
+      
+      <div style="display:flex; height:600px;">
+        <!-- Left: Form -->
+        <div class="dc-form-col" style="flex:1.5; border-right:1px solid var(--border); background:var(--bg-base);">
+          
+          <!-- Tab Navigation -->
+          <div class="dc-tab-nav" style="padding-left:16px;">
+            <button class="dc-tab-btn" @click="activeTab = 'config'" :class="activeTab === 'config' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
+              <span class="material-icons-round" style="font-size:16px;">dns</span> Basis
+            </button>
+            <button class="dc-tab-btn" @click="activeTab = 'gameplay'" :class="activeTab === 'gameplay' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
+              <span class="material-icons-round" style="font-size:16px;">sports_esports</span> Gameplay
+            </button>
+            <button class="dc-tab-btn" @click="activeTab = 'performance'" :class="activeTab === 'performance' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
+              <span class="material-icons-round" style="font-size:16px;">speed</span> Performance
+            </button>
+            <button class="dc-tab-btn" @click="activeTab = 'cronjobs'" :class="activeTab === 'cronjobs' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
+              <span class="material-icons-round" style="font-size:16px;">schedule</span> Aufgaben
+            </button>
+          </div>
+
+          <!-- Content Area -->
+          <div class="dc-tab-content">
+            
+            <!-- CONFIG TAB -->
+            <div x-show="activeTab === 'config'">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Container-Name</div>
+                  <div class="setting-desc">Eindeutiger Name in Docker</div>
+                </div>
+                <input type="text" class="setting-input" style="width:240px" x-model="$store.modals.install.data.safeName" />
+              </div>
+              
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Server-Name</div>
+                  <div class="setting-desc">Name im Spiel (server.properties)</div>
+                </div>
+                <input type="text" class="setting-input" style="width:240px" x-model="$store.modals.install.data.serverName" />
+              </div>
+              
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Server-Port</div>
+                  <div class="setting-desc">Minecraft Verbindungsport</div>
+                </div>
+                <input type="number" class="setting-input" style="width:240px" x-model="$store.modals.install.data.port" />
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Server-Icon URL</div>
+                  <div class="setting-desc">Optional (z.B. https://.../icon.png)</div>
+                </div>
+                <input type="text" class="setting-input" style="width:240px" placeholder="URL zum Icon..." />
+              </div>
+              
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">RAM (MB)</div>
+                  <div class="setting-desc">Für den Java-Heap (-Xms / -Xmx)</div>
+                </div>
+                <div style="position:relative; width:240px;">
+                  <input type="number" class="setting-input" style="width:100%; padding-right:32px;" x-model="$store.modals.install.data.ram" />
+                  <span style="position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-muted);">MB</span>
+                </div>
+              </div>
+              
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Datenpfad (Host)</div>
+                  <div class="setting-desc">Bind-Mount für Serverdaten</div>
+                </div>
+                <input type="text" class="setting-input" style="width:240px; font-family:'JetBrains Mono', monospace; font-size:11px;" x-model="$store.modals.install.data.path" />
+              </div>
+              
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Server-Typ</div>
+                  <div class="setting-desc">Servertyp (auto aus Modpack)</div>
+                </div>
+                <select class="setting-input" style="width:240px" x-model="$store.modals.install.data.type">
+                  <option value="AUTO">Auto (aus Modpack)</option>
+                  <option value="VANILLA">Vanilla</option>
+                  <option value="PAPER">Paper</option>
+                  <option value="FABRIC">Fabric</option>
+                  <option value="FORGE">Forge</option>
+                  <option value="NEOFORGE">NeoForge</option>
+                </select>
+              </div>
+              
+              <div class="setting-row" style="border-bottom:none;">
+                <div class="setting-info">
+                  <div class="setting-label">Restart-Policy</div>
+                  <div class="setting-desc">Wann soll neugestartet werden?</div>
+                </div>
+                <select class="setting-input" style="width:240px" x-model="$store.modals.install.data.restart">
+                  <option value="unless-stopped">unless-stopped</option>
+                  <option value="always">always</option>
+                  <option value="no">no</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- GAMEPLAY TAB -->
+            <div x-show="activeTab === 'gameplay'" style="display:none;">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Max Players</div>
+                  <div class="setting-desc">Maximale Spieleranzahl</div>
+                </div>
+                <input type="number" class="setting-input" style="width:160px" x-model="$store.modals.install.data.maxPlayers" />
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Difficulty</div>
+                  <div class="setting-desc">Schwierigkeitsgrad</div>
+                </div>
+                <select class="setting-input" style="width:160px" x-model="$store.modals.install.data.difficulty">
+                  <option value="easy">Easy</option>
+                  <option value="normal">Normal</option>
+                  <option value="hard">Hard</option>
+                  <option value="peaceful">Peaceful</option>
+                </select>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">PVP</div>
+                  <div class="setting-desc">Spieler gegen Spieler</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.pvp" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Online Mode (Premium)</div>
+                  <div class="setting-desc">Nur gekaufte Accounts</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.onlineMode" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Whitelist aktivieren</div>
+                  <div class="setting-desc">Nur eingetragene Spieler können beitreten</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.enableWhitelist" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              <div class="setting-row" x-show="$store.modals.install.data.enableWhitelist" style="display:none; border-bottom:none;">
+                <div class="setting-info">
+                  <div class="setting-label">Erlaubte Spieler</div>
+                  <div class="setting-desc">Kommagetrennt (Spieler1,Spieler2)</div>
+                </div>
+                <input type="text" class="setting-input" style="width:240px" placeholder="z.B. Spieler1,Spieler2" x-model="$store.modals.install.data.whitelist" />
+              </div>
+            </div>
+            
+            <!-- PERFORMANCE TAB -->
+            <div x-show="activeTab === 'performance'" style="display:none;">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Initial RAM (-Xms)</div>
+                  <div class="setting-desc">Reservierter Startspeicher</div>
+                </div>
+                <div style="position:relative; width:160px;">
+                  <input type="number" class="setting-input" style="width:100%; padding-right:32px;" x-model="$store.modals.install.data.initRam" />
+                  <span style="position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-muted);">MB</span>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Aikar's Flags (G1GC)</div>
+                  <div class="setting-desc">Empfohlen für Paper/Spigot Server</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.aikar" @change="if($store.modals.install.data.aikar) $store.modals.install.data.meowice = false" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">MeowIce Flags (ZGC)</div>
+                  <div class="setting-desc">Empfohlen für große Heaps (>12GB) / Fabric</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.meowice" @change="if($store.modals.install.data.meowice) $store.modals.install.data.aikar = false" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Befehlsblöcke</div>
+                  <div class="setting-desc">Command Blocks erlauben</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.cmdBlocks" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Fliegen erlauben</div>
+                  <div class="setting-desc">Verhindert Kicks bei Lags</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.flight" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              <div class="setting-row" style="border-bottom:none;">
+                <div class="setting-info">
+                  <div class="setting-label">Rolling Logs</div>
+                  <div class="setting-desc">Server-Logs komprimieren und rotieren</div>
+                </div>
+                <label class="action-toggle">
+                  <input type="checkbox" x-model="$store.modals.install.data.rollingLogs" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+            </div>
+
+            <!-- CRONJOBS TAB -->
+            <div x-show="activeTab === 'cronjobs'" style="display: none; padding: 16px;">
+              <div style="margin-bottom: 24px;" x-data="{ mode: 'preset' }">
+                <label style="display:block; font-size:14px; font-weight:600; margin-bottom:12px; color:var(--text-primary);">Neuen Cronjob anlegen</label>
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                  <div style="flex:1;">
+                    <select class="setting-input" style="width:100%; height: 40px; padding-top: 0; padding-bottom: 0;">
+                      <option value="restart">Server Neustart</option>
+                      <option value="backup">Automatisches Backup</option>
+                      <option value="update">Mod/Plugin Update</option>
+                    </select>
+                  </div>
+                  <div style="flex:1.5;">
+                    <select class="setting-input" x-model="mode" style="width:100%; height: 40px; padding-top: 0; padding-bottom: 0;">
+                      <option value="preset">Täglich (04:00 Uhr)</option>
+                      <option value="preset2">Täglich (Mitternacht)</option>
+                      <option value="custom">Experte (Cron-Syntax)...</option>
+                    </select>
+                    <input type="text" class="setting-input" placeholder="Cron-Syntax (z.B. 0 4 * * *)" x-show="mode === 'custom'" style="width:100%; margin-top:8px; display:none;" />
+                  </div>
+                  <button class="btn btn-primary" style="padding: 0 16px; height: 40px;"><span class="material-icons-round">add</span></button>
+                </div>
+              </div>
+              
+              <div style="border: 1px solid var(--border); border-radius: 12px; overflow:hidden;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; border-bottom: 1px solid var(--border); background: var(--bg-surface);">
+                  <div>
+                    <div style="font-size:14px; font-weight:600; color:var(--text-primary);">Automatisches Backup</div>
+                    <div style="font-size:12px; color:var(--accent); font-family:'JetBrains Mono', monospace; margin-top:4px;">0 * * * * <span style="color:var(--text-secondary);">(Stündlich)</span></div>
+                  </div>
+                  <button class="icon-btn" style="color:var(--red); opacity:0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><span class="material-icons-round" style="font-size:20px;">delete</span></button>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background: var(--bg-surface);">
+                  <div>
+                    <div style="font-size:14px; font-weight:600; color:var(--text-primary);">Server Neustart</div>
+                    <div style="font-size:12px; color:var(--accent); font-family:'JetBrains Mono', monospace; margin-top:4px;">0 4 * * * <span style="color:var(--text-secondary);">(Täglich um 04:00)</span></div>
+                  </div>
+                  <button class="icon-btn" style="color:var(--red); opacity:0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><span class="material-icons-round" style="font-size:20px;">delete</span></button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        
+        <!-- Right: Preview -->
+        <div style="flex: 1; padding: 24px; display: flex; flex-direction: column; min-height: 0;">
+          <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; flex-shrink: 0;">Docker-Befehl Vorschau</div>
+          <div style="background:#0d0f13; border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:16px; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--green); line-height:1.6; overflow-y:auto; overflow-x:auto; margin-bottom:16px; white-space:pre-wrap; flex: 1; min-height: 0;" x-html="$store.modals.install.getPreviewCmd()"></div>
+          <div style="background:rgba(249, 115, 22, 0.05); border:1px solid rgba(249, 115, 22, 0.3); border-radius:8px; padding:16px; flex-shrink: 0;">
+            <div style="display:flex; align-items:center; gap:8px; color:var(--orange); font-weight:600; font-size:13px; margin-bottom:8px;">
+              <span class="material-icons-round" style="font-size:16px;">info</span> itzg/minecraft-server
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+              Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert. Modpack-ID wird als <code style="color:var(--cyan)">CF_API_KEY</code> + <code style="color:var(--cyan)">MODPACK_ID</code> übergeben.
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="modal-footer" style="padding:20px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:12px; background:var(--bg-base);">
+        <button class="btn btn-ghost" @click="$store.modals.install.copyCmd()">
+          <span class="material-icons-round">content_copy</span> <span data-i18n="tooltip_msg">Befehl kopieren</span>
+        </button>
+        <button class="btn btn-ghost" @click="$store.modals.install.open = false"><span data-i18n="btn_cancel">Abbrechen</span></button>
+        <button class="btn btn-primary" style="background:var(--orange); border-color:var(--orange);" @click="$store.modals.install.open = false; if (typeof showToast === 'function') showToast($store.modals.install.data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');">
+          <span class="material-icons-round" x-text="$store.modals.install.data.isEdit ? 'save' : 'rocket_launch'"></span> <span x-text="$store.modals.install.data.isEdit ? 'Änderungen speichern' : 'Container starten'"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SCRIPTS ──────────────────────────────────────────────────────────── -->
+
+</body>
+
+</html>

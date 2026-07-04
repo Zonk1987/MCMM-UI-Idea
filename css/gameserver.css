@@ -1,0 +1,171 @@
+/* ─── Game Server Grid ─── */
+
+.gs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.gs-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  overflow: hidden;
+  transition: all var(--trans-med);
+  position: relative;
+}
+
+.gs-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.gs-card-banner {
+  height: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.gs-card-banner-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(1px) brightness(0.5);
+  transform: scale(1.05);
+}
+
+.gs-card-banner-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  height: 100%;
+}
+
+.gs-game-icon {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: rgba(0,0,0,0.4);
+  padding: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  font-size: 28px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.gs-card-title {
+  flex: 1;
+}
+
+.gs-server-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.gs-game-name {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+}
+
+.gs-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+.gs-status-pill.online {
+  background: rgba(34,197,94,0.25);
+  color: #4ade80;
+  border: 1px solid rgba(34,197,94,0.4);
+}
+
+.gs-status-pill.offline {
+  background: rgba(239,68,68,0.2);
+  color: #f87171;
+  border: 1px solid rgba(239,68,68,0.3);
+}
+
+.gs-status-pill .status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.gs-status-pill.online .status-dot { animation: pulse-green 2s infinite; }
+
+.gs-card-body { padding: 16px; }
+
+.gs-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.gs-metric {
+  background: var(--bg-surface);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.gs-metric-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.gs-metric-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gs-resource-bar { margin-bottom: 14px; }
+
+.resource-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.resource-bar-track {
+  height: 4px;
+  background: var(--bg-surface);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.resource-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.resource-bar-fill.ram  { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+.resource-bar-fill.cpu  { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+
+.gs-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.gs-card-actions .btn { flex: 1; justify-content: center; }
