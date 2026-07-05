@@ -176,19 +176,21 @@ export function gameserverApp() {
       image: '',
       port: '',
       ram: '',
-      path: ''
+      path: '',
     },
 
     init() {
       this.syncStatus();
-      
+
       if (typeof Alpine !== 'undefined') {
         Alpine.effect(() => {
           if (Alpine.store('global')) {
-            Alpine.store('global').onlineGameservers = this.instances.filter(s => s.status === 'online').length;
-            
+            Alpine.store('global').onlineGameservers = this.instances.filter(
+              (s) => s.status === 'online'
+            ).length;
+
             let totalPlayers = 0;
-            this.instances.forEach(s => {
+            this.instances.forEach((s) => {
               if (s.status === 'online' && s.players && s.players.current) {
                 totalPlayers += s.players.current;
               }
@@ -197,51 +199,53 @@ export function gameserverApp() {
           }
         });
       }
-      
+
       // Live simulation for CPU/RAM and sparkline animations
       setInterval(() => {
-        this.instances.forEach(srv => {
+        this.instances.forEach((srv) => {
           if (srv.status !== 'online') return;
           srv.cpu = Math.max(5, Math.min(95, srv.cpu + (Math.random() - 0.5) * 8));
           // Create new object to trigger Alpine's deep reactivity
-          srv.ram = { 
-            ...srv.ram, 
-            used: Math.max(512, Math.min(srv.ram.max, srv.ram.used + (Math.random() - 0.5) * 200)) 
+          srv.ram = {
+            ...srv.ram,
+            used: Math.max(512, Math.min(srv.ram.max, srv.ram.used + (Math.random() - 0.5) * 200)),
           };
         });
       }, 5000);
     },
 
     syncStatus() {
-      this.instances.forEach(srv => {
+      this.instances.forEach((srv) => {
         // Find matching docker container
-        const c = typeof window.DOCKER_CONTAINERS !== 'undefined' 
-          ? window.DOCKER_CONTAINERS.find(d => d.id === srv.containerId)
-          : null;
+        const c =
+          typeof window.DOCKER_CONTAINERS !== 'undefined'
+            ? window.DOCKER_CONTAINERS.find((d) => d.id === srv.containerId)
+            : null;
         if (c) srv.status = c.status === 'running' ? 'online' : 'offline';
       });
     },
 
     get onlineCount() {
-      return this.instances.filter(s => s.status === 'online').length;
+      return this.instances.filter((s) => s.status === 'online').length;
     },
 
     getTemplate(gameId) {
-      return this.templates.find(t => t.id === gameId);
+      return this.templates.find((t) => t.id === gameId);
     },
 
     toggleServer(id) {
-      const srv = this.instances.find(x => x.containerId === id);
+      const srv = this.instances.find((x) => x.containerId === id);
       if (!srv) return;
       // Note: In real life this would talk to Docker API. We just simulate here.
       srv.status = srv.status === 'online' ? 'offline' : 'online';
-      
-      const statusWord = srv.status === 'online' ? (t('started') || 'gestartet') : (t('stopped') || 'gestoppt');
+
+      const statusWord =
+        srv.status === 'online' ? t('started') || 'gestartet' : t('stopped') || 'gestoppt';
       if (typeof showToast === 'function') {
         showToast(`${srv.serverName} ${statusWord}`, srv.status === 'online' ? 'success' : 'info');
       }
     },
-    
+
     // Wizard Logic
     openCreateWizard() {
       this.wizardStep = 0;
@@ -254,7 +258,7 @@ export function gameserverApp() {
     },
 
     selectWizardGame(id) {
-      this.wizardGame = this.templates.find(t => t.id === id);
+      this.wizardGame = this.templates.find((t) => t.id === id);
     },
 
     nextWizardStep() {
@@ -273,10 +277,10 @@ export function gameserverApp() {
     prevWizardStep() {
       if (this.wizardStep > 0) this.wizardStep--;
     },
-    
+
     getWizardCmd() {
       if (!this.wizardGame) return '';
-      const envStr = (this.wizardGame.env || []).map(e => `  -e "${e}"`).join(' \\\n');
+      const envStr = (this.wizardGame.env || []).map((e) => `  -e "${e}"`).join(' \\\n');
       return `docker run -d \\
   --name ${this.wForm.name.replace(/\\s+/g, '_')} \\
   --restart unless-stopped \\
@@ -294,33 +298,29 @@ ${envStr} \\
         setTimeout(() => showToast(`${this.wForm.name} erfolgreich erstellt! 🚀`, 'success'), 2000);
       }
     },
-    
+
     // Sparkline Helper
     getSparkline(id, val, color) {
       return generateSparkline(id, val, color);
     },
-    
+
     getRamLabel(srv) {
       return (srv.ram.used / 1024).toFixed(2) + 'G';
     },
-    
+
     getRamPct(srv) {
       return Math.round((srv.ram.used / srv.ram.max) * 100);
     },
-    
+
     formatBytesLabel(bytes) {
       if (typeof formatBytes === 'function') return formatBytes(bytes);
       return (bytes / 1024 / 1024).toFixed(2) + ' MB';
-    }
+    },
   };
 }
 
 // Dummy backward compatibility
-export function initGameServer() {
-  if (typeof bindGameServerEvents === 'function') {
-    bindGameServerEvents();
-  }
-};
+export function initGameServer() {}
 export function renderGameServers() {}
 
 /**
@@ -330,24 +330,24 @@ export function renderGameServers() {}
 export function generateSparkline(id, val, color) {
   // Clamp value
   const v = Math.min(Math.max(val, 0), 100);
-  
+
   // Generate some fake historical points based on the current value
   const points = [];
-  let currentY = 28 - (v / 100 * 28);
+  let currentY = 28 - (v / 100) * 28;
   points.push(`100,${currentY}`); // Current value on the right
-  
+
   for (let i = 1; i <= 5; i++) {
-    const x = 100 - (i * 20);
+    const x = 100 - i * 20;
     // Randomize past values slightly, but trend towards the current value
-    const deviation = (Math.random() * 30 - 15);
+    const deviation = Math.random() * 30 - 15;
     const pastV = Math.min(Math.max(v + deviation, 0), 100);
-    const y = 28 - (pastV / 100 * 28);
+    const y = 28 - (pastV / 100) * 28;
     points.unshift(`${x},${y}`);
   }
-  
+
   const pathD = `M0,28 L${points[0]} L${points[1]} L${points[2]} L${points[3]} L${points[4]} L${points[5]} L100,28 Z`;
   const strokeD = `M${points[0]} L${points[1]} L${points[2]} L${points[3]} L${points[4]} L${points[5]}`;
-  
+
   return `
     <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 28" style="overflow:visible">
       <defs>
@@ -361,11 +361,11 @@ export function generateSparkline(id, val, color) {
       <circle cx="100" cy="${currentY}" r="2.5" fill="${color}" />
     </svg>
   `;
-};
+}
 
 /* ─── Console ─── */
 export const CONSOLE_LOGS = {
-  'minecraft01': [
+  minecraft01: [
     '[13:00:01] [Server thread/INFO]: Starting Minecraft server on *:25565',
     '[13:00:02] [Server thread/INFO]: Loading properties',
     '[13:00:03] [Server thread/INFO]: Default game type: SURVIVAL',
@@ -377,13 +377,13 @@ export const CONSOLE_LOGS = {
     '[13:14:35] [Server thread/CHAT]: <CreeperSlayer> Ich hab 32 Stück!',
     '[13:15:02] [Server thread/INFO]: DiamondMiner99[/10.0.0.42:61234] logged in',
   ],
-  'minecraft02': [
+  minecraft02: [
     '[12:00:01] [Server thread/INFO]: Starting Minecraft server on *:25566',
     '[12:00:06] [Server thread/INFO]: Done (2.891s)! For help, type "help"',
     '[12:55:10] [Server thread/INFO]: PixelArtist[/192.168.1.20:55210] logged in',
     '[12:55:12] [Server thread/CHAT]: <PixelArtist> Wer möchte beim Stadion mitbauen?',
   ],
-  'valheim01': [
+  valheim01: [
     '[13:00:00] [Info   :   Valheim]: Valheim version: 0.218.19',
     '[13:00:02] [Info   :   Valheim]: Starting to load scene: main',
     '[13:00:08] [Info   :   Valheim]: Game server connected',
@@ -391,89 +391,30 @@ export const CONSOLE_LOGS = {
     '[13:05:23] [Info   :   Valheim]: Peer 76561198012345678 has wrong password',
     '[13:05:30] [Info   :   Valheim]: Got connection SteamID 76561198098765432',
   ],
-  'palworld01': [
-    '[Server]: Palworld Server stopped.',
-  ],
+  palworld01: ['[Server]: Palworld Server stopped.'],
 };
 
-export let consoleServerId  = null;
-export let consoleLogTimer  = null;
-export let consoleStreamer  = null;
+export let consoleServerId = null;
+export let consoleLogTimer = null;
+export let consoleStreamer = null;
 
 window.consoleAutoScrollEnabled = true;
-window.toggleAutoScroll = (val) => { window.consoleAutoScrollEnabled = val; };
+window.toggleAutoScroll = (val) => {
+  window.consoleAutoScrollEnabled = val;
+  if (val && consoleTerminal) {
+    consoleTerminal.scrollToBottom();
+  }
+};
 window.clearConsole = () => {
-  if (consoleVirtualScroller) {
-    consoleVirtualScroller.setItems([], consoleLineHTML);
+  if (consoleTerminal) {
+    consoleTerminal.clear();
   }
 };
 
-import { toggleModal, formatBytes, formatNum, showToast, pingClass, debounce, throttle, Logger } from './utils.js';
+import { toggleModal, formatBytes, formatNum, showToast, debounce, throttle } from './utils.js';
 
-let consoleVirtualScroller = null;
-
-class VirtualScroller {
-  constructor(container, itemHeight = 22) {
-    this.container = container;
-    this.itemHeight = itemHeight;
-    this.items = [];
-    this.renderFn = null;
-    
-    this.inner = document.createElement('div');
-    this.inner.style.position = 'relative';
-    this.container.innerHTML = '';
-    this.container.appendChild(this.inner);
-    
-    this.container.addEventListener('scroll', throttle(() => {
-      this.render();
-      const isAtBottom = this.container.scrollHeight - this.container.scrollTop <= this.container.clientHeight + 20;
-      const autoScrollCb = document.getElementById('consoleAutoScroll');
-      
-      if (isAtBottom && !window.consoleAutoScrollEnabled) {
-        window.consoleAutoScrollEnabled = true;
-        if (autoScrollCb) autoScrollCb.checked = true;
-      } else if (!isAtBottom && window.consoleAutoScrollEnabled) {
-        window.consoleAutoScrollEnabled = false;
-        if (autoScrollCb) autoScrollCb.checked = false;
-      }
-    }, 16));
-    window.addEventListener('resize', debounce(() => this.render(), 100));
-  }
-
-  setItems(items, renderFn) {
-    this.items = items;
-    this.renderFn = renderFn;
-    this.inner.style.height = `${this.items.length * this.itemHeight}px`;
-    this.render();
-    this.scrollToBottom();
-  }
-
-  appendItem(item) {
-    this.items.push(item);
-    this.inner.style.height = `${this.items.length * this.itemHeight}px`;
-    this.render();
-    if (window.consoleAutoScrollEnabled) this.scrollToBottom();
-  }
-
-  render() {
-    const scrollTop = this.container.scrollTop;
-    const viewportHeight = this.container.clientHeight;
-    
-    const startIndex = Math.max(0, Math.floor(scrollTop / this.itemHeight) - 10);
-    const endIndex = Math.min(this.items.length - 1, Math.ceil((scrollTop + viewportHeight) / this.itemHeight) + 10);
-    
-    let html = '';
-    for (let i = startIndex; i <= endIndex; i++) {
-      html += `<div style="position:absolute; top:${i * this.itemHeight}px; left:0; right:0; height:${this.itemHeight}px; overflow:hidden;">${this.renderFn(this.items[i])}</div>`;
-    }
-    this.inner.innerHTML = html;
-  }
-
-  scrollToBottom() {
-    this.container.scrollTop = this.container.scrollHeight;
-  }
-}
-
+let consoleTerminal = null;
+let consoleFitAddon = null;
 
 class MockLogStreamer {
   constructor(serverId, onMessage) {
@@ -481,7 +422,7 @@ class MockLogStreamer {
     this.onMessage = onMessage;
     this.interval = null;
     this.msgCount = 0;
-    
+
     setTimeout(() => {
       this.onMessage(`[System] Verbinde mit Log-Stream für ${serverId}...`);
       setTimeout(() => {
@@ -490,17 +431,20 @@ class MockLogStreamer {
       }, 600);
     }, 200);
   }
-  
+
   startStreaming() {
     const templates = [
       () => `[${timestamp()}] [Server thread/INFO]: Chunk load complete.`,
-      () => `[${timestamp()}] [Server thread/INFO]: Player${Math.floor(Math.random()*100)} joined the game`,
-      () => `[${timestamp()}] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running ${Math.floor(Math.random()*5000)}ms or ${Math.floor(Math.random()*100)} ticks behind`,
+      () =>
+        `[${timestamp()}] [Server thread/INFO]: Player${Math.floor(Math.random() * 100)} joined the game`,
+      () =>
+        `[${timestamp()}] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running ${Math.floor(Math.random() * 5000)}ms or ${Math.floor(Math.random() * 100)} ticks behind`,
       () => `[${timestamp()}] [Server thread/INFO]: Saving chunks for level 'ServerLevel'...`,
-      () => `[${timestamp()}] [Server thread/CHAT]: <Player${Math.floor(Math.random()*100)}> Hello world!`,
+      () =>
+        `[${timestamp()}] [Server thread/CHAT]: <Player${Math.floor(Math.random() * 100)}> Hello world!`,
       () => `[${timestamp()}] [Server thread/ERROR]: Exception in server tick loop`,
     ];
-    
+
     const tick = () => {
       const template = templates[Math.floor(Math.random() * templates.length)];
       this.onMessage(template());
@@ -510,14 +454,40 @@ class MockLogStreamer {
         this.interval = setTimeout(tick, Math.random() * 2000 + 400);
       }
     };
-    
+
     this.interval = setTimeout(tick, 1000);
   }
-  
+
   stop() {
     clearTimeout(this.interval);
     this.onMessage(`[System] Verbindung zum Log-Stream getrennt.`);
   }
+}
+
+function initTerminal() {
+  if (consoleTerminal) return;
+
+  consoleTerminal = new window.Terminal({
+    theme: {
+      background: 'transparent',
+      foreground: '#a9b1d6',
+      cursor: '#f7768e',
+    },
+    fontFamily: '"Fira Code", monospace',
+    fontSize: 13,
+    convertEol: true,
+    disableStdin: true,
+  });
+
+  consoleFitAddon = new window.FitAddon.FitAddon();
+  consoleTerminal.loadAddon(consoleFitAddon);
+
+  window.addEventListener(
+    'resize',
+    debounce(() => {
+      if (consoleFitAddon) consoleFitAddon.fit();
+    }, 100)
+  );
 }
 
 /**
@@ -526,68 +496,90 @@ class MockLogStreamer {
  */
 export function openConsole(srv) {
   consoleServerId = srv.containerId;
-  document.getElementById('consoleTitle').textContent = `${t('general.console') || 'Konsole'} — ${srv.serverName}`;
+  document.getElementById('consoleTitle').textContent =
+    `${t('general.console') || 'Konsole'} — ${srv.serverName}`;
 
   const isOn = srv.status === 'online';
   const statusEl = document.getElementById('consoleStatus');
   statusEl.className = `status-badge ${isOn ? 'running' : 'stopped'}`;
-  statusEl.innerHTML = `<span class="dot"></span> ${isOn ? 'Live' : (t('general.offline') || 'Offline')}`;
+  statusEl.innerHTML = `<span class="dot"></span> ${isOn ? 'Live' : t('general.offline') || 'Offline'}`;
 
   const output = document.getElementById('consoleOutput');
-  
-  if (!consoleVirtualScroller) {
-    consoleVirtualScroller = new VirtualScroller(output, 22);
-  } else {
-    // Reset inner height if reusing
-    consoleVirtualScroller.container = output;
+
+  if (!consoleTerminal) {
+    initTerminal();
+    output.innerHTML = '';
+    consoleTerminal.open(output);
   }
-  
+
   if (consoleStreamer) {
     consoleStreamer.stop();
     consoleStreamer = null;
   }
 
+  consoleTerminal.clear();
+
   const logs = CONSOLE_LOGS[srv.containerId] ? [...CONSOLE_LOGS[srv.containerId]] : [];
-  consoleVirtualScroller.setItems(logs, consoleLineHTML);
+  logs.forEach((line) => consoleTerminal.writeln(formatAnsiLine(line)));
 
   toggleModal('consoleModal', true);
-  document.getElementById('consoleInput').focus();
+
+  // Fit terminal after modal animation
+  setTimeout(() => {
+    if (consoleFitAddon) consoleFitAddon.fit();
+    document.getElementById('consoleInput').focus();
+  }, 150);
 
   if (isOn) {
     consoleStreamer = new MockLogStreamer(srv.containerId, (msg) => {
-      if (consoleVirtualScroller) {
-        consoleVirtualScroller.appendItem(msg);
-      }
+      appendConsoleLine(msg);
     });
   } else {
-    consoleVirtualScroller.appendItem(`[Server]: ${t('general.no_logs') || 'Keine Logs für'} ${srv.serverName} ${t('general.available') || 'verfügbar'} (Server ist offline).`);
+    consoleTerminal.writeln(
+      `\x1b[31m[Server]: ${t('general.no_logs') || 'Keine Logs für'} ${srv.serverName} ${t('general.available') || 'verfügbar'} (Server ist offline).\x1b[0m`
+    );
   }
 }
 
 /**
- * Format a raw log string into HTML
+ * Format a raw log string with ANSI colors for Xterm.js
  * @param {string} line - The raw log line
- * @returns {string} The HTML formatted string
+ * @returns {string} The ANSI formatted string
  */
-export function consoleLineHTML(line) {
-  let cls = 'log-info';
+export function formatAnsiLine(line) {
+  let formatted = line;
   const lowerLine = line.toLowerCase();
-  
-  if (lowerLine.includes('system]')) return `<div class="log-line log-info" style="margin:0; color:var(--text-muted); font-style:italic;">${escapeHtml(line)}</div>`;
-  
-  if (lowerLine.includes('/warn') || lowerLine.includes('warn:')) cls = 'log-warn';
-  else if (lowerLine.includes('/error') || lowerLine.includes('error:') || lowerLine.includes('exception')) cls = 'log-error';
-  else if (lowerLine.includes('chat') || lowerLine.includes('<')) cls = 'log-chat';
-  else if (lowerLine.includes('joined') || lowerLine.includes('logged in')) cls = 'log-join';
-  else if (lowerLine.includes('left') || lowerLine.includes('logged out')) cls = 'log-leave';
 
-  let formatted = escapeHtml(line);
-  // Highlight timestamps like [12:34:56]
-  formatted = formatted.replace(/^(\[\d{2}:\d{2}:\d{2}\])/g, '<span style="color:var(--text-muted)">$1</span>');
-  // Highlight thread info like [Server thread/INFO]:
-  formatted = formatted.replace(/(\[[a-zA-Z0-9 -]+\/(INFO|WARN|ERROR|CHAT)\]:)/g, '<span style="color:var(--blue-dim)">$1</span>');
+  let baseColor = '\x1b[0m'; // Reset
 
-  return `<div class="log-line ${cls}" style="margin:0;">${formatted}</div>`;
+  if (lowerLine.includes('system]')) {
+    baseColor = '\x1b[3m\x1b[90m'; // Italic Gray
+  } else if (lowerLine.includes('/warn') || lowerLine.includes('warn:')) {
+    baseColor = '\x1b[33m'; // Yellow
+  } else if (
+    lowerLine.includes('/error') ||
+    lowerLine.includes('error:') ||
+    lowerLine.includes('exception')
+  ) {
+    baseColor = '\x1b[31m'; // Red
+  } else if (lowerLine.includes('chat') || lowerLine.includes('<')) {
+    baseColor = '\x1b[36m'; // Cyan
+  } else if (lowerLine.includes('joined') || lowerLine.includes('logged in')) {
+    baseColor = '\x1b[32m'; // Green
+  } else if (lowerLine.includes('left') || lowerLine.includes('logged out')) {
+    baseColor = '\x1b[35m'; // Magenta
+  }
+
+  // Colorize timestamps like [12:34:56]
+  formatted = formatted.replace(/^(\[\d{2}:\d{2}:\d{2}\])/g, '\x1b[90m$1\x1b[0m' + baseColor);
+
+  // Colorize thread info like [Server thread/INFO]:
+  formatted = formatted.replace(
+    /(\[[a-zA-Z0-9 -]+\/(INFO|WARN|ERROR|CHAT)\]:)/g,
+    '\x1b[34m$1\x1b[0m' + baseColor
+  );
+
+  return baseColor + formatted + '\x1b[0m';
 }
 
 /**
@@ -596,18 +588,13 @@ export function consoleLineHTML(line) {
  */
 export function appendConsoleLine(line) {
   if (consoleServerId && CONSOLE_LOGS[consoleServerId]) {
-    // Don't push to CONSOLE_LOGS if the scroller already pushed it (which it doesn't, scroller pushes to its own items array reference)
-    // Actually scroller items is a reference to CONSOLE_LOGS array?
-    // Wait, setItems passes `logs` which IS `CONSOLE_LOGS[srv.containerId]`.
-    // So appendItem will push to `this.items` which will mutate `CONSOLE_LOGS[srv.containerId]`.
+    CONSOLE_LOGS[consoleServerId].push(line);
   }
-  
-  if (consoleVirtualScroller) {
-    consoleVirtualScroller.appendItem(line);
-  } else {
-    // Fallback if closed
-    if (consoleServerId && CONSOLE_LOGS[consoleServerId]) {
-      CONSOLE_LOGS[consoleServerId].push(line);
+
+  if (consoleTerminal) {
+    consoleTerminal.writeln(formatAnsiLine(line));
+    if (window.consoleAutoScrollEnabled) {
+      consoleTerminal.scrollToBottom();
     }
   }
 }
@@ -626,17 +613,16 @@ export function timestamp() {
  * @returns {string} Escaped string
  */
 export function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-
 // --- UI Bindings for Alpine ---
-window.closeConsole = function() {
+window.closeConsole = function () {
   clearInterval(consoleLogTimer);
   toggleModal('consoleModal', false);
 };
 
-window.consoleSend = function() {
+window.consoleSend = function () {
   const input = document.getElementById('consoleInput');
   if (!input) return;
   const cmd = input.value.trim();
@@ -645,7 +631,9 @@ window.consoleSend = function() {
   input.value = '';
   setTimeout(() => {
     if (cmd.startsWith('list')) {
-      appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: There are 3/20 players online: Steve_Gaming, CreeperSlayer, DiamondMiner99`);
+      appendConsoleLine(
+        `[${timestamp()}] [Server thread/INFO]: There are 3/20 players online: Steve_Gaming, CreeperSlayer, DiamondMiner99`
+      );
     } else if (cmd.startsWith('say ')) {
       appendConsoleLine(`[${timestamp()}] [Server thread/CHAT]: [Server] ${cmd.slice(4)}`);
     } else if (cmd === 'stop') {
@@ -653,44 +641,168 @@ window.consoleSend = function() {
       appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Saving players`);
       appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Saving worlds`);
     } else {
-      appendConsoleLine(`[${timestamp()}] [Server thread/INFO]: Unknown command. Type "help" for help.`);
+      appendConsoleLine(
+        `[${timestamp()}] [Server thread/INFO]: Unknown command. Type "help" for help.`
+      );
     }
   }, 300);
 };
 
-window.closeFm = function() {
+window.closeFm = function () {
   toggleModal('fileManagerModal', false);
 };
 
-window.fmSelectFile = function(btn) {
-  document.querySelectorAll('#fmFileTree .settings-nav-btn').forEach(b => b.classList.remove('active'));
+window.fmSelectFile = function (btn) {
+  document
+    .querySelectorAll('#fmFileTree .settings-nav-btn')
+    .forEach((b) => b.classList.remove('active'));
   btn.classList.add('active');
   const type = btn.dataset.type;
-  const fileName = btn.textContent.trim().replace(/^folder|description\s*/, '').trim();
+  const fileName = btn.textContent
+    .trim()
+    .replace(/^folder|description\s*/, '')
+    .trim();
   const editor = document.getElementById('fmEditorTextarea');
   const headerTitle = document.getElementById('fmCurrentFile');
   if (headerTitle) headerTitle.textContent = fileName;
   if (type === 'file') {
     if (fileName === 'server.properties') {
-      editor.value = "#Minecraft server properties\n#Mon Oct 02 12:00:00 2023\nenable-jmx-monitoring=false\nrcon.port=25575\nlevel-seed=\ngamemode=survival\nenable-command-block=false\nenable-query=false\ngenerator-settings={}\nenforce-secure-profile=true\nlevel-name=world\nmotd=Mein Unraid Minecraft Server\nquery.port=25565\npvp=true\ngenerate-structures=true\nmax-chained-neighbor-updates=1000000\ndifficulty=easy\nnetwork-compression-threshold=256\nmax-tick-time=60000\nrequire-resource-pack=false\nuse-native-transport=true\nmax-players=20\nonline-mode=true\nenable-status=true\nallow-flight=false\ninitial-disabled-packs=";
+      editor.value =
+        '#Minecraft server properties\n#Mon Oct 02 12:00:00 2023\nenable-jmx-monitoring=false\nrcon.port=25575\nlevel-seed=\ngamemode=survival\nenable-command-block=false\nenable-query=false\ngenerator-settings={}\nenforce-secure-profile=true\nlevel-name=world\nmotd=Mein Unraid Minecraft Server\nquery.port=25565\npvp=true\ngenerate-structures=true\nmax-chained-neighbor-updates=1000000\ndifficulty=easy\nnetwork-compression-threshold=256\nmax-tick-time=60000\nrequire-resource-pack=false\nuse-native-transport=true\nmax-players=20\nonline-mode=true\nenable-status=true\nallow-flight=false\ninitial-disabled-packs=';
     } else if (fileName === 'eula.txt') {
-      editor.value = "#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Mon Oct 02 12:00:00 2023\neula=true";
+      editor.value =
+        '#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Mon Oct 02 12:00:00 2023\neula=true';
     } else if (fileName === 'ops.json') {
-      editor.value = "[\n  {\n    \"uuid\": \"d44...\",\n    \"name\": \"AdminPlayer\",\n    \"level\": 4,\n    \"bypassesPlayerLimit\": false\n  }\n]";
+      editor.value =
+        '[\n  {\n    "uuid": "d44...",\n    "name": "AdminPlayer",\n    "level": 4,\n    "bypassesPlayerLimit": false\n  }\n]';
     } else {
-      editor.value = "// Inhalt von " + fileName + " wird geladen...";
+      editor.value = '// Inhalt von ' + fileName + ' wird geladen...';
     }
     editor.disabled = false;
   } else {
-    editor.value = "// Ordner ausgewählt. Bitte wähle eine Datei zum Bearbeiten aus.";
+    editor.value = '// Ordner ausgewählt. Bitte wähle eine Datei zum Bearbeiten aus.';
     editor.disabled = true;
   }
 };
 
-window.closeBackup = function() {
+window.closeBackup = function () {
   toggleModal('backupModal', false);
 };
 
-window.fmSave = function() {
+window.fmSave = function () {
   if (typeof showToast === 'function') showToast('Datei erfolgreich gespeichert.', 'success');
+};
+
+let dragCounter = 0;
+
+window.fmDragOver = function (e) {
+  e.preventDefault();
+  dragCounter++;
+  const overlay = document.getElementById('fmDragOverlay');
+  if (overlay && !overlay.classList.contains('drag-active')) {
+    overlay.classList.add('drag-active');
+  }
+};
+
+window.fmDragLeave = function (e) {
+  e.preventDefault();
+  dragCounter--;
+  if (dragCounter <= 0) {
+    dragCounter = 0;
+    const overlay = document.getElementById('fmDragOverlay');
+    if (overlay) overlay.classList.remove('drag-active');
+  }
+};
+
+window.fmDrop = function (e) {
+  e.preventDefault();
+  dragCounter = 0;
+  const overlay = document.getElementById('fmDragOverlay');
+  if (overlay) overlay.classList.remove('drag-active');
+
+  const fileTree = document.getElementById('fmFileTree');
+  let firstFileLoaded = false;
+
+  if (e.dataTransfer && e.dataTransfer.items) {
+    // Traverse items to mock folder and file uploads
+    for (let i = 0; i < e.dataTransfer.items.length; i++) {
+      const item = e.dataTransfer.items[i];
+      if (item.kind === 'file') {
+        const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
+        if (entry) {
+          const isFolder = entry.isDirectory;
+          const fileName = entry.name;
+
+          // Append to file tree mock
+          const newBtn = document.createElement('button');
+          newBtn.className = 'settings-nav-btn';
+          newBtn.dataset.type = isFolder ? 'folder' : 'file';
+          newBtn.style.paddingLeft = '24px';
+          newBtn.onclick = function () {
+            window.fmSelectFile(this);
+          };
+
+          const iconSpan = document.createElement('span');
+          iconSpan.className = 'material-icons-round';
+          iconSpan.style.color = isFolder ? 'var(--yellow)' : 'var(--text-muted)';
+          iconSpan.textContent = isFolder ? 'folder' : 'description';
+
+          newBtn.appendChild(iconSpan);
+          newBtn.appendChild(document.createTextNode(' ' + fileName));
+          fileTree.appendChild(newBtn);
+
+          // If it's a file, read its content into the editor
+          if (!isFolder && !firstFileLoaded) {
+            const file = item.getAsFile();
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+              const editor = document.getElementById('fmEditorTextarea');
+              const headerTitle = document.getElementById('fmCurrentFile');
+              if (editor) {
+                editor.value = evt.target.result;
+                editor.disabled = false;
+              }
+              if (headerTitle) headerTitle.textContent = fileName;
+
+              document
+                .querySelectorAll('#fmFileTree .settings-nav-btn')
+                .forEach((b) => b.classList.remove('active'));
+              newBtn.classList.add('active');
+            };
+            reader.readAsText(file);
+            firstFileLoaded = true;
+          }
+        }
+      }
+    }
+    if (typeof showToast === 'function') {
+      const t = document.querySelector('[x-data]')
+        ? document.querySelector('[x-data]').__x.$data.$store.i18n.t
+        : (k) => k;
+      showToast(t('general.fm_upload_success') || 'Erfolgreich hochgeladen', 'success');
+    }
+  }
+};
+
+window.fmDownload = function () {
+  const editor = document.getElementById('fmEditorTextarea');
+  const headerTitle = document.getElementById('fmCurrentFile');
+  if (!editor || !headerTitle) return;
+
+  const content = editor.value;
+  const fileName = headerTitle.textContent.trim() || 'config.txt';
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
 };

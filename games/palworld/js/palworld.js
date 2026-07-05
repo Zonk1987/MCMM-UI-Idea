@@ -8,7 +8,7 @@ import { appSettings } from '../../../js/settings.js';
 GameAdditions.registerGame('palworld', {
   name: 'Palworld',
   icon: '🦎',
-  
+
   onSelect(state) {
     // Hide Minecraft-specific UI and enforce CurseForge
     const mcSidebar = document.getElementById('mcSidebar');
@@ -17,7 +17,7 @@ GameAdditions.registerGame('palworld', {
     const modrinthBtn = sourceToggle?.querySelector('[data-source="modrinth"]');
     const ftbBtn = sourceToggle?.querySelector('[data-source="ftb"]');
     const cfBtn = sourceToggle?.querySelector('[data-source="curseforge"]');
-    
+
     if (mcSidebar) mcSidebar.style.display = 'none';
     if (mcLayout) mcLayout.classList.add('no-sidebar');
     if (modrinthBtn) modrinthBtn.style.display = 'none';
@@ -32,5 +32,5 @@ GameAdditions.registerGame('palworld', {
       // 85196 is the verified internal CurseForge GameID for Palworld
       await GameAdditions.fetchCurseForgeGeneric('85196', state);
     }
-  }
+  },
 });

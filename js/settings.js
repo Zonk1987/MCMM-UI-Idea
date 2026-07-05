@@ -7,6 +7,7 @@
 
 /** @type {Object} Default application settings */
 export const DEFAULT_SETTINGS = {
+  theme: 'dark',
   accentColor: '#f57c00',
   lang: 'en',
   compactMode: false,
@@ -34,7 +35,7 @@ export const DEFAULT_SETTINGS = {
   notifPlayer: true,
   notifUpdate: true,
   notifCrash: true,
-  disabledModules: []
+  disabledModules: [],
 };
 
 /** @type {Object} Current application settings */
@@ -62,6 +63,7 @@ export function loadSettings() {
       }
       appSettings = { ...DEFAULT_SETTINGS, ...parsed };
     } catch (e) {
+      console.warn('Failed to load settings', e);
       appSettings = { ...DEFAULT_SETTINGS };
     }
   } else {
@@ -75,22 +77,22 @@ export function loadSettings() {
  * Save current settings to localStorage and apply visual changes
  */
 export function saveSettings() {
-  const oldLang = localStorage.getItem('gs_hub_settings') ? 
-    (JSON.parse(localStorage.getItem('gs_hub_settings')).lang || 'en') : 'en';
+  const oldLang = localStorage.getItem('gs_hub_settings')
+    ? JSON.parse(localStorage.getItem('gs_hub_settings')).lang || 'en'
+    : 'en';
 
   readSettingsForm();
   localStorage.setItem('gs_hub_settings', JSON.stringify(appSettings));
-  
+
   if (oldLang !== appSettings.lang) {
     window.location.reload();
     return;
   }
-  
-  if (typeof GameAdditions !== 'undefined') {
-    GameAdditions.buildGameSelector();
+
+  if (window.GameAdditions) {
+    window.GameAdditions.buildGameSelector();
   }
-  
-  
+
   applyVisualSettings();
   showToast(t('settings.saved') || 'Einstellungen gespeichert', 'success');
   toggleSettingsPanel(false);
@@ -100,7 +102,9 @@ export function saveSettings() {
  * Reset settings to default values after user confirmation
  */
 export function resetSettings() {
-  if (confirm(t('settings.reset_confirm') || 'Einstellungen wirklich auf Standardwerte zurücksetzen?')) {
+  if (
+    confirm(t('settings.reset_confirm') || 'Einstellungen wirklich auf Standardwerte zurücksetzen?')
+  ) {
     appSettings = { ...DEFAULT_SETTINGS };
     localStorage.removeItem('gs_hub_settings');
     applyVisualSettings();
@@ -115,7 +119,7 @@ export function resetSettings() {
 export function applyVisualSettings() {
   // 1. Accent color
   document.documentElement.style.setProperty('--accent', appSettings.accentColor);
-  
+
   // Calculate a light accent dim & glow based on hex accent
   const hex = appSettings.accentColor;
   const r = parseInt(hex.slice(1, 3), 16);
@@ -127,13 +131,16 @@ export function applyVisualSettings() {
   // 2. Compact mode
   document.body.classList.toggle('compact-mode', appSettings.compactMode);
 
-  // 3. Language
-  if (typeof loadLanguage === 'function') {
-    loadLanguage(appSettings.lang);
+  // 3. Theme
+  document.documentElement.setAttribute('data-theme', appSettings.theme || 'dark');
+
+  // 4. Language
+  if (typeof window.loadLanguage === 'function') {
+    window.loadLanguage(appSettings.lang);
   }
 
   // Update swatches active state
-  document.querySelectorAll('#accentSwatches .swatch').forEach(sw => {
+  document.querySelectorAll('#accentSwatches .swatch').forEach((sw) => {
     if (sw.classList.contains('swatch-custom')) {
       sw.value = appSettings.accentColor;
     } else {
@@ -144,10 +151,17 @@ export function applyVisualSettings() {
 
 // Fill UI form inputs with appSettings values
 export function fillSettingsForm() {
-  const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
-  const setChk = (id, val) => { const el = document.getElementById(id); if(el) el.checked = val; };
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  };
+  const setChk = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.checked = val;
+  };
 
   setVal('settingLang', appSettings.lang);
+  setVal('settingTheme', appSettings.theme || 'dark');
   setChk('settingCompact', appSettings.compactMode);
   setVal('settingRefreshInterval', appSettings.refreshInterval);
   setChk('settingAnimations', appSettings.animations);
@@ -181,15 +195,17 @@ export function fillSettingsForm() {
 
   // Populate modules
   const modContainer = document.getElementById('settingsModuleList');
-  if (modContainer && typeof GameAdditions !== 'undefined') {
+  if (modContainer && window.GameAdditions) {
     modContainer.innerHTML = '';
-    const allGames = Object.keys(GameAdditions.games);
-    allGames.forEach(gameId => {
+    const allGames = Object.keys(window.GameAdditions.games);
+    allGames.forEach((gameId) => {
       if (gameId === 'minecraft') return; // skip default
-      const cfg = GameAdditions.games[gameId];
+      const cfg = window.GameAdditions.games[gameId];
       const isChecked = !(appSettings.disabledModules || []).includes(gameId);
-      
-      modContainer.insertAdjacentHTML('beforeend', `
+
+      modContainer.insertAdjacentHTML(
+        'beforeend',
+        `
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label">${cfg.name || gameId}</div>
@@ -200,7 +216,8 @@ export function fillSettingsForm() {
             <div class="toggle-track"><div class="toggle-thumb"></div></div>
           </label>
         </div>
-      `);
+      `
+      );
     });
   }
 }
@@ -208,8 +225,10 @@ export function fillSettingsForm() {
 // Read values from UI form inputs into appSettings
 export function readSettingsForm() {
   appSettings.lang = document.getElementById('settingLang').value;
+  appSettings.theme = document.getElementById('settingTheme').value;
   appSettings.compactMode = document.getElementById('settingCompact').checked;
-  appSettings.refreshInterval = parseInt(document.getElementById('settingRefreshInterval').value) || 5;
+  appSettings.refreshInterval =
+    parseInt(document.getElementById('settingRefreshInterval').value) || 5;
   appSettings.animations = document.getElementById('settingAnimations').checked;
   appSettings.debugMode = document.getElementById('settingDebug').checked;
 
@@ -232,7 +251,8 @@ export function readSettingsForm() {
   appSettings.mcEula = document.getElementById('settingMcEula').checked;
 
   appSettings.toastsEnabled = document.getElementById('settingToastsEnabled').checked;
-  appSettings.toastDuration = parseInt(document.getElementById('settingToastDuration').value) || 3500;
+  appSettings.toastDuration =
+    parseInt(document.getElementById('settingToastDuration').value) || 3500;
 
   appSettings.notifContainer = document.getElementById('notifContainer').checked;
   appSettings.notifPlayer = document.getElementById('notifPlayer').checked;
@@ -240,7 +260,7 @@ export function readSettingsForm() {
   appSettings.notifCrash = document.getElementById('notifCrash').checked;
 
   const disabledModules = [];
-  document.querySelectorAll('#settingsModuleList input[type="checkbox"]').forEach(cb => {
+  document.querySelectorAll('#settingsModuleList input[type="checkbox"]').forEach((cb) => {
     if (!cb.checked) disabledModules.push(cb.dataset.module);
   });
   appSettings.disabledModules = disabledModules;
@@ -278,8 +298,12 @@ export function bindSettingsEvents() {
   });
 
   // Close Settings Panel
-  document.getElementById('closeSettingsBtn')?.addEventListener('click', () => toggleSettingsPanel(false));
-  document.getElementById('settingsBackdrop')?.addEventListener('click', () => toggleSettingsPanel(false));
+  document
+    .getElementById('closeSettingsBtn')
+    ?.addEventListener('click', () => toggleSettingsPanel(false));
+  document
+    .getElementById('settingsBackdrop')
+    ?.addEventListener('click', () => toggleSettingsPanel(false));
 
   // Settings Save & Reset
   document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
@@ -287,29 +311,29 @@ export function bindSettingsEvents() {
 
   // Live language preview
   document.getElementById('settingLang')?.addEventListener('change', (e) => {
-    if (typeof loadLanguage === 'function') {
-      loadLanguage(e.target.value);
+    if (typeof window.loadLanguage === 'function') {
+      window.loadLanguage(e.target.value);
     }
   });
 
   // Settings section navigation (sidebar inside settings panel)
-  document.getElementById('settingsNav').addEventListener('click', e => {
+  document.getElementById('settingsNav').addEventListener('click', (e) => {
     const btn = e.target.closest('.settings-nav-btn');
     if (!btn) return;
 
     // Toggle active nav class
-    document.querySelectorAll('.settings-nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.settings-nav-btn').forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
 
     // Toggle active section visibility
     const targetTab = btn.dataset.stab;
-    document.querySelectorAll('.settings-section').forEach(sec => {
+    document.querySelectorAll('.settings-section').forEach((sec) => {
       sec.classList.toggle('active', sec.id === `stab-${targetTab}`);
     });
   });
 
   // Swatch click logic
-  document.getElementById('accentSwatches').addEventListener('click', e => {
+  document.getElementById('accentSwatches').addEventListener('click', (e) => {
     const swatch = e.target.closest('.swatch');
     if (!swatch || swatch.classList.contains('swatch-custom')) return;
 
@@ -318,7 +342,7 @@ export function bindSettingsEvents() {
   });
 
   // Custom color picker swatch
-  document.getElementById('customAccentColor').addEventListener('input', e => {
+  document.getElementById('customAccentColor').addEventListener('input', (e) => {
     appSettings.accentColor = e.target.value;
     applyVisualSettings();
   });

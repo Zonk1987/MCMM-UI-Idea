@@ -1,993 +1,1715 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GameServer Hub — Unraid Plugin</title>
+    <meta
+      name="description"
+      content="Erweitertes Unraid Docker-Menü mit GameServer Hub, Minecraft Mod-Browser und Player Management."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/modules/buttons.css" />
+    <link rel="stylesheet" href="css/modules/forms.css" />
+    <link rel="stylesheet" href="css/modules/stats.css" />
+    <link rel="stylesheet" href="css/modules/modals.css" />
+    <link rel="stylesheet" href="css/modules/console.css" />
+    <link rel="stylesheet" href="css/modules/badges.css" />
+    <link rel="stylesheet" href="css/modules/states.css" />
+    <link rel="stylesheet" href="css/modules/lists.css" />
+    <link rel="stylesheet" href="css/docker.css" />
+    <link rel="stylesheet" href="css/gameserver.css" />
+    <link rel="stylesheet" href="css/gameAdditions.css" />
+    <link rel="stylesheet" href="games/minecraft/css/minecraft.css" />
+    <link rel="stylesheet" href="games/palworld/css/palworld.css" />
+    <link rel="stylesheet" href="games/valheim/css/valheim.css" />
+    <link rel="stylesheet" href="games/cs2/css/cs2.css" />
+    <link rel="stylesheet" href="css/players.css" />
+    <link rel="stylesheet" href="css/settings.css" />
+    <link rel="stylesheet" href="css/toast.css" />
+    <link rel="stylesheet" href="css/vendor/xterm.css" />
+    <script src="js/vendor/xterm.js"></script>
+    <script src="js/vendor/xterm-addon-fit.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script defer src="js/alpine-store.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GameServer Hub — Unraid Plugin</title>
-  <meta name="description"
-    content="Erweitertes Unraid Docker-Menü mit GameServer Hub, Minecraft Mod-Browser und Player Management." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/modules/buttons.css" />
-  <link rel="stylesheet" href="css/modules/forms.css" />
-  <link rel="stylesheet" href="css/modules/stats.css" />
-  <link rel="stylesheet" href="css/modules/modals.css" />
-  <link rel="stylesheet" href="css/modules/console.css" />
-  <link rel="stylesheet" href="css/modules/badges.css" />
-  <link rel="stylesheet" href="css/modules/states.css" />
-  <link rel="stylesheet" href="css/modules/lists.css" />
-  <link rel="stylesheet" href="css/docker.css" />
-  <link rel="stylesheet" href="css/gameserver.css" />
-  <link rel="stylesheet" href="css/gameAdditions.css" />
-  <link rel="stylesheet" href="games/minecraft/css/minecraft.css" />
-  <link rel="stylesheet" href="games/palworld/css/palworld.css" />
-  <link rel="stylesheet" href="games/valheim/css/valheim.css" />
-  <link rel="stylesheet" href="games/cs2/css/cs2.css" />
-  <link rel="stylesheet" href="css/players.css" />
-  <link rel="stylesheet" href="css/settings.css" />
-  <link rel="stylesheet" href="css/toast.css" />
-
-  <script type="module" src="js/main.js"></script>
-  <script defer src="js/alpine-store.js"></script>
-</head>
-
-<body>
-
-  <!-- ─── TOP NAV BAR (Unraid-style) ─────────────────────────────────────── -->
-  <header class="topbar" id="topbar" x-data>
-    <div class="topbar-brand">
-      <div class="topbar-logo">
-        <span class="material-icons-round">dns</span>
-      </div>
-      <span class="topbar-title">GameServer <span class="accent">Hub</span></span>
-      <span class="topbar-subtitle" x-text="$store.i18n.t('general.plugin_subtitle')">Unraid Plugin v1.0</span>
-    </div>
-
-    <nav class="tab-nav" id="tabNav" role="tablist">
-      <button class="tab-btn active" data-tab="docker" id="tab-docker" role="tab" aria-selected="true"
-        aria-controls="panel-docker">
-        <span class="material-icons-round">view_list</span>
-        <span x-text="$store.i18n.t('nav.docker')">Docker</span>
-        <span class="tab-badge" id="badge-docker" x-data x-text="$store.global.dockerCount">0</span>
-      </button>
-      <button class="tab-btn" data-tab="gameserver" id="tab-gameserver" role="tab" aria-selected="false"
-        aria-controls="panel-gameserver">
-        <span class="material-icons-round">sports_esports</span>
-        <span x-text="$store.i18n.t('nav.gameservers')">Game Servers</span>
-        <span class="tab-badge live" id="badge-gameserver" x-data x-text="$store.global.onlineGameservers">0</span>
-      </button>
-      <button class="tab-btn" data-tab="game-additions" id="tab-game-additions" role="tab" aria-selected="false"
-        aria-controls="panel-game-additions">
-        <span class="material-icons-round">extension</span>
-        <span x-text="$store.i18n.t('nav.game_additions')">Game Additions</span>
-      </button>
-      <button class="tab-btn" data-tab="players" id="tab-players" role="tab" aria-selected="false"
-        aria-controls="panel-players">
-        <span class="material-icons-round">group</span>
-        <span x-text="$store.i18n.t('nav.players')">Players</span>
-        <span class="tab-badge online" id="badge-players" x-data x-text="$store.global.onlinePlayers">0</span>
-      </button>
-    </nav>
-
-    <div class="topbar-right">
-      <button class="icon-btn" id="refreshBtn" :title="$store.i18n.t('btn.refresh')">
-        <span class="material-icons-round">refresh</span>
-      </button>
-      <button class="icon-btn" id="settingsBtn" :title="$store.i18n.t('nav.settings')">
-        <span class="material-icons-round">settings</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- ─── MAIN CONTENT ─────────────────────────────────────────────────────── -->
-  <main class="main-content">
-
-    <!-- ── PANEL: Docker Overview ─── -->
-    <section class="tab-panel active" id="panel-docker" role="tabpanel" aria-labelledby="tab-docker" x-data="dockerApp()">
-      <!-- Component loaded dynamically -->
-    </section>
-
-    <!-- ── PANEL: Game Servers ─── -->
-    <section class="tab-panel" id="panel-gameserver" role="tabpanel" aria-labelledby="tab-gameserver" x-data="gameserverApp()">
-      <!-- Component loaded dynamically -->
-    </section>
-
-
-    <!-- ── PANEL: Game Additions ─── -->
-    <!-- ── PANEL: Game Additions ─── -->
-    <section class="tab-panel" id="panel-game-additions" role="tabpanel" aria-labelledby="tab-game-additions">
-      <!-- Component loaded dynamically -->
-    </section>
-
-
-
-
-    <!-- ── PANEL: Player Manager ─── -->
-    <!-- ── PANEL: Player Manager ─── -->
-    <section class="tab-panel" id="panel-players" role="tabpanel" aria-labelledby="tab-players" x-data="playersApp()">
-      <!-- Component loaded dynamically -->
-    </section>
-
-  </main>
-
-  <!-- ─── TOAST NOTIFICATIONS ─────────────────────────────────────────────── -->
-  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
-
-  <!-- ─── SETTINGS PANEL (slide-over) ─────────────────────────────────────── -->
-  <div class="settings-backdrop" id="settingsBackdrop"></div>
-  <aside class="settings-panel" id="settingsPanel" aria-label="Einstellungen" x-data>
-    <div class="settings-header">
-      <div class="settings-header-title">
-        <span class="material-icons-round">settings</span>
-        <h2 x-text="$store.i18n.t('settings.title')">Einstellungen</h2>
-      </div>
-      <button class="icon-btn" id="closeSettingsBtn">
-        <span class="material-icons-round">close</span>
-      </button>
-    </div>
-
-    <nav class="settings-nav" id="settingsNav">
-      <button class="settings-nav-btn active" data-stab="general"><span class="material-icons-round">tune</span> <span
-          x-text="$store.i18n.t('settings.general')">Allgemein</span></button>
-      <button class="settings-nav-btn" data-stab="docker"><span class="material-icons-round">view_list</span> <span
-          x-text="$store.i18n.t('nav.docker')">Docker</span></button>
-      <button class="settings-nav-btn" data-stab="gameserver"><span class="material-icons-round">sports_esports</span>
-        <span x-text="$store.i18n.t('nav.gameservers')">GameServer</span></button>
-      <button class="settings-nav-btn" data-stab="minecraft"><span
-          style="font-size:16px; width:24px; text-align:center; display:inline-block;">&#x26CF;</span>
-        Minecraft</button>
-      <button class="settings-nav-btn" data-stab="modules"><span class="material-icons-round">extension</span>
-        Module</button>
-      <button class="settings-nav-btn" data-stab="notifications"><span class="material-icons-round">notifications</span>
-        <span x-text="$store.i18n.t('settings.notifications')">Meldungen</span></button>
-    </nav>
-
-    <form onsubmit="return false;" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
-      <div class="settings-body" id="settingsBody">
-
-      <!-- Allgemein -->
-      <div class="settings-section active" id="stab-general">
-        <div class="settings-group">
-          <div class="settings-group-title" x-text="$store.i18n.t('settings.appearance')">Darstellung</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings.accent')">Akzentfarbe</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings.accent_desc')">Hauptfarbe der Oberfläche</div>
-            </div>
-            <div class="color-swatches" id="accentSwatches">
-              <button class="swatch active" data-color="#f57c00" style="background:#f57c00"
-                title="Unraid Orange"></button>
-              <button class="swatch" data-color="#3b82f6" style="background:#3b82f6" title="Blau"></button>
-              <button class="swatch" data-color="#22c55e" style="background:#22c55e" title="Grün"></button>
-              <button class="swatch" data-color="#a855f7" style="background:#a855f7" title="Lila"></button>
-              <button class="swatch" data-color="#ef4444" style="background:#ef4444" title="Rot"></button>
-              <button class="swatch" data-color="#06b6d4" style="background:#06b6d4" title="Cyan"></button>
-              <input type="color" id="customAccentColor" class="swatch swatch-custom" value="#f57c00"
-                title="Eigene Farbe" />
-            </div>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings.language')">Sprache</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings.language_desc')">Anzeigesprache der Benutzeroberfläche</div>
-            </div>
-            <select class="setting-select" id="settingLang">
-              <option value="en">English</option>
-              <option value="de">Deutsch</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-              <option value="it">Italiano</option>
-            </select>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings.compact')">Kompakter Modus</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings.compact_desc')">Weniger Abstände, mehr Inhalt sichtbar</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingCompact" />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
+  <body>
+    <!-- ─── TOP NAV BAR (Unraid-style) ─────────────────────────────────────── -->
+    <header class="topbar" id="topbar" x-data>
+      <div class="topbar-brand">
+        <div class="topbar-logo">
+          <span class="material-icons-round">dns</span>
         </div>
-        <div class="settings-group">
-          <div class="settings-group-title" x-text="$store.i18n.t('settings.behavior')">Verhalten</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings.refresh')">Auto-Refresh-Interval</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings.refresh_desc')">Automatische Aktualisierung alle N Sekunden
-              </div>
-            </div>
-            <div class="setting-input-row">
-              <input type="number" class="setting-input" id="settingRefreshInterval" value="5" min="1" max="60"
-                style="width:70px" />
-              <span class="setting-unit">Sek.</span>
-            </div>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings.animations')">Animationen</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings.animations_desc')">Übergangsanimationen aktivieren</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingAnimations" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings_debug')">Entwicklermodus</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings_debug_desc')">Debug-Logs in der Konsole anzeigen</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingDebug" />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-        </div>
+        <span class="topbar-title">GameServer <span class="accent">Hub</span></span>
+        <span class="topbar-subtitle" x-text="$store.i18n.t('general.plugin_subtitle')"
+          >Unraid Plugin v1.0</span
+        >
       </div>
 
-      <!-- Docker -->
-      <div class="settings-section" id="stab-docker">
-        <div class="settings-group">
-          <div class="settings-group-title">Verbindung</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Docker Socket</div>
-              <div class="setting-desc">Pfad zum Docker Unix-Socket</div>
-            </div>
-            <input type="text" class="setting-input" id="settingDockerSocket" value="/var/run/docker.sock"
-              style="width:210px;font-family:monospace;font-size:12px" />
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Unraid API-URL</div>
-              <div class="setting-desc">Lokale Unraid-API-Adresse</div>
-            </div>
-            <input type="text" class="setting-input" id="settingUnraidApi" value="http://localhost/api"
-              style="width:210px;font-family:monospace;font-size:12px" />
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="settings-group-title">Verhalten</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Standard Restart-Policy</div>
-              <div class="setting-desc">Für neue Container</div>
-            </div>
-            <select class="setting-select" id="settingRestartPolicy">
-              <option value="unless-stopped" selected>unless-stopped</option>
-              <option value="always">always</option>
-              <option value="on-failure">on-failure</option>
-              <option value="no">no</option>
-            </select>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Update-Check beim Start</div>
-              <div class="setting-desc">Auf neue Image-Versionen prüfen</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingUpdateCheck" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Bestätigung beim Stoppen</div>
-              <div class="setting-desc">Sicherheitsabfrage vor dem Stoppen</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingStopConfirm" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
+      <nav class="tab-nav" id="tabNav" role="tablist">
+        <button
+          class="tab-btn active"
+          data-tab="docker"
+          id="tab-docker"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-docker"
+        >
+          <span class="material-icons-round">view_list</span>
+          <span x-text="$store.i18n.t('nav.docker')">Docker</span>
+          <span class="tab-badge" id="badge-docker" x-data x-text="$store.global.dockerCount"
+            >0</span
+          >
+        </button>
+        <button
+          class="tab-btn"
+          data-tab="gameserver"
+          id="tab-gameserver"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-gameserver"
+        >
+          <span class="material-icons-round">sports_esports</span>
+          <span x-text="$store.i18n.t('nav.gameservers')">Game Servers</span>
+          <span
+            class="tab-badge live"
+            id="badge-gameserver"
+            x-data
+            x-text="$store.global.onlineGameservers"
+            >0</span
+          >
+        </button>
+        <button
+          class="tab-btn"
+          data-tab="game-additions"
+          id="tab-game-additions"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-game-additions"
+        >
+          <span class="material-icons-round">extension</span>
+          <span x-text="$store.i18n.t('nav.game_additions')">Game Additions</span>
+        </button>
+        <button
+          class="tab-btn"
+          data-tab="players"
+          id="tab-players"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-players"
+        >
+          <span class="material-icons-round">group</span>
+          <span x-text="$store.i18n.t('nav.players')">Players</span>
+          <span
+            class="tab-badge online"
+            id="badge-players"
+            x-data
+            x-text="$store.global.onlinePlayers"
+            >0</span
+          >
+        </button>
+      </nav>
 
-      <!-- GameServer -->
-      <div class="settings-section" id="stab-gameserver">
-        <div class="settings-group">
-          <div class="settings-group-title">Standard-Werte (neue Server)</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Datenpfad</div>
-              <div class="setting-desc">Basis-Pfad für Serverdaten auf dem Host</div>
-            </div>
-            <input type="text" class="setting-input" id="settingGsDataPath" value="/mnt/user/gameservers"
-              style="width:210px;font-family:monospace;font-size:12px" />
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Standard-RAM</div>
-              <div class="setting-desc">Arbeitsspeicher für neue Gameserver</div>
-            </div>
-            <div class="setting-input-row">
-              <input type="number" class="setting-input" id="settingGsRam" value="4096" min="512" step="512"
-                style="width:90px" />
-              <span class="setting-unit">MB</span>
-            </div>
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="settings-group-title">RCON</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">RCON aktivieren</div>
-              <div class="setting-desc">Fernsteuerung über RCON</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingRconEnabled" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">RCON-Port</div>
-              <div class="setting-desc">Standard-Port für RCON</div>
-            </div>
-            <input type="number" class="setting-input" id="settingRconPort" value="25575" style="width:90px" />
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">RCON-Passwort</div>
-              <div class="setting-desc">Wird in neue Container eingetragen</div>
-            </div>
-            <input type="password" class="setting-input" id="settingRconPassword" placeholder="••••••••"
-              style="width:180px" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Minecraft -->
-      <div class="settings-section" id="stab-minecraft">
-        <div class="settings-group">
-          <div class="settings-group-title">APIs</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">CurseForge API-Key</div>
-              <div class="setting-desc">Kostenlos auf curseforge.com erhältlich</div>
-            </div>
-            <input type="password" class="setting-input" id="settingCfApiKey" placeholder="Schlüssel eingeben..."
-              style="width:190px" />
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Modrinth API</div>
-              <div class="setting-desc">Öffentlich — kein Key erforderlich</div>
-            </div>
-            <span class="setting-badge ok"><span class="material-icons-round" style="font-size:14px">check_circle</span>
-              Verbunden</span>
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="settings-group-title">Standard-Werte (neue Minecraft-Server)</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Server-Typ</div>
-              <div class="setting-desc">Vorauswahl im Server-Wizard</div>
-            </div>
-            <select class="setting-select" id="settingMcType">
-              <option value="PAPER" selected>Paper</option>
-              <option value="FABRIC">Fabric</option>
-              <option value="FORGE">Forge</option>
-              <option value="NEOFORGE">NeoForge</option>
-              <option value="VANILLA">Vanilla</option>
-              <option value="SPIGOT">Spigot</option>
-            </select>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">MC-Version</div>
-              <div class="setting-desc">Vorauswahl im Server-Wizard</div>
-            </div>
-            <select class="setting-select" id="settingMcVersion">
-              <option value="LATEST" selected>Latest</option>
-              <option value="1.21.4">1.21.4</option>
-              <option value="1.21.1">1.21.1</option>
-              <option value="1.20.4">1.20.4</option>
-              <option value="1.20.1">1.20.1</option>
-            </select>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Max. Spieler</div>
-            </div>
-            <input type="number" class="setting-input" id="settingMcMaxPlayers" value="20" min="1" max="500"
-              style="width:80px" />
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">EULA automatisch akzeptieren</div>
-              <div class="setting-desc">Fügt EULA=TRUE automatisch hinzu</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingMcEula" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Meldungen -->
-      <div class="settings-section" id="stab-notifications">
-        <div class="settings-group">
-          <div class="settings-group-title">Toast-Meldungen</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Meldungen aktivieren</div>
-              <div class="setting-desc">Toast-Benachrichtigungen global an/aus</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="settingToastsEnabled" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Anzeigedauer</div>
-              <div class="setting-desc">Wie lange Meldungen sichtbar bleiben</div>
-            </div>
-            <div class="setting-input-row">
-              <input type="number" class="setting-input" id="settingToastDuration" value="3500" min="1000" max="10000"
-                step="500" style="width:90px" />
-              <span class="setting-unit">ms</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="settings-group">
-          <div class="settings-group-title" style="color: var(--text-muted);">Entwickler-Optionen</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Developer Mode (Debug)</div>
-              <div class="setting-desc">Erweiterte Logs und API-Outputs in der Browser-Konsole ausgeben</div>
-            </div>
-            <label class="setting-toggle">
-              <input type="checkbox" id="developerMode" />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="settings-group-title">Ereignisse</div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Container gestartet / gestoppt</div>
-            </div>
-            <label class="setting-toggle"><input type="checkbox" id="notifContainer" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Spieler tritt bei / verlässt</div>
-            </div>
-            <label class="setting-toggle"><input type="checkbox" id="notifPlayer" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Update verfügbar</div>
-            </div>
-            <label class="setting-toggle"><input type="checkbox" id="notifUpdate" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Server-Fehler / Crash</div>
-            </div>
-            <label class="setting-toggle"><input type="checkbox" id="notifCrash" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- Module -->
-      <div class="settings-section" id="stab-modules">
-        <div class="settings-group">
-          <div class="settings-group-title">Installierte Module</div>
-          <p style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">
-            Aktiviere oder deaktiviere installierte Game-Module im Hub. (Das Basis-Modul "Minecraft" ist immer aktiv.)
-          </p>
-          <div id="settingsModuleList">
-            <!-- Dynamically populated by JS -->
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /settings-body -->
-
-    <div class="settings-footer">
-      <button class="btn btn-ghost" id="resetSettingsBtn">
-        <span class="material-icons-round">restart_alt</span> Zurücksetzen
-      </button>
-      <button class="btn btn-primary" id="saveSettingsBtn">
-        <span class="material-icons-round">save</span> Speichern
-      </button>
-      </div>
-    </form>
-  </aside>
-
-
-  <!-- ── Backup Modal (Mockup) ── -->
-
-
-  <!-- ── Welcome Modal (Onboarding) ── -->
-  <div class="modal-backdrop" id="welcomeModal" hidden x-data="{ step: 1 }">
-    <div class="modal modal-large glass-card" style="max-width: 500px; text-align: center;">
-      <div class="modal-body"
-        style="padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-
-        <!-- Step 1 -->
-        <div x-show="step === 1" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
-          <div
-            style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), #ff6d00); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px var(--accent-glow);">
-            <span class="material-icons-round" style="font-size: 40px; color: #fff;">sports_esports</span>
-          </div>
-          <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px;">Willkommen im GameServer Hub</h2>
-          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
-            Dein zentrales Dashboard für alle Docker-basierten Gameserver auf Unraid. Verwalte deine Container,
-            installiere neue Spiele mit einem Klick und bearbeite Dateien direkt im Browser.
-          </p>
-        </div>
-
-        <!-- Step 2 -->
-        <div x-show="step === 2" style="display: flex; flex-direction: column; align-items: center; gap: 16px;"
-          style="display: none;">
-          <div
-            style="width: 80px; height: 80px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
-            <span class="material-icons-round" style="font-size: 40px;">extension</span>
-          </div>
-          <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px;">Game Additions</h2>
-          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
-            Egal ob Minecraft, CS2 oder Palworld – die Game Additions Module bieten dir maßgeschneiderte Dashboards für
-            jedes Spiel. Lade Mods herunter, verwalte Spieler und passe Server-Properties an.
-          </p>
-        </div>
-
-        <!-- Step 3 -->
-        <div x-show="step === 3" style="display: flex; flex-direction: column; align-items: center; gap: 16px;"
-          style="display: none;">
-          <div
-            style="width: 80px; height: 80px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
-            <span class="material-icons-round" style="font-size: 40px;">rocket_launch</span>
-          </div>
-          <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px;">Bereit zum Start!</h2>
-          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
-            Alles ist eingerichtet. Du kannst den Hub nach deinen Wünschen über das Zahnrad-Symbol oben rechts anpassen.
-            Viel Spaß beim Hosten!
-          </p>
-        </div>
-
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
-          <div
-            :style="step === 1 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-            style="height: 8px; border-radius: 4px; transition: all 0.3s ease;"></div>
-          <div
-            :style="step === 2 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-            style="height: 8px; border-radius: 4px; transition: all 0.3s ease;"></div>
-          <div
-            :style="step === 3 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-            style="height: 8px; border-radius: 4px; transition: all 0.3s ease;"></div>
-        </div>
-
-      </div>
-      <div class="modal-footer"
-        style="justify-content: center; border-top: none; padding-bottom: 30px; position: relative;">
-        <button class="btn btn-ghost" x-show="step > 1" @click="step--"
-          style="position: absolute; left: 30px;">Zurück</button>
-        <button class="btn btn-primary" x-show="step < 3" @click="step++" style="width: 200px;">Weiter</button>
-        <button class="btn btn-primary" x-show="step === 3"
-          @click="typeof window.finishOnboarding === 'function' ? window.finishOnboarding() : null"
-          style="width: 200px;">Loslegen</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Docker Config Modal (Alpine) -->
-  <div class="modal-backdrop" id="configModalAlpine" x-data x-show="$store.modals.config.open" style="display: none;" x-transition>
-    <div class="modal glass-card" @click.away="$store.modals.config.open = false">
-      <div class="modal-header">
-        <h2 x-text="$store.i18n.t('config_title')">Einstellungen</h2>
-        <button class="icon-btn" @click="$store.modals.config.open = false"><span class="material-icons-round">close</span></button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="cfgContName" x-text="$store.i18n.t('general.container')">Container Name</label>
-          <input id="cfgContName" type="text" class="form-input" x-model="$store.modals.config.data.name" />
-        </div>
-        <div class="form-group">
-          <label for="cfgContPort">Port (Host)</label>
-          <input id="cfgContPort" type="number" class="form-input" x-model="$store.modals.config.data.port" />
-        </div>
-        <div class="form-group">
-          <label for="cfgContRam">Max. RAM (MB)</label>
-          <input id="cfgContRam" type="number" class="form-input" x-model="$store.modals.config.data.ram" />
-        </div>
-        <div class="form-group">
-          <label for="cfgContRestart">Restart Policy</label>
-          <select id="cfgContRestart" class="form-input" style="width:100%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:8px; border-radius:6px; outline:none; -webkit-appearance:none; appearance:none;">
-            <option>unless-stopped</option>
-            <option>always</option>
-            <option>no</option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-footer" style="margin-top:20px;">
-        <button class="btn btn-ghost" @click="$store.modals.config.open = false"><span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span></button>
-        <button class="btn btn-primary" @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings.saved') || 'Einstellungen gespeichert!') : 'Einstellungen gespeichert!', 'success');">
-          <span class="material-icons-round">save</span> <span x-text="$store.i18n.t('btn.save')">Speichern</span>
+      <div class="topbar-right">
+        <button
+          class="icon-btn"
+          id="refreshBtn"
+          :aria-label="$store.i18n.t('btn.refresh')"
+          :title="$store.i18n.t('btn.refresh')"
+        >
+          <span class="material-icons-round">refresh</span>
+        </button>
+        <button
+          class="icon-btn"
+          id="settingsBtn"
+          :aria-label="$store.i18n.t('nav.settings')"
+          :title="$store.i18n.t('nav.settings')"
+        >
+          <span class="material-icons-round">settings</span>
         </button>
       </div>
+    </header>
+
+    <!-- ─── MAIN CONTENT ─────────────────────────────────────────────────────── -->
+    <main class="main-content">
+      <!-- ── PANEL: Docker Overview ─── -->
+      <section
+        class="tab-panel active"
+        id="panel-docker"
+        role="tabpanel"
+        aria-labelledby="tab-docker"
+        x-data="dockerApp()"
+      >
+        <!-- Component loaded dynamically -->
+      </section>
+
+      <!-- ── PANEL: Game Servers ─── -->
+      <section
+        class="tab-panel"
+        id="panel-gameserver"
+        role="tabpanel"
+        aria-labelledby="tab-gameserver"
+        x-data="gameserverApp()"
+      >
+        <!-- Component loaded dynamically -->
+      </section>
+
+      <!-- ── PANEL: Game Additions ─── -->
+      <section
+        class="tab-panel"
+        id="panel-game-additions"
+        role="tabpanel"
+        aria-labelledby="tab-game-additions"
+      >
+        <!-- Component loaded dynamically -->
+      </section>
+
+      <!-- ── PANEL: Player Manager ─── -->
+      <section
+        class="tab-panel"
+        id="panel-players"
+        role="tabpanel"
+        aria-labelledby="tab-players"
+        x-data="playersApp()"
+      >
+        <!-- Component loaded dynamically -->
+      </section>
+    </main>
+
+    <!-- ─── TOAST NOTIFICATIONS ─────────────────────────────────────────────── -->
+    <div
+      class="toast-container"
+      id="toastContainer"
+      aria-live="polite"
+      x-data
+      @toast.window="$store.toasts.add($event.detail.msg, $event.detail.type)"
+    >
+      <template x-for="toast in $store.toasts.items" :key="toast.id">
+        <div class="toast" :class="toast.type" x-transition>
+          <span class="material-icons-round toast-icon" x-text="toast.icon"></span>
+          <span class="toast-msg" x-text="toast.msg"></span>
+        </div>
+      </template>
     </div>
-  </div>
 
-  <!-- Game Server Install Modal (Alpine) -->
-  <div class="modal-backdrop" id="installModalAlpine" 
-       x-data="installModal()"
-       @open-install-modal.window="openModal($event.detail)"
-       x-show="open" style="display: none;" x-transition>
-    <div class="modal-content" @click.away="open = false" style="max-width:1050px; padding:0; overflow:hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.6); background: var(--bg-base); backdrop-filter: none;">
-      <!-- Header -->
-      <div class="modal-header" style="background:var(--bg-card); padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; gap:16px;">
-        <div style="background:var(--accent-dim); color:var(--accent); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <span class="material-icons-round" style="font-size:24px;">dns</span>
+    <!-- ─── SETTINGS PANEL (slide-over) ─────────────────────────────────────── -->
+    <div class="settings-backdrop" id="settingsBackdrop"></div>
+    <aside class="settings-panel" id="settingsPanel" aria-label="Einstellungen" x-data>
+      <div class="settings-header">
+        <div class="settings-header-title">
+          <span class="material-icons-round">settings</span>
+          <h2 x-text="$store.i18n.t('settings.title')">Einstellungen</h2>
         </div>
-        <div style="flex:1;">
-          <h2 style="margin:0; font-size:18px; color:#fff;"><span x-text="data.isEdit ? 'Einstellungen' : 'Neuen Server'"></span>: <span x-text="data.name"></span></h2>
-          <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">itzg/minecraft-server · von <span x-text="data.author"></span></div>
-        </div>
-        <button class="icon-btn" @click="open = false"><span class="material-icons-round">close</span></button>
+        <button
+          class="icon-btn"
+          id="closeSettingsBtn"
+          :aria-label="$store.i18n.t('btn.close') || 'Schließen'"
+        >
+          <span class="material-icons-round">close</span>
+        </button>
       </div>
-      
-      <div style="display:flex; height:600px;">
-        <!-- Left: Form -->
-        <div class="dc-form-col" style="flex:1.5; border-right:1px solid var(--border); background:var(--bg-base);">
-          
-          <!-- Tab Navigation -->
-          <div class="dc-tab-nav" style="padding-left:16px;">
-            <button class="dc-tab-btn" @click="activeTab = 'config'" :class="activeTab === 'config' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
-              <span class="material-icons-round" style="font-size:16px;">dns</span> Basis
-            </button>
-            <button class="dc-tab-btn" @click="activeTab = 'gameplay'" :class="activeTab === 'gameplay' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
-              <span class="material-icons-round" style="font-size:16px;">sports_esports</span> Gameplay
-            </button>
-            <button class="dc-tab-btn" @click="activeTab = 'performance'" :class="activeTab === 'performance' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
-              <span class="material-icons-round" style="font-size:16px;">speed</span> Performance
-            </button>
-            <button class="dc-tab-btn" @click="activeTab = 'cronjobs'" :class="activeTab === 'cronjobs' ? 'active' : ''" style="display:flex; align-items:center; gap:6px;">
-              <span class="material-icons-round" style="font-size:16px;">schedule</span> Aufgaben
-            </button>
-          </div>
 
-          <!-- Content Area -->
-          <div class="dc-tab-content">
-            
-            <!-- CONFIG TAB -->
-            <div x-show="activeTab === 'config'">
-              <div class="setting-row">
-                <div class="setting-info">
-                  <label class="setting-label" for="instSafeName">Container-Name</label>
-                  <div class="setting-desc">Eindeutiger Name in Docker</div>
-                </div>
-                <input type="text" id="instSafeName" name="instSafeName" class="setting-input" style="width:240px" x-model="data.safeName" />
-              </div>
-              
-              <div class="setting-row">
-                <div class="setting-info">
-                  <label class="setting-label" for="instServerName">Server-Name</label>
-                  <div class="setting-desc">Name im Spiel (server.properties)</div>
-                </div>
-                <input type="text" id="instServerName" name="instServerName" class="setting-input" style="width:240px" x-model="data.serverName" />
-              </div>
-              
-              <div class="setting-row">
-                <div class="setting-info">
-                  <label class="setting-label" for="instPort">Server-Port</label>
-                  <div class="setting-desc">Minecraft Verbindungsport</div>
-                </div>
-                <input type="number" id="instPort" name="instPort" class="setting-input" style="width:240px" x-model="data.port" />
-              </div>
+      <nav class="settings-nav" id="settingsNav">
+        <button class="settings-nav-btn active" data-stab="general">
+          <span class="material-icons-round">tune</span>
+          <span x-text="$store.i18n.t('settings.general')">Allgemein</span>
+        </button>
+        <button class="settings-nav-btn" data-stab="docker">
+          <span class="material-icons-round">view_list</span>
+          <span x-text="$store.i18n.t('nav.docker')">Docker</span>
+        </button>
+        <button class="settings-nav-btn" data-stab="gameserver">
+          <span class="material-icons-round">sports_esports</span>
+          <span x-text="$store.i18n.t('nav.gameservers')">GameServer</span>
+        </button>
+        <button class="settings-nav-btn" data-stab="minecraft">
+          <span style="font-size: 16px; width: 24px; text-align: center; display: inline-block"
+            >&#x26CF;</span
+          >
+          Minecraft
+        </button>
+        <button class="settings-nav-btn" data-stab="modules">
+          <span class="material-icons-round">extension</span> Module
+        </button>
+        <button class="settings-nav-btn" data-stab="notifications">
+          <span class="material-icons-round">notifications</span>
+          <span x-text="$store.i18n.t('settings.notifications')">Meldungen</span>
+        </button>
+      </nav>
 
-              <div class="setting-row">
-                <div class="setting-info">
-                  <label class="setting-label" for="instIconUrl">Server-Icon URL</label>
-                  <div class="setting-desc">Optional (z.B. https://.../icon.png)</div>
-                </div>
-                <input type="text" id="instIconUrl" name="instIconUrl" class="setting-input" style="width:240px" placeholder="URL zum Icon..." />
+      <form
+        onsubmit="return false;"
+        style="display: flex; flex-direction: column; flex: 1; overflow: hidden"
+      >
+        <!-- Hidden username field for accessibility/password manager compliance -->
+        <input type="text" autocomplete="username" style="display:none;" />
+        <div class="settings-body" id="settingsBody">
+          <!-- Allgemein -->
+          <div class="settings-section active" id="stab-general">
+            <div class="settings-group">
+              <div class="settings-group-title" x-text="$store.i18n.t('settings.appearance')">
+                Darstellung
               </div>
-              
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label" for="instRam">RAM (MB)</label>
-                  <div class="setting-desc">Für den Java-Heap (-Xms / -Xmx)</div>
+                  <div class="setting-label" x-text="$store.i18n.t('settings.accent')">
+                    Akzentfarbe
+                  </div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings.accent_desc')">
+                    Hauptfarbe der Oberfläche
+                  </div>
                 </div>
-                <div style="position:relative; width:240px;">
-                  <input type="number" id="instRam" name="instRam" class="setting-input" style="width:100%; padding-right:32px;" x-model="data.ram" />
-                  <span style="position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-muted);">MB</span>
+                <div class="color-swatches" id="accentSwatches">
+                  <button
+                    class="swatch active"
+                    data-color="#f57c00"
+                    style="background: #f57c00"
+                    title="Unraid Orange"
+                  ></button>
+                  <button
+                    class="swatch"
+                    data-color="#3b82f6"
+                    style="background: #3b82f6"
+                    title="Blau"
+                  ></button>
+                  <button
+                    class="swatch"
+                    data-color="#22c55e"
+                    style="background: #22c55e"
+                    title="Grün"
+                  ></button>
+                  <button
+                    class="swatch"
+                    data-color="#a855f7"
+                    style="background: #a855f7"
+                    title="Lila"
+                  ></button>
+                  <button
+                    class="swatch"
+                    data-color="#ef4444"
+                    style="background: #ef4444"
+                    title="Rot"
+                  ></button>
+                  <button
+                    class="swatch"
+                    data-color="#06b6d4"
+                    style="background: #06b6d4"
+                    title="Cyan"
+                  ></button>
+                  <input
+                    type="color"
+                    id="customAccentColor"
+                    class="swatch swatch-custom"
+                    value="#f57c00"
+                    title="Eigene Farbe"
+                  />
                 </div>
               </div>
-              
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label" for="instDataPath">Datenpfad (Host)</label>
-                  <div class="setting-desc">Bind-Mount für Serverdaten</div>
+                  <div class="setting-label" x-text="$store.i18n.t('settings.theme')">Theme</div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings.theme_desc')">
+                    Helles oder dunkles Erscheinungsbild
+                  </div>
                 </div>
-                <input type="text" id="instDataPath" name="instDataPath" class="setting-input" style="width:240px; font-family:'JetBrains Mono', monospace; font-size:11px;" x-model="data.path" />
-              </div>
-              
-              <div class="setting-row">
-                <div class="setting-info">
-                  <label class="setting-label" for="instServerType">Server-Typ</label>
-                  <div class="setting-desc">Servertyp (auto aus Modpack)</div>
-                </div>
-                <select id="instServerType" name="instServerType" class="setting-input" style="width:240px" x-model="data.type">
-                  <option value="AUTO">Auto (aus Modpack)</option>
-                  <option value="VANILLA">Vanilla</option>
-                  <option value="PAPER">Paper</option>
-                  <option value="FABRIC">Fabric</option>
-                  <option value="FORGE">Forge</option>
-                  <option value="NEOFORGE">NeoForge</option>
+                <select class="setting-select" id="settingTheme">
+                  <option value="dark" x-text="$store.i18n.t('settings.theme_dark')">Dunkel</option>
+                  <option value="light" x-text="$store.i18n.t('settings.theme_light')">Hell</option>
                 </select>
               </div>
-              
-              <div class="setting-row" style="border-bottom:none;">
+              <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label" for="instRestartPolicy">Restart-Policy</label>
-                  <div class="setting-desc">Wann soll neugestartet werden?</div>
+                  <div class="setting-label" x-text="$store.i18n.t('settings.language')">
+                    Sprache
+                  </div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings.language_desc')">
+                    Anzeigesprache der Benutzeroberfläche
+                  </div>
                 </div>
-                <select id="instRestartPolicy" name="instRestartPolicy" class="setting-input" style="width:240px" x-model="data.restart">
-                  <option value="unless-stopped">unless-stopped</option>
+                <select class="setting-select" id="settingLang">
+                  <option value="en">English</option>
+                  <option value="de">Deutsch</option>
+                  <option value="es">Español</option>
+                  <option value="fr">Français</option>
+                  <option value="it">Italiano</option>
+                </select>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" x-text="$store.i18n.t('settings.compact')">
+                    Kompakter Modus
+                  </div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings.compact_desc')">
+                    Weniger Abstände, mehr Inhalt sichtbar
+                  </div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingCompact" />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="settings-group">
+              <div class="settings-group-title" x-text="$store.i18n.t('settings.behavior')">
+                Verhalten
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" x-text="$store.i18n.t('settings.refresh')">
+                    Auto-Refresh-Interval
+                  </div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings.refresh_desc')">
+                    Automatische Aktualisierung alle N Sekunden
+                  </div>
+                </div>
+                <div class="setting-input-row">
+                  <input
+                    type="number"
+                    class="setting-input"
+                    id="settingRefreshInterval"
+                    value="5"
+                    min="1"
+                    max="60"
+                    style="width: 70px"
+                  />
+                  <span class="setting-unit">Sek.</span>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" x-text="$store.i18n.t('settings.animations')">
+                    Animationen
+                  </div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings.animations_desc')">
+                    Übergangsanimationen aktivieren
+                  </div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingAnimations" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" x-text="$store.i18n.t('settings_debug')">
+                    Entwicklermodus
+                  </div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings_debug_desc')">
+                    Debug-Logs in der Konsole anzeigen
+                  </div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingDebug" />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Docker -->
+          <div class="settings-section" id="stab-docker">
+            <div class="settings-group">
+              <div class="settings-group-title">Verbindung</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Docker Socket</div>
+                  <div class="setting-desc">Pfad zum Docker Unix-Socket</div>
+                </div>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="settingDockerSocket"
+                  value="/var/run/docker.sock"
+                  style="width: 210px; font-family: monospace; font-size: 12px"
+                />
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Unraid API-URL</div>
+                  <div class="setting-desc">Lokale Unraid-API-Adresse</div>
+                </div>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="settingUnraidApi"
+                  value="http://localhost/api"
+                  style="width: 210px; font-family: monospace; font-size: 12px"
+                />
+              </div>
+            </div>
+            <div class="settings-group">
+              <div class="settings-group-title">Verhalten</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Standard Restart-Policy</div>
+                  <div class="setting-desc">Für neue Container</div>
+                </div>
+                <select class="setting-select" id="settingRestartPolicy">
+                  <option value="unless-stopped" selected>unless-stopped</option>
                   <option value="always">always</option>
+                  <option value="on-failure">on-failure</option>
                   <option value="no">no</option>
                 </select>
               </div>
-            </div>
-            
-            <!-- GAMEPLAY TAB -->
-            <div x-show="activeTab === 'gameplay'" style="display:none;">
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label" for="instMaxPlayers">Max Players</label>
-                  <div class="setting-desc">Maximale Spieleranzahl</div>
+                  <div class="setting-label">Update-Check beim Start</div>
+                  <div class="setting-desc">Auf neue Image-Versionen prüfen</div>
                 </div>
-                <input type="number" id="instMaxPlayers" name="instMaxPlayers" class="setting-input" style="width:160px" x-model="data.maxPlayers" />
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingUpdateCheck" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
               </div>
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label" for="instDifficulty">Difficulty</label>
-                  <div class="setting-desc">Schwierigkeitsgrad</div>
+                  <div class="setting-label">Bestätigung beim Stoppen</div>
+                  <div class="setting-desc">Sicherheitsabfrage vor dem Stoppen</div>
                 </div>
-                <select id="instDifficulty" name="instDifficulty" class="setting-input" style="width:160px" x-model="data.difficulty">
-                  <option value="easy">Easy</option>
-                  <option value="normal">Normal</option>
-                  <option value="hard">Hard</option>
-                  <option value="peaceful">Peaceful</option>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingStopConfirm" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- GameServer -->
+          <div class="settings-section" id="stab-gameserver">
+            <div class="settings-group">
+              <div class="settings-group-title">Standard-Werte (neue Server)</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Datenpfad</div>
+                  <div class="setting-desc">Basis-Pfad für Serverdaten auf dem Host</div>
+                </div>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="settingGsDataPath"
+                  value="/mnt/user/gameservers"
+                  autocomplete="off"
+                  style="width: 210px; font-family: monospace; font-size: 12px"
+                />
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Standard-RAM</div>
+                  <div class="setting-desc">Arbeitsspeicher für neue Gameserver</div>
+                </div>
+                <div class="setting-input-row">
+                  <input
+                    type="number"
+                    class="setting-input"
+                    id="settingGsRam"
+                    value="4096"
+                    min="512"
+                    step="512"
+                    style="width: 90px"
+                  />
+                  <span class="setting-unit">MB</span>
+                </div>
+              </div>
+            </div>
+            <div class="settings-group">
+              <div class="settings-group-title">RCON</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">RCON aktivieren</div>
+                  <div class="setting-desc">Fernsteuerung über RCON</div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingRconEnabled" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">RCON-Port</div>
+                  <div class="setting-desc">Standard-Port für RCON</div>
+                </div>
+                <input
+                  type="number"
+                  class="setting-input"
+                  id="settingRconPort"
+                  value="25575"
+                  style="width: 90px"
+                />
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">RCON-Passwort</div>
+                  <div class="setting-desc">Wird in neue Container eingetragen</div>
+                </div>
+                <input
+                  type="password"
+                  class="setting-input"
+                  id="settingRconPassword"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                  style="width: 180px"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Minecraft -->
+          <div class="settings-section" id="stab-minecraft">
+            <div class="settings-group">
+              <div class="settings-group-title">APIs</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">CurseForge API-Key</div>
+                  <div class="setting-desc">Kostenlos auf curseforge.com erhältlich</div>
+                </div>
+                <input
+                  type="password"
+                  class="setting-input"
+                  id="settingCfApiKey"
+                  placeholder="Schlüssel eingeben..."
+                  autocomplete="new-password"
+                  style="width: 190px"
+                />
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Modrinth API</div>
+                  <div class="setting-desc">Öffentlich — kein Key erforderlich</div>
+                </div>
+                <span class="setting-badge ok"
+                  ><span class="material-icons-round" style="font-size: 14px">check_circle</span>
+                  Verbunden</span
+                >
+              </div>
+            </div>
+            <div class="settings-group">
+              <div class="settings-group-title">Standard-Werte (neue Minecraft-Server)</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Server-Typ</div>
+                  <div class="setting-desc">Vorauswahl im Server-Wizard</div>
+                </div>
+                <select class="setting-select" id="settingMcType">
+                  <option value="PAPER" selected>Paper</option>
+                  <option value="FABRIC">Fabric</option>
+                  <option value="FORGE">Forge</option>
+                  <option value="NEOFORGE">NeoForge</option>
+                  <option value="VANILLA">Vanilla</option>
+                  <option value="SPIGOT">Spigot</option>
                 </select>
               </div>
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label">PVP</div>
-                  <div class="setting-desc">Spieler gegen Spieler</div>
+                  <div class="setting-label">MC-Version</div>
+                  <div class="setting-desc">Vorauswahl im Server-Wizard</div>
                 </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.pvp" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
+                <select class="setting-select" id="settingMcVersion">
+                  <option value="LATEST" selected>Latest</option>
+                  <option value="1.21.4">1.21.4</option>
+                  <option value="1.21.1">1.21.1</option>
+                  <option value="1.20.4">1.20.4</option>
+                  <option value="1.20.1">1.20.1</option>
+                </select>
               </div>
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label">Online Mode (Premium)</div>
-                  <div class="setting-desc">Nur gekaufte Accounts</div>
+                  <div class="setting-label">Max. Spieler</div>
                 </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.onlineMode" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
+                <input
+                  type="number"
+                  class="setting-input"
+                  id="settingMcMaxPlayers"
+                  value="20"
+                  min="1"
+                  max="500"
+                  style="width: 80px"
+                />
               </div>
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label">Whitelist aktivieren</div>
-                  <div class="setting-desc">Nur eingetragene Spieler können beitreten</div>
+                  <div class="setting-label">EULA automatisch akzeptieren</div>
+                  <div class="setting-desc">Fügt EULA=TRUE automatisch hinzu</div>
                 </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.enableWhitelist" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
-              </div>
-              <div class="setting-row" x-show="data.enableWhitelist" style="display:none; border-bottom:none;">
-                <div class="setting-info">
-                  <label class="setting-label" for="instWhitelist">Erlaubte Spieler</label>
-                  <div class="setting-desc">Kommagetrennt (Spieler1,Spieler2)</div>
-                </div>
-                <input type="text" id="instWhitelist" name="instWhitelist" class="setting-input" style="width:240px" placeholder="z.B. Spieler1,Spieler2" x-model="data.whitelist" />
-              </div>
-            </div>
-            
-            <!-- PERFORMANCE TAB -->
-            <div x-show="activeTab === 'performance'" style="display:none;">
-              <div class="setting-row">
-                <div class="setting-info">
-                  <label class="setting-label" for="instInitRam">Initial RAM (-Xms)</label>
-                  <div class="setting-desc">Reservierter Startspeicher</div>
-                </div>
-                <div style="position:relative; width:160px;">
-                  <input type="number" id="instInitRam" name="instInitRam" class="setting-input" style="width:100%; padding-right:32px;" x-model="data.initRam" />
-                  <span style="position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-muted);">MB</span>
-                </div>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info">
-                  <div class="setting-label">Aikar's Flags (G1GC)</div>
-                  <div class="setting-desc">Empfohlen für Paper/Spigot Server</div>
-                </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.aikar" @change="if(data.aikar) data.meowice = false" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info">
-                  <div class="setting-label">MeowIce Flags (ZGC)</div>
-                  <div class="setting-desc">Empfohlen für große Heaps (>12GB) / Fabric</div>
-                </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.meowice" @change="if(data.meowice) data.aikar = false" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info">
-                  <div class="setting-label">Befehlsblöcke</div>
-                  <div class="setting-desc">Command Blocks erlauben</div>
-                </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.cmdBlocks" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info">
-                  <div class="setting-label">Fliegen erlauben</div>
-                  <div class="setting-desc">Verhindert Kicks bei Lags</div>
-                </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.flight" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
-              </div>
-              <div class="setting-row" style="border-bottom:none;">
-                <div class="setting-info">
-                  <div class="setting-label">Rolling Logs</div>
-                  <div class="setting-desc">Server-Logs komprimieren und rotieren</div>
-                </div>
-                <label class="action-toggle">
-                  <input type="checkbox" x-model="data.rollingLogs" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingMcEula" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
                 </label>
               </div>
             </div>
+          </div>
 
-            <!-- CRONJOBS TAB -->
-            <div x-show="activeTab === 'cronjobs'" style="display: none; padding: 16px;">
-              <div style="margin-bottom: 24px;" x-data="{ mode: 'preset' }">
-                <label for="cronJobSelect" style="display:block; font-size:14px; font-weight:600; margin-bottom:12px; color:var(--text-primary);">Neuen Cronjob anlegen</label>
-                <div style="display:flex; gap:12px; align-items:flex-start;">
-                  <div style="flex:1;">
-                    <select id="cronJobSelect" class="setting-input" style="width:100%; height: 40px; padding-top: 0; padding-bottom: 0;">
-                      <option value="restart">Server Neustart</option>
-                      <option value="backup">Automatisches Backup</option>
-                      <option value="update">Mod/Plugin Update</option>
-                    </select>
-                  </div>
-                  <div style="flex:1.5;">
-                    <select id="cronJobMode" name="cronJobMode" class="setting-input" x-model="mode" style="width:100%; height: 40px; padding-top: 0; padding-bottom: 0;">
-                      <option value="preset">Täglich (04:00 Uhr)</option>
-                      <option value="preset2">Täglich (Mitternacht)</option>
-                      <option value="custom">Experte (Cron-Syntax)...</option>
-                    </select>
-                    <input type="text" id="cronJobCustom" name="cronJobCustom" class="setting-input" placeholder="Cron-Syntax (z.B. 0 4 * * *)" x-show="mode === 'custom'" style="width:100%; margin-top:8px; display:none;" />
-                  </div>
-                  <button class="btn btn-primary" style="padding: 0 16px; height: 40px;"><span class="material-icons-round">add</span></button>
+          <!-- Meldungen -->
+          <div class="settings-section" id="stab-notifications">
+            <div class="settings-group">
+              <div class="settings-group-title">Toast-Meldungen</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Meldungen aktivieren</div>
+                  <div class="setting-desc">Toast-Benachrichtigungen global an/aus</div>
                 </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingToastsEnabled" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
               </div>
-              
-              <div style="border: 1px solid var(--border); border-radius: 12px; overflow:hidden;">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; border-bottom: 1px solid var(--border); background: var(--bg-surface);">
-                  <div>
-                    <div style="font-size:14px; font-weight:600; color:var(--text-primary);">Automatisches Backup</div>
-                    <div style="font-size:12px; color:var(--accent); font-family:'JetBrains Mono', monospace; margin-top:4px;">0 * * * * <span style="color:var(--text-secondary);">(Stündlich)</span></div>
-                  </div>
-                  <button class="icon-btn" style="color:var(--red); opacity:0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><span class="material-icons-round" style="font-size:20px;">delete</span></button>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Anzeigedauer</div>
+                  <div class="setting-desc">Wie lange Meldungen sichtbar bleiben</div>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background: var(--bg-surface);">
-                  <div>
-                    <div style="font-size:14px; font-weight:600; color:var(--text-primary);">Server Neustart</div>
-                    <div style="font-size:12px; color:var(--accent); font-family:'JetBrains Mono', monospace; margin-top:4px;">0 4 * * * <span style="color:var(--text-secondary);">(Täglich um 04:00)</span></div>
-                  </div>
-                  <button class="icon-btn" style="color:var(--red); opacity:0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><span class="material-icons-round" style="font-size:20px;">delete</span></button>
+                <div class="setting-input-row">
+                  <input
+                    type="number"
+                    class="setting-input"
+                    id="settingToastDuration"
+                    value="3500"
+                    min="1000"
+                    max="10000"
+                    step="500"
+                    style="width: 90px"
+                  />
+                  <span class="setting-unit">ms</span>
                 </div>
               </div>
             </div>
 
+            <div class="settings-group">
+              <div class="settings-group-title" style="color: var(--text-muted)">
+                Entwickler-Optionen
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Developer Mode (Debug)</div>
+                  <div class="setting-desc">
+                    Erweiterte Logs und API-Outputs in der Browser-Konsole ausgeben
+                  </div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="developerMode" />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="settings-group">
+              <div class="settings-group-title">Ereignisse</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Container gestartet / gestoppt</div>
+                </div>
+                <label class="setting-toggle"
+                  ><input type="checkbox" id="notifContainer" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Spieler tritt bei / verlässt</div>
+                </div>
+                <label class="setting-toggle"
+                  ><input type="checkbox" id="notifPlayer" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Update verfügbar</div>
+                </div>
+                <label class="setting-toggle"
+                  ><input type="checkbox" id="notifUpdate" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Server-Fehler / Crash</div>
+                </div>
+                <label class="setting-toggle"
+                  ><input type="checkbox" id="notifCrash" checked />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module -->
+          <div class="settings-section" id="stab-modules">
+            <div class="settings-group">
+              <div class="settings-group-title">Installierte Module</div>
+              <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px">
+                Aktiviere oder deaktiviere installierte Game-Module im Hub. (Das Basis-Modul
+                "Minecraft" ist immer aktiv.)
+              </p>
+              <div id="settingsModuleList">
+                <!-- Dynamically populated by JS -->
+              </div>
+            </div>
           </div>
         </div>
-        
-        <!-- Right: Preview -->
-        <div style="flex: 1; padding: 24px; display: flex; flex-direction: column; min-height: 0;">
-          <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; flex-shrink: 0;">Docker-Befehl Vorschau</div>
-          <div style="background:#0d0f13; border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:16px; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--green); line-height:1.6; overflow-y:auto; overflow-x:auto; margin-bottom:16px; white-space:pre-wrap; flex: 1; min-height: 0;" x-html="getPreviewCmd()"></div>
-          <div style="background:rgba(249, 115, 22, 0.05); border:1px solid rgba(249, 115, 22, 0.3); border-radius:8px; padding:16px; flex-shrink: 0;">
-            <div style="display:flex; align-items:center; gap:8px; color:var(--accent); font-weight:600; font-size:13px; margin-bottom:8px;">
-              <span class="material-icons-round" style="font-size:16px;">info</span> itzg/minecraft-server
+        <!-- /settings-body -->
+
+        <div class="settings-footer">
+          <button class="btn btn-ghost" id="resetSettingsBtn">
+            <span class="material-icons-round">restart_alt</span> Zurücksetzen
+          </button>
+          <button class="btn btn-primary" id="saveSettingsBtn">
+            <span class="material-icons-round">save</span> Speichern
+          </button>
+        </div>
+      </form>
+    </aside>
+
+    <!-- ── Backup Modal (Mockup) ── -->
+
+    <!-- ── Welcome Modal (Onboarding) ── -->
+    <div
+      class="modal-backdrop"
+      id="welcomeModal"
+      x-data="welcomeModal()"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="welcomeModalTitle"
+    >
+      <div class="modal modal-large glass-card" style="max-width: 500px; text-align: center">
+        <div
+          class="modal-body"
+          style="
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+          "
+        >
+          <!-- Step 1 -->
+          <div
+            x-show="step === 1"
+            style="display: flex; flex-direction: column; align-items: center; gap: 16px"
+          >
+            <div
+              style="
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, var(--accent), #ff6d00);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 10px 25px var(--accent-glow);
+              "
+            >
+              <span class="material-icons-round" style="font-size: 40px; color: #fff"
+                >sports_esports</span
+              >
             </div>
-            <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
-              Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert. Modpack-ID wird als <code style="color:var(--cyan)">CF_API_KEY</code> + <code style="color:var(--cyan)">MODPACK_ID</code> übergeben.
+            <h1 id="welcomeModalTitle" style="margin: 0; font-size: 24px; margin-bottom: 8px">
+              Willkommen zum <span style="color: var(--accent)">MCMM</span> GameServer Hub
+            </h1>
+            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6">
+              Dein zentrales Dashboard für alle Docker-basierten Gameserver auf Unraid. Verwalte
+              deine Container, installiere neue Spiele mit einem Klick und bearbeite Dateien direkt
+              im Browser.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div
+            x-show="step === 2"
+            style="display: flex; flex-direction: column; align-items: center; gap: 16px"
+            style="display: none"
+          >
+            <div
+              style="
+                width: 80px;
+                height: 80px;
+                background: rgba(59, 130, 246, 0.15);
+                color: #3b82f6;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <span class="material-icons-round" style="font-size: 40px">extension</span>
             </div>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px">Game Additions</h2>
+            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6">
+              Egal ob Minecraft, CS2 oder Palworld – die Game Additions Module bieten dir
+              maßgeschneiderte Dashboards für jedes Spiel. Lade Mods herunter, verwalte Spieler und
+              passe Server-Properties an.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div
+            x-show="step === 3"
+            style="display: flex; flex-direction: column; align-items: center; gap: 16px"
+            style="display: none"
+          >
+            <div
+              style="
+                width: 80px;
+                height: 80px;
+                background: rgba(34, 197, 94, 0.15);
+                color: #22c55e;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <span class="material-icons-round" style="font-size: 40px">rocket_launch</span>
+            </div>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px">Bereit zum Start!</h2>
+            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6">
+              Alles ist eingerichtet. Du kannst den Hub nach deinen Wünschen über das Zahnrad-Symbol
+              oben rechts anpassen. Viel Spaß beim Hosten!
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-top: 10px">
+            <div
+              :style="step === 1 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
+              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+            ></div>
+            <div
+              :style="step === 2 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
+              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+            ></div>
+            <div
+              :style="step === 3 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
+              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+            ></div>
           </div>
         </div>
-      </div>
-      
-      <!-- Footer -->
-      <div class="modal-footer" style="padding:20px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:12px; background:var(--bg-base);">
-        <button class="btn btn-ghost" @click="copyCmd()">
-          <span class="material-icons-round">content_copy</span> <span x-text="$store.i18n.t('general.tooltip_msg')">Befehl kopieren</span>
-        </button>
-        <button class="btn btn-ghost" @click="open = false"><span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span></button>
-        <button class="btn btn-primary" style="background:var(--accent); border-color:var(--accent);" @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');">
-          <span class="material-icons-round" x-text="data.isEdit ? 'save' : 'rocket_launch'"></span> <span x-text="data.isEdit ? 'Änderungen speichern' : 'Container starten'"></span>
-        </button>
+        <div
+          class="modal-footer"
+          style="
+            justify-content: center;
+            border-top: none;
+            padding-bottom: 30px;
+            position: relative;
+          "
+        >
+          <button
+            class="btn btn-ghost"
+            x-show="step > 1"
+            @click="step--"
+            style="position: absolute; left: 30px"
+          >
+            Zurück
+          </button>
+          <button class="btn btn-primary" x-show="step < 3" @click="step++" style="width: 200px">
+            Weiter
+          </button>
+          <button
+            class="btn btn-primary"
+            x-show="step === 3"
+            @click="typeof window.finishOnboarding === 'function' ? window.finishOnboarding() : null"
+            style="width: 200px"
+          >
+            Loslegen
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ─── SCRIPTS ──────────────────────────────────────────────────────────── -->
-  <script src="js/vendor/alpine.min.js" defer></script>
-  <script type="module" src="js/utils.js"></script>
-  <script type="module" src="js/i18n.js"></script>
-  <script type="module" src="js/alpine-store.js"></script>
-  <script type="module" src="js/docker.js"></script>
-  <script type="module" src="js/gameserver.js"></script>
-  <script type="module" src="js/gameAdditions.js"></script>
-  <script type="module" src="js/players.js"></script>
-  <script type="module" src="js/settings.js"></script>
-  <script type="module" src="js/main.js"></script>
-</body>
+    <!-- Docker Config Modal (Alpine) -->
+    <div
+      class="modal-backdrop"
+      id="configModalAlpine"
+      x-data
+      x-show="$store.modals.config.open"
+      style="display: none"
+      x-transition
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="configModalTitle"
+    >
+      <div class="modal glass-card" @click.away="$store.modals.config.open = false">
+        <div class="modal-header">
+          <h2 id="configModalTitle" x-text="$store.i18n.t('config_title')">Einstellungen</h2>
+          <button
+            class="icon-btn"
+            @click="$store.modals.config.open = false"
+            aria-label="Schließen"
+          >
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="cfgContName" x-text="$store.i18n.t('general.container')"
+              >Container Name</label
+            >
+            <input
+              id="cfgContName"
+              type="text"
+              class="form-input"
+              x-model="$store.modals.config.data.name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="cfgContPort">Port (Host)</label>
+            <input
+              id="cfgContPort"
+              type="number"
+              class="form-input"
+              x-model="$store.modals.config.data.port"
+            />
+          </div>
+          <div class="form-group">
+            <label for="cfgContRam">Max. RAM (MB)</label>
+            <input
+              id="cfgContRam"
+              type="number"
+              class="form-input"
+              x-model="$store.modals.config.data.ram"
+            />
+          </div>
+          <div class="form-group">
+            <label for="cfgContRestart">Restart Policy</label>
+            <select
+              id="cfgContRestart"
+              class="form-input"
+              style="
+                width: 100%;
+                background: var(--bg-input);
+                border: 1px solid var(--border);
+                color: var(--text-primary);
+                padding: 8px;
+                border-radius: 6px;
+                outline: none;
+                -webkit-appearance: none;
+                appearance: none;
+              "
+            >
+              <option>unless-stopped</option>
+              <option>always</option>
+              <option>no</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer" style="margin-top: 20px">
+          <button class="btn btn-ghost" @click="$store.modals.config.open = false">
+            <span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span>
+          </button>
+          <button
+            class="btn btn-primary"
+            @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings.saved') || 'Einstellungen gespeichert!') : 'Einstellungen gespeichert!', 'success');"
+          >
+            <span class="material-icons-round">save</span>
+            <span x-text="$store.i18n.t('btn.save')">Speichern</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Server Install Modal (Alpine) -->
+    <div
+      class="modal-backdrop"
+      id="installModalAlpine"
+      x-data="installModal()"
+      @open-install-modal.window="openModal($event.detail)"
+      x-show="open"
+      style="display: none"
+      x-transition
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="installModalTitle"
+    >
+      <div
+        class="modal-content"
+        @click.away="open = false"
+        style="
+          max-width: 1050px;
+          padding: 0;
+          overflow: hidden;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--border);
+          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+          background: var(--bg-base);
+          backdrop-filter: none;
+        "
+      >
+        <!-- Header -->
+        <div
+          class="modal-header"
+          style="
+            background: var(--bg-card);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+          "
+        >
+          <div
+            style="
+              background: var(--accent-dim);
+              color: var(--accent);
+              width: 48px;
+              height: 48px;
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            "
+          >
+            <span class="material-icons-round" style="font-size: 24px">dns</span>
+          </div>
+          <div style="flex: 1">
+            <h2 id="installModalTitle" style="margin: 0; font-size: 18px; color: #fff">
+              <span x-text="data.isEdit ? 'Einstellungen' : 'Neuen Server'"></span>:
+              <span x-text="data.name"></span>
+            </h2>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px">
+              itzg/minecraft-server · von <span x-text="data.author"></span>
+            </div>
+          </div>
+          <button class="icon-btn" @click="open = false" aria-label="Schließen">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+
+        <div style="display: flex; height: 600px">
+          <!-- Left: Form -->
+          <div
+            class="dc-form-col"
+            style="flex: 1.5; border-right: 1px solid var(--border); background: var(--bg-base)"
+          >
+            <!-- Tab Navigation -->
+            <div class="dc-tab-nav" style="padding-left: 16px">
+              <button
+                class="dc-tab-btn"
+                @click="activeTab = 'config'"
+                :class="activeTab === 'config' ? 'active' : ''"
+                style="display: flex; align-items: center; gap: 6px"
+              >
+                <span class="material-icons-round" style="font-size: 16px">dns</span> Basis
+              </button>
+              <button
+                class="dc-tab-btn"
+                @click="activeTab = 'gameplay'"
+                :class="activeTab === 'gameplay' ? 'active' : ''"
+                style="display: flex; align-items: center; gap: 6px"
+              >
+                <span class="material-icons-round" style="font-size: 16px">sports_esports</span>
+                Gameplay
+              </button>
+              <button
+                class="dc-tab-btn"
+                @click="activeTab = 'performance'"
+                :class="activeTab === 'performance' ? 'active' : ''"
+                style="display: flex; align-items: center; gap: 6px"
+              >
+                <span class="material-icons-round" style="font-size: 16px">speed</span> Performance
+              </button>
+              <button
+                class="dc-tab-btn"
+                @click="activeTab = 'cronjobs'"
+                :class="activeTab === 'cronjobs' ? 'active' : ''"
+                style="display: flex; align-items: center; gap: 6px"
+              >
+                <span class="material-icons-round" style="font-size: 16px">schedule</span> Aufgaben
+              </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="dc-tab-content">
+              <!-- CONFIG TAB -->
+              <div x-show="activeTab === 'config'">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instSafeName">Container-Name</label>
+                    <div class="setting-desc">Eindeutiger Name in Docker</div>
+                  </div>
+                  <input
+                    type="text"
+                    id="instSafeName"
+                    name="instSafeName"
+                    class="setting-input"
+                    style="width: 240px"
+                    x-model="data.safeName"
+                  />
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instServerName">Server-Name</label>
+                    <div class="setting-desc">Name im Spiel (server.properties)</div>
+                  </div>
+                  <input
+                    type="text"
+                    id="instServerName"
+                    name="instServerName"
+                    class="setting-input"
+                    style="width: 240px"
+                    x-model="data.serverName"
+                  />
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instPort">Server-Port</label>
+                    <div class="setting-desc">Minecraft Verbindungsport</div>
+                  </div>
+                  <input
+                    type="number"
+                    id="instPort"
+                    name="instPort"
+                    class="setting-input"
+                    style="width: 240px"
+                    x-model="data.port"
+                  />
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instIconUrl">Server-Icon URL</label>
+                    <div class="setting-desc">Optional (z.B. https://.../icon.png)</div>
+                  </div>
+                  <input
+                    type="text"
+                    id="instIconUrl"
+                    name="instIconUrl"
+                    class="setting-input"
+                    style="width: 240px"
+                    placeholder="URL zum Icon..."
+                  />
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instRam">RAM (MB)</label>
+                    <div class="setting-desc">Für den Java-Heap (-Xms / -Xmx)</div>
+                  </div>
+                  <div style="position: relative; width: 240px">
+                    <input
+                      type="number"
+                      id="instRam"
+                      name="instRam"
+                      class="setting-input"
+                      style="width: 100%; padding-right: 32px"
+                      x-model="data.ram"
+                    />
+                    <span
+                      style="
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 12px;
+                        color: var(--text-muted);
+                      "
+                      >MB</span
+                    >
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instDataPath">Datenpfad (Host)</label>
+                    <div class="setting-desc">Bind-Mount für Serverdaten</div>
+                  </div>
+                  <input
+                    type="text"
+                    id="instDataPath"
+                    name="instDataPath"
+                    class="setting-input"
+                    style="width: 240px; font-family: 'JetBrains Mono', monospace; font-size: 11px"
+                    x-model="data.path"
+                  />
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instServerType">Server-Typ</label>
+                    <div class="setting-desc">Servertyp (auto aus Modpack)</div>
+                  </div>
+                  <select
+                    id="instServerType"
+                    name="instServerType"
+                    class="setting-input"
+                    style="width: 240px"
+                    x-model="data.type"
+                  >
+                    <option value="AUTO">Auto (aus Modpack)</option>
+                    <option value="VANILLA">Vanilla</option>
+                    <option value="PAPER">Paper</option>
+                    <option value="FABRIC">Fabric</option>
+                    <option value="FORGE">Forge</option>
+                    <option value="NEOFORGE">NeoForge</option>
+                  </select>
+                </div>
+
+                <div class="setting-row" style="border-bottom: none">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instRestartPolicy">Restart-Policy</label>
+                    <div class="setting-desc">Wann soll neugestartet werden?</div>
+                  </div>
+                  <select
+                    id="instRestartPolicy"
+                    name="instRestartPolicy"
+                    class="setting-input"
+                    style="width: 240px"
+                    x-model="data.restart"
+                  >
+                    <option value="unless-stopped">unless-stopped</option>
+                    <option value="always">always</option>
+                    <option value="no">no</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- GAMEPLAY TAB -->
+              <div x-show="activeTab === 'gameplay'" style="display: none">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instMaxPlayers">Max Players</label>
+                    <div class="setting-desc">Maximale Spieleranzahl</div>
+                  </div>
+                  <input
+                    type="number"
+                    id="instMaxPlayers"
+                    name="instMaxPlayers"
+                    class="setting-input"
+                    style="width: 160px"
+                    x-model="data.maxPlayers"
+                  />
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instDifficulty">Difficulty</label>
+                    <div class="setting-desc">Schwierigkeitsgrad</div>
+                  </div>
+                  <select
+                    id="instDifficulty"
+                    name="instDifficulty"
+                    class="setting-input"
+                    style="width: 160px"
+                    x-model="data.difficulty"
+                  >
+                    <option value="easy">Easy</option>
+                    <option value="normal">Normal</option>
+                    <option value="hard">Hard</option>
+                    <option value="peaceful">Peaceful</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">PVP</div>
+                    <div class="setting-desc">Spieler gegen Spieler</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input type="checkbox" x-model="data.pvp" />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Online Mode (Premium)</div>
+                    <div class="setting-desc">Nur gekaufte Accounts</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input type="checkbox" x-model="data.onlineMode" />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Whitelist aktivieren</div>
+                    <div class="setting-desc">Nur eingetragene Spieler können beitreten</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input type="checkbox" x-model="data.enableWhitelist" />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+                <div
+                  class="setting-row"
+                  x-show="data.enableWhitelist"
+                  style="display: none; border-bottom: none"
+                >
+                  <div class="setting-info">
+                    <label class="setting-label" for="instWhitelist">Erlaubte Spieler</label>
+                    <div class="setting-desc">Kommagetrennt (Spieler1,Spieler2)</div>
+                  </div>
+                  <input
+                    type="text"
+                    id="instWhitelist"
+                    name="instWhitelist"
+                    class="setting-input"
+                    style="width: 240px"
+                    placeholder="z.B. Spieler1,Spieler2"
+                    x-model="data.whitelist"
+                  />
+                </div>
+              </div>
+
+              <!-- PERFORMANCE TAB -->
+              <div x-show="activeTab === 'performance'" style="display: none">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <label class="setting-label" for="instInitRam">Initial RAM (-Xms)</label>
+                    <div class="setting-desc">Reservierter Startspeicher</div>
+                  </div>
+                  <div style="position: relative; width: 160px">
+                    <input
+                      type="number"
+                      id="instInitRam"
+                      name="instInitRam"
+                      class="setting-input"
+                      style="width: 100%; padding-right: 32px"
+                      x-model="data.initRam"
+                    />
+                    <span
+                      style="
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 12px;
+                        color: var(--text-muted);
+                      "
+                      >MB</span
+                    >
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Aikar's Flags (G1GC)</div>
+                    <div class="setting-desc">Empfohlen für Paper/Spigot Server</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input
+                      type="checkbox"
+                      x-model="data.aikar"
+                      @change="if(data.aikar) data.meowice = false"
+                    />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">MeowIce Flags (ZGC)</div>
+                    <div class="setting-desc">Empfohlen für große Heaps (>12GB) / Fabric</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input
+                      type="checkbox"
+                      x-model="data.meowice"
+                      @change="if(data.meowice) data.aikar = false"
+                    />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Befehlsblöcke</div>
+                    <div class="setting-desc">Command Blocks erlauben</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input type="checkbox" x-model="data.cmdBlocks" />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">Fliegen erlauben</div>
+                    <div class="setting-desc">Verhindert Kicks bei Lags</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input type="checkbox" x-model="data.flight" />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+                <div class="setting-row" style="border-bottom: none">
+                  <div class="setting-info">
+                    <div class="setting-label">Rolling Logs</div>
+                    <div class="setting-desc">Server-Logs komprimieren und rotieren</div>
+                  </div>
+                  <label class="action-toggle">
+                    <input type="checkbox" x-model="data.rollingLogs" />
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CRONJOBS TAB -->
+              <div x-show="activeTab === 'cronjobs'" style="display: none; padding: 16px">
+                <div style="margin-bottom: 24px" x-data="{ mode: 'preset' }">
+                  <label
+                    for="cronJobSelect"
+                    style="
+                      display: block;
+                      font-size: 14px;
+                      font-weight: 600;
+                      margin-bottom: 12px;
+                      color: var(--text-primary);
+                    "
+                    >Neuen Cronjob anlegen</label
+                  >
+                  <div style="display: flex; gap: 12px; align-items: flex-start">
+                    <div style="flex: 1">
+                      <select
+                        id="cronJobSelect"
+                        class="setting-input"
+                        style="width: 100%; height: 40px; padding-top: 0; padding-bottom: 0"
+                      >
+                        <option value="restart">Server Neustart</option>
+                        <option value="backup">Automatisches Backup</option>
+                        <option value="update">Mod/Plugin Update</option>
+                      </select>
+                    </div>
+                    <div style="flex: 1.5">
+                      <select
+                        id="cronJobMode"
+                        name="cronJobMode"
+                        class="setting-input"
+                        x-model="mode"
+                        style="width: 100%; height: 40px; padding-top: 0; padding-bottom: 0"
+                      >
+                        <option value="preset">Täglich (04:00 Uhr)</option>
+                        <option value="preset2">Täglich (Mitternacht)</option>
+                        <option value="custom">Experte (Cron-Syntax)...</option>
+                      </select>
+                      <input
+                        type="text"
+                        id="cronJobCustom"
+                        name="cronJobCustom"
+                        class="setting-input"
+                        placeholder="Cron-Syntax (z.B. 0 4 * * *)"
+                        x-show="mode === 'custom'"
+                        style="width: 100%; margin-top: 8px; display: none"
+                      />
+                    </div>
+                    <button class="btn btn-primary" style="padding: 0 16px; height: 40px">
+                      <span class="material-icons-round">add</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div style="border: 1px solid var(--border); border-radius: 12px; overflow: hidden">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      padding: 16px;
+                      border-bottom: 1px solid var(--border);
+                      background: var(--bg-surface);
+                    "
+                  >
+                    <div>
+                      <div style="font-size: 14px; font-weight: 600; color: var(--text-primary)">
+                        Automatisches Backup
+                      </div>
+                      <div
+                        style="
+                          font-size: 12px;
+                          color: var(--accent);
+                          font-family: 'JetBrains Mono', monospace;
+                          margin-top: 4px;
+                        "
+                      >
+                        0 * * * * <span style="color: var(--text-secondary)">(Stündlich)</span>
+                      </div>
+                    </div>
+                    <button
+                      class="icon-btn"
+                      style="color: var(--red); opacity: 0.7"
+                      onmouseover="this.style.opacity = 1"
+                      onmouseout="this.style.opacity = 0.7"
+                    >
+                      <span class="material-icons-round" style="font-size: 20px">delete</span>
+                    </button>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      padding: 16px;
+                      background: var(--bg-surface);
+                    "
+                  >
+                    <div>
+                      <div style="font-size: 14px; font-weight: 600; color: var(--text-primary)">
+                        Server Neustart
+                      </div>
+                      <div
+                        style="
+                          font-size: 12px;
+                          color: var(--accent);
+                          font-family: 'JetBrains Mono', monospace;
+                          margin-top: 4px;
+                        "
+                      >
+                        0 4 * * *
+                        <span style="color: var(--text-secondary)">(Täglich um 04:00)</span>
+                      </div>
+                    </div>
+                    <button
+                      class="icon-btn"
+                      style="color: var(--red); opacity: 0.7"
+                      onmouseover="this.style.opacity = 1"
+                      onmouseout="this.style.opacity = 0.7"
+                    >
+                      <span class="material-icons-round" style="font-size: 20px">delete</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Preview -->
+          <div style="flex: 1; padding: 24px; display: flex; flex-direction: column; min-height: 0">
+            <div
+              style="
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 16px;
+                flex-shrink: 0;
+              "
+            >
+              Docker-Befehl Vorschau
+            </div>
+            <div
+              style="
+                background: #0d0f13;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: 12px;
+                padding: 16px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 12px;
+                color: var(--green);
+                line-height: 1.6;
+                overflow-y: auto;
+                overflow-x: auto;
+                margin-bottom: 16px;
+                white-space: pre-wrap;
+                flex: 1;
+                min-height: 0;
+              "
+              x-html="getPreviewCmd()"
+            ></div>
+            <div
+              style="
+                background: rgba(249, 115, 22, 0.05);
+                border: 1px solid rgba(249, 115, 22, 0.3);
+                border-radius: 8px;
+                padding: 16px;
+                flex-shrink: 0;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  color: var(--accent);
+                  font-weight: 600;
+                  font-size: 13px;
+                  margin-bottom: 8px;
+                "
+              >
+                <span class="material-icons-round" style="font-size: 16px">info</span>
+                itzg/minecraft-server
+              </div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.5">
+                Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert. Modpack-ID
+                wird als <code style="color: var(--cyan)">CF_API_KEY</code> +
+                <code style="color: var(--cyan)">MODPACK_ID</code> übergeben.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+          class="modal-footer"
+          style="
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: var(--bg-base);
+          "
+        >
+          <button class="btn btn-ghost" @click="copyCmd()">
+            <span class="material-icons-round">content_copy</span>
+            <span x-text="$store.i18n.t('general.tooltip_msg')">Befehl kopieren</span>
+          </button>
+          <button class="btn btn-ghost" @click="open = false">
+            <span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span>
+          </button>
+          <button
+            class="btn btn-primary"
+            style="background: var(--accent); border-color: var(--accent)"
+            @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');"
+          >
+            <span
+              class="material-icons-round"
+              x-text="data.isEdit ? 'save' : 'rocket_launch'"
+            ></span>
+            <span x-text="data.isEdit ? 'Änderungen speichern' : 'Container starten'"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SCRIPTS ──────────────────────────────────────────────────────────── -->
+    <script src="js/vendor/alpine.min.js" defer></script>
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/i18n.js"></script>
+    <script type="module" src="js/alpine-store.js"></script>
+    <script type="module" src="js/docker.js"></script>
+    <script type="module" src="js/gameserver.js"></script>
+    <script type="module" src="js/gameAdditions.js"></script>
+    <script type="module" src="js/players.js"></script>
+    <script type="module" src="js/settings.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
 </html>

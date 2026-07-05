@@ -6,17 +6,17 @@
 export const GameAdditions = {
   games: {},
   state: {
-    game:     'minecraft', // default
-    source:   'modrinth',
+    game: 'minecraft', // default
+    source: 'modrinth',
     category: 'modpacks',
-    loader:   'all',
-    version:  '',
-    sort:     'downloads',
-    query:    '',
-    page:     0,
-    perPage:  24,
-    total:    0,
-    loading:  false,
+    loader: 'all',
+    version: '',
+    sort: 'downloads',
+    query: '',
+    page: 0,
+    perPage: 24,
+    total: 0,
+    loading: false,
   },
 
   /**
@@ -32,18 +32,18 @@ export const GameAdditions = {
   init() {
     this.buildGameSelector();
     this.bindEvents();
-    
+
     // Set default game if not found
     if (!this.games[this.state.game]) {
       this.state.game = Object.keys(this.games)[0];
     }
-    
+
     // Trigger initial select logic for the default game
     const mod = this.games[this.state.game];
     if (mod && mod.onSelect) {
       mod.onSelect(this.state);
     }
-    
+
     this.refresh();
   },
 
@@ -58,12 +58,13 @@ export const GameAdditions = {
     if (grid) {
       grid.innerHTML = `<div class="loading-grid" style="grid-column:1/-1">${this.skeletonGrid(8)}</div>`;
     }
-    
+
     const meta = document.getElementById('mcSearchMeta');
-    if (meta) meta.textContent = typeof t === 'function' ? (t('general.loading') || 'Lädt...') : 'Lädt...';
+    if (meta)
+      meta.textContent = typeof t === 'function' ? t('general.loading') || 'Lädt...' : 'Lädt...';
 
     const gameModule = this.games[this.state.game];
-    
+
     try {
       if (gameModule && gameModule.fetchContent) {
         await gameModule.fetchContent(this.state);
@@ -97,7 +98,7 @@ export const GameAdditions = {
       const stored = localStorage.getItem('gs_hub_settings');
       if (stored) disabled = JSON.parse(stored).disabledModules || [];
     } catch (e) {}
-    
+
     for (const [id, game] of Object.entries(this.games)) {
       if (id !== 'minecraft' && disabled.includes(id)) continue;
 
@@ -111,7 +112,7 @@ export const GameAdditions = {
       `;
       container.appendChild(el);
     }
-    
+
     if (disabled.includes(this.state.game) && this.state.game !== 'minecraft') {
       this.state.game = 'minecraft';
       this.refresh();
@@ -125,10 +126,10 @@ export const GameAdditions = {
     // 1. Source toggle
     const sourceToggle = document.getElementById('sourceToggle');
     if (sourceToggle) {
-      sourceToggle.addEventListener('click', e => {
+      sourceToggle.addEventListener('click', (e) => {
         const btn = e.target.closest('.source-btn');
         if (!btn) return;
-        sourceToggle.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
+        sourceToggle.querySelectorAll('.source-btn').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         this.state.source = btn.dataset.source;
         this.state.page = 0;
@@ -139,35 +140,37 @@ export const GameAdditions = {
     // 2. Game Selector
     const gameSelector = document.getElementById('hubGameSelector');
     if (gameSelector) {
-      gameSelector.addEventListener('click', e => {
+      gameSelector.addEventListener('click', (e) => {
         const card = e.target.closest('.wizard-game-card');
         if (!card) return;
-        
-        gameSelector.querySelectorAll('.wizard-game-card').forEach(c => c.classList.remove('selected'));
+
+        gameSelector
+          .querySelectorAll('.wizard-game-card')
+          .forEach((c) => c.classList.remove('selected'));
         card.classList.add('selected');
-        
+
         const gameId = card.dataset.hubgame;
         this.state.game = gameId;
         this.state.page = 0;
-        
+
         // Let module adapt UI
         const mod = this.games[gameId];
         if (mod && mod.onSelect) {
           mod.onSelect(this.state);
         }
-        
+
         this.refresh();
       });
     }
 
     // 3. Category & Loader Filters
-    ['categoryFilter', 'loaderFilter'].forEach(id => {
+    ['categoryFilter', 'loaderFilter'].forEach((id) => {
       const group = document.getElementById(id);
       if (group) {
-        group.addEventListener('click', e => {
+        group.addEventListener('click', (e) => {
           const btn = e.target.closest('.filter-chip');
           if (!btn) return;
-          group.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+          group.querySelectorAll('.filter-chip').forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
           if (id === 'categoryFilter') this.state.category = btn.dataset.cat;
           if (id === 'loaderFilter') this.state.loader = btn.dataset.loader;
@@ -178,12 +181,12 @@ export const GameAdditions = {
     });
 
     // 4. Select dropdowns
-    ['versionFilter', 'sortFilter'].forEach(id => {
+    ['versionFilter', 'sortFilter'].forEach((id) => {
       const el = document.getElementById(id);
       if (el) {
-        el.addEventListener('change', e => {
+        el.addEventListener('change', (e) => {
           if (id === 'versionFilter') this.state.version = e.target.value;
-          if (id === 'sortFilter')    this.state.sort = e.target.value;
+          if (id === 'sortFilter') this.state.sort = e.target.value;
           this.state.page = 0;
           this.refresh();
         });
@@ -194,7 +197,7 @@ export const GameAdditions = {
     const searchInput = document.getElementById('mcSearch');
     if (searchInput) {
       let debounce;
-      searchInput.addEventListener('input', e => {
+      searchInput.addEventListener('input', (e) => {
         clearTimeout(debounce);
         this.state.query = e.target.value.trim();
         debounce = setTimeout(() => {
@@ -207,7 +210,7 @@ export const GameAdditions = {
     // 6. Pagination & Card Clicks
     const grid = document.getElementById('mcGrid');
     if (grid) {
-      grid.addEventListener('click', e => {
+      const handleAction = (e) => {
         if (e.target.closest('.mc-pagination .btn:not(:disabled)')) {
           const btn = e.target.closest('.mc-pagination .btn');
           const isNext = btn.classList.contains('next');
@@ -218,20 +221,27 @@ export const GameAdditions = {
 
         const card = e.target.closest('.mc-card[data-id]');
         if (card) {
-          if (window.Alpine) {
-            Alpine.store('modals').install.data = {
-              ...Alpine.store('modals').install.data,
-              id: card.dataset.id,
-              name: card.dataset.name,
-              author: card.dataset.author || 'Unknown',
-              isEdit: false
-            };
-            Alpine.store('modals').install.open = true;
-          }
+          window.dispatchEvent(
+            new CustomEvent('open-install-modal', {
+              detail: {
+                id: card.dataset.id,
+                name: card.dataset.name,
+                author: card.dataset.author || 'Unknown',
+                isEdit: false,
+              },
+            })
+          );
+        }
+      };
+
+      grid.addEventListener('click', handleAction);
+      grid.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleAction(e);
         }
       });
     }
-
   },
 
   /**
@@ -242,7 +252,7 @@ export const GameAdditions = {
       this.renderCurseForgeApiKeyWarning();
       return;
     }
-    
+
     const offset = state.page * state.perPage;
     const params = new URLSearchParams({
       gameId: gameId,
@@ -255,7 +265,7 @@ export const GameAdditions = {
     }
 
     const headers = {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'x-api-key': appSettings.cfApiKey,
     };
 
@@ -330,15 +340,16 @@ ${JSON.stringify(body, null, 2)}
   renderCurseForgeCards(data) {
     const grid = document.getElementById('mcGrid');
     if (!grid) return;
-    grid.innerHTML = data.map(mod => {
-      const thumb = (mod.logo && mod.logo.thumbnailUrl) ? mod.logo.thumbnailUrl : '';
-      return `
-      <div class="mc-card" data-id="${mod.id}" data-name="${mod.name}">
+    grid.innerHTML = data
+      .map((mod) => {
+        const thumb = mod.logo && mod.logo.thumbnailUrl ? mod.logo.thumbnailUrl : '';
+        return `
+      <div class="mc-card" data-id="${mod.id}" data-name="${mod.name}" role="button" tabindex="0">
         <div class="mc-card-top">
           ${thumb ? `<img src="${thumb}" alt="${mod.name}" class="mc-card-icon" />` : `<div class="mc-card-icon-placeholder"><span class="material-icons-round">extension</span></div>`}
           <div class="mc-card-header-info">
             <div class="mc-card-name" title="${mod.name}">${mod.name}</div>
-            <div class="mc-card-author">by ${mod.authors && mod.authors.length > 0 ? mod.authors.map(a => a.name).join(', ') : 'Unknown'}</div>
+            <div class="mc-card-author">by ${mod.authors && mod.authors.length > 0 ? mod.authors.map((a) => a.name).join(', ') : 'Unknown'}</div>
           </div>
         </div>
         
@@ -354,13 +365,14 @@ ${JSON.stringify(body, null, 2)}
         </div>
       </div>
       `;
-    }).join('');
+      })
+      .join('');
   },
 
   renderPagination(state) {
     const grid = document.getElementById('mcGrid');
     if (!grid || state.total <= state.perPage) return;
-    
+
     const maxPage = Math.ceil(state.total / state.perPage) - 1;
     const paginationHtml = `
       <div class="mc-pagination" style="grid-column: 1 / -1; width: 100%; display:flex; justify-content:center; align-items:center; gap:16px; margin-top:32px; padding-bottom:24px;">
@@ -377,7 +389,10 @@ ${JSON.stringify(body, null, 2)}
   },
 
   skeletonGrid(count) {
-    return Array(count).fill('').map(() => `
+    return Array(count)
+      .fill('')
+      .map(
+        () => `
       <div class="mc-card skeleton" style="border:1px solid rgba(255,255,255,0.05); background:var(--bg-card);">
         <div class="mc-card-header">
           <div class="skeleton-icon" style="width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.1)"></div>
@@ -389,6 +404,8 @@ ${JSON.stringify(body, null, 2)}
         <div style="width:100%;height:12px;background:rgba(255,255,255,0.05);margin-bottom:8px;border-radius:4px;margin-top:12px;"></div>
         <div style="width:80%;height:12px;background:rgba(255,255,255,0.05);border-radius:4px;"></div>
       </div>
-    `).join('');
-  }
+    `
+      )
+      .join('');
+  },
 };

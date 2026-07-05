@@ -8,7 +8,15 @@
   border-bottom: 1px solid var(--border);
 }
 
-.list-entry:last-child { border-bottom: none; }
+.list-entry:last-child {
+  border-bottom: none;
+}
 
-.list-entry-name { font-weight: 600; flex: 1; }
-.list-entry-meta { font-size: 11px; color: var(--text-muted); }
+.list-entry-name {
+  font-weight: 600;
+  flex: 1;
+}
+.list-entry-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}

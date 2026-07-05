@@ -11,8 +11,12 @@
   top: calc(var(--topbar-h) + 24px);
 }
 
-.sidebar-section { margin-bottom: 20px; }
-.sidebar-section:last-child { margin-bottom: 0; }
+.sidebar-section {
+  margin-bottom: 20px;
+}
+.sidebar-section:last-child {
+  margin-bottom: 0;
+}
 
 .sidebar-label {
   display: block;
@@ -47,7 +51,10 @@
   text-align: left;
 }
 
-.filter-chip:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.filter-chip:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
 
 .filter-chip.active {
   background: var(--accent-dim);
@@ -81,7 +88,9 @@
   padding: 6px 10px;
 }
 
-.filter-select:focus { border-color: var(--accent); }
+.filter-select:focus {
+  border-color: var(--accent);
+}
 
 /* Loader Tags */
 .mc-tag {
@@ -94,9 +103,33 @@
   border: 1px solid var(--border);
 }
 
-.mc-tag.fabric  { background: var(--blue-dim); color: var(--blue); border-color: rgba(59,130,246,0.3); }
-.mc-tag.forge   { background: var(--yellow-dim); color: var(--yellow); border-color: rgba(234,179,8,0.3); }
-.mc-tag.neoforge { background: var(--orange-dim, rgba(249,115,22,0.15)); color: var(--accent); border-color: rgba(249,115,22,0.3); }
-.mc-tag.paper   { background: var(--green-dim); color: var(--green); border-color: var(--green-dim); }
-.mc-tag.quilt   { background: var(--purple-dim); color: var(--purple); border-color: rgba(168,85,247,0.3); }
-.mc-tag.spigot  { background: var(--red-dim); color: var(--red); border-color: var(--red-dim); }
+.mc-tag.fabric {
+  background: var(--blue-dim);
+  color: var(--blue);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+.mc-tag.forge {
+  background: var(--yellow-dim);
+  color: var(--yellow);
+  border-color: rgba(234, 179, 8, 0.3);
+}
+.mc-tag.neoforge {
+  background: var(--orange-dim, rgba(249, 115, 22, 0.15));
+  color: var(--accent);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+.mc-tag.paper {
+  background: var(--green-dim);
+  color: var(--green);
+  border-color: var(--green-dim);
+}
+.mc-tag.quilt {
+  background: var(--purple-dim);
+  color: var(--purple);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+.mc-tag.spigot {
+  background: var(--red-dim);
+  color: var(--red);
+  border-color: var(--red-dim);
+}

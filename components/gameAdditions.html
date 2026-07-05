@@ -1,681 +1,893 @@
-    <section class="tab-panel" id="panel-game-additions" role="tabpanel" aria-labelledby="tab-game-additions" x-data>
-      <div class="panel-header" style="flex-direction:column; align-items:flex-start; gap:20px;">
-        <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-          <div class="panel-title-group">
-            <h1 x-text="$store.i18n.t('general.ga_title')">Game Additions</h1>
-            <p class="panel-subtitle" x-text="$store.i18n.t('general.ga_subtitle')">Entdecke Modpacks, Mods und Plugins für deine Server</p>
-          </div>
-          <div class="panel-actions">
-            <div class="source-toggle" id="sourceToggle">
-              <button class="source-btn active" data-source="modrinth">Modrinth</button>
-              <button class="source-btn" data-source="curseforge">CurseForge</button>
-              <button class="source-btn" data-source="ftb">FTB</button>
-            </div>
-          </div>
+<section
+  class="tab-panel"
+  id="panel-game-additions"
+  role="tabpanel"
+  aria-labelledby="tab-game-additions"
+  x-data
+>
+  <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 20px">
+    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center">
+      <div class="panel-title-group">
+        <h1 x-text="$store.i18n.t('general.ga_title')">Game Additions</h1>
+        <p class="panel-subtitle" x-text="$store.i18n.t('general.ga_subtitle')">
+          Entdecke Modpacks, Mods und Plugins für deine Server
+        </p>
+      </div>
+      <div class="panel-actions">
+        <div class="source-toggle" id="sourceToggle">
+          <button class="source-btn active" data-source="modrinth">Modrinth</button>
+          <button class="source-btn" data-source="curseforge">CurseForge</button>
+          <button class="source-btn" data-source="ftb">FTB</button>
         </div>
+      </div>
+    </div>
 
-        <!-- Multi-Game Selector (Filled dynamically by gameAdditions.js) -->
-        <div id="hubGameSelector" style="display:flex; gap:12px; width:100%; overflow-x:auto; padding-bottom:4px;">
+    <!-- Multi-Game Selector (Filled dynamically by gameAdditions.js) -->
+    <div
+      id="hubGameSelector"
+      style="display: flex; gap: 12px; width: 100%; overflow-x: auto; padding-bottom: 4px"
+    ></div>
+  </div>
+
+  <div class="mc-layout">
+    <!-- Sidebar Filter -->
+    <aside class="mc-sidebar" id="mcSidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label" x-text="$store.i18n.t('general.filter_category')">Kategorie</div>
+        <div class="filter-group" id="categoryFilter">
+          <button class="filter-chip active" data-cat="modpacks">
+            📦 <span x-text="$store.i18n.t('general.filter_modpacks')">Modpacks</span>
+          </button>
+          <button class="filter-chip" data-cat="mods">
+            🔧 <span x-text="$store.i18n.t('general.filter_mods')">Mods</span>
+          </button>
+          <button class="filter-chip" data-cat="plugins">
+            🔌 <span x-text="$store.i18n.t('general.filter_plugins')">Plugins</span>
+          </button>
+          <button class="filter-chip" data-cat="datapacks">📋 Datenpakete</button>
+          <button class="filter-chip" data-cat="resourcepacks">🎨 Resource Packs</button>
+          <button class="filter-chip" data-cat="shaders">✨ Shader</button>
         </div>
       </div>
 
-      <div class="mc-layout">
-        <!-- Sidebar Filter -->
-        <aside class="mc-sidebar" id="mcSidebar">
-          <div class="sidebar-section">
-            <div class="sidebar-label" x-text="$store.i18n.t('general.filter_category')">Kategorie</div>
-            <div class="filter-group" id="categoryFilter">
-              <button class="filter-chip active" data-cat="modpacks">📦 <span
-                  x-text="$store.i18n.t('general.filter_modpacks')">Modpacks</span></button>
-              <button class="filter-chip" data-cat="mods">🔧 <span x-text="$store.i18n.t('general.filter_mods')">Mods</span></button>
-              <button class="filter-chip" data-cat="plugins">🔌 <span x-text="$store.i18n.t('general.filter_plugins')">Plugins</span></button>
-              <button class="filter-chip" data-cat="datapacks">📋 Datenpakete</button>
-              <button class="filter-chip" data-cat="resourcepacks">🎨 Resource Packs</button>
-              <button class="filter-chip" data-cat="shaders">✨ Shader</button>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Loader</div>
+        <div class="filter-group" id="loaderFilter">
+          <button
+            class="filter-chip active"
+            data-loader="all"
+            x-text="$store.i18n.t('general.filter_all')"
+          >
+            Alle
+          </button>
+          <button class="filter-chip" data-loader="fabric">Fabric</button>
+          <button class="filter-chip" data-loader="forge">Forge</button>
+          <button class="filter-chip" data-loader="neoforge">NeoForge</button>
+          <button class="filter-chip" data-loader="quilt">Quilt</button>
+          <button class="filter-chip" data-loader="paper">Paper</button>
+          <button class="filter-chip" data-loader="spigot">Spigot</button>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <label
+          for="versionFilter"
+          class="sidebar-label"
+          x-text="$store.i18n.t('general.filter_version')"
+          >MC Version</label
+        >
+        <select class="filter-select" id="versionFilter">
+          <option value="" x-text="$store.i18n.t('general.filter_any')">Alle Versionen</option>
+          <option value="1.21.4">1.21.4</option>
+          <option value="1.21.1">1.21.1</option>
+          <option value="1.20.6">1.20.6</option>
+          <option value="1.20.4">1.20.4</option>
+          <option value="1.20.1">1.20.1</option>
+          <option value="1.19.4">1.19.4</option>
+          <option value="1.18.2">1.18.2</option>
+          <option value="1.16.5">1.16.5</option>
+        </select>
+      </div>
+
+      <div class="sidebar-section">
+        <label for="sortFilter" class="sidebar-label">Sortierung</label>
+        <select class="filter-select" id="sortFilter">
+          <option value="downloads">Meiste Downloads</option>
+          <option value="updated">Neueste Updates</option>
+          <option value="created">Neu eingestellt</option>
+          <option value="follows">Beliebteste</option>
+        </select>
+      </div>
+    </aside>
+
+    <!-- Content Area -->
+    <div class="mc-content">
+      <div class="mc-search-bar">
+        <label for="mcSearch" style="display: flex; align-items: center; cursor: text; margin: 0"
+          ><span class="material-icons-round">search</span></label
+        >
+        <input
+          type="text"
+          id="mcSearch"
+          name="mcSearch"
+          aria-label="Minecraft Inhalte suchen"
+          :placeholder="$store.i18n.t('general.search_mods')"
+        />
+        <div class="mc-search-meta" id="mcSearchMeta">Tippe um zu suchen...</div>
+      </div>
+
+      <div
+        class="mc-grid"
+        id="mcGrid"
+        x-init="typeof autoAnimate !== 'undefined' ? autoAnimate($el) : null"
+      >
+        <!-- Filled by minecraft.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Mod Detail Modal -->
+  <div class="modal-backdrop" id="modDetailModal" hidden>
+    <div class="modal modal-large glass-card">
+      <div class="modal-header">
+        <div class="mod-modal-title">
+          <img src="" alt="" id="modModalIcon" class="mod-modal-icon" />
+          <div>
+            <h2 id="modModalName"></h2>
+            <p id="modModalAuthor"></p>
+          </div>
+        </div>
+        <button class="icon-btn" id="closeModModal">
+          <span class="material-icons-round">close</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modModalBody">
+        <!-- Filled dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="closeModModalBtn">
+          <span class="material-icons-round">close</span>
+          <span x-text="$store.i18n.t('btn.cancel')">Schließen</span>
+        </button>
+        <button class="btn btn-primary" id="installModBtn">
+          <span class="material-icons-round">add_box</span>
+          <span x-text="$store.i18n.t('btn.install')">Installieren</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Docker-Erstellungs-Wizard für Modpacks -->
+  <div class="modal-backdrop" id="dockerCreateModal" hidden>
+    <div class="modal modal-xl glass-card">
+      <div class="modal-header">
+        <div class="mod-modal-title">
+          <span class="material-icons-round" style="font-size: 28px; color: var(--accent)"
+            >dns</span
+          >
+          <div>
+            <h2 id="dockerModalTitle">Neuen Minecraft-Server erstellen</h2>
+            <p id="dockerModalSubtitle" style="color: var(--text-muted); font-size: 12px">
+              itzg/minecraft-server · Docker Container
+            </p>
+          </div>
+        </div>
+        <button class="icon-btn" id="closeDockerCreateModal">
+          <span class="material-icons-round">close</span>
+        </button>
+      </div>
+
+      <!-- Wizard body: left form tabs + right preview -->
+      <div class="dc-wizard-body">
+        <!-- Left: Tabbed form -->
+        <div class="dc-form-col">
+          <div class="dc-tab-nav" id="dcTabNav">
+            <button class="dc-tab-btn active" data-dctab="docker">🐳 Docker / Java</button>
+            <button class="dc-tab-btn" data-dctab="server">🖥️ Server</button>
+            <button class="dc-tab-btn" data-dctab="gameplay">🎮 Gameplay</button>
+            <button class="dc-tab-btn" data-dctab="advanced">⚙️ Erweitert</button>
+          </div>
+
+          <!-- Tab 1: Docker / Java -->
+          <div class="dc-tab-content active" id="dctab-docker">
+            <div class="dc-section-title">Container</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Container-Name</div>
+                <div class="setting-desc">Eindeutiger Docker-Name</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcName"
+                placeholder="mc-server-01"
+                style="width: 170px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Port (Host)</div>
+                <div class="setting-desc">Verbindungsport Minecraft</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcPort"
+                value="25565"
+                min="1024"
+                max="65535"
+                style="width: 90px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Datenpfad (Host)</div>
+                <div class="setting-desc">Bind-Mount /data</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcDataPath"
+                value="/mnt/user/gameservers"
+                style="width: 200px; font-family: monospace; font-size: 11px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Restart-Policy</div>
+              </div>
+              <select class="setting-select" id="dcRestart">
+                <option value="unless-stopped" selected>unless-stopped</option>
+                <option value="always">always</option>
+                <option value="on-failure">on-failure</option>
+                <option value="no">no</option>
+              </select>
+            </div>
+
+            <div class="dc-section-title" style="margin-top: 14px">Java / Server-Typ</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Server-Typ (TYPE)</div>
+                <div class="setting-desc">auto aus Modpack bei CF/Modrinth</div>
+              </div>
+              <select class="setting-select" id="dcType">
+                <option value="AUTO">Auto (aus Modpack)</option>
+                <option value="VANILLA">Vanilla</option>
+                <option value="PAPER">Paper</option>
+                <option value="FABRIC">Fabric</option>
+                <option value="FORGE">Forge</option>
+                <option value="NEOFORGE">NeoForge</option>
+                <option value="QUILT">Quilt</option>
+                <option value="CURSEFORGE">CurseForge</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">MC-Version (VERSION)</div>
+                <div class="setting-desc">z.B. LATEST oder 1.21.1</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcVersion"
+                value="LATEST"
+                style="width: 100px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">RAM (MEMORY)</div>
+                <div class="setting-desc">Java-Heap -Xmx</div>
+              </div>
+              <div class="setting-input-row">
+                <input
+                  type="number"
+                  class="setting-input"
+                  id="dcRam"
+                  value="4096"
+                  min="512"
+                  step="512"
+                  style="width: 90px"
+                />
+                <span class="setting-unit">MB</span>
+              </div>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ENABLE_ROLLING_LOGS</div>
+                <div class="setting-desc">Log-Rotation aktivieren</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcRollingLogs" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">USE_LOG_TIMESTAMP</div>
+                <div class="setting-desc">Zeitstempel in Logs</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcLogTimestamp" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+
+            <div class="dc-section-title" style="margin-top: 14px">JVM Optimizations</div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">USE_AIKAR_FLAGS</div>
+                <div class="setting-desc">
+                  Empfohlen für die meisten Server (G1GC) - ideal für Paper/Spigot
+                </div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcAikarFlags" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ENABLE_MEOWICES_FLAGS</div>
+                <div class="setting-desc">
+                  Für ZGC/Shenandoah (MC 1.15+) - gut bei sehr großen Heaps >12GB
+                </div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcMeowices" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">USE_LARGE_PAGES</div>
+                <div class="setting-desc">Braucht Host-OS HugePages - reduziert TLB Misses</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcLargePages" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">USE_SIMD_FLAGS</div>
+                <div class="setting-desc">
+                  Nutzt Vector API (Java 16+) - höhere Performance bei modernen CPUs
+                </div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcSimd" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
             </div>
           </div>
 
-          <div class="sidebar-section">
-            <div class="sidebar-label">Loader</div>
-            <div class="filter-group" id="loaderFilter">
-              <button class="filter-chip active" data-loader="all" x-text="$store.i18n.t('general.filter_all')">Alle</button>
-              <button class="filter-chip" data-loader="fabric">Fabric</button>
-              <button class="filter-chip" data-loader="forge">Forge</button>
-              <button class="filter-chip" data-loader="neoforge">NeoForge</button>
-              <button class="filter-chip" data-loader="quilt">Quilt</button>
-              <button class="filter-chip" data-loader="paper">Paper</button>
-              <button class="filter-chip" data-loader="spigot">Spigot</button>
+          <!-- Tab 2: Server -->
+          <div class="dc-tab-content" id="dctab-server" style="display: none">
+            <div class="dc-section-title">Basis</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">SERVER_NAME (MOTD)</div>
+                <div class="setting-desc">Angezeigter Name in Serverliste</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcServerName"
+                placeholder="Mein Minecraft-Server"
+                style="width: 200px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">MAX_PLAYERS</div>
+                <div class="setting-desc">Max. gleichzeitige Spieler</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcMaxPlayers"
+                value="20"
+                min="1"
+                max="1000"
+                style="width: 80px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">DIFFICULTY</div>
+                <div class="setting-desc">peaceful / easy / normal / hard</div>
+              </div>
+              <select class="setting-select" id="dcDifficulty">
+                <option value="easy">easy</option>
+                <option value="normal" selected>normal</option>
+                <option value="hard">hard</option>
+                <option value="peaceful">peaceful</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ONLINE_MODE</div>
+                <div class="setting-desc">Mojang-Auth (false = Cracked)</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcOnlineMode" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">VIEW_DISTANCE</div>
+                <div class="setting-desc">Sichtweite in Chunks</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcViewDistance"
+                value="12"
+                min="2"
+                max="32"
+                style="width: 70px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">SIMULATION_DISTANCE</div>
+                <div class="setting-desc">Simulationsweite in Chunks</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcSimDistance"
+                value="10"
+                min="2"
+                max="32"
+                style="width: 70px"
+              />
+            </div>
+
+            <div class="dc-section-title" style="margin-top: 14px">Whitelist & RCON</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ENABLE_WHITELIST</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcWhitelist" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row" id="dcWhitelistNamesRow" style="display: none">
+              <div class="setting-info">
+                <div class="setting-label">WHITELIST</div>
+                <div class="setting-desc">Spielernamen (kommagetrennt)</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcWhitelistNames"
+                placeholder="Spieler1,Spieler2"
+                style="width: 200px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">OPS</div>
+                <div class="setting-desc">OP-Spielernamen (kommagetrennt)</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcOps"
+                placeholder="AdminName"
+                style="width: 200px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ENABLE_RCON</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcRcon" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">RCON_PORT</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcRconPort"
+                value="25575"
+                style="width: 90px"
+              />
+            </div>
+            <form class="setting-row" onsubmit="return false;">
+              <!-- Hidden username field for accessibility/password manager compliance -->
+              <input type="text" autocomplete="username" style="display:none;" />
+              <div class="setting-info">
+                <div class="setting-label">RCON_PASSWORD</div>
+              </div>
+              <input
+                type="password"
+                class="setting-input"
+                id="dcRconPw"
+                placeholder="sicheres Passwort"
+                autocomplete="new-password"
+                style="width: 170px"
+              />
+            </form>
+
+            <div class="dc-section-title" style="margin-top: 14px">Icon & Textur</div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ICON</div>
+                <div class="setting-desc">URL zu server-icon.png (64×64)</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcIcon"
+                placeholder="https://..."
+                style="width: 200px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">RESOURCE_PACK</div>
+                <div class="setting-desc">URL zum Resource Pack .zip</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcResourcePack"
+                placeholder="https://..."
+                style="width: 200px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">RESOURCE_PACK_ENFORCE</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcResourcePackEnforce" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
             </div>
           </div>
 
-          <div class="sidebar-section">
-            <label for="versionFilter" class="sidebar-label" x-text="$store.i18n.t('general.filter_version')">MC Version</label>
-            <select class="filter-select" id="versionFilter">
-              <option value="" x-text="$store.i18n.t('general.filter_any')">Alle Versionen</option>
-              <option value="1.21.4">1.21.4</option>
-              <option value="1.21.1">1.21.1</option>
-              <option value="1.20.6">1.20.6</option>
-              <option value="1.20.4">1.20.4</option>
-              <option value="1.20.1">1.20.1</option>
-              <option value="1.19.4">1.19.4</option>
-              <option value="1.18.2">1.18.2</option>
-              <option value="1.16.5">1.16.5</option>
-            </select>
+          <!-- Tab 3: Gameplay -->
+          <div class="dc-tab-content" id="dctab-gameplay" style="display: none">
+            <div class="dc-section-title">Spielmodus</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">MODE (Gamemode)</div>
+              </div>
+              <select class="setting-select" id="dcGamemode">
+                <option value="survival" selected>survival</option>
+                <option value="creative">creative</option>
+                <option value="adventure">adventure</option>
+                <option value="spectator">spectator</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">FORCE_GAMEMODE</div>
+                <div class="setting-desc">Spieler immer auf Mode setzen</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcForceGamemode" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">PVP</div>
+                <div class="setting-desc">Spieler-vs-Spieler Kämpfe</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcPvp" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">HARDCORE</div>
+                <div class="setting-desc">Hardcore-Modus (1 Leben)</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcHardcore" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ALLOW_FLIGHT</div>
+                <div class="setting-desc">Fliegen ohne Plugin erlauben</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcAllowFlight" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+
+            <div class="dc-section-title" style="margin-top: 14px">Welt</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">LEVEL_TYPE</div>
+                <div class="setting-desc">Weltgenerierung</div>
+              </div>
+              <select class="setting-select" id="dcLevelType">
+                <option value="minecraft:normal" selected>Normal</option>
+                <option value="minecraft:flat">Flat (Superflat)</option>
+                <option value="minecraft:large_biomes">Large Biomes</option>
+                <option value="minecraft:amplified">Amplified</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">SEED</div>
+                <div class="setting-desc">Welt-Seed (leer = zufällig)</div>
+              </div>
+              <input
+                type="text"
+                class="setting-input"
+                id="dcSeed"
+                placeholder="leer = zufällig"
+                style="width: 160px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">SPAWN_PROTECTION</div>
+                <div class="setting-desc">Spawn-Schutzradius (Chunks)</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcSpawnProtection"
+                value="16"
+                min="0"
+                style="width: 70px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">GENERATE_STRUCTURES</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcGenStructures" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ALLOW_NETHER</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcAllowNether" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
           </div>
 
-          <div class="sidebar-section">
-            <label for="sortFilter" class="sidebar-label">Sortierung</label>
-            <select class="filter-select" id="sortFilter">
-              <option value="downloads">Meiste Downloads</option>
-              <option value="updated">Neueste Updates</option>
-              <option value="created">Neu eingestellt</option>
-              <option value="follows">Beliebteste</option>
-            </select>
-          </div>
-        </aside>
+          <!-- Tab 4: Erweitert -->
+          <div class="dc-tab-content" id="dctab-advanced" style="display: none">
+            <div class="dc-section-title">Befehle & Features</div>
 
-        <!-- Content Area -->
-        <div class="mc-content">
-          <div class="mc-search-bar">
-            <label for="mcSearch" style="display:flex; align-items:center; cursor:text; margin:0;"><span
-                class="material-icons-round">search</span></label>
-            <input type="text" id="mcSearch" name="mcSearch"
-              aria-label="Minecraft Inhalte suchen" :placeholder="$store.i18n.t('general.search_mods')" />
-            <div class="mc-search-meta" id="mcSearchMeta">Tippe um zu suchen...</div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ENABLE_COMMAND_BLOCK</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcCommandBlock" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">SNOOPER_ENABLED</div>
+                <div class="setting-desc">Mojang Telemetrie</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcSnooper" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">PLAYER_IDLE_TIMEOUT</div>
+                <div class="setting-desc">Minuten bis AFK-Kick (0=aus)</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcIdleTimeout"
+                value="0"
+                min="0"
+                style="width: 70px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">MAX_TICK_TIME</div>
+                <div class="setting-desc">ms bis Crash-Detektion (-1=aus)</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcMaxTick"
+                value="60000"
+                style="width: 90px"
+              />
+            </div>
+
+            <div class="dc-section-title" style="margin-top: 14px">Auto-Pause / Auto-Stop</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ENABLE_AUTOPAUSE</div>
+                <div class="setting-desc">Server pausieren wenn leer</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcAutopause" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">AUTOPAUSE_TIMEOUT_EST</div>
+                <div class="setting-desc">Sekunden nach letztem Spieler</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcAutopauseTimeout"
+                value="3600"
+                style="width: 90px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">ENABLE_AUTOSTOP</div>
+                <div class="setting-desc">Server stoppen wenn leer</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcAutostop" />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+
+            <div class="dc-section-title" style="margin-top: 14px">Netzwerk</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">NETWORK_COMPRESSION_THRESHOLD</div>
+                <div class="setting-desc">Bytes (256 standard, -1=aus)</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcNetworkCompression"
+                value="256"
+                style="width: 80px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">MAX_BUILD_HEIGHT</div>
+              </div>
+              <input
+                type="number"
+                class="setting-input"
+                id="dcMaxBuildHeight"
+                value="320"
+                style="width: 80px"
+              />
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">OVERRIDE_SERVER_PROPERTIES</div>
+                <div class="setting-desc">Env-Vars immer überschreiben</div>
+              </div>
+              <label class="setting-toggle"
+                ><input type="checkbox" id="dcOverrideProps" checked />
+                <div class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Command Preview -->
+        <div class="dc-preview-col">
+          <div class="dc-section-title">Docker-Befehl Vorschau</div>
+          <pre id="dcCommandPreview">Konfiguration eingeben...</pre>
+
+          <div class="dc-info-box">
+            <div
+              style="font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 6px"
+            >
+              <span class="material-icons-round" style="font-size: 14px; vertical-align: middle"
+                >info</span
+              >
+              itzg/minecraft-server
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.5">
+              Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert. Nur
+              geänderte Standardwerte werden ausgegeben.
+            </p>
           </div>
 
-          <div class="mc-grid" id="mcGrid">
-            <!-- Filled by minecraft.js -->
+          <div
+            id="dcCopyStatus"
+            style="display: none; font-size: 12px; color: var(--green); margin-top: 6px"
+          >
+            <span class="material-icons-round" style="font-size: 14px; vertical-align: middle"
+              >check_circle</span
+            >
+            In Zwischenablage kopiert!
           </div>
         </div>
       </div>
 
-      <!-- Mod Detail Modal -->
-      <div class="modal-backdrop" id="modDetailModal" hidden>
-        <div class="modal modal-large glass-card">
-          <div class="modal-header">
-            <div class="mod-modal-title">
-              <img src="" alt="" id="modModalIcon" class="mod-modal-icon" />
-              <div>
-                <h2 id="modModalName"></h2>
-                <p id="modModalAuthor"></p>
-              </div>
-            </div>
-            <button class="icon-btn" id="closeModModal"><span class="material-icons-round">close</span></button>
-          </div>
-          <div class="modal-body" id="modModalBody">
-            <!-- Filled dynamically -->
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-ghost" id="closeModModalBtn">
-              <span class="material-icons-round">close</span> <span x-text="$store.i18n.t('btn.cancel')">Schließen</span>
-            </button>
-            <button class="btn btn-primary" id="installModBtn">
-              <span class="material-icons-round">add_box</span> <span x-text="$store.i18n.t('btn.install')">Installieren</span>
-            </button>
-          </div>
-        </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="dcCopyBtn">
+          <span class="material-icons-round">content_copy</span> Befehl kopieren
+        </button>
+        <button class="btn btn-ghost" id="closeDockerCreateModalBtn">Abbrechen</button>
+        <button class="btn btn-primary" id="dcCreateBtn">
+          <span class="material-icons-round">rocket_launch</span> Container starten
+        </button>
       </div>
-
-      <!-- Docker-Erstellungs-Wizard für Modpacks -->
-      <div class="modal-backdrop" id="dockerCreateModal" hidden>
-        <div class="modal modal-xl glass-card">
-          <div class="modal-header">
-            <div class="mod-modal-title">
-              <span class="material-icons-round" style="font-size:28px;color:var(--accent)">dns</span>
-              <div>
-                <h2 id="dockerModalTitle">Neuen Minecraft-Server erstellen</h2>
-                <p id="dockerModalSubtitle" style="color:var(--text-muted);font-size:12px">itzg/minecraft-server ·
-                  Docker Container</p>
-              </div>
-            </div>
-            <button class="icon-btn" id="closeDockerCreateModal">
-              <span class="material-icons-round">close</span>
-            </button>
-          </div>
-
-          <!-- Wizard body: left form tabs + right preview -->
-          <div class="dc-wizard-body">
-
-            <!-- Left: Tabbed form -->
-            <div class="dc-form-col">
-              <div class="dc-tab-nav" id="dcTabNav">
-                <button class="dc-tab-btn active" data-dctab="docker">🐳 Docker / Java</button>
-                <button class="dc-tab-btn" data-dctab="server">🖥️ Server</button>
-                <button class="dc-tab-btn" data-dctab="gameplay">🎮 Gameplay</button>
-                <button class="dc-tab-btn" data-dctab="advanced">⚙️ Erweitert</button>
-              </div>
-
-              <!-- Tab 1: Docker / Java -->
-              <div class="dc-tab-content active" id="dctab-docker">
-                <div class="dc-section-title">Container</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">Container-Name</div>
-                    <div class="setting-desc">Eindeutiger Docker-Name</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcName" placeholder="mc-server-01" style="width:170px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">Port (Host)</div>
-                    <div class="setting-desc">Verbindungsport Minecraft</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcPort" value="25565" min="1024" max="65535"
-                    style="width:90px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">Datenpfad (Host)</div>
-                    <div class="setting-desc">Bind-Mount /data</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcDataPath" value="/mnt/user/gameservers"
-                    style="width:200px;font-family:monospace;font-size:11px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">Restart-Policy</div>
-                  </div>
-                  <select class="setting-select" id="dcRestart">
-                    <option value="unless-stopped" selected>unless-stopped</option>
-                    <option value="always">always</option>
-                    <option value="on-failure">on-failure</option>
-                    <option value="no">no</option>
-                  </select>
-                </div>
-
-                <div class="dc-section-title" style="margin-top:14px">Java / Server-Typ</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">Server-Typ (TYPE)</div>
-                    <div class="setting-desc">auto aus Modpack bei CF/Modrinth</div>
-                  </div>
-                  <select class="setting-select" id="dcType">
-                    <option value="AUTO">Auto (aus Modpack)</option>
-                    <option value="VANILLA">Vanilla</option>
-                    <option value="PAPER">Paper</option>
-                    <option value="FABRIC">Fabric</option>
-                    <option value="FORGE">Forge</option>
-                    <option value="NEOFORGE">NeoForge</option>
-                    <option value="QUILT">Quilt</option>
-                    <option value="CURSEFORGE">CurseForge</option>
-                  </select>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">MC-Version (VERSION)</div>
-                    <div class="setting-desc">z.B. LATEST oder 1.21.1</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcVersion" value="LATEST" style="width:100px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">RAM (MEMORY)</div>
-                    <div class="setting-desc">Java-Heap -Xmx</div>
-                  </div>
-                  <div class="setting-input-row">
-                    <input type="number" class="setting-input" id="dcRam" value="4096" min="512" step="512"
-                      style="width:90px" />
-                    <span class="setting-unit">MB</span>
-                  </div>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ENABLE_ROLLING_LOGS</div>
-                    <div class="setting-desc">Log-Rotation aktivieren</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcRollingLogs" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">USE_LOG_TIMESTAMP</div>
-                    <div class="setting-desc">Zeitstempel in Logs</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcLogTimestamp" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-
-                <div class="dc-section-title" style="margin-top:14px">JVM Optimizations</div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">USE_AIKAR_FLAGS</div>
-                    <div class="setting-desc">Empfohlen für die meisten Server (G1GC) - ideal für Paper/Spigot</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcAikarFlags" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ENABLE_MEOWICES_FLAGS</div>
-                    <div class="setting-desc">Für ZGC/Shenandoah (MC 1.15+) - gut bei sehr großen Heaps >12GB</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcMeowices" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">USE_LARGE_PAGES</div>
-                    <div class="setting-desc">Braucht Host-OS HugePages - reduziert TLB Misses</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcLargePages" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">USE_SIMD_FLAGS</div>
-                    <div class="setting-desc">Nutzt Vector API (Java 16+) - höhere Performance bei modernen CPUs</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcSimd" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Tab 2: Server -->
-              <div class="dc-tab-content" id="dctab-server" style="display:none">
-                <div class="dc-section-title">Basis</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">SERVER_NAME (MOTD)</div>
-                    <div class="setting-desc">Angezeigter Name in Serverliste</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcServerName" placeholder="Mein Minecraft-Server"
-                    style="width:200px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">MAX_PLAYERS</div>
-                    <div class="setting-desc">Max. gleichzeitige Spieler</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcMaxPlayers" value="20" min="1" max="1000"
-                    style="width:80px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">DIFFICULTY</div>
-                    <div class="setting-desc">peaceful / easy / normal / hard</div>
-                  </div>
-                  <select class="setting-select" id="dcDifficulty">
-                    <option value="easy">easy</option>
-                    <option value="normal" selected>normal</option>
-                    <option value="hard">hard</option>
-                    <option value="peaceful">peaceful</option>
-                  </select>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ONLINE_MODE</div>
-                    <div class="setting-desc">Mojang-Auth (false = Cracked)</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcOnlineMode" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">VIEW_DISTANCE</div>
-                    <div class="setting-desc">Sichtweite in Chunks</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcViewDistance" value="12" min="2" max="32"
-                    style="width:70px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">SIMULATION_DISTANCE</div>
-                    <div class="setting-desc">Simulationsweite in Chunks</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcSimDistance" value="10" min="2" max="32"
-                    style="width:70px" />
-                </div>
-
-                <div class="dc-section-title" style="margin-top:14px">Whitelist & RCON</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ENABLE_WHITELIST</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcWhitelist" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row" id="dcWhitelistNamesRow" style="display:none">
-                  <div class="setting-info">
-                    <div class="setting-label">WHITELIST</div>
-                    <div class="setting-desc">Spielernamen (kommagetrennt)</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcWhitelistNames" placeholder="Spieler1,Spieler2"
-                    style="width:200px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">OPS</div>
-                    <div class="setting-desc">OP-Spielernamen (kommagetrennt)</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcOps" placeholder="AdminName" style="width:200px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ENABLE_RCON</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcRcon" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">RCON_PORT</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcRconPort" value="25575" style="width:90px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">RCON_PASSWORD</div>
-                  </div>
-                  <input type="password" class="setting-input" id="dcRconPw" placeholder="sicheres Passwort"
-                    style="width:170px" />
-                </div>
-
-                <div class="dc-section-title" style="margin-top:14px">Icon & Textur</div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ICON</div>
-                    <div class="setting-desc">URL zu server-icon.png (64×64)</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcIcon" placeholder="https://..." style="width:200px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">RESOURCE_PACK</div>
-                    <div class="setting-desc">URL zum Resource Pack .zip</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcResourcePack" placeholder="https://..."
-                    style="width:200px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">RESOURCE_PACK_ENFORCE</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcResourcePackEnforce" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Tab 3: Gameplay -->
-              <div class="dc-tab-content" id="dctab-gameplay" style="display:none">
-                <div class="dc-section-title">Spielmodus</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">MODE (Gamemode)</div>
-                  </div>
-                  <select class="setting-select" id="dcGamemode">
-                    <option value="survival" selected>survival</option>
-                    <option value="creative">creative</option>
-                    <option value="adventure">adventure</option>
-                    <option value="spectator">spectator</option>
-                  </select>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">FORCE_GAMEMODE</div>
-                    <div class="setting-desc">Spieler immer auf Mode setzen</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcForceGamemode" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">PVP</div>
-                    <div class="setting-desc">Spieler-vs-Spieler Kämpfe</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcPvp" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">HARDCORE</div>
-                    <div class="setting-desc">Hardcore-Modus (1 Leben)</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcHardcore" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ALLOW_FLIGHT</div>
-                    <div class="setting-desc">Fliegen ohne Plugin erlauben</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcAllowFlight" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-
-                <div class="dc-section-title" style="margin-top:14px">Welt</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">LEVEL_TYPE</div>
-                    <div class="setting-desc">Weltgenerierung</div>
-                  </div>
-                  <select class="setting-select" id="dcLevelType">
-                    <option value="minecraft:normal" selected>Normal</option>
-                    <option value="minecraft:flat">Flat (Superflat)</option>
-                    <option value="minecraft:large_biomes">Large Biomes</option>
-                    <option value="minecraft:amplified">Amplified</option>
-                  </select>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">SEED</div>
-                    <div class="setting-desc">Welt-Seed (leer = zufällig)</div>
-                  </div>
-                  <input type="text" class="setting-input" id="dcSeed" placeholder="leer = zufällig"
-                    style="width:160px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">SPAWN_PROTECTION</div>
-                    <div class="setting-desc">Spawn-Schutzradius (Chunks)</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcSpawnProtection" value="16" min="0"
-                    style="width:70px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">GENERATE_STRUCTURES</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcGenStructures" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ALLOW_NETHER</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcAllowNether" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Tab 4: Erweitert -->
-              <div class="dc-tab-content" id="dctab-advanced" style="display:none">
-                <div class="dc-section-title">Befehle & Features</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ENABLE_COMMAND_BLOCK</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcCommandBlock" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">SNOOPER_ENABLED</div>
-                    <div class="setting-desc">Mojang Telemetrie</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcSnooper" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">PLAYER_IDLE_TIMEOUT</div>
-                    <div class="setting-desc">Minuten bis AFK-Kick (0=aus)</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcIdleTimeout" value="0" min="0" style="width:70px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">MAX_TICK_TIME</div>
-                    <div class="setting-desc">ms bis Crash-Detektion (-1=aus)</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcMaxTick" value="60000" style="width:90px" />
-                </div>
-
-                <div class="dc-section-title" style="margin-top:14px">Auto-Pause / Auto-Stop</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ENABLE_AUTOPAUSE</div>
-                    <div class="setting-desc">Server pausieren wenn leer</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcAutopause" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">AUTOPAUSE_TIMEOUT_EST</div>
-                    <div class="setting-desc">Sekunden nach letztem Spieler</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcAutopauseTimeout" value="3600" style="width:90px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">ENABLE_AUTOSTOP</div>
-                    <div class="setting-desc">Server stoppen wenn leer</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcAutostop" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-
-                <div class="dc-section-title" style="margin-top:14px">Netzwerk</div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">NETWORK_COMPRESSION_THRESHOLD</div>
-                    <div class="setting-desc">Bytes (256 standard, -1=aus)</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcNetworkCompression" value="256" style="width:80px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">MAX_BUILD_HEIGHT</div>
-                  </div>
-                  <input type="number" class="setting-input" id="dcMaxBuildHeight" value="320" style="width:80px" />
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-label">OVERRIDE_SERVER_PROPERTIES</div>
-                    <div class="setting-desc">Env-Vars immer überschreiben</div>
-                  </div>
-                  <label class="setting-toggle"><input type="checkbox" id="dcOverrideProps" checked />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right: Command Preview -->
-            <div class="dc-preview-col">
-              <div class="dc-section-title">Docker-Befehl Vorschau</div>
-              <pre id="dcCommandPreview">Konfiguration eingeben...</pre>
-
-              <div class="dc-info-box">
-                <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">
-                  <span class="material-icons-round" style="font-size:14px;vertical-align:middle">info</span>
-                  itzg/minecraft-server
-                </div>
-                <p style="font-size:11px;color:var(--text-muted);margin:0;line-height:1.5">
-                  Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert.
-                  Nur geänderte Standardwerte werden ausgegeben.
-                </p>
-              </div>
-
-              <div id="dcCopyStatus" style="display:none;font-size:12px;color:var(--green);margin-top:6px">
-                <span class="material-icons-round" style="font-size:14px;vertical-align:middle">check_circle</span> In
-                Zwischenablage kopiert!
-              </div>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn btn-ghost" id="dcCopyBtn">
-              <span class="material-icons-round">content_copy</span> Befehl kopieren
-            </button>
-            <button class="btn btn-ghost" id="closeDockerCreateModalBtn">Abbrechen</button>
-            <button class="btn btn-primary" id="dcCreateBtn">
-              <span class="material-icons-round">rocket_launch</span> Container starten
-            </button>
-          </div>
-        </div>
-      </div>
-
-    </section>
+    </div>
+  </div>
+</section>

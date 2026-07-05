@@ -13,9 +13,28 @@
   letter-spacing: 0.3px;
 }
 
-.gamemode-badge:hover { filter: brightness(1.2); transform: scale(1.04); }
+.gamemode-badge:hover {
+  filter: brightness(1.2);
+  transform: scale(1.04);
+}
 
-.gm-survival  { background: var(--green-dim);  color: var(--green);  border-color: rgba(34,197,94,0.35); }
-.gm-creative  { background: var(--blue-dim);   color: var(--blue);   border-color: rgba(59,130,246,0.35); }
-.gm-adventure { background: var(--yellow-dim); color: var(--yellow); border-color: rgba(234,179,8,0.35); }
-.gm-spectator { background: var(--purple-dim); color: var(--purple); border-color: rgba(168,85,247,0.35); }
+.gm-survival {
+  background: var(--green-dim);
+  color: var(--green);
+  border-color: rgba(34, 197, 94, 0.35);
+}
+.gm-creative {
+  background: var(--blue-dim);
+  color: var(--blue);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+.gm-adventure {
+  background: var(--yellow-dim);
+  color: var(--yellow);
+  border-color: rgba(234, 179, 8, 0.35);
+}
+.gm-spectator {
+  background: var(--purple-dim);
+  color: var(--purple);
+  border-color: rgba(168, 85, 247, 0.35);
+}

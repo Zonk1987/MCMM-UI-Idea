@@ -8,7 +8,7 @@ import { appSettings } from '../../../js/settings.js';
 GameAdditions.registerGame('valheim', {
   name: 'Valheim',
   icon: '🪓',
-  
+
   onSelect(state) {
     // Hide Minecraft-specific UI and enforce CurseForge
     const mcSidebar = document.getElementById('mcSidebar');
@@ -17,7 +17,7 @@ GameAdditions.registerGame('valheim', {
     const modrinthBtn = sourceToggle?.querySelector('[data-source="modrinth"]');
     const ftbBtn = sourceToggle?.querySelector('[data-source="ftb"]');
     const cfBtn = sourceToggle?.querySelector('[data-source="curseforge"]');
-    
+
     if (mcSidebar) mcSidebar.style.display = 'none';
     if (mcLayout) mcLayout.classList.add('no-sidebar');
     if (modrinthBtn) modrinthBtn.style.display = 'none';
@@ -32,5 +32,5 @@ GameAdditions.registerGame('valheim', {
       // 435882 is the verified internal CurseForge GameID for Valheim
       await GameAdditions.fetchCurseForgeGeneric('435882', state);
     }
-  }
+  },
 });

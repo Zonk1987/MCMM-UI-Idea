@@ -8,7 +8,7 @@ import { appSettings } from '../../../js/settings.js';
 GameAdditions.registerGame('cs2', {
   name: 'CS2',
   icon: '🔫',
-  
+
   onSelect(state) {
     // Hide Minecraft-specific UI and enforce CurseForge
     const mcSidebar = document.getElementById('mcSidebar');
@@ -17,7 +17,7 @@ GameAdditions.registerGame('cs2', {
     const modrinthBtn = sourceToggle?.querySelector('[data-source="modrinth"]');
     const ftbBtn = sourceToggle?.querySelector('[data-source="ftb"]');
     const cfBtn = sourceToggle?.querySelector('[data-source="curseforge"]');
-    
+
     if (mcSidebar) mcSidebar.style.display = 'none';
     if (mcLayout) mcLayout.classList.add('no-sidebar');
     if (modrinthBtn) modrinthBtn.style.display = 'none';
@@ -32,5 +32,5 @@ GameAdditions.registerGame('cs2', {
       // 4268 is used here as a placeholder for CS:GO/CS2 context
       await GameAdditions.fetchCurseForgeGeneric('4268', state);
     }
-  }
+  },
 });

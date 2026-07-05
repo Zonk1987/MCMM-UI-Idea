@@ -3,18 +3,58 @@
    Bootstraps all modules and wires top-level navigation.
 ═══════════════════════════════════════════════════════════ */
 
-import { I18N, loadLanguage, t, initI18n } from './i18n.js';
-import { toggleModal, showToast, formatNum, formatBytes, playerAvatarError, debounce, switchTab, pingClass, skeletonGrid } from './utils.js';
-import { initSettings, loadSettings, saveSettings, resetSettings, applyVisualSettings, fillSettingsForm, readSettingsForm, toggleSettingsPanel, bindSettingsEvents, appSettings } from './settings.js';
+import { loadLanguage, t, initI18n } from './i18n.js';
+import {
+  toggleModal,
+  showToast,
+  formatNum,
+  formatDate,
+  formatBytes,
+  playerAvatarError,
+  debounce,
+  switchTab,
+  pingClass,
+  skeletonGrid,
+} from './utils.js';
+import { initSettings, applyVisualSettings, appSettings } from './settings.js';
 import { DOCKER_CONTAINERS, dockerApp } from './docker.js';
-import { GAME_TEMPLATES, GS_INSTANCES, gameserverApp, openConsole } from './gameserver.js';
+import { GS_INSTANCES, gameserverApp, openConsole } from './gameserver.js';
 import { playersApp } from './players.js';
 import { GameAdditions } from './gameAdditions.js';
 import { registerAlpineComponents } from './alpine-components.js';
+import autoAnimate from './vendor/auto-animate.js';
 
 document.addEventListener('alpine:init', () => {
   if (window.Alpine) {
     registerAlpineComponents(window.Alpine);
+  }
+});
+
+// Modal Keyboard Support (Esc = close, Enter = confirm)
+document.addEventListener('keydown', (e) => {
+  const openModals = Array.from(document.querySelectorAll('.modal-backdrop')).filter(el => {
+    return !el.hasAttribute('hidden') && window.getComputedStyle(el).display !== 'none';
+  });
+  
+  if (openModals.length === 0) return;
+  const topModal = openModals[openModals.length - 1];
+
+  if (e.key === 'Escape') {
+    const closeBtn = topModal.querySelector('.modal-header .icon-btn, [aria-label="Schließen"], #closeModModal');
+    if (closeBtn) closeBtn.click();
+  } else if (e.key === 'Enter') {
+    const tag = e.target.tagName.toLowerCase();
+    if (tag === 'textarea' || tag === 'button') return;
+    if (e.target.hasAttribute('@keydown.enter')) return;
+    
+    // Specific modals to ignore for global Enter
+    if (topModal.id === 'fileManagerModal' || topModal.id === 'consoleModal') return;
+    
+    const confirmBtn = topModal.querySelector('.modal-footer .btn-primary, .modal-footer .btn-danger, .modal-footer .btn-success');
+    if (confirmBtn && !confirmBtn.disabled) {
+      e.preventDefault();
+      confirmBtn.click();
+    }
   }
 });
 
@@ -23,13 +63,14 @@ window.t = t;
 window.toggleModal = toggleModal;
 window.showToast = showToast;
 window.formatNum = formatNum;
+window.formatDate = formatDate;
 window.formatBytes = formatBytes;
 window.playerAvatarError = playerAvatarError;
 window.pingClass = pingClass;
+window.autoAnimate = autoAnimate;
 window.skeletonGrid = skeletonGrid;
 window.appSettings = appSettings;
 window.switchTab = switchTab;
-
 
 window.dockerApp = dockerApp;
 window.openConfigModal = (id, name, port, ram) => {
@@ -48,35 +89,33 @@ window.GameAdditions = GameAdditions;
 window.loadLanguage = loadLanguage;
 window.applyVisualSettings = applyVisualSettings;
 
-window.finishOnboarding = function() {
+window.finishOnboarding = function () {
   localStorage.setItem('gs_hub_onboarding_done', 'true');
   const modal = document.getElementById('welcomeModal');
   if (modal) {
     modal.style.opacity = '0';
-    setTimeout(() => { modal.hidden = true; modal.style.opacity = '1'; }, 300);
+    setTimeout(() => {
+      modal.hidden = true;
+      modal.style.opacity = '1';
+    }, 300);
   }
 };
-
-
 
 async function loadComponents() {
   const components = [
     { id: 'panel-docker', url: 'components/docker.html' },
     { id: 'panel-gameserver', url: 'components/gameservers.html' },
     { id: 'panel-game-additions', url: 'components/gameAdditions.html' },
-    { id: 'panel-players', url: 'components/players.html' }
+    { id: 'panel-players', url: 'components/players.html' },
   ];
-  
+
   for (const comp of components) {
     try {
       const response = await fetch(comp.url + '?v=' + new Date().getTime());
       if (response.ok) {
         const html = await response.text();
-        // Insert innerHTML, preserving the outer section tag from the placeholder
         const el = document.getElementById(comp.id);
         if (el) {
-          // Because the component files contain the <section> tag itself,
-          // we replace the placeholder's outerHTML with the fetched content.
           el.outerHTML = html;
         }
       } else {
@@ -104,7 +143,7 @@ async function initApp() {
   GameAdditions.init();
 
   // ── Tab navigation ────────────────────────────────────
-  document.getElementById('tabNav')?.addEventListener('click', e => {
+  document.getElementById('tabNav')?.addEventListener('click', (e) => {
     const btn = e.target.closest('.tab-btn');
     if (!btn) return;
     switchTab(btn.dataset.tab);
@@ -113,29 +152,43 @@ async function initApp() {
   // ── Refresh button ────────────────────────────────────
   document.getElementById('refreshBtn')?.addEventListener('click', () => {
     const active = document.querySelector('.tab-btn.active')?.dataset.tab;
-    if (active === 'docker') { /* Alpine handles it */ }
-    if (active === 'gameserver') { /* Alpine handles it */ }
-    if (active === 'game-additions') { GameAdditions.refresh(); }
-    if (active === 'players') { /* Alpine handles it */ }
+    if (active === 'docker') {
+      /* Alpine handles it */
+    }
+    if (active === 'gameserver') {
+      /* Alpine handles it */
+    }
+    if (active === 'game-additions') {
+      GameAdditions.refresh();
+    }
+    if (active === 'players') {
+      /* Alpine handles it */
+    }
     showToast(t('general.data_refreshed') || 'Daten aktualisiert', 'success');
 
     // Spin the refresh icon briefly
     const icon = document.querySelector('#refreshBtn .material-icons-round');
     if (icon) {
       icon.style.transition = 'transform 0.6s ease';
-      icon.style.transform  = 'rotate(360deg)';
-      setTimeout(() => { icon.style.transform = ''; icon.style.transition = ''; }, 700);
+      icon.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        icon.style.transform = '';
+        icon.style.transition = '';
+      }, 700);
     }
   });
 
   console.log('%c🎮 GameServer Hub v1.0', 'color:#f57c00;font-size:16px;font-weight:bold');
-  console.log(`%cUnraid Plugin — ${t('general.loaded_successfully') || 'Erfolgreich geladen'}`, 'color:#22c55e');
+  console.log(
+    `%cUnraid Plugin — ${t('general.loaded_successfully') || 'Erfolgreich geladen'}`,
+    'color:#22c55e'
+  );
 
   // ── Show Onboarding Modal ─────────────────────────────
   if (!localStorage.getItem('gs_hub_onboarding_done')) {
     const welcome = document.getElementById('welcomeModal');
     if (welcome) {
-      setTimeout(() => welcome.hidden = false, 500); // slight delay
+      setTimeout(() => (welcome.hidden = false), 500); // slight delay
     }
   }
   // Dynamically load Alpine.js AFTER all modules are initialized
@@ -152,7 +205,7 @@ if (document.readyState === 'loading') {
 }
 
 // Import game addition modules AFTER GameAdditions has been attached to window
-// (Wait, static imports are hoisted. To ensure they run AFTER GameAdditions is global, 
+// (Wait, static imports are hoisted. To ensure they run AFTER GameAdditions is global,
 // we should just let them import GameAdditions directly, which we already did!)
 import '../games/minecraft/js/minecraft.js';
 import '../games/palworld/js/palworld.js';

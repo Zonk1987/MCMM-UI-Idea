@@ -8,7 +8,7 @@ export const I18N = {
   currentLang: 'en',
   translations: {},
   fallbackTranslations: {},
-  supportedLangs: ['en', 'de', 'es', 'fr', 'it']
+  supportedLangs: ['en', 'de', 'es', 'fr', 'it'],
 };
 
 /**
@@ -20,7 +20,7 @@ export async function loadLanguage(langCode) {
   if (!I18N.supportedLangs.includes(langCode)) {
     langCode = 'en'; // fallback
   }
-  
+
   try {
     // Load English fallback if not loaded
     if (Object.keys(I18N.fallbackTranslations).length === 0) {
@@ -34,10 +34,10 @@ export async function loadLanguage(langCode) {
 
     const response = await fetch(`lang/${langCode}.json?v=${new Date().getTime()}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    
+
     I18N.translations = await response.json();
     I18N.currentLang = langCode;
-    
+
     // Trigger reactivity in Alpine if available
     if (window.Alpine) {
       const store = Alpine.store('i18n');
@@ -59,17 +59,27 @@ function resolvePath(obj, path) {
 /**
  * Returns the translated string for a given key, with fallback to English.
  * @param {string} key - The translation key (dot-notation supported).
+ * @param {object} variables - Optional variables for interpolation.
  * @returns {string} The translated string or the key itself if not found.
  */
-export function t(key) {
+export function t(key, variables = {}) {
   let val = resolvePath(I18N.translations, key);
-  
+
   // Fallback to English if key is missing in the current language
   if (val === undefined && I18N.currentLang !== 'en') {
     val = resolvePath(I18N.fallbackTranslations, key);
   }
-  
-  return val !== undefined ? val : key;
+
+  if (val !== undefined) {
+    if (typeof val === 'string' && Object.keys(variables).length > 0) {
+      return val.replace(/\{(\w+)\}/g, (match, p1) => {
+        return variables[p1] !== undefined ? variables[p1] : match;
+      });
+    }
+    return val;
+  }
+
+  return key;
 }
 
 // Expose to window for JS dynamic bindings and Alpine Store
@@ -83,7 +93,9 @@ export async function initI18n() {
     try {
       const parsed = JSON.parse(savedSettings);
       if (parsed.lang) lang = parsed.lang;
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Failed to parse settings for i18n', e);
+    }
   }
   await loadLanguage(lang);
 }

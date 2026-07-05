@@ -8,7 +8,7 @@ import { appSettings } from '../../../js/settings.js';
 GameAdditions.registerGame('minecraft', {
   name: 'Minecraft',
   icon: '⛏',
-  
+
   onSelect(state) {
     // Show Minecraft-specific sidebar and toggle buttons
     const mcSidebar = document.getElementById('mcSidebar');
@@ -17,13 +17,16 @@ GameAdditions.registerGame('minecraft', {
     const modrinthBtn = sourceToggle?.querySelector('[data-source="modrinth"]');
     const ftbBtn = sourceToggle?.querySelector('[data-source="ftb"]');
     const cfBtn = sourceToggle?.querySelector('[data-source="curseforge"]');
-    
+
     if (mcSidebar) mcSidebar.style.display = 'block';
     if (mcLayout) mcLayout.classList.remove('no-sidebar');
-    if (modrinthBtn) { modrinthBtn.style.display = 'inline-block'; modrinthBtn.classList.add('active'); }
+    if (modrinthBtn) {
+      modrinthBtn.style.display = 'inline-block';
+      modrinthBtn.classList.add('active');
+    }
     if (ftbBtn) ftbBtn.style.display = 'inline-block';
     if (cfBtn) cfBtn.classList.remove('active');
-    
+
     state.source = 'modrinth';
   },
 
@@ -36,7 +39,7 @@ GameAdditions.registerGame('minecraft', {
       } else {
         // Fallback for non-modpacks in FTB
         const origQuery = state.query;
-        state.query = origQuery ? ('FTB ' + origQuery) : 'FTB';
+        state.query = origQuery ? 'FTB ' + origQuery : 'FTB';
         await this.fetchModrinth(state);
         state.query = origQuery;
         const meta = document.getElementById('mcSearchMeta');
@@ -53,26 +56,26 @@ GameAdditions.registerGame('minecraft', {
   async fetchModrinth(state) {
     const MODRINTH_API = 'https://api.modrinth.com/v2';
     const CAT_TYPE_MAP = {
-      modpacks:     'modpack',
-      mods:         'mod',
-      plugins:      'plugin',
-      resourcepacks:'resourcepack',
-      datapacks:    'datapack',
-      shaders:      'shader',
+      modpacks: 'modpack',
+      mods: 'mod',
+      plugins: 'plugin',
+      resourcepacks: 'resourcepack',
+      datapacks: 'datapack',
+      shaders: 'shader',
     };
     const LOADER_FACET = {
-      fabric:   'fabric',
-      forge:    'forge',
+      fabric: 'fabric',
+      forge: 'forge',
       neoforge: 'neoforge',
-      quilt:    'quilt',
-      paper:    'paper',
-      spigot:   'spigot',
+      quilt: 'quilt',
+      paper: 'paper',
+      spigot: 'spigot',
     };
 
     const projectType = CAT_TYPE_MAP[state.category] || 'modpack';
     const offset = state.page * state.perPage;
     const facets = [[`project_type:${projectType}`]];
-    
+
     if (state.loader !== 'all' && LOADER_FACET[state.loader]) {
       facets.push([`categories:${LOADER_FACET[state.loader]}`]);
     }
@@ -85,13 +88,13 @@ GameAdditions.registerGame('minecraft', {
       index: state.sort,
       offset: offset.toString(),
       limit: state.perPage.toString(),
-      facets: JSON.stringify(facets)
+      facets: JSON.stringify(facets),
     });
 
     const res = await fetch(`${MODRINTH_API}/search?${params}`);
     if (!res.ok) throw new Error(`Modrinth API Fehler: ${res.status}`);
     const data = await res.json();
-    
+
     state.total = data.total_hits;
     const meta = document.getElementById('mcSearchMeta');
     if (meta) meta.textContent = `${state.total.toLocaleString()} Ergebnisse (Modrinth)`;
@@ -103,10 +106,11 @@ GameAdditions.registerGame('minecraft', {
   renderModrinthCards(hits) {
     const grid = document.getElementById('mcGrid');
     if (!grid) return;
-    grid.innerHTML = hits.map(hit => {
-      const icon = hit.icon_url || '';
-      return `
-      <div class="mc-card" data-id="${hit.project_id}" data-name="${hit.title}">
+    grid.innerHTML = hits
+      .map((hit) => {
+        const icon = hit.icon_url || '';
+        return `
+      <div class="mc-card" data-id="${hit.project_id}" data-name="${hit.title}" role="button" tabindex="0">
         <div class="mc-card-top">
           ${icon ? `<img src="${icon}" alt="${hit.title}" class="mc-card-icon" />` : `<div class="mc-card-icon-placeholder"><span class="material-icons-round">extension</span></div>`}
           <div class="mc-card-header-info">
@@ -127,7 +131,8 @@ GameAdditions.registerGame('minecraft', {
         </div>
       </div>
       `;
-    }).join('');
+      })
+      .join('');
   },
 
   // -------------------------------------------------------------
@@ -157,8 +162,8 @@ GameAdditions.registerGame('minecraft', {
 
     const CF_SORT_MAP = {
       downloads: 6, // TotalDownloads
-      updated:   3, // LastUpdated
-      newest:    2, // Popularity / Featured
+      updated: 3, // LastUpdated
+      newest: 2, // Popularity / Featured
     };
 
     const offset = state.page * state.perPage;
@@ -170,7 +175,7 @@ GameAdditions.registerGame('minecraft', {
 
     const classId = CF_CLASS_MAP[state.category] || 4471;
     params.append('classId', classId.toString());
-    
+
     if (state.version) {
       params.append('gameVersion', state.version);
     }
@@ -187,14 +192,14 @@ GameAdditions.registerGame('minecraft', {
     }
 
     const headers = {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'x-api-key': appSettings.cfApiKey,
     };
 
     let res = await fetch(`https://api.curseforge.com/v1/mods/search?${params}`, { headers });
     let body = await res.json();
     if (!res.ok) throw new Error(`CurseForge API Error ${res.status}`);
-    
+
     const data = body.data || [];
     if (data.length === 0) {
       GameAdditions.renderEmptyState(params.toString(), body);
@@ -214,25 +219,45 @@ GameAdditions.registerGame('minecraft', {
   // -------------------------------------------------------------
   async fetchFTB(state) {
     const FTB_MOCK = [
-      { id:'ftb1', name:'FTB Revelations', author:'FTB Team', downloads:9000000, desc:'A well-rounded general modpack.', loaders:['forge'], icon:'🟧', version:'1.12.2' },
-      { id:'ftb2', name:'FTB Academy', author:'FTB Team', downloads:5500000, desc:'The perfect beginner modpack.', loaders:['forge'], icon:'🟧', version:'1.20.1' },
+      {
+        id: 'ftb1',
+        name: 'FTB Revelations',
+        author: 'FTB Team',
+        downloads: 9000000,
+        desc: 'A well-rounded general modpack.',
+        loaders: ['forge'],
+        icon: '🟧',
+        version: '1.12.2',
+      },
+      {
+        id: 'ftb2',
+        name: 'FTB Academy',
+        author: 'FTB Team',
+        downloads: 5500000,
+        desc: 'The perfect beginner modpack.',
+        loaders: ['forge'],
+        icon: '🟧',
+        version: '1.20.1',
+      },
     ];
-    
-    return new Promise(resolve => {
+
+    return new Promise((resolve) => {
       setTimeout(() => {
         let results = FTB_MOCK;
         if (state.query) {
-          results = results.filter(m => m.name.toLowerCase().includes(state.query.toLowerCase()));
+          results = results.filter((m) => m.name.toLowerCase().includes(state.query.toLowerCase()));
         }
-        
+
         state.total = results.length;
         const meta = document.getElementById('mcSearchMeta');
         if (meta) meta.textContent = `${state.total.toLocaleString()} Ergebnisse (FTB)`;
 
         const grid = document.getElementById('mcGrid');
         if (grid) {
-          grid.innerHTML = results.map(mod => `
-          <div class="mc-card" data-id="${mod.id}" data-name="${mod.name}">
+          grid.innerHTML = results
+            .map(
+              (mod) => `
+          <div class="mc-card" data-id="${mod.id}" data-name="${mod.name}" role="button" tabindex="0">
             <div class="mc-card-top">
               <div class="mc-card-icon-placeholder" style="background:linear-gradient(135deg, #f97316, #ea580c);color:#fff;border:none;">
                 <span class="material-icons-round">widgets</span>
@@ -254,10 +279,12 @@ GameAdditions.registerGame('minecraft', {
               </div>
             </div>
           </div>
-          `).join('');
+          `
+            )
+            .join('');
         }
         resolve();
       }, 300); // Simulate network delay
     });
-  }
+  },
 });

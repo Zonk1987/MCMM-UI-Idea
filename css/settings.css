@@ -18,12 +18,14 @@
 
 .settings-panel {
   position: fixed;
-  top: 0; right: 0; bottom: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
   width: 580px;
   max-width: 100%;
   background: var(--bg-surface);
   border-left: 1px solid var(--border);
-  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
   z-index: 101;
   display: flex;
   transform: translateX(100%);
@@ -36,7 +38,9 @@
 
 .settings-header {
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 64px;
   padding: 0 20px;
   border-bottom: 1px solid var(--border);
@@ -170,12 +174,15 @@
 }
 
 .swatch {
-  width: 24px; height: 24px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: 2px solid var(--bg-surface);
   cursor: pointer;
   outline: none;
-  transition: transform var(--trans-fast), border-color var(--trans-fast);
+  transition:
+    transform var(--trans-fast),
+    border-color var(--trans-fast);
   box-shadow: 0 0 0 1px var(--border);
   padding: 0;
 }
@@ -194,7 +201,8 @@
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  width: 24px; height: 24px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   box-shadow: none;
 }
@@ -223,7 +231,8 @@
   outline: none;
 }
 
-.setting-input:focus, .setting-select:focus {
+.setting-input:focus,
+.setting-select:focus {
   border-color: var(--accent);
 }
 
@@ -242,12 +251,15 @@
 .setting-toggle {
   position: relative;
   display: inline-block;
-  width: 44px; height: 24px;
+  width: 44px;
+  height: 24px;
   cursor: pointer;
 }
 
 .setting-toggle input {
-  opacity: 0; width: 0; height: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .toggle-track {
@@ -260,13 +272,15 @@
 
 .toggle-thumb {
   position: absolute;
-  height: 18px; width: 18px;
-  top: 50%; left: 3px;
+  height: 18px;
+  width: 18px;
+  top: 50%;
+  left: 3px;
   margin-top: -9px;
   background: #fff;
   border-radius: 50%;
   transition: transform var(--trans-fast);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .setting-toggle input:checked + .toggle-track {
@@ -296,7 +310,9 @@
 /* Footer buttons */
 .settings-footer {
   position: absolute;
-  bottom: 0; left: 180px; right: 0;
+  bottom: 0;
+  left: 180px;
+  right: 0;
   height: 64px;
   padding: 0 20px;
   border-top: 1px solid var(--border);
@@ -313,6 +329,7 @@
 .compact-mode .gs-card-body {
   padding: 12px;
 }
-.compact-mode .docker-table td, .compact-mode .player-table td {
+.compact-mode .docker-table td,
+.compact-mode .player-table td {
   padding: 8px 12px;
 }

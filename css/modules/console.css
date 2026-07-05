@@ -8,30 +8,21 @@
   overflow-x: hidden;
   padding: 12px 16px;
   background: var(--bg-base);
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 12px;
-  line-height: 1.7;
-  display: block;
+  /* Remove padding since xterm brings its own, or keep a small margin */
+  padding: 8px;
 }
 
-.console-output::-webkit-scrollbar { width: 4px; }
-.console-output::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 2px; }
-
-.log-line { padding: 1px 0; word-break: break-all; }
-.log-info  { color: var(--text-secondary); }
-.log-warn  { color: var(--yellow); }
-.log-error { color: var(--red); }
-.log-chat  { color: var(--green); }
-.log-join  { color: var(--green); }
-.log-leave { color: var(--accent); }
-
+/* Xterm specific overrides */
+.xterm-viewport {
+  border-radius: var(--radius);
+}
 .console-input-bar {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
   background: var(--bg-base);
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .console-prompt {
@@ -53,6 +44,8 @@
   caret-color: var(--green);
 }
 
-.console-input::placeholder { color: var(--text-muted); }
+.console-input::placeholder {
+  color: var(--text-muted);
+}
 
 /* Code preview */

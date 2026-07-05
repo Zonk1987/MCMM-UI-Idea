@@ -32,7 +32,9 @@
   transition: all var(--trans-fast);
 }
 
-.source-btn:hover { color: var(--text-primary); }
+.source-btn:hover {
+  color: var(--text-primary);
+}
 
 .source-btn.active {
   background: var(--accent);
@@ -41,7 +43,11 @@
 }
 
 /* Search */
-.mc-content { display: flex; flex-direction: column; gap: 16px; }
+.mc-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 .mc-search-bar {
   display: flex;
@@ -54,9 +60,13 @@
   transition: border-color var(--trans-fast);
 }
 
-.mc-search-bar:focus-within { border-color: var(--accent); }
+.mc-search-bar:focus-within {
+  border-color: var(--accent);
+}
 
-.mc-search-bar .material-icons-round { color: var(--text-muted); }
+.mc-search-bar .material-icons-round {
+  color: var(--text-muted);
+}
 
 .mc-search-bar input {
   flex: 1;
@@ -69,9 +79,15 @@
   padding: 14px 0;
 }
 
-.mc-search-bar input::placeholder { color: var(--text-muted); }
+.mc-search-bar input::placeholder {
+  color: var(--text-muted);
+}
 
-.mc-search-meta { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+.mc-search-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
 
 /* Premium Grid */
 .mc-grid {
@@ -102,19 +118,26 @@
 .mc-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent 60%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.05), transparent 60%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
 }
 
-.mc-card:hover { 
-  border-color: rgba(255, 255, 255, 0.15); 
-  transform: translateY(-4px); 
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--accent-dim); 
+.mc-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.3),
+    0 0 0 1px var(--accent-dim);
 }
-.mc-card:hover::before { opacity: 1; }
+.mc-card:hover::before {
+  opacity: 1;
+}
 
 /* Top Section: Icon + Title + Action */
 .mc-card-top {
@@ -125,30 +148,34 @@
 }
 
 .mc-card-icon {
-  width: 64px; height: 64px;
+  width: 64px;
+  height: 64px;
   border-radius: 14px;
   object-fit: cover;
   background: var(--bg-surface);
   flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .mc-card-icon-placeholder {
-  width: 64px; height: 64px;
+  width: 64px;
+  height: 64px;
   border-radius: 14px;
   background: linear-gradient(135deg, var(--bg-surface), #1a1e2a);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 28px;
   color: var(--text-muted);
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.mc-card-header-info { 
-  flex: 1; 
-  min-width: 0; 
+.mc-card-header-info {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -229,8 +256,8 @@
   color: var(--text-muted);
 }
 
-.mc-meta-item .material-icons-round { 
-  font-size: 14px; 
+.mc-meta-item .material-icons-round {
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
@@ -243,7 +270,10 @@
   padding: 12px;
 }
 
-.page-info { font-size: 13px; color: var(--text-secondary); }
+.page-info {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
 
 /* Loading state */
 .loading-grid {
@@ -253,18 +283,29 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    var(--bg-card-hover) 50%,
+    var(--bg-card) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius);
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
-.skeleton-card { height: 100px; }
+.skeleton-card {
+  height: 100px;
+}
 
 /* Additional helper for games without sidebar */
 .mc-layout.no-sidebar {

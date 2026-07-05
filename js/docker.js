@@ -16,7 +16,7 @@ export const DOCKER_CONTAINERS = [
     ports: [{ host: '32400', container: '32400', proto: 'tcp' }],
     paths: [
       { host: '/mnt/user/appdata/plex', container: '/config' },
-      { host: '/mnt/user/Media',        container: '/data/media' },
+      { host: '/mnt/user/Media', container: '/data/media' },
     ],
   },
   {
@@ -28,9 +28,7 @@ export const DOCKER_CONTAINERS = [
     status: 'running',
     upToDate: true,
     ports: [{ host: '25565', container: '25565', proto: 'tcp' }],
-    paths: [
-      { host: '/mnt/user/gameservers/mc-survival', container: '/data' },
-    ],
+    paths: [{ host: '/mnt/user/gameservers/mc-survival', container: '/data' }],
     isGameServer: true,
     game: 'minecraft',
   },
@@ -43,9 +41,7 @@ export const DOCKER_CONTAINERS = [
     status: 'running',
     upToDate: false,
     ports: [{ host: '25566', container: '25565', proto: 'tcp' }],
-    paths: [
-      { host: '/mnt/user/gameservers/mc-creative', container: '/data' },
-    ],
+    paths: [{ host: '/mnt/user/gameservers/mc-creative', container: '/data' }],
     isGameServer: true,
     game: 'minecraft',
   },
@@ -87,11 +83,11 @@ export const DOCKER_CONTAINERS = [
     status: 'running',
     upToDate: false,
     ports: [
-      { host: '53',   container: '53',   proto: 'tcp/udp' },
-      { host: '8053', container: '80',   proto: 'tcp' },
+      { host: '53', container: '53', proto: 'tcp/udp' },
+      { host: '8053', container: '80', proto: 'tcp' },
     ],
     paths: [
-      { host: '/mnt/user/appdata/pihole',      container: '/etc/pihole' },
+      { host: '/mnt/user/appdata/pihole', container: '/etc/pihole' },
       { host: '/mnt/user/appdata/pihole/dnsmasq', container: '/etc/dnsmasq.d' },
     ],
   },
@@ -115,9 +111,9 @@ export const DOCKER_CONTAINERS = [
     status: 'running',
     upToDate: true,
     ports: [
-      { host: '80',   container: '80',   proto: 'tcp' },
-      { host: '443',  container: '443',  proto: 'tcp' },
-      { host: '81',   container: '81',   proto: 'tcp' },
+      { host: '80', container: '80', proto: 'tcp' },
+      { host: '443', container: '443', proto: 'tcp' },
+      { host: '81', container: '81', proto: 'tcp' },
     ],
     paths: [{ host: '/mnt/user/appdata/npm', container: '/data' }],
   },
@@ -160,7 +156,7 @@ export function dockerApp() {
     selectAll: false,
 
     get filteredContainers() {
-      let list = this.containers.filter(c => 
+      let list = this.containers.filter((c) =>
         c.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
 
@@ -170,7 +166,7 @@ export function dockerApp() {
         if (typeof av === 'string') av = av.toLowerCase();
         if (typeof bv === 'string') bv = bv.toLowerCase();
         if (av < bv) return this.sortAsc ? -1 : 1;
-        if (av > bv) return this.sortAsc ?  1 : -1;
+        if (av > bv) return this.sortAsc ? 1 : -1;
         return 0;
       });
 
@@ -186,14 +182,12 @@ export function dockerApp() {
           }
         });
       }
-      
-
 
       // Watch for selection changes to update selectAll
       this.$watch('selected', (value) => {
         this.selectAll = value.length === this.filteredContainers.length && value.length > 0;
       });
-      
+
       // Clear selection on search
       this.$watch('searchQuery', () => {
         this.selected = [];
@@ -202,13 +196,13 @@ export function dockerApp() {
 
     get stats() {
       return {
-        running: this.containers.filter(c => c.status === 'running').length,
-        stopped: this.containers.filter(c => c.status === 'stopped').length,
-        updates: this.containers.filter(c => !c.upToDate).length,
-        total: this.containers.length
+        running: this.containers.filter((c) => c.status === 'running').length,
+        stopped: this.containers.filter((c) => c.status === 'stopped').length,
+        updates: this.containers.filter((c) => !c.upToDate).length,
+        total: this.containers.length,
       };
     },
-    
+
     toggleSort(col) {
       if (this.sortCol === col) {
         this.sortAsc = !this.sortAsc;
@@ -220,7 +214,7 @@ export function dockerApp() {
 
     toggleSelectAll() {
       if (this.selectAll) {
-        this.selected = this.filteredContainers.map(c => c.id);
+        this.selected = this.filteredContainers.map((c) => c.id);
       } else {
         this.selected = [];
       }
@@ -228,42 +222,44 @@ export function dockerApp() {
 
     bulkAction(action) {
       if (this.selected.length === 0) return;
-      
+
       const count = this.selected.length;
-      
+
       if (action === 'delete') {
         if (!confirm(`${count} Container wirklich löschen?`)) return;
-        this.containers = this.containers.filter(c => !this.selected.includes(c.id));
+        this.containers = this.containers.filter((c) => !this.selected.includes(c.id));
         this.selected = [];
         showToast(`${count} Container gelöscht`, 'success');
         return;
       }
-      
-      this.selected.forEach(id => {
-        const c = this.containers.find(x => x.id === id);
+
+      this.selected.forEach((id) => {
+        const c = this.containers.find((x) => x.id === id);
         if (c) {
           if (action === 'start') c.status = 'running';
           if (action === 'stop') c.status = 'stopped';
         }
       });
-      
-      const statusWord = action === 'start' ? (t('started') || 'gestartet') : (t('stopped') || 'gestoppt');
+
+      const statusWord =
+        action === 'start' ? t('started') || 'gestartet' : t('stopped') || 'gestoppt';
       showToast(`${count} Container ${statusWord}`, 'success');
       this.selected = [];
     },
 
     toggleContainer(id) {
-      const c = this.containers.find(x => x.id === id);
+      const c = this.containers.find((x) => x.id === id);
       if (!c) return;
       c.status = c.status === 'running' ? 'stopped' : 'running';
-      const statusWord = c.status === 'running' ? (t('started') || 'gestartet') : (t('stopped') || 'gestoppt');
+      const statusWord =
+        c.status === 'running' ? t('started') || 'gestartet' : t('stopped') || 'gestoppt';
       showToast(`${c.name} ${statusWord}`, c.status === 'running' ? 'success' : 'info');
-      
+
       // We do not need manual DOM refresh here since Alpine handles it via reactivity!
     },
 
     updateContainer(id) {
-      const c = this.containers.find(x => x.id === id);
+      const c = this.containers.find((x) => x.id === id);
       if (!c) return;
       c.upToDate = true;
       if (typeof showToast === 'function') {
@@ -272,10 +268,9 @@ export function dockerApp() {
           showToast(`${c.name} erfolgreich aktualisiert`, 'success');
         }, 2000);
       }
-    }
+    },
   };
 }
 
 // Dummy for backwards compatibility with main.js until fully refactored
 export function initDocker() {}
-

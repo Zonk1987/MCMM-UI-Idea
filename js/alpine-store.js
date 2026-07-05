@@ -2,48 +2,97 @@ document.addEventListener('alpine:init', () => {
   Alpine.store('global', {
     dockerCount: 0,
     onlineGameservers: 0,
-    onlinePlayers: 0
+    onlinePlayers: 0,
+  });
+
+  Alpine.store('toasts', {
+    items: [],
+    add(msg, type = 'info') {
+      const id = Date.now() + Math.random().toString(36).substr(2, 9);
+      const icons = { success: 'check_circle', error: 'error', info: 'info' };
+      const icon = icons[type] || icons.info;
+
+      this.items = [...this.items, { id, msg, type, icon }];
+
+      const duration = typeof appSettings !== 'undefined' ? appSettings.toastDuration : 3500;
+      setTimeout(() => {
+        this.remove(id);
+      }, duration);
+    },
+    remove(id) {
+      this.items = this.items.filter((t) => t.id !== id);
+    },
   });
 
   Alpine.store('i18n', {
     locale: 'de',
     messages: {},
     fallbackMessages: {},
-    t(key) {
+    t(key, variables = {}) {
       // Read to trigger Alpine reactivity tracking
       const msgs = this.messages;
       const fallback = this.fallbackMessages;
-      
+
       if (!msgs || Object.keys(msgs).length === 0) return key;
 
-      const resolvePath = (obj, path) => path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
-      
+      const resolvePath = (obj, path) =>
+        path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
+
       let val = resolvePath(msgs, key);
       if (val === undefined && this.locale !== 'en') {
         val = resolvePath(fallback, key);
       }
-      
-      return val !== undefined ? val : key;
-    }
+
+      if (val !== undefined) {
+        if (typeof val === 'string' && Object.keys(variables).length > 0) {
+          return val.replace(/\{(\w+)\}/g, (match, p1) => {
+            return variables[p1] !== undefined ? variables[p1] : match;
+          });
+        }
+        return val;
+      }
+
+      return key;
+    },
   });
 
   Alpine.store('modals', {
     config: { open: false, data: {} },
-    install: { 
-      open: false, 
+    install: {
+      open: false,
       data: {
-        name: '', serverName: '', author: 'Unknown', isEdit: false,
-        port: 25565, ram: 4096, initRam: 1024, path: '/mnt/user/gameservers/',
-        type: 'AUTO', restart: 'unless-stopped', maxPlayers: 20, difficulty: 'normal',
-        motd: 'Mein Unraid Server', pvp: true, onlineMode: true, cmdBlocks: true,
-        hardcore: false, flight: false, enableWhitelist: false, whitelist: '',
-        aikar: true, meowice: false, graalvm: false, largePages: false, rollingLogs: true,
-        source: 'curseforge'
+        name: '',
+        serverName: '',
+        author: 'Unknown',
+        isEdit: false,
+        port: 25565,
+        ram: 4096,
+        initRam: 1024,
+        path: '/mnt/user/gameservers/',
+        type: 'AUTO',
+        restart: 'unless-stopped',
+        maxPlayers: 20,
+        difficulty: 'normal',
+        motd: 'Mein Unraid Server',
+        pvp: true,
+        onlineMode: true,
+        cmdBlocks: true,
+        hardcore: false,
+        flight: false,
+        enableWhitelist: false,
+        whitelist: '',
+        aikar: true,
+        meowice: false,
+        graalvm: false,
+        largePages: false,
+        rollingLogs: true,
+        source: 'curseforge',
       },
       getPreviewCmd() {
         const d = this.data;
         if (!d || !d.name) return '';
-        let envType = d.type === 'AUTO' ? (d.source === 'curseforge' ? 'CURSEFORGE' : 'MODRINTH') : d.type;
+        let envType =
+          d.type === 'AUTO' ? (d.source === 'curseforge' ? 'CURSEFORGE' : 'MODRINTH') : d.type;
         let jvmEnvs = '';
         if (d.meowice) {
           jvmEnvs = '-e USE_MEOWICE_FLAGS=true \\\n  -e USE_MEOWICE_GRAALVM_FLAGS=true \\';
@@ -78,7 +127,7 @@ document.addEventListener('alpine:init', () => {
         const rawCmd = this.getPreviewCmd().replace(/<[^>]*>?/gm, '');
         navigator.clipboard.writeText(rawCmd);
         if (typeof showToast === 'function') showToast('Kopiert!', 'success');
-      }
-    }
+      },
+    },
   });
 });
