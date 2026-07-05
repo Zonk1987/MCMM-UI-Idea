@@ -60,7 +60,7 @@ export const GameAdditions = {
     }
     
     const meta = document.getElementById('mcSearchMeta');
-    if (meta) meta.textContent = typeof t === 'function' ? (t('loading') || 'Lädt...') : 'Lädt...';
+    if (meta) meta.textContent = typeof t === 'function' ? (t('general.loading') || 'Lädt...') : 'Lädt...';
 
     const gameModule = this.games[this.state.game];
     

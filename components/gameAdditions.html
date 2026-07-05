@@ -2,8 +2,8 @@
       <div class="panel-header" style="flex-direction:column; align-items:flex-start; gap:20px;">
         <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
           <div class="panel-title-group">
-            <h1 x-text="$store.i18n.t('ga_title')">Game Additions</h1>
-            <p class="panel-subtitle" x-text="$store.i18n.t('ga_subtitle')">Entdecke Modpacks, Mods und Plugins für deine Server</p>
+            <h1 x-text="$store.i18n.t('general.ga_title')">Game Additions</h1>
+            <p class="panel-subtitle" x-text="$store.i18n.t('general.ga_subtitle')">Entdecke Modpacks, Mods und Plugins für deine Server</p>
           </div>
           <div class="panel-actions">
             <div class="source-toggle" id="sourceToggle">
@@ -23,12 +23,12 @@
         <!-- Sidebar Filter -->
         <aside class="mc-sidebar" id="mcSidebar">
           <div class="sidebar-section">
-            <div class="sidebar-label" x-text="$store.i18n.t('filter_category')">Kategorie</div>
+            <div class="sidebar-label" x-text="$store.i18n.t('general.filter_category')">Kategorie</div>
             <div class="filter-group" id="categoryFilter">
               <button class="filter-chip active" data-cat="modpacks">📦 <span
-                  x-text="$store.i18n.t('filter_modpacks')">Modpacks</span></button>
-              <button class="filter-chip" data-cat="mods">🔧 <span x-text="$store.i18n.t('filter_mods')">Mods</span></button>
-              <button class="filter-chip" data-cat="plugins">🔌 <span x-text="$store.i18n.t('filter_plugins')">Plugins</span></button>
+                  x-text="$store.i18n.t('general.filter_modpacks')">Modpacks</span></button>
+              <button class="filter-chip" data-cat="mods">🔧 <span x-text="$store.i18n.t('general.filter_mods')">Mods</span></button>
+              <button class="filter-chip" data-cat="plugins">🔌 <span x-text="$store.i18n.t('general.filter_plugins')">Plugins</span></button>
               <button class="filter-chip" data-cat="datapacks">📋 Datenpakete</button>
               <button class="filter-chip" data-cat="resourcepacks">🎨 Resource Packs</button>
               <button class="filter-chip" data-cat="shaders">✨ Shader</button>
@@ -38,7 +38,7 @@
           <div class="sidebar-section">
             <div class="sidebar-label">Loader</div>
             <div class="filter-group" id="loaderFilter">
-              <button class="filter-chip active" data-loader="all" x-text="$store.i18n.t('filter_all')">Alle</button>
+              <button class="filter-chip active" data-loader="all" x-text="$store.i18n.t('general.filter_all')">Alle</button>
               <button class="filter-chip" data-loader="fabric">Fabric</button>
               <button class="filter-chip" data-loader="forge">Forge</button>
               <button class="filter-chip" data-loader="neoforge">NeoForge</button>
@@ -49,9 +49,9 @@
           </div>
 
           <div class="sidebar-section">
-            <label for="versionFilter" class="sidebar-label" x-text="$store.i18n.t('filter_version')">MC Version</label>
+            <label for="versionFilter" class="sidebar-label" x-text="$store.i18n.t('general.filter_version')">MC Version</label>
             <select class="filter-select" id="versionFilter">
-              <option value="" x-text="$store.i18n.t('filter_any')">Alle Versionen</option>
+              <option value="" x-text="$store.i18n.t('general.filter_any')">Alle Versionen</option>
               <option value="1.21.4">1.21.4</option>
               <option value="1.21.1">1.21.1</option>
               <option value="1.20.6">1.20.6</option>
@@ -80,7 +80,7 @@
             <label for="mcSearch" style="display:flex; align-items:center; cursor:text; margin:0;"><span
                 class="material-icons-round">search</span></label>
             <input type="text" id="mcSearch" name="mcSearch"
-              aria-label="Minecraft Inhalte suchen" :placeholder="$store.i18n.t('search_mods')" />
+              aria-label="Minecraft Inhalte suchen" :placeholder="$store.i18n.t('general.search_mods')" />
             <div class="mc-search-meta" id="mcSearchMeta">Tippe um zu suchen...</div>
           </div>
 
@@ -108,10 +108,10 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-ghost" id="closeModModalBtn">
-              <span class="material-icons-round">close</span> <span x-text="$store.i18n.t('btn_cancel')">Schließen</span>
+              <span class="material-icons-round">close</span> <span x-text="$store.i18n.t('btn.cancel')">Schließen</span>
             </button>
             <button class="btn btn-primary" id="installModBtn">
-              <span class="material-icons-round">add_box</span> <span x-text="$store.i18n.t('btn_install')">Installieren</span>
+              <span class="material-icons-round">add_box</span> <span x-text="$store.i18n.t('btn.install')">Installieren</span>
             </button>
           </div>
         </div>

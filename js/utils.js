@@ -91,6 +91,7 @@ export function switchTab(tabId) {
   document.querySelectorAll('.tab-panel').forEach(p => {
     p.classList.toggle('active', p.id === `panel-${tabId}`);
   });
+  window.dispatchEvent(new CustomEvent('tab-changed', { detail: tabId }));
 }
 
 export function pingClass(ms) {

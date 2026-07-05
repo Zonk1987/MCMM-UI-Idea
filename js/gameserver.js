@@ -526,12 +526,12 @@ class MockLogStreamer {
  */
 export function openConsole(srv) {
   consoleServerId = srv.containerId;
-  document.getElementById('consoleTitle').textContent = `${t('console') || 'Konsole'} — ${srv.serverName}`;
+  document.getElementById('consoleTitle').textContent = `${t('general.console') || 'Konsole'} — ${srv.serverName}`;
 
   const isOn = srv.status === 'online';
   const statusEl = document.getElementById('consoleStatus');
   statusEl.className = `status-badge ${isOn ? 'running' : 'stopped'}`;
-  statusEl.innerHTML = `<span class="dot"></span> ${isOn ? 'Live' : (t('offline') || 'Offline')}`;
+  statusEl.innerHTML = `<span class="dot"></span> ${isOn ? 'Live' : (t('general.offline') || 'Offline')}`;
 
   const output = document.getElementById('consoleOutput');
   
@@ -560,7 +560,7 @@ export function openConsole(srv) {
       }
     });
   } else {
-    consoleVirtualScroller.appendItem(`[Server]: ${t('no_logs') || 'Keine Logs für'} ${srv.serverName} ${t('available') || 'verfügbar'} (Server ist offline).`);
+    consoleVirtualScroller.appendItem(`[Server]: ${t('general.no_logs') || 'Keine Logs für'} ${srv.serverName} ${t('general.available') || 'verfügbar'} (Server ist offline).`);
   }
 }
 

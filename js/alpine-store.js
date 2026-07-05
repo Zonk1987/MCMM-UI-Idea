@@ -8,8 +8,22 @@ document.addEventListener('alpine:init', () => {
   Alpine.store('i18n', {
     locale: 'de',
     messages: {},
+    fallbackMessages: {},
     t(key) {
-      return this.messages[key] || key;
+      // Read to trigger Alpine reactivity tracking
+      const msgs = this.messages;
+      const fallback = this.fallbackMessages;
+      
+      if (!msgs || Object.keys(msgs).length === 0) return key;
+
+      const resolvePath = (obj, path) => path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
+      
+      let val = resolvePath(msgs, key);
+      if (val === undefined && this.locale !== 'en') {
+        val = resolvePath(fallback, key);
+      }
+      
+      return val !== undefined ? val : key;
     }
   });
 

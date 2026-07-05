@@ -1,0 +1,30 @@
+/* ─── Stats Row ─── */
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color var(--trans-fast);
+}
+
+.stat-card:hover { border-color: var(--border-hover); }
+
+.stat-icon { font-size: 28px !important; }
+.stat-icon.running { color: var(--green); }
+.stat-icon.stopped { color: var(--red); }
+.stat-icon.update  { color: var(--yellow); }
+.stat-icon.total   { color: var(--blue); }
+
+.stat-value { font-size: 24px; font-weight: 800; color: var(--text-primary); }
+.stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }

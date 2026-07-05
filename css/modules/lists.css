@@ -1,0 +1,14 @@
+/* ─── Ban list / Whitelist entries ─── */
+
+.list-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.list-entry:last-child { border-bottom: none; }
+
+.list-entry-name { font-weight: 600; flex: 1; }
+.list-entry-meta { font-size: 11px; color: var(--text-muted); }

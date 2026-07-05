@@ -14,14 +14,21 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" />
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css?v=2" />
+  <link rel="stylesheet" href="css/modules/buttons.css" />
+  <link rel="stylesheet" href="css/modules/forms.css" />
+  <link rel="stylesheet" href="css/modules/stats.css" />
+  <link rel="stylesheet" href="css/modules/modals.css" />
+  <link rel="stylesheet" href="css/modules/console.css" />
+  <link rel="stylesheet" href="css/modules/badges.css" />
+  <link rel="stylesheet" href="css/modules/states.css" />
+  <link rel="stylesheet" href="css/modules/lists.css" />
   <link rel="stylesheet" href="css/docker.css" />
   <link rel="stylesheet" href="css/gameserver.css" />
   <link rel="stylesheet" href="css/gameAdditions.css" />
-  <link rel="stylesheet" href="css/modules/minecraft.css" />
-  <link rel="stylesheet" href="css/modules/palworld.css" />
-  <link rel="stylesheet" href="css/modules/valheim.css" />
-  <link rel="stylesheet" href="css/modules/cs2.css" />
+  <link rel="stylesheet" href="games/minecraft/css/minecraft.css" />
+  <link rel="stylesheet" href="games/palworld/css/palworld.css" />
+  <link rel="stylesheet" href="games/valheim/css/valheim.css" />
+  <link rel="stylesheet" href="games/cs2/css/cs2.css" />
   <link rel="stylesheet" href="css/players.css" />
   <link rel="stylesheet" href="css/settings.css" />
   <link rel="stylesheet" href="css/toast.css" />
@@ -39,40 +46,40 @@
         <span class="material-icons-round">dns</span>
       </div>
       <span class="topbar-title">GameServer <span class="accent">Hub</span></span>
-      <span class="topbar-subtitle" x-text="$store.i18n.t('plugin_subtitle')">Unraid Plugin v1.0</span>
+      <span class="topbar-subtitle" x-text="$store.i18n.t('general.plugin_subtitle')">Unraid Plugin v1.0</span>
     </div>
 
     <nav class="tab-nav" id="tabNav" role="tablist">
       <button class="tab-btn active" data-tab="docker" id="tab-docker" role="tab" aria-selected="true"
         aria-controls="panel-docker">
         <span class="material-icons-round">view_list</span>
-        <span x-text="$store.i18n.t('nav_docker')">Docker</span>
+        <span x-text="$store.i18n.t('nav.docker')">Docker</span>
         <span class="tab-badge" id="badge-docker" x-data x-text="$store.global.dockerCount">0</span>
       </button>
       <button class="tab-btn" data-tab="gameserver" id="tab-gameserver" role="tab" aria-selected="false"
         aria-controls="panel-gameserver">
         <span class="material-icons-round">sports_esports</span>
-        <span x-text="$store.i18n.t('nav_gameservers')">Game Servers</span>
+        <span x-text="$store.i18n.t('nav.gameservers')">Game Servers</span>
         <span class="tab-badge live" id="badge-gameserver" x-data x-text="$store.global.onlineGameservers">0</span>
       </button>
       <button class="tab-btn" data-tab="game-additions" id="tab-game-additions" role="tab" aria-selected="false"
         aria-controls="panel-game-additions">
         <span class="material-icons-round">extension</span>
-        <span x-text="$store.i18n.t('nav_game_additions')">Game Additions</span>
+        <span x-text="$store.i18n.t('nav.game_additions')">Game Additions</span>
       </button>
       <button class="tab-btn" data-tab="players" id="tab-players" role="tab" aria-selected="false"
         aria-controls="panel-players">
         <span class="material-icons-round">group</span>
-        <span x-text="$store.i18n.t('nav_players')">Players</span>
+        <span x-text="$store.i18n.t('nav.players')">Players</span>
         <span class="tab-badge online" id="badge-players" x-data x-text="$store.global.onlinePlayers">0</span>
       </button>
     </nav>
 
     <div class="topbar-right">
-      <button class="icon-btn" id="refreshBtn" :title="$store.i18n.t('btn_refresh')">
+      <button class="icon-btn" id="refreshBtn" :title="$store.i18n.t('btn.refresh')">
         <span class="material-icons-round">refresh</span>
       </button>
-      <button class="icon-btn" id="settingsBtn" :title="$store.i18n.t('nav_settings')">
+      <button class="icon-btn" id="settingsBtn" :title="$store.i18n.t('nav.settings')">
         <span class="material-icons-round">settings</span>
       </button>
     </div>
@@ -118,7 +125,7 @@
     <div class="settings-header">
       <div class="settings-header-title">
         <span class="material-icons-round">settings</span>
-        <h2 x-text="$store.i18n.t('settings_title')">Einstellungen</h2>
+        <h2 x-text="$store.i18n.t('settings.title')">Einstellungen</h2>
       </div>
       <button class="icon-btn" id="closeSettingsBtn">
         <span class="material-icons-round">close</span>
@@ -127,18 +134,18 @@
 
     <nav class="settings-nav" id="settingsNav">
       <button class="settings-nav-btn active" data-stab="general"><span class="material-icons-round">tune</span> <span
-          x-text="$store.i18n.t('settings_general')">Allgemein</span></button>
+          x-text="$store.i18n.t('settings.general')">Allgemein</span></button>
       <button class="settings-nav-btn" data-stab="docker"><span class="material-icons-round">view_list</span> <span
-          x-text="$store.i18n.t('nav_docker')">Docker</span></button>
+          x-text="$store.i18n.t('nav.docker')">Docker</span></button>
       <button class="settings-nav-btn" data-stab="gameserver"><span class="material-icons-round">sports_esports</span>
-        <span x-text="$store.i18n.t('nav_gameservers')">GameServer</span></button>
+        <span x-text="$store.i18n.t('nav.gameservers')">GameServer</span></button>
       <button class="settings-nav-btn" data-stab="minecraft"><span
           style="font-size:16px; width:24px; text-align:center; display:inline-block;">&#x26CF;</span>
         Minecraft</button>
       <button class="settings-nav-btn" data-stab="modules"><span class="material-icons-round">extension</span>
         Module</button>
       <button class="settings-nav-btn" data-stab="notifications"><span class="material-icons-round">notifications</span>
-        <span x-text="$store.i18n.t('settings_notifications')">Meldungen</span></button>
+        <span x-text="$store.i18n.t('settings.notifications')">Meldungen</span></button>
     </nav>
 
     <form onsubmit="return false;" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
@@ -147,11 +154,11 @@
       <!-- Allgemein -->
       <div class="settings-section active" id="stab-general">
         <div class="settings-group">
-          <div class="settings-group-title" x-text="$store.i18n.t('settings_appearance')">Darstellung</div>
+          <div class="settings-group-title" x-text="$store.i18n.t('settings.appearance')">Darstellung</div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings_accent')">Akzentfarbe</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings_accent_desc')">Hauptfarbe der Oberfläche</div>
+              <div class="setting-label" x-text="$store.i18n.t('settings.accent')">Akzentfarbe</div>
+              <div class="setting-desc" x-text="$store.i18n.t('settings.accent_desc')">Hauptfarbe der Oberfläche</div>
             </div>
             <div class="color-swatches" id="accentSwatches">
               <button class="swatch active" data-color="#f57c00" style="background:#f57c00"
@@ -167,8 +174,8 @@
           </div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings_language')">Sprache</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings_language_desc')">Anzeigesprache der Benutzeroberfläche</div>
+              <div class="setting-label" x-text="$store.i18n.t('settings.language')">Sprache</div>
+              <div class="setting-desc" x-text="$store.i18n.t('settings.language_desc')">Anzeigesprache der Benutzeroberfläche</div>
             </div>
             <select class="setting-select" id="settingLang">
               <option value="en">English</option>
@@ -180,8 +187,8 @@
           </div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings_compact')">Kompakter Modus</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings_compact_desc')">Weniger Abstände, mehr Inhalt sichtbar</div>
+              <div class="setting-label" x-text="$store.i18n.t('settings.compact')">Kompakter Modus</div>
+              <div class="setting-desc" x-text="$store.i18n.t('settings.compact_desc')">Weniger Abstände, mehr Inhalt sichtbar</div>
             </div>
             <label class="setting-toggle">
               <input type="checkbox" id="settingCompact" />
@@ -192,11 +199,11 @@
           </div>
         </div>
         <div class="settings-group">
-          <div class="settings-group-title" x-text="$store.i18n.t('settings_behavior')">Verhalten</div>
+          <div class="settings-group-title" x-text="$store.i18n.t('settings.behavior')">Verhalten</div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings_refresh')">Auto-Refresh-Interval</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings_refresh_desc')">Automatische Aktualisierung alle N Sekunden
+              <div class="setting-label" x-text="$store.i18n.t('settings.refresh')">Auto-Refresh-Interval</div>
+              <div class="setting-desc" x-text="$store.i18n.t('settings.refresh_desc')">Automatische Aktualisierung alle N Sekunden
               </div>
             </div>
             <div class="setting-input-row">
@@ -207,8 +214,8 @@
           </div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-label" x-text="$store.i18n.t('settings_animations')">Animationen</div>
-              <div class="setting-desc" x-text="$store.i18n.t('settings_animations_desc')">Übergangsanimationen aktivieren</div>
+              <div class="setting-label" x-text="$store.i18n.t('settings.animations')">Animationen</div>
+              <div class="setting-desc" x-text="$store.i18n.t('settings.animations_desc')">Übergangsanimationen aktivieren</div>
             </div>
             <label class="setting-toggle">
               <input type="checkbox" id="settingAnimations" checked />
@@ -623,7 +630,7 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label for="cfgContName" x-text="$store.i18n.t('container')">Container Name</label>
+          <label for="cfgContName" x-text="$store.i18n.t('general.container')">Container Name</label>
           <input id="cfgContName" type="text" class="form-input" x-model="$store.modals.config.data.name" />
         </div>
         <div class="form-group">
@@ -644,9 +651,9 @@
         </div>
       </div>
       <div class="modal-footer" style="margin-top:20px;">
-        <button class="btn btn-ghost" @click="$store.modals.config.open = false"><span x-text="$store.i18n.t('btn_cancel')">Abbrechen</span></button>
-        <button class="btn btn-primary" @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings_saved') || 'Einstellungen gespeichert!') : 'Einstellungen gespeichert!', 'success');">
-          <span class="material-icons-round">save</span> <span x-text="$store.i18n.t('btn_save')">Speichern</span>
+        <button class="btn btn-ghost" @click="$store.modals.config.open = false"><span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span></button>
+        <button class="btn btn-primary" @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings.saved') || 'Einstellungen gespeichert!') : 'Einstellungen gespeichert!', 'success');">
+          <span class="material-icons-round">save</span> <span x-text="$store.i18n.t('btn.save')">Speichern</span>
         </button>
       </div>
     </div>
@@ -654,19 +661,20 @@
 
   <!-- Game Server Install Modal (Alpine) -->
   <div class="modal-backdrop" id="installModalAlpine" 
-       x-data="{ activeTab: 'config' }"  
-       x-show="$store.modals.install.open" style="display: none;" x-transition>
-    <div class="modal-content" @click.away="$store.modals.install.open = false" style="max-width:1050px; padding:0; overflow:hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.6); background: var(--bg-base); backdrop-filter: none;">
+       x-data="installModal()"
+       @open-install-modal.window="openModal($event.detail)"
+       x-show="open" style="display: none;" x-transition>
+    <div class="modal-content" @click.away="open = false" style="max-width:1050px; padding:0; overflow:hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.6); background: var(--bg-base); backdrop-filter: none;">
       <!-- Header -->
       <div class="modal-header" style="background:var(--bg-card); padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; gap:16px;">
-        <div style="background:var(--orange-dim); color:var(--orange); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <div style="background:var(--accent-dim); color:var(--accent); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:24px;">dns</span>
         </div>
         <div style="flex:1;">
-          <h2 style="margin:0; font-size:18px; color:#fff;"><span x-text="$store.modals.install.data.isEdit ? 'Einstellungen' : 'Neuen Server'"></span>: <span x-text="$store.modals.install.data.name"></span></h2>
-          <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">itzg/minecraft-server · von <span x-text="$store.modals.install.data.author"></span></div>
+          <h2 style="margin:0; font-size:18px; color:#fff;"><span x-text="data.isEdit ? 'Einstellungen' : 'Neuen Server'"></span>: <span x-text="data.name"></span></h2>
+          <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">itzg/minecraft-server · von <span x-text="data.author"></span></div>
         </div>
-        <button class="icon-btn" @click="$store.modals.install.open = false"><span class="material-icons-round">close</span></button>
+        <button class="icon-btn" @click="open = false"><span class="material-icons-round">close</span></button>
       </div>
       
       <div style="display:flex; height:600px;">
@@ -699,7 +707,7 @@
                   <label class="setting-label" for="instSafeName">Container-Name</label>
                   <div class="setting-desc">Eindeutiger Name in Docker</div>
                 </div>
-                <input type="text" id="instSafeName" name="instSafeName" class="setting-input" style="width:240px" x-model="$store.modals.install.data.safeName" />
+                <input type="text" id="instSafeName" name="instSafeName" class="setting-input" style="width:240px" x-model="data.safeName" />
               </div>
               
               <div class="setting-row">
@@ -707,7 +715,7 @@
                   <label class="setting-label" for="instServerName">Server-Name</label>
                   <div class="setting-desc">Name im Spiel (server.properties)</div>
                 </div>
-                <input type="text" id="instServerName" name="instServerName" class="setting-input" style="width:240px" x-model="$store.modals.install.data.serverName" />
+                <input type="text" id="instServerName" name="instServerName" class="setting-input" style="width:240px" x-model="data.serverName" />
               </div>
               
               <div class="setting-row">
@@ -715,7 +723,7 @@
                   <label class="setting-label" for="instPort">Server-Port</label>
                   <div class="setting-desc">Minecraft Verbindungsport</div>
                 </div>
-                <input type="number" id="instPort" name="instPort" class="setting-input" style="width:240px" x-model="$store.modals.install.data.port" />
+                <input type="number" id="instPort" name="instPort" class="setting-input" style="width:240px" x-model="data.port" />
               </div>
 
               <div class="setting-row">
@@ -732,7 +740,7 @@
                   <div class="setting-desc">Für den Java-Heap (-Xms / -Xmx)</div>
                 </div>
                 <div style="position:relative; width:240px;">
-                  <input type="number" id="instRam" name="instRam" class="setting-input" style="width:100%; padding-right:32px;" x-model="$store.modals.install.data.ram" />
+                  <input type="number" id="instRam" name="instRam" class="setting-input" style="width:100%; padding-right:32px;" x-model="data.ram" />
                   <span style="position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-muted);">MB</span>
                 </div>
               </div>
@@ -742,7 +750,7 @@
                   <label class="setting-label" for="instDataPath">Datenpfad (Host)</label>
                   <div class="setting-desc">Bind-Mount für Serverdaten</div>
                 </div>
-                <input type="text" id="instDataPath" name="instDataPath" class="setting-input" style="width:240px; font-family:'JetBrains Mono', monospace; font-size:11px;" x-model="$store.modals.install.data.path" />
+                <input type="text" id="instDataPath" name="instDataPath" class="setting-input" style="width:240px; font-family:'JetBrains Mono', monospace; font-size:11px;" x-model="data.path" />
               </div>
               
               <div class="setting-row">
@@ -750,7 +758,7 @@
                   <label class="setting-label" for="instServerType">Server-Typ</label>
                   <div class="setting-desc">Servertyp (auto aus Modpack)</div>
                 </div>
-                <select id="instServerType" name="instServerType" class="setting-input" style="width:240px" x-model="$store.modals.install.data.type">
+                <select id="instServerType" name="instServerType" class="setting-input" style="width:240px" x-model="data.type">
                   <option value="AUTO">Auto (aus Modpack)</option>
                   <option value="VANILLA">Vanilla</option>
                   <option value="PAPER">Paper</option>
@@ -765,7 +773,7 @@
                   <label class="setting-label" for="instRestartPolicy">Restart-Policy</label>
                   <div class="setting-desc">Wann soll neugestartet werden?</div>
                 </div>
-                <select id="instRestartPolicy" name="instRestartPolicy" class="setting-input" style="width:240px" x-model="$store.modals.install.data.restart">
+                <select id="instRestartPolicy" name="instRestartPolicy" class="setting-input" style="width:240px" x-model="data.restart">
                   <option value="unless-stopped">unless-stopped</option>
                   <option value="always">always</option>
                   <option value="no">no</option>
@@ -780,14 +788,14 @@
                   <label class="setting-label" for="instMaxPlayers">Max Players</label>
                   <div class="setting-desc">Maximale Spieleranzahl</div>
                 </div>
-                <input type="number" id="instMaxPlayers" name="instMaxPlayers" class="setting-input" style="width:160px" x-model="$store.modals.install.data.maxPlayers" />
+                <input type="number" id="instMaxPlayers" name="instMaxPlayers" class="setting-input" style="width:160px" x-model="data.maxPlayers" />
               </div>
               <div class="setting-row">
                 <div class="setting-info">
                   <label class="setting-label" for="instDifficulty">Difficulty</label>
                   <div class="setting-desc">Schwierigkeitsgrad</div>
                 </div>
-                <select id="instDifficulty" name="instDifficulty" class="setting-input" style="width:160px" x-model="$store.modals.install.data.difficulty">
+                <select id="instDifficulty" name="instDifficulty" class="setting-input" style="width:160px" x-model="data.difficulty">
                   <option value="easy">Easy</option>
                   <option value="normal">Normal</option>
                   <option value="hard">Hard</option>
@@ -800,7 +808,7 @@
                   <div class="setting-desc">Spieler gegen Spieler</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.pvp" />
+                  <input type="checkbox" x-model="data.pvp" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
@@ -810,7 +818,7 @@
                   <div class="setting-desc">Nur gekaufte Accounts</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.onlineMode" />
+                  <input type="checkbox" x-model="data.onlineMode" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
@@ -820,16 +828,16 @@
                   <div class="setting-desc">Nur eingetragene Spieler können beitreten</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.enableWhitelist" />
+                  <input type="checkbox" x-model="data.enableWhitelist" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
-              <div class="setting-row" x-show="$store.modals.install.data.enableWhitelist" style="display:none; border-bottom:none;">
+              <div class="setting-row" x-show="data.enableWhitelist" style="display:none; border-bottom:none;">
                 <div class="setting-info">
                   <label class="setting-label" for="instWhitelist">Erlaubte Spieler</label>
                   <div class="setting-desc">Kommagetrennt (Spieler1,Spieler2)</div>
                 </div>
-                <input type="text" id="instWhitelist" name="instWhitelist" class="setting-input" style="width:240px" placeholder="z.B. Spieler1,Spieler2" x-model="$store.modals.install.data.whitelist" />
+                <input type="text" id="instWhitelist" name="instWhitelist" class="setting-input" style="width:240px" placeholder="z.B. Spieler1,Spieler2" x-model="data.whitelist" />
               </div>
             </div>
             
@@ -841,7 +849,7 @@
                   <div class="setting-desc">Reservierter Startspeicher</div>
                 </div>
                 <div style="position:relative; width:160px;">
-                  <input type="number" id="instInitRam" name="instInitRam" class="setting-input" style="width:100%; padding-right:32px;" x-model="$store.modals.install.data.initRam" />
+                  <input type="number" id="instInitRam" name="instInitRam" class="setting-input" style="width:100%; padding-right:32px;" x-model="data.initRam" />
                   <span style="position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-muted);">MB</span>
                 </div>
               </div>
@@ -851,7 +859,7 @@
                   <div class="setting-desc">Empfohlen für Paper/Spigot Server</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.aikar" @change="if($store.modals.install.data.aikar) $store.modals.install.data.meowice = false" />
+                  <input type="checkbox" x-model="data.aikar" @change="if(data.aikar) data.meowice = false" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
@@ -861,7 +869,7 @@
                   <div class="setting-desc">Empfohlen für große Heaps (>12GB) / Fabric</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.meowice" @change="if($store.modals.install.data.meowice) $store.modals.install.data.aikar = false" />
+                  <input type="checkbox" x-model="data.meowice" @change="if(data.meowice) data.aikar = false" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
@@ -871,7 +879,7 @@
                   <div class="setting-desc">Command Blocks erlauben</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.cmdBlocks" />
+                  <input type="checkbox" x-model="data.cmdBlocks" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
@@ -881,7 +889,7 @@
                   <div class="setting-desc">Verhindert Kicks bei Lags</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.flight" />
+                  <input type="checkbox" x-model="data.flight" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
@@ -891,7 +899,7 @@
                   <div class="setting-desc">Server-Logs komprimieren und rotieren</div>
                 </div>
                 <label class="action-toggle">
-                  <input type="checkbox" x-model="$store.modals.install.data.rollingLogs" />
+                  <input type="checkbox" x-model="data.rollingLogs" />
                   <div class="toggle-track"><div class="toggle-thumb"></div></div>
                 </label>
               </div>
@@ -945,9 +953,9 @@
         <!-- Right: Preview -->
         <div style="flex: 1; padding: 24px; display: flex; flex-direction: column; min-height: 0;">
           <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; flex-shrink: 0;">Docker-Befehl Vorschau</div>
-          <div style="background:#0d0f13; border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:16px; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--green); line-height:1.6; overflow-y:auto; overflow-x:auto; margin-bottom:16px; white-space:pre-wrap; flex: 1; min-height: 0;" x-html="$store.modals.install.getPreviewCmd()"></div>
+          <div style="background:#0d0f13; border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:16px; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--green); line-height:1.6; overflow-y:auto; overflow-x:auto; margin-bottom:16px; white-space:pre-wrap; flex: 1; min-height: 0;" x-html="getPreviewCmd()"></div>
           <div style="background:rgba(249, 115, 22, 0.05); border:1px solid rgba(249, 115, 22, 0.3); border-radius:8px; padding:16px; flex-shrink: 0;">
-            <div style="display:flex; align-items:center; gap:8px; color:var(--orange); font-weight:600; font-size:13px; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px; color:var(--accent); font-weight:600; font-size:13px; margin-bottom:8px;">
               <span class="material-icons-round" style="font-size:16px;">info</span> itzg/minecraft-server
             </div>
             <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
@@ -959,12 +967,12 @@
       
       <!-- Footer -->
       <div class="modal-footer" style="padding:20px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:12px; background:var(--bg-base);">
-        <button class="btn btn-ghost" @click="$store.modals.install.copyCmd()">
-          <span class="material-icons-round">content_copy</span> <span x-text="$store.i18n.t('tooltip_msg')">Befehl kopieren</span>
+        <button class="btn btn-ghost" @click="copyCmd()">
+          <span class="material-icons-round">content_copy</span> <span x-text="$store.i18n.t('general.tooltip_msg')">Befehl kopieren</span>
         </button>
-        <button class="btn btn-ghost" @click="$store.modals.install.open = false"><span x-text="$store.i18n.t('btn_cancel')">Abbrechen</span></button>
-        <button class="btn btn-primary" style="background:var(--orange); border-color:var(--orange);" @click="$store.modals.install.open = false; if (typeof showToast === 'function') showToast($store.modals.install.data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');">
-          <span class="material-icons-round" x-text="$store.modals.install.data.isEdit ? 'save' : 'rocket_launch'"></span> <span x-text="$store.modals.install.data.isEdit ? 'Änderungen speichern' : 'Container starten'"></span>
+        <button class="btn btn-ghost" @click="open = false"><span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span></button>
+        <button class="btn btn-primary" style="background:var(--accent); border-color:var(--accent);" @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');">
+          <span class="material-icons-round" x-text="data.isEdit ? 'save' : 'rocket_launch'"></span> <span x-text="data.isEdit ? 'Änderungen speichern' : 'Container starten'"></span>
         </button>
       </div>
     </div>

@@ -10,6 +10,13 @@ import { DOCKER_CONTAINERS, dockerApp } from './docker.js';
 import { GAME_TEMPLATES, GS_INSTANCES, gameserverApp, openConsole } from './gameserver.js';
 import { playersApp } from './players.js';
 import { GameAdditions } from './gameAdditions.js';
+import { registerAlpineComponents } from './alpine-components.js';
+
+document.addEventListener('alpine:init', () => {
+  if (window.Alpine) {
+    registerAlpineComponents(window.Alpine);
+  }
+});
 
 // Expose globals required by Alpine and inline event handlers
 window.t = t;
@@ -110,7 +117,7 @@ async function initApp() {
     if (active === 'gameserver') { /* Alpine handles it */ }
     if (active === 'game-additions') { GameAdditions.refresh(); }
     if (active === 'players') { /* Alpine handles it */ }
-    showToast(t('data_refreshed') || 'Daten aktualisiert', 'success');
+    showToast(t('general.data_refreshed') || 'Daten aktualisiert', 'success');
 
     // Spin the refresh icon briefly
     const icon = document.querySelector('#refreshBtn .material-icons-round');
@@ -122,7 +129,7 @@ async function initApp() {
   });
 
   console.log('%c🎮 GameServer Hub v1.0', 'color:#f57c00;font-size:16px;font-weight:bold');
-  console.log(`%cUnraid Plugin — ${t('loaded_successfully') || 'Erfolgreich geladen'}`, 'color:#22c55e');
+  console.log(`%cUnraid Plugin — ${t('general.loaded_successfully') || 'Erfolgreich geladen'}`, 'color:#22c55e');
 
   // ── Show Onboarding Modal ─────────────────────────────
   if (!localStorage.getItem('gs_hub_onboarding_done')) {
@@ -147,7 +154,7 @@ if (document.readyState === 'loading') {
 // Import game addition modules AFTER GameAdditions has been attached to window
 // (Wait, static imports are hoisted. To ensure they run AFTER GameAdditions is global, 
 // we should just let them import GameAdditions directly, which we already did!)
-import './modules/minecraft.js';
-import './modules/palworld.js';
-import './modules/valheim.js';
-import './modules/cs2.js';
+import '../games/minecraft/js/minecraft.js';
+import '../games/palworld/js/palworld.js';
+import '../games/valheim/js/valheim.js';
+import '../games/cs2/js/cs2.js';

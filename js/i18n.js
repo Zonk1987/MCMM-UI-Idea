@@ -7,6 +7,7 @@
 export const I18N = {
   currentLang: 'en',
   translations: {},
+  fallbackTranslations: {},
   supportedLangs: ['en', 'de', 'es', 'fr', 'it']
 };
 
@@ -21,35 +22,57 @@ export async function loadLanguage(langCode) {
   }
   
   try {
+    // Load English fallback if not loaded
+    if (Object.keys(I18N.fallbackTranslations).length === 0) {
+      try {
+        const fbRes = await fetch(`lang/en.json?v=${new Date().getTime()}`);
+        if (fbRes.ok) I18N.fallbackTranslations = await fbRes.json();
+      } catch (e) {
+        console.error('Failed to load English fallback', e);
+      }
+    }
+
     const response = await fetch(`lang/${langCode}.json?v=${new Date().getTime()}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     
     I18N.translations = await response.json();
     I18N.currentLang = langCode;
     
+    // Trigger reactivity in Alpine if available
     if (window.Alpine) {
       const store = Alpine.store('i18n');
       if (store) {
         store.locale = langCode;
-        store.messages = I18N.translations;
+        store.fallbackMessages = I18N.fallbackTranslations;
+        store.messages = I18N.translations; // Alpine reactivity trigger
       }
     }
   } catch (error) {
     console.error(`Failed to load language: ${langCode}`, error);
-    // If it fails, fallback to empty/keys so we at least don't crash
   }
 }
 
-/**
- * Returns the translated string for a given key.
- * @param {string} key - The translation key.
- * @returns {string|undefined} The translated string, or undefined if not found (allows JS fallbacks to work).
- */
-export function t(key) {
-  return I18N.translations[key];
+function resolvePath(obj, path) {
+  return path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
 }
 
-// Expose to window for JS dynamic bindings (outside Alpine context)
+/**
+ * Returns the translated string for a given key, with fallback to English.
+ * @param {string} key - The translation key (dot-notation supported).
+ * @returns {string} The translated string or the key itself if not found.
+ */
+export function t(key) {
+  let val = resolvePath(I18N.translations, key);
+  
+  // Fallback to English if key is missing in the current language
+  if (val === undefined && I18N.currentLang !== 'en') {
+    val = resolvePath(I18N.fallbackTranslations, key);
+  }
+  
+  return val !== undefined ? val : key;
+}
+
+// Expose to window for JS dynamic bindings and Alpine Store
 window.t = t;
 
 // Ensure i18n logic is initialized on load

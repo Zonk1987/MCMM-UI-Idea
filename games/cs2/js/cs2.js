@@ -1,12 +1,13 @@
 /* ═══════════════════════════════════════════════════════════
-   valheim.js — Valheim Module for Game Additions
+   cs2.js — CS2 Module for Game Additions
 ═══════════════════════════════════════════════════════════ */
 
-import { GameAdditions } from '../gameAdditions.js';
+import { GameAdditions } from '../../../js/gameAdditions.js';
+import { appSettings } from '../../../js/settings.js';
 
-GameAdditions.registerGame('valheim', {
-  name: 'Valheim',
-  icon: '🪓',
+GameAdditions.registerGame('cs2', {
+  name: 'CS2',
+  icon: '🔫',
   
   onSelect(state) {
     // Hide Minecraft-specific UI and enforce CurseForge
@@ -28,8 +29,8 @@ GameAdditions.registerGame('valheim', {
 
   async fetchContent(state) {
     if (state.source === 'curseforge') {
-      // 435882 is the verified internal CurseForge GameID for Valheim
-      await GameAdditions.fetchCurseForgeGeneric('435882', state);
+      // 4268 is used here as a placeholder for CS:GO/CS2 context
+      await GameAdditions.fetchCurseForgeGeneric('4268', state);
     }
   }
 });

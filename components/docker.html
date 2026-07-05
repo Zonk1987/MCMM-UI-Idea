@@ -2,15 +2,15 @@
       x-data="dockerApp()">
       <div class="panel-header">
         <div class="panel-title-group">
-          <h1 x-text="$store.i18n.t('docker_title')">Docker Hub</h1>
-          <p class="panel-subtitle" x-text="$store.i18n.t('docker_subtitle')">Verwalte deine Docker Container, Updates und
+          <h1 x-text="$store.i18n.t('general.docker_title')">Docker Hub</h1>
+          <p class="panel-subtitle" x-text="$store.i18n.t('general.docker_subtitle')">Verwalte deine Docker Container, Updates und
             Systemauslastung</p>
         </div>
         <div class="panel-actions" style="display:flex; align-items:center; gap:16px;">
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer; white-space:nowrap;"
-            :title="$store.i18n.t('advanced_view')">
+            :title="$store.i18n.t('general.advanced_view')">
             <span style="font-size:12px; color:var(--text-secondary); font-weight:600;"
-              x-text="$store.i18n.t('advanced_view')">Advanced View</span>
+              x-text="$store.i18n.t('general.advanced_view')">Advanced View</span>
             <div class="action-toggle">
               <input type="checkbox" x-model="advancedView">
               <div class="toggle-track">
@@ -22,7 +22,7 @@
             <label for="dockerSearchInput" style="display:flex; align-items:center; cursor:text; margin:0;"><span
                 class="material-icons-round">search</span></label>
             <input type="text" id="dockerSearchInput" name="dockerSearch" x-model="searchQuery"
-              :placeholder="$store.i18n.t('search_container')" aria-label="Container suchen" />
+              :placeholder="$store.i18n.t('general.search_container')" aria-label="Container suchen" />
           </div>
         </div>
       </div>
@@ -32,28 +32,28 @@
           <span class="material-icons-round stat-icon running">play_circle</span>
           <div>
             <div class="stat-value" x-text="stats.running">0</div>
-            <div class="stat-label" x-text="$store.i18n.t('stat_running')">Läuft</div>
+            <div class="stat-label" x-text="$store.i18n.t('stat.running')">Läuft</div>
           </div>
         </div>
         <div class="stat-card">
           <span class="material-icons-round stat-icon stopped">stop_circle</span>
           <div>
             <div class="stat-value" x-text="stats.stopped">0</div>
-            <div class="stat-label" x-text="$store.i18n.t('stat_stopped')">Gestoppt</div>
+            <div class="stat-label" x-text="$store.i18n.t('stat.stopped')">Gestoppt</div>
           </div>
         </div>
         <div class="stat-card">
           <span class="material-icons-round stat-icon update">update</span>
           <div>
             <div class="stat-value" x-text="stats.updates">0</div>
-            <div class="stat-label" x-text="$store.i18n.t('stat_updates')">Updates</div>
+            <div class="stat-label" x-text="$store.i18n.t('stat.updates')">Updates</div>
           </div>
         </div>
         <div class="stat-card">
           <span class="material-icons-round stat-icon total">grid_view</span>
           <div>
             <div class="stat-value" x-text="stats.total">0</div>
-            <div class="stat-label" x-text="$store.i18n.t('stat_total')">Gesamt</div>
+            <div class="stat-label" x-text="$store.i18n.t('stat.total')">Gesamt</div>
           </div>
         </div>
       </div>
@@ -67,17 +67,17 @@
                   aria-label="Alle auswählen" />
               </th>
               <th class="col-icon"></th>
-              <th class="col-name sortable" @click="toggleSort('name')"><span x-text="$store.i18n.t('col_name')">Name</span> <span
+              <th class="col-name sortable" @click="toggleSort('name')"><span x-text="$store.i18n.t('col.name')">Name</span> <span
                   class="material-icons-round sort-icon">unfold_more</span></th>
-              <th class="col-status sortable" @click="toggleSort('status')"><span x-text="$store.i18n.t('col_status')">Status</span>
+              <th class="col-status sortable" @click="toggleSort('status')"><span x-text="$store.i18n.t('col.status')">Status</span>
                 <span class="material-icons-round sort-icon">unfold_more</span></th>
               <th class="col-adv" x-show="advancedView" style="width:80px; text-align:center;"
-                x-text="$store.i18n.t('col_autostart')">Autostart</th>
-              <th class="col-adv" x-show="advancedView" style="width:180px;" x-text="$store.i18n.t('col_cpu_ram')">CPU / RAM</th>
-              <th class="col-adv" x-show="advancedView" style="width:160px;" x-text="$store.i18n.t('col_uptime')">Uptime</th>
-              <th class="col-ports" x-text="$store.i18n.t('col_ports')">Ports</th>
-              <th class="col-paths" x-text="$store.i18n.t('col_paths')">Pfade</th>
-              <th class="col-actions" x-text="$store.i18n.t('col_actions')">Aktionen</th>
+                x-text="$store.i18n.t('col.autostart')">Autostart</th>
+              <th class="col-adv" x-show="advancedView" style="width:180px;" x-text="$store.i18n.t('col.cpu_ram')">CPU / RAM</th>
+              <th class="col-adv" x-show="advancedView" style="width:160px;" x-text="$store.i18n.t('col.uptime')">Uptime</th>
+              <th class="col-ports" x-text="$store.i18n.t('col.ports')">Ports</th>
+              <th class="col-paths" x-text="$store.i18n.t('col.paths')">Pfade</th>
+              <th class="col-actions" x-text="$store.i18n.t('col.actions')">Aktionen</th>
             </tr>
           </thead>
           <tbody>
@@ -122,7 +122,7 @@
                 <td colspan="10">
                   <div class="empty-state">
                     <span class="material-icons-round">inbox</span>
-                    <p x-text="$store.i18n.t('no_containers_found')">Keine Container gefunden</p>
+                    <p x-text="$store.i18n.t('general.no_containers_found')">Keine Container gefunden</p>
                   </div>
                 </td>
               </tr>
@@ -222,22 +222,22 @@
                   <td>
                     <div class="row-actions">
                       <label class="action-toggle"
-                        :title="c.status === 'running' ? (t('btn_stop') || 'Stoppen') : (t('btn_start') || 'Starten')">
+                        :title="c.status === 'running' ? (t('btn.stop') || 'Stoppen') : (t('btn.start') || 'Starten')">
                         <input type="checkbox" :checked="c.status === 'running'" @change="toggleContainer(c.id)" />
                         <div class="toggle-track">
                           <div class="toggle-thumb"></div>
                         </div>
                       </label>
-                      <button class="action-btn" :title="$store.i18n.t('tooltip_logs')"
+                      <button class="action-btn" :title="$store.i18n.t('general.tooltip_logs')"
                         @click="typeof openTerminal === 'function' ? openTerminal(c.id) : null">
                         <span class="material-icons-round">terminal</span>
                       </button>
-                      <button class="action-btn" :title="$store.i18n.t('tooltip_settings')"
-                        @click="$store.modals.config.data = {id: c.id, name: c.name, port: (c.ports && c.ports[0]) ? c.ports[0].host : '', ram: 4096}; $store.modals.config.open = true">
+                      <button class="action-btn" :title="$store.i18n.t('general.tooltip_settings')"
+                        @click="$dispatch('open-config-modal', {id: c.id, name: c.name, port: (c.ports && c.ports[0]) ? c.ports[0].host : '', ram: 4096})">
                         <span class="material-icons-round">settings</span>
                       </button>
                       <template x-if="!c.upToDate">
-                        <button class="action-btn" style="color:var(--yellow)" :title="$store.i18n.t('tooltip_update')"
+                        <button class="action-btn" style="color:var(--yellow)" :title="$store.i18n.t('general.tooltip_update')"
                           @click="updateContainer(c.id)">
                           <span class="material-icons-round">upgrade</span>
                         </button>
@@ -252,9 +252,7 @@
       </div>
 
       <!-- Bulk Action Bar -->
-      <div class="bulk-action-bar" :class="selected.length > 0 ? 'active' : ''"
-        style="position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--bg-card); border:1px solid var(--border); box-shadow:0 10px 25px rgba(0,0,0,0.5); padding:12px 24px; border-radius:12px; display:flex; align-items:center; gap:20px; z-index:100; transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity:0;"
-        :style="selected.length > 0 ? 'transform:translateX(-50%) translateY(0); opacity:1;' : ''">
+      <div class="bulk-action-bar" :class="selected.length > 0 ? 'active' : ''">
         <div style="display:flex; align-items:center; gap:8px; color:var(--text-primary); font-weight:600;">
           <span class="material-icons-round" style="color:var(--accent);">check_circle</span>
           <span x-text="`${selected.length} ausgewählt`"></span>

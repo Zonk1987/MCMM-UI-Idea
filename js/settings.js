@@ -92,7 +92,7 @@ export function saveSettings() {
   
   
   applyVisualSettings();
-  showToast(t('settings_saved') || 'Einstellungen gespeichert', 'success');
+  showToast(t('settings.saved') || 'Einstellungen gespeichert', 'success');
   toggleSettingsPanel(false);
 }
 
@@ -100,12 +100,12 @@ export function saveSettings() {
  * Reset settings to default values after user confirmation
  */
 export function resetSettings() {
-  if (confirm(t('settings_reset_confirm') || 'Einstellungen wirklich auf Standardwerte zurücksetzen?')) {
+  if (confirm(t('settings.reset_confirm') || 'Einstellungen wirklich auf Standardwerte zurücksetzen?')) {
     appSettings = { ...DEFAULT_SETTINGS };
     localStorage.removeItem('gs_hub_settings');
     applyVisualSettings();
     fillSettingsForm();
-    showToast(t('settings_reset_success') || 'Standardeinstellungen geladen', 'info');
+    showToast(t('settings.reset_success') || 'Standardeinstellungen geladen', 'info');
   }
 }
 

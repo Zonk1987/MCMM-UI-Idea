@@ -2,7 +2,8 @@
    palworld.js — Palworld Module for Game Additions
 ═══════════════════════════════════════════════════════════ */
 
-import { GameAdditions } from '../gameAdditions.js';
+import { GameAdditions } from '../../../js/gameAdditions.js';
+import { appSettings } from '../../../js/settings.js';
 
 GameAdditions.registerGame('palworld', {
   name: 'Palworld',

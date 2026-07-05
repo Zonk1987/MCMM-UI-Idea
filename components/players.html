@@ -1,8 +1,8 @@
     <section class="tab-panel" id="panel-players" role="tabpanel" aria-labelledby="tab-players" x-data="playersApp()">
       <div class="panel-header">
         <div class="panel-title-group">
-          <h1 x-text="$store.i18n.t('pl_title')">Player Manager</h1>
-          <p class="panel-subtitle" x-text="$store.i18n.t('pl_subtitle')">Spieler verwalten, bannen, kicken und Whitelist pflegen</p>
+          <h1 x-text="$store.i18n.t('pl.title')">Player Manager</h1>
+          <p class="panel-subtitle" x-text="$store.i18n.t('pl.subtitle')">Spieler verwalten, bannen, kicken und Whitelist pflegen</p>
         </div>
         <div class="panel-actions">
           <div class="custom-select-wrap" :class="{ 'open': selectorOpen }" @click.away="selectorOpen = false">
@@ -15,7 +15,7 @@
               <li class="custom-select-option" @click="state.server = ''; selectorOpen = false"
                 :class="{'active': state.server === ''}">
                 <span class="cso-dot" style="background:var(--text-muted)"></span>
-                <span x-text="$store.i18n.t('server_selector_default')">Kein Server</span>
+                <span x-text="$store.i18n.t('general.server_selector_default')">Kein Server</span>
               </li>
               <template x-for="s in servers" :key="s.containerId">
                 <li class="custom-select-option" @click="state.server = s.containerId; selectorOpen = false"
@@ -24,7 +24,7 @@
                     :style="{ background: s.status === 'online' ? 'var(--green)' : 'var(--red)' }"></span>
                   <span x-text="s.serverName"></span>
                   <span class="cso-status"
-                    x-text="s.status === 'online' ? (t('online') || 'Online') : (t('offline') || 'Offline')"></span>
+                    x-text="s.status === 'online' ? (t('general.online') || 'Online') : (t('general.offline') || 'Offline')"></span>
                 </li>
               </template>
             </ul>
@@ -36,20 +36,20 @@
         <!-- Sub-Tabs -->
         <div class="player-subtabs">
           <button class="subtab-btn" :class="{ 'active': state.subtab === 'online' }" @click="state.subtab = 'online'">
-            <span class="material-icons-round">sensors</span> <span x-text="$store.i18n.t('tab_online')">Online</span>
+            <span class="material-icons-round">sensors</span> <span x-text="$store.i18n.t('tab.online')">Online</span>
             <span class="tab-badge online" x-text="onlineCount"></span>
           </button>
           <button class="subtab-btn" :class="{ 'active': state.subtab === 'whitelist' }"
             @click="state.subtab = 'whitelist'">
             <span class="material-icons-round">playlist_add_check</span> <span
-              x-text="$store.i18n.t('tab_whitelist')">Whitelist</span>
+              x-text="$store.i18n.t('tab.whitelist')">Whitelist</span>
           </button>
           <button class="subtab-btn" :class="{ 'active': state.subtab === 'bans' }" @click="state.subtab = 'bans'">
-            <span class="material-icons-round">gavel</span> <span x-text="$store.i18n.t('tab_bans')">Bans</span>
+            <span class="material-icons-round">gavel</span> <span x-text="$store.i18n.t('tab.bans')">Bans</span>
           </button>
           <button class="subtab-btn" :class="{ 'active': state.subtab === 'chatlog' }"
             @click="state.subtab = 'chatlog'">
-            <span class="material-icons-round">chat</span> <span x-text="$store.i18n.t('tab_chatlog')">Chat Log</span>
+            <span class="material-icons-round">chat</span> <span x-text="$store.i18n.t('tab.chatlog')">Chat Log</span>
           </button>
         </div>
 
@@ -59,13 +59,13 @@
           <template x-if="!state.server">
             <div class="empty-state">
               <span class="material-icons-round">dns</span>
-              <p x-text="$store.i18n.t('no_server_selected')">Wähle einen Server aus um Spielerdaten zu sehen.</p>
+              <p x-text="$store.i18n.t('general.no_server_selected')">Wähle einen Server aus um Spielerdaten zu sehen.</p>
             </div>
           </template>
           <template x-if="state.server && !activeData">
             <div class="empty-state">
               <span class="material-icons-round">error</span>
-              <p x-text="$store.i18n.t('no_server_data')">Keine Daten für diesen Server verfügbar.</p>
+              <p x-text="$store.i18n.t('general.no_server_data')">Keine Daten für diesen Server verfügbar.</p>
             </div>
           </template>
 
@@ -74,7 +74,7 @@
             <div>
               <template x-if="!activeData.online.length">
                 <div class="empty-state"><span class="material-icons-round">person_off</span>
-                  <p x-text="$store.i18n.t('no_players_online')">Keine Spieler online.</p>
+                  <p x-text="$store.i18n.t('general.no_players_online')">Keine Spieler online.</p>
                 </div>
               </template>
               <template x-if="activeData.online.length > 0">
@@ -83,12 +83,12 @@
                     <thead>
                       <tr>
                         <th style="width:40px"></th>
-                        <th x-text="$store.i18n.t('col_player')">Spieler</th>
-                        <th x-text="$store.i18n.t('col_ping')">Ping</th>
-                        <th x-text="$store.i18n.t('col_playtime')">Spielzeit</th>
-                        <th x-text="$store.i18n.t('col_gamemode')">Gamemode</th>
-                        <th x-text="$store.i18n.t('col_rank')">Rang</th>
-                        <th x-text="$store.i18n.t('col_actions')">Aktionen</th>
+                        <th x-text="$store.i18n.t('col.player')">Spieler</th>
+                        <th x-text="$store.i18n.t('col.ping')">Ping</th>
+                        <th x-text="$store.i18n.t('col.playtime')">Spielzeit</th>
+                        <th x-text="$store.i18n.t('col.gamemode')">Gamemode</th>
+                        <th x-text="$store.i18n.t('col.rank')">Rang</th>
+                        <th x-text="$store.i18n.t('col.actions')">Aktionen</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -109,32 +109,32 @@
                           </td>
                           <td>
                             <template x-if="p.isOp"><span class="mc-tag forge" style="font-size:10px"
-                                x-text="$store.i18n.t('rank_op')">OP</span></template>
+                                x-text="$store.i18n.t('general.rank_op')">OP</span></template>
                             <template x-if="!p.isOp"><span class="mc-tag"
-                                x-text="$store.i18n.t('rank_player')">Spieler</span></template>
+                                x-text="$store.i18n.t('general.rank_player')">Spieler</span></template>
                           </td>
                           <td>
                             <div class="player-actions">
                               <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px"
-                                @click="msgPlayer(p.name)" :title="$store.i18n.t('tooltip_msg')">
+                                @click="msgPlayer(p.name)" :title="$store.i18n.t('general.tooltip_msg')">
                                 <span class="material-icons-round" style="font-size:14px">chat</span>
                               </button>
                               <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px"
-                                @click="tpPlayer(p.name)" :title="$store.i18n.t('tooltip_tp')">
+                                @click="tpPlayer(p.name)" :title="$store.i18n.t('general.tooltip_tp')">
                                 <span class="material-icons-round" style="font-size:14px">near_me</span>
                               </button>
                               <template x-if="!p.isOp">
                                 <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px"
-                                  @click="opPlayer(p.name)" :title="$store.i18n.t('tooltip_op')">
+                                  @click="opPlayer(p.name)" :title="$store.i18n.t('general.tooltip_op')">
                                   <span class="material-icons-round" style="font-size:14px">admin_panel_settings</span>
                                 </button>
                               </template>
                               <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;color:var(--yellow)"
-                                @click="kickPlayer(p.name)" :title="$store.i18n.t('tooltip_kick')">
+                                @click="kickPlayer(p.name)" :title="$store.i18n.t('general.tooltip_kick')">
                                 <span class="material-icons-round" style="font-size:14px">logout</span>
                               </button>
                               <button class="btn btn-danger" style="padding:4px 10px;font-size:11px"
-                                @click="openBanModal(p.name)" :title="$store.i18n.t('tooltip_ban')">
+                                @click="openBanModal(p.name)" :title="$store.i18n.t('general.tooltip_ban')">
                                 <span class="material-icons-round" style="font-size:14px">gavel</span>
                               </button>
                             </div>
@@ -156,7 +156,7 @@
                 <span style="font-size:13px;color:var(--text-secondary)"
                   x-text="activeData.whitelist.length + ' ' + (t('whitelist_players') || 'Spieler auf der Whitelist')"></span>
                 <button class="btn btn-primary" style="padding:6px 14px;font-size:12px" @click="addWhitelist()">
-                  <span class="material-icons-round">person_add</span> <span x-text="$store.i18n.t('btn_add')">Hinzufügen</span>
+                  <span class="material-icons-round">person_add</span> <span x-text="$store.i18n.t('btn.add')">Hinzufügen</span>
                 </button>
               </div>
               <template x-for="p in activeData.whitelist" :key="p.name">
@@ -168,14 +168,14 @@
                   <button class="btn btn-danger" style="padding:5px 12px;font-size:11px"
                     @click="removeWhitelist(p.name)">
                     <span class="material-icons-round" style="font-size:13px">remove</span> <span
-                      x-text="$store.i18n.t('btn_remove')">Entfernen</span>
+                      x-text="$store.i18n.t('btn.remove')">Entfernen</span>
                   </button>
                 </div>
               </template>
               <template x-if="!activeData.whitelist.length">
                 <div class="empty-state" style="padding:40px"><span
                     class="material-icons-round">playlist_add_check</span>
-                  <p x-text="$store.i18n.t('whitelist_empty')">Whitelist ist leer.</p>
+                  <p x-text="$store.i18n.t('general.whitelist_empty')">Whitelist ist leer.</p>
                 </div>
               </template>
             </div>
@@ -194,18 +194,18 @@
                   <div style="flex:1">
                     <div class="list-entry-name" style="color:var(--red)" x-text="b.name"></div>
                     <div class="list-entry-meta"
-                      x-text="(t('ban_reason_prefix') || 'Grund: ') + b.reason + ' · ' + b.date + ' · ' + b.duration">
+                      x-text="(t('general.ban_reason_prefix') || 'Grund: ') + b.reason + ' · ' + b.date + ' · ' + b.duration">
                     </div>
                   </div>
                   <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px" @click="unbanPlayer(b.name)">
                     <span class="material-icons-round" style="font-size:13px">undo</span> <span
-                      x-text="$store.i18n.t('btn_unban')">Entbannen</span>
+                      x-text="$store.i18n.t('btn.unban')">Entbannen</span>
                   </button>
                 </div>
               </template>
               <template x-if="!activeData.bans.length">
                 <div class="empty-state"><span class="material-icons-round">gavel</span>
-                  <p x-text="$store.i18n.t('bans_empty')">Keine aktiven Bans.</p>
+                  <p x-text="$store.i18n.t('general.bans_empty')">Keine aktiven Bans.</p>
                 </div>
               </template>
             </div>
@@ -231,7 +231,7 @@
                 </template>
                 <template x-if="!activeData.chatlog.length">
                   <div class="empty-state"><span class="material-icons-round">chat_bubble_outline</span>
-                    <p x-text="$store.i18n.t('chat_empty')">Keine Nachrichten.</p>
+                    <p x-text="$store.i18n.t('general.chat_empty')">Keine Nachrichten.</p>
                   </div>
                 </template>
               </div>
@@ -239,7 +239,7 @@
                 <label for="chatInput" style="position:absolute; width:1px; height:1px; overflow:hidden;">Chat</label>
                 <input type="text" id="chatInput" name="chatInput" x-model="state.chatInput" @keydown.enter="sendChat()"
                   class="form-input" style="flex:1;background:var(--bg-input)"
-                  :placeholder="$store.i18n.t('chat_placeholder')" />
+                  :placeholder="$store.i18n.t('general.chat_placeholder')" />
                 <button class="btn btn-primary" @click="sendChat()"><span
                     class="material-icons-round">send</span></button>
               </div>
@@ -253,34 +253,34 @@
         @click.self="state.banTarget = null">
         <div class="modal glass-card">
           <div class="modal-header">
-            <h2 x-text="$store.i18n.t('ban_modal_title')">Spieler bannen</h2>
+            <h2 x-text="$store.i18n.t('general.ban_modal_title')">Spieler bannen</h2>
             <button class="icon-btn" @click="state.banTarget = null"><span
                 class="material-icons-round">close</span></button>
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label for="banPlayer" x-text="$store.i18n.t('col_player')">Spieler</label>
+              <label for="banPlayer" x-text="$store.i18n.t('col.player')">Spieler</label>
               <input type="text" id="banPlayer" readonly class="form-input" :value="state.banTarget" />
             </div>
             <div class="form-group">
-              <label for="banReason" x-text="$store.i18n.t('ban_reason_label')">Grund</label>
+              <label for="banReason" x-text="$store.i18n.t('general.ban_reason_label')">Grund</label>
               <input type="text" id="banReason" x-model="state.banReason"
-                :placeholder="$store.i18n.t('ban_reason_placeholder')" class="form-input" />
+                :placeholder="$store.i18n.t('general.ban_reason_placeholder')" class="form-input" />
             </div>
             <div class="form-group">
-              <label for="banDuration" x-text="$store.i18n.t('ban_duration_label')">Dauer</label>
+              <label for="banDuration" x-text="$store.i18n.t('general.ban_duration_label')">Dauer</label>
               <select id="banDuration" x-model="state.banDuration" class="filter-select">
-                <option value="permanent" x-text="$store.i18n.t('duration_permanent')">Permanent</option>
-                <option value="1d" x-text="$store.i18n.t('duration_1d')">1 Tag</option>
-                <option value="7d" x-text="$store.i18n.t('duration_7d')">7 Tage</option>
-                <option value="30d" x-text="$store.i18n.t('duration_30d')">30 Tage</option>
+                <option value="permanent" x-text="$store.i18n.t('general.duration_permanent')">Permanent</option>
+                <option value="1d" x-text="$store.i18n.t('general.duration_1d')">1 Tag</option>
+                <option value="7d" x-text="$store.i18n.t('general.duration_7d')">7 Tage</option>
+                <option value="30d" x-text="$store.i18n.t('general.duration_30d')">30 Tage</option>
               </select>
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-ghost" @click="state.banTarget = null" x-text="$store.i18n.t('btn_cancel')">Abbrechen</button>
+            <button class="btn btn-ghost" @click="state.banTarget = null" x-text="$store.i18n.t('btn.cancel')">Abbrechen</button>
             <button class="btn btn-danger" @click="confirmBan()">
-              <span class="material-icons-round">gavel</span> <span x-text="$store.i18n.t('btn_ban')">Bannen</span>
+              <span class="material-icons-round">gavel</span> <span x-text="$store.i18n.t('btn.ban')">Bannen</span>
             </button>
           </div>
         </div>

@@ -49,6 +49,21 @@ export function playersApp() {
           { time: '12:55:10', player: 'PixelArtist', msg: 'Wer möchte beim Stadion mitbauen?' },
         ],
       },
+      'valheim01': {
+        online: [
+          { name: 'OdinSon', uuid: 'v-123456', ping: 32, playtime: '4h 10m', gamemode: 'survival', isOp: true },
+          { name: 'VikingWarrior', uuid: 'v-654321', ping: 45, playtime: '1h 20m', gamemode: 'survival', isOp: false },
+        ],
+        whitelist: [
+          { name: 'OdinSon', uuid: 'v-123456' },
+          { name: 'VikingWarrior', uuid: 'v-654321' },
+        ],
+        bans: [],
+        chatlog: [
+          { time: '13:10:00', player: 'OdinSon', msg: 'Lass uns den Sumpf erkunden.' },
+          { time: '13:12:30', player: 'VikingWarrior', msg: 'Bin gleich da, brauche noch Pfeile.' },
+        ],
+      },
     },
 
     state: {
@@ -75,14 +90,29 @@ export function playersApp() {
 
     init() {
       // Available servers
-      this.servers = (typeof GS_INSTANCES !== 'undefined') ? GS_INSTANCES.filter(s => s.game === 'minecraft') : [];
+      this.servers = (typeof GS_INSTANCES !== 'undefined') ? GS_INSTANCES : [];
       
-      // (onlinePlayers is now calculated by gameserverApp for all gameservers)
+      const autoSelect = () => {
+        if (!this.state.server && this.servers.length > 0) {
+          const firstOnline = this.servers.find(s => s.status === 'online');
+          if (firstOnline) this.state.server = firstOnline.containerId;
+        }
+      };
+      
+      autoSelect();
 
       // Allow global triggering
       window.selectPlayerServer = (serverId) => {
         this.state.server = serverId;
       };
+
+      // Listen for tab changes
+      window.addEventListener('tab-changed', (e) => {
+        if (e.detail === 'players') {
+          this.servers = (typeof GS_INSTANCES !== 'undefined') ? GS_INSTANCES : [];
+          autoSelect();
+        }
+      });
     },
 
     // ─── Actions ───
@@ -109,7 +139,7 @@ export function playersApp() {
         uuid: '—',
         reason: this.state.banReason || (typeof t === 'function' ? (t('no_reason') || 'Kein Grund angegeben') : 'Kein Grund angegeben'),
         date: new Date().toLocaleDateString('de-DE'),
-        duration: this.state.banDuration === 'permanent' ? (typeof t === 'function' ? (t('duration_permanent') || 'Permanent') : 'Permanent') : this.state.banDuration
+        duration: this.state.banDuration === 'permanent' ? (typeof t === 'function' ? (t('general.duration_permanent') || 'Permanent') : 'Permanent') : this.state.banDuration
       });
       
       if(typeof toggleModal === 'function') toggleModal('banModal', false);
