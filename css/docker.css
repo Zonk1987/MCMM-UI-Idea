@@ -479,3 +479,100 @@
   opacity: 1;
   pointer-events: auto;
 }
+
+/* ─── Context Menu ─── */
+.docker-context-menu {
+  position: fixed;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  padding: 8px;
+  z-index: 9999;
+  min-width: 200px;
+  font-size: 14px;
+  backdrop-filter: blur(8px);
+}
+
+.docker-context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.docker-context-menu li {
+  padding: 8px 12px;
+  margin: 2px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.docker-context-menu li:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.docker-context-menu li.danger {
+  color: #ef4444;
+}
+
+.docker-context-menu li.danger:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* ─── Folder Headers ─── */
+.folder-header {
+  background: var(--bg-surface);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.folder-header:hover {
+  background: var(--bg-card-hover);
+}
+
+.folder-cell {
+  padding: 10px 16px !important;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.folder-title {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.docker-context-menu .ctx-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  gap: 12px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.docker-context-menu .ctx-item:hover {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.docker-context-menu .ctx-item .material-icons-round {
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+.docker-context-menu .ctx-item:hover .material-icons-round {
+  opacity: 1;
+}
+
+.docker-context-menu .ctx-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}

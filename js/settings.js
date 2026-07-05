@@ -349,3 +349,21 @@ export function bindSettingsEvents() {
 }
 
 // main.js will call initSettings() instead of standalone listener
+
+/**
+ * Debug App for editing container labels
+ */
+export function debugApp() {
+  return {
+    get containers() {
+      return typeof Alpine !== 'undefined' && Alpine.store('core') 
+        ? Alpine.store('core').containers 
+        : [];
+    },
+    updateLabel(id, key, value) {
+      if (typeof Alpine !== 'undefined' && Alpine.store('core')) {
+        Alpine.store('core').setLabel(id, key, value);
+      }
+    }
+  };
+}

@@ -113,61 +113,11 @@ export const GAME_TEMPLATES = [
   },
 ];
 
-// Simulated game server instances derived from docker containers
-export const GS_INSTANCES = [
-  {
-    containerId: 'minecraft01',
-    game: 'minecraft',
-    serverName: 'Minecraft-Survival',
-    version: '1.21.4 Paper',
-    status: 'online',
-    players: { current: 3, max: 20 },
-    ram: { used: 3200, max: 4096 },
-    cpu: 24,
-    uptime: '3d 14h 22m',
-    port: 25565,
-  },
-  {
-    containerId: 'minecraft02',
-    game: 'minecraft',
-    serverName: 'MC-Creative',
-    version: '1.20.4 Fabric',
-    status: 'online',
-    players: { current: 1, max: 20 },
-    ram: { used: 2100, max: 4096 },
-    cpu: 8,
-    uptime: '12h 5m',
-    port: 25566,
-  },
-  {
-    containerId: 'valheim01',
-    game: 'valheim',
-    serverName: 'Valheim-Server',
-    version: '0.218.19',
-    status: 'online',
-    players: { current: 2, max: 10 },
-    ram: { used: 1800, max: 4096 },
-    cpu: 15,
-    uptime: '1d 3h',
-    port: 2456,
-  },
-  {
-    containerId: 'palworld01',
-    game: 'palworld',
-    serverName: 'Palworld-Server',
-    version: '0.3.9',
-    status: 'offline',
-    players: { current: 0, max: 32 },
-    ram: { used: 0, max: 8192 },
-    cpu: 0,
-    uptime: '—',
-    port: 8211,
-  },
-];
-
 export function gameserverApp() {
   return {
-    instances: [...GS_INSTANCES],
+    get instances() {
+      return Alpine.store('core').getGameservers();
+    },
     templates: GAME_TEMPLATES,
     wizardStep: 0,
     wizardGame: null,
@@ -234,15 +184,12 @@ export function gameserverApp() {
     },
 
     toggleServer(id) {
-      const srv = this.instances.find((x) => x.containerId === id);
-      if (!srv) return;
-      // Note: In real life this would talk to Docker API. We just simulate here.
-      srv.status = srv.status === 'online' ? 'offline' : 'online';
-
-      const statusWord =
-        srv.status === 'online' ? t('started') || 'gestartet' : t('stopped') || 'gestoppt';
+      Alpine.store('core').toggleContainer(id);
       if (typeof showToast === 'function') {
-        showToast(`${srv.serverName} ${statusWord}`, srv.status === 'online' ? 'success' : 'info');
+        const s = this.instances.find((i) => i.containerId === id);
+        if (s) {
+           showToast(`${s.serverName} ${s.status === 'online' ? 'gestartet' : 'gestoppt'}`, 'info');
+        }
       }
     },
 

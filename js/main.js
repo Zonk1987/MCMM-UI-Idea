@@ -16,16 +16,21 @@ import {
   pingClass,
   skeletonGrid,
 } from './utils.js';
-import { initSettings, applyVisualSettings, appSettings } from './settings.js';
-import { DOCKER_CONTAINERS, dockerApp } from './docker.js';
-import { GS_INSTANCES, gameserverApp, openConsole } from './gameserver.js';
+import { initSettings, applyVisualSettings, appSettings, debugApp } from './settings.js';
+import { initCoreStore } from './core-store.js';
+import { dockerApp } from './docker.js';
+import { gameserverApp, openConsole } from './gameserver.js';
 import { playersApp } from './players.js';
+import { foldersApp } from './folders.js';
+import { networksApp } from './networks.js';
+import { composeApp } from './compose.js';
 import { GameAdditions } from './gameAdditions.js';
 import { registerAlpineComponents } from './alpine-components.js';
 import autoAnimate from './vendor/auto-animate.js';
 
 document.addEventListener('alpine:init', () => {
   if (window.Alpine) {
+    initCoreStore(window.Alpine);
     registerAlpineComponents(window.Alpine);
   }
 });
@@ -79,15 +84,17 @@ window.openConfigModal = (id, name, port, ram) => {
     Alpine.store('modals').config.open = true;
   }
 };
-window.GS_INSTANCES = GS_INSTANCES;
-window.DOCKER_CONTAINERS = DOCKER_CONTAINERS;
 window.gameserverApp = gameserverApp;
 window.openConsole = openConsole;
 
 window.playersApp = playersApp;
+window.foldersApp = foldersApp;
+window.networksApp = networksApp;
+window.composeApp = composeApp;
 window.GameAdditions = GameAdditions;
 window.loadLanguage = loadLanguage;
 window.applyVisualSettings = applyVisualSettings;
+window.debugApp = debugApp;
 
 window.finishOnboarding = function () {
   localStorage.setItem('gs_hub_onboarding_done', 'true');
@@ -140,6 +147,8 @@ async function initApp() {
   // Modals are handled by Alpine.js natively, do not move them manually.
 
   // ── Initialize all modules ────────────────────────────
+  // Store initialization moved to top-level alpine:init listener
+
   GameAdditions.init();
 
   // ── Tab navigation ────────────────────────────────────

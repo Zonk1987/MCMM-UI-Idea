@@ -4,149 +4,11 @@
    Currently uses realistic mock data.
 ═══════════════════════════════════════════════════════════ */
 
-export const DOCKER_CONTAINERS = [
-  {
-    id: 'plex01',
-    name: 'Plex',
-    image: 'plexinc/pms-docker:latest',
-    icon: 'https://cdn2.steamgriddb.com/icon/c0c7c76d30bd3dcaefc96f40275bdc0a.ico',
-    iconFallback: '🎬',
-    status: 'running',
-    upToDate: true,
-    ports: [{ host: '32400', container: '32400', proto: 'tcp' }],
-    paths: [
-      { host: '/mnt/user/appdata/plex', container: '/config' },
-      { host: '/mnt/user/Media', container: '/data/media' },
-    ],
-  },
-  {
-    id: 'minecraft01',
-    name: 'Minecraft-Survival',
-    image: 'itzg/minecraft-server:latest',
-    icon: null,
-    iconFallback: '⛏',
-    status: 'running',
-    upToDate: true,
-    ports: [{ host: '25565', container: '25565', proto: 'tcp' }],
-    paths: [{ host: '/mnt/user/gameservers/mc-survival', container: '/data' }],
-    isGameServer: true,
-    game: 'minecraft',
-  },
-  {
-    id: 'minecraft02',
-    name: 'MC-Creative',
-    image: 'itzg/minecraft-server:latest',
-    icon: null,
-    iconFallback: '⛏',
-    status: 'running',
-    upToDate: false,
-    ports: [{ host: '25566', container: '25565', proto: 'tcp' }],
-    paths: [{ host: '/mnt/user/gameservers/mc-creative', container: '/data' }],
-    isGameServer: true,
-    game: 'minecraft',
-  },
-  {
-    id: 'valheim01',
-    name: 'Valheim-Server',
-    image: 'lloesche/valheim-server:latest',
-    icon: null,
-    iconFallback: '🪓',
-    status: 'running',
-    upToDate: true,
-    ports: [
-      { host: '2456', container: '2456', proto: 'udp' },
-      { host: '2457', container: '2457', proto: 'udp' },
-    ],
-    paths: [{ host: '/mnt/user/gameservers/valheim', container: '/config' }],
-    isGameServer: true,
-    game: 'valheim',
-  },
-  {
-    id: 'palworld01',
-    name: 'Palworld-Server',
-    image: 'thijsvanloef/palworld-server-docker:latest',
-    icon: null,
-    iconFallback: '🦎',
-    status: 'stopped',
-    upToDate: true,
-    ports: [{ host: '8211', container: '8211', proto: 'udp' }],
-    paths: [{ host: '/mnt/user/gameservers/palworld', container: '/palworld' }],
-    isGameServer: true,
-    game: 'palworld',
-  },
-  {
-    id: 'pihole01',
-    name: 'Pi-hole',
-    image: 'pihole/pihole:latest',
-    icon: null,
-    iconFallback: '🕳',
-    status: 'running',
-    upToDate: false,
-    ports: [
-      { host: '53', container: '53', proto: 'tcp/udp' },
-      { host: '8053', container: '80', proto: 'tcp' },
-    ],
-    paths: [
-      { host: '/mnt/user/appdata/pihole', container: '/etc/pihole' },
-      { host: '/mnt/user/appdata/pihole/dnsmasq', container: '/etc/dnsmasq.d' },
-    ],
-  },
-  {
-    id: 'grafana01',
-    name: 'Grafana',
-    image: 'grafana/grafana:latest',
-    icon: null,
-    iconFallback: '📈',
-    status: 'running',
-    upToDate: true,
-    ports: [{ host: '3000', container: '3000', proto: 'tcp' }],
-    paths: [{ host: '/mnt/user/appdata/grafana', container: '/var/lib/grafana' }],
-  },
-  {
-    id: 'nginx01',
-    name: 'NGINX Proxy Manager',
-    image: 'jc21/nginx-proxy-manager:latest',
-    icon: null,
-    iconFallback: '🔀',
-    status: 'running',
-    upToDate: true,
-    ports: [
-      { host: '80', container: '80', proto: 'tcp' },
-      { host: '443', container: '443', proto: 'tcp' },
-      { host: '81', container: '81', proto: 'tcp' },
-    ],
-    paths: [{ host: '/mnt/user/appdata/npm', container: '/data' }],
-  },
-  {
-    id: 'portainer01',
-    name: 'Portainer',
-    image: 'portainer/portainer-ce:latest',
-    icon: null,
-    iconFallback: '🐳',
-    status: 'stopped',
-    upToDate: false,
-    ports: [{ host: '9443', container: '9443', proto: 'tcp' }],
-    paths: [{ host: '/var/run/docker.sock', container: '/var/run/docker.sock' }],
-  },
-  {
-    id: 'immich01',
-    name: 'Immich',
-    image: 'ghcr.io/immich-app/immich-server:latest',
-    icon: null,
-    iconFallback: '🖼',
-    status: 'running',
-    upToDate: true,
-    ports: [{ host: '2283', container: '2283', proto: 'tcp' }],
-    paths: [
-      { host: '/mnt/user/Photos', container: '/usr/src/app/upload' },
-      { host: '/mnt/user/appdata/immich', container: '/config' },
-    ],
-  },
-];
-
 export function dockerApp() {
   return {
-    containers: [...DOCKER_CONTAINERS], // Initialized immediately
+    get containers() {
+      return Alpine.store('core').containers;
+    },
     isLoading: false,
     searchQuery: '',
     sortCol: 'name',
@@ -154,6 +16,36 @@ export function dockerApp() {
     advancedView: false,
     selected: [],
     selectAll: false,
+
+    contextMenu: {
+      open: false,
+      x: 0,
+      y: 0,
+      container: null
+    },
+
+    openContextMenu(e, container) {
+      e.stopPropagation();
+      this.contextMenu.open = true;
+      this.contextMenu.x = e.clientX;
+      this.contextMenu.y = e.clientY;
+      this.contextMenu.container = container;
+      
+      // Keep menu within viewport bounds
+      this.$nextTick(() => {
+        const menu = document.getElementById('docker-ctx-menu');
+        if (menu) {
+          const rect = menu.getBoundingClientRect();
+          if (rect.right > window.innerWidth) this.contextMenu.x = window.innerWidth - rect.width - 10;
+          if (rect.bottom > window.innerHeight) this.contextMenu.y = window.innerHeight - rect.height - 10;
+        }
+      });
+    },
+
+    closeContextMenu() {
+      this.contextMenu.open = false;
+      // Intentionally not setting container to null here to allow transition animations to finish cleanly
+    },
 
     get filteredContainers() {
       let list = this.containers.filter((c) =>
@@ -171,6 +63,66 @@ export function dockerApp() {
       });
 
       return list;
+    },
+
+    get useFolders() {
+      if (typeof appSettings !== 'undefined' && appSettings.useFolders === false) return false;
+      return this.filteredContainers.some(c => c.labels && c.labels['folder.view3']);
+    },
+
+    get viewItems() {
+      if (!this.useFolders) {
+        return this.filteredContainers.map(c => ({ type: 'container', ...c }));
+      }
+
+      const items = [];
+      const folderMap = {};
+      const unassigned = [];
+
+      // Pre-seed explicitly created folders
+      const explicitFolders = (Alpine.store('core') && Alpine.store('core').customFolders) || [];
+      explicitFolders.forEach(fName => {
+        folderMap[fName] = [];
+      });
+
+      this.filteredContainers.forEach(c => {
+        const fName = c.labels && c.labels['folder.view3'];
+        if (fName) {
+          if (!folderMap[fName]) folderMap[fName] = [];
+          folderMap[fName].push({ type: 'container', folder: fName, ...c });
+        } else {
+          unassigned.push({ type: 'container', ...c });
+        }
+      });
+
+      const sortedFolderNames = Object.keys(folderMap).sort();
+      sortedFolderNames.forEach(fName => {
+        items.push({ type: 'folder', id: 'folder_' + fName, name: fName, count: folderMap[fName].length });
+        items.push(...folderMap[fName]);
+      });
+      
+      items.push(...unassigned);
+      return items;
+    },
+
+    expandedFolders: {},
+
+    toggleFolder(fName) {
+      if (this.expandedFolders[fName] === undefined) {
+         this.expandedFolders[fName] = true; // Default is closed, so toggling makes it open
+      } else {
+         this.expandedFolders[fName] = !this.expandedFolders[fName];
+      }
+    },
+
+    isFolderExpanded(fName) {
+      // Default to false (closed) if not explicitly set
+      return this.expandedFolders[fName] === true;
+    },
+
+    createFolderPrompt() {
+      // Dispatch event to open the Alpine modal for FolderView3
+      window.dispatchEvent(new CustomEvent('open-folder-modal'));
     },
 
     init() {
@@ -248,26 +200,13 @@ export function dockerApp() {
     },
 
     toggleContainer(id) {
-      const c = this.containers.find((x) => x.id === id);
-      if (!c) return;
-      c.status = c.status === 'running' ? 'stopped' : 'running';
-      const statusWord =
-        c.status === 'running' ? t('started') || 'gestartet' : t('stopped') || 'gestoppt';
-      showToast(`${c.name} ${statusWord}`, c.status === 'running' ? 'success' : 'info');
-
-      // We do not need manual DOM refresh here since Alpine handles it via reactivity!
+      Alpine.store('core').toggleContainer(id);
     },
 
     updateContainer(id) {
-      const c = this.containers.find((x) => x.id === id);
-      if (!c) return;
-      c.upToDate = true;
-      if (typeof showToast === 'function') {
-        showToast(`${c.name} wird aktualisiert...`, 'info');
-        setTimeout(() => {
-          showToast(`${c.name} erfolgreich aktualisiert`, 'success');
-        }, 2000);
-      }
+      Alpine.store('core').updateContainer(id);
+      if (typeof showToast === 'function')
+        showToast(t('docker.update_started') || 'Update gestartet...', 'info');
     },
   };
 }

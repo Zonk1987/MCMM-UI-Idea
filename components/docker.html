@@ -44,6 +44,10 @@
           aria-label="Container suchen"
         />
       </div>
+      <button class="btn btn-secondary" style="height: 38px" @click="createFolderPrompt()">
+        <span class="material-icons-round">create_new_folder</span>
+        Neuer Ordner
+      </button>
     </div>
   </div>
 
@@ -126,7 +130,6 @@
           </th>
           <th class="col-ports" x-text="$store.i18n.t('col.ports')">Ports</th>
           <th class="col-paths" x-text="$store.i18n.t('col.paths')">Pfade</th>
-          <th class="col-actions" x-text="$store.i18n.t('col.actions')">Aktionen</th>
         </tr>
       </thead>
       <tbody x-init="typeof autoAnimate !== 'undefined' ? autoAnimate($el) : null">
@@ -156,19 +159,13 @@
               <td>
                 <div class="skeleton skeleton-text" style="width: 90%"></div>
               </td>
-              <td>
-                <div style="display: flex; gap: 4px">
-                  <div class="skeleton skeleton-btn" style="width: 40px"></div>
-                  <div class="skeleton skeleton-btn" style="width: 32px"></div>
-                </div>
-              </td>
             </tr>
           </template>
         </template>
 
         <template x-if="!isLoading && filteredContainers.length === 0">
           <tr>
-            <td colspan="10">
+            <td colspan="9">
               <div class="empty-state">
                 <span class="material-icons-round">inbox</span>
                 <p x-text="$store.i18n.t('general.no_containers_found')">
@@ -180,184 +177,187 @@
         </template>
 
         <template x-if="!isLoading">
-          <template x-for="c in filteredContainers" :key="c.id">
-            <tr :style="selected.includes(c.id) ? 'background: var(--bg-card-hover)' : ''">
-              <td style="text-align: center">
-                <input
-                  type="checkbox"
-                  style="cursor: pointer"
-                  :value="c.id"
-                  x-model="selected"
-                  aria-label="Container auswählen"
-                />
-              </td>
-              <td>
-                <template x-if="c.icon">
-                  <div class="container-icon-wrap">
-                    <img
-                      :src="c.icon"
-                      :alt="c.name"
-                      onerror="
-                        this.parentElement.className = 'container-icon-fallback';
-                        this.parentElement.innerHTML = 'x';
-                      "
-                    />
+          <template x-for="c in viewItems" :key="c.id">
+            <tr 
+              :class="c.type === 'folder' ? 'folder-header' : ''"
+              @click="c.type === 'folder' ? toggleFolder(c.name) : null"
+              x-show="c.type === 'folder' || (!c.folder || isFolderExpanded(c.folder))"
+              :style="c.type === 'container' && selected.includes(c.id) ? 'background: var(--bg-card-hover)' : ''"
+            >
+              <!-- Folder Cell -->
+              <template x-if="c.type === 'folder'">
+                <td :colspan="advancedView ? 9 : 6" class="folder-cell">
+                  <div class="folder-title">
+                    <span class="folder-icon" x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
+                    <span style="font-weight: 500; font-size: 14px; margin: 0 6px;" x-text="c.name"></span>
+                    <span class="folder-count" style="color: var(--text-muted)" x-text="`(${c.count})`"></span>
                   </div>
-                </template>
-                <template x-if="!c.icon">
-                  <div class="container-icon-fallback" x-text="c.iconFallback"></div>
-                </template>
-              </td>
-              <td>
-                <div class="container-name" x-text="c.name"></div>
-                <div class="container-image" x-text="c.image"></div>
-              </td>
-              <td>
-                <div :class="'status-badge ' + c.status">
-                  <span class="dot"></span>
-                  <span x-text="c.status === 'running' ? 'Läuft' : 'Gestoppt'"></span>
-                </div>
-                <template x-if="!c.upToDate">
-                  <div class="update-badge">Update verfügbar</div>
-                </template>
-              </td>
-              <td
-                class="col-adv"
-                x-show="advancedView"
-                style="text-align: center; vertical-align: middle"
-              >
-                <label class="action-toggle" style="margin: 0" title="Autostart">
-                  <input type="checkbox" :checked="c.id==='nginx01' || c.id==='portainer01'" />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
-                </label>
-              </td>
-              <td
-                class="col-adv"
-                x-show="advancedView"
-                style="vertical-align: middle; padding-top: 8px; padding-bottom: 8px"
-              >
-                <div style="margin-bottom: 8px">
-                  <div style="font-size: 11px; margin-bottom: 4px; color: var(--text-secondary)">
-                    CPU:
-                    <span
-                      x-text="c.status === 'running' ? (Math.random() * 5).toFixed(1) + '%' : '0.0%'"
-                    ></span>
-                  </div>
-                  <div
-                    style="
-                      height: 4px;
-                      background: var(--bg-surface);
-                      border-radius: 2px;
-                      overflow: hidden;
-                    "
-                  >
-                    <div
-                      :style="`width:${c.status === 'running' ? Math.random()*20+5 : 0}%; background:var(--cyan); height:100%;`"
-                    ></div>
-                  </div>
-                </div>
-                <div>
-                  <div style="font-size: 11px; margin-bottom: 4px; color: var(--text-secondary)">
-                    RAM:
-                    <span
-                      x-text="c.status === 'running' ? Math.floor(Math.random() * 400 + 100) + ' MB' : '0 MB'"
-                    ></span>
-                  </div>
-                  <div
-                    style="
-                      height: 4px;
-                      background: var(--bg-surface);
-                      border-radius: 2px;
-                      overflow: hidden;
-                    "
-                  >
-                    <div
-                      :style="`width:${c.status === 'running' ? Math.random()*30+10 : 0}%; background:var(--purple); height:100%;`"
-                    ></div>
-                  </div>
-                </div>
-              </td>
-              <td
-                class="col-adv"
-                x-show="advancedView"
-                style="font-size: 12px; color: var(--text-secondary); line-height: 1.4"
-              >
-                <span
-                  x-html="c.status === 'running' ? 'Uptime: 5 days (healthy)<br>Created: 14 days ago' : '—'"
-                ></span>
-              </td>
-              <td>
-                <div class="port-list">
-                  <template x-for="p in c.ports">
-                    <div class="port-item">
-                      <span class="port-host" x-text="p.host"></span>
-                      <span class="port-arrow">↔</span>
-                      <span x-text="p.container"></span>
-                      <span style="color: var(--text-muted)" x-text="` (${p.proto})`"></span>
+                </td>
+              </template>
+
+              <!-- Container Cells -->
+              <template x-if="c.type === 'container'">
+                <td style="text-align: center">
+                  <input
+                    type="checkbox"
+                    style="cursor: pointer"
+                    :value="c.id"
+                    x-model="selected"
+                    aria-label="Container auswählen"
+                  />
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td>
+                  <template x-if="c.icon">
+                    <div class="container-icon-wrap cursor-pointer hover-glow" @click.prevent="openContextMenu($event, c)">
+                      <img
+                        :src="c.icon"
+                        :alt="c.name"
+                        onerror="
+                          this.parentElement.className = 'container-icon-fallback cursor-pointer hover-glow';
+                          this.parentElement.innerHTML = 'x';
+                        "
+                      />
                     </div>
                   </template>
-                </div>
-              </td>
-              <td>
-                <div class="path-list">
-                  <template x-for="p in c.paths.slice(0, 3)">
-                    <div class="path-item" :title="`${p.host} → ${p.container}`">
-                      <span x-text="p.host"></span> <span class="path-arrow">→</span>
-                      <span x-text="p.container"></span>
-                    </div>
+                  <template x-if="!c.icon">
+                    <div class="container-icon-fallback cursor-pointer hover-glow" @click.prevent="openContextMenu($event, c)" x-text="c.iconFallback"></div>
                   </template>
-                  <template x-if="c.paths.length > 3">
-                    <div
-                      class="path-item"
-                      style="color: var(--accent)"
-                      x-text="`+${c.paths.length - 3} weitere`"
-                    ></div>
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td>
+                  <div class="container-name" x-text="c.name"></div>
+                  <div class="container-image" x-text="c.image"></div>
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td>
+                  <div :class="'status-badge ' + c.status">
+                    <span class="dot"></span>
+                    <span x-text="c.status === 'running' ? 'Läuft' : 'Gestoppt'"></span>
+                  </div>
+                  <template x-if="!c.upToDate">
+                    <div class="update-badge">Update verfügbar</div>
                   </template>
-                </div>
-              </td>
-              <td>
-                <div class="row-actions">
-                  <label
-                    class="action-toggle"
-                    :title="c.status === 'running' ? (t('btn.stop') || 'Stoppen') : (t('btn.start') || 'Starten')"
-                  >
-                    <input
-                      type="checkbox"
-                      :checked="c.status === 'running'"
-                      @change="toggleContainer(c.id)"
-                    />
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td
+                  class="col-adv"
+                  x-show="advancedView"
+                  style="text-align: center; vertical-align: middle"
+                >
+                  <label class="action-toggle" style="margin: 0" title="Autostart">
+                    <input type="checkbox" :checked="c.id==='nginx01' || c.id==='portainer01'" />
                     <div class="toggle-track">
                       <div class="toggle-thumb"></div>
                     </div>
                   </label>
-                  <button
-                    class="action-btn"
-                    :title="$store.i18n.t('general.tooltip_logs')"
-                    @click="typeof openTerminal === 'function' ? openTerminal(c.id) : null"
-                  >
-                    <span class="material-icons-round">terminal</span>
-                  </button>
-                  <button
-                    class="action-btn"
-                    :title="$store.i18n.t('general.tooltip_settings')"
-                    @click="$dispatch('open-config-modal', {id: c.id, name: c.name, port: (c.ports && c.ports[0]) ? c.ports[0].host : '', ram: 4096})"
-                  >
-                    <span class="material-icons-round">settings</span>
-                  </button>
-                  <template x-if="!c.upToDate">
-                    <button
-                      class="action-btn"
-                      style="color: var(--yellow)"
-                      :title="$store.i18n.t('general.tooltip_update')"
-                      @click="updateContainer(c.id)"
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td
+                  class="col-adv"
+                  x-show="advancedView"
+                  style="vertical-align: middle; padding-top: 8px; padding-bottom: 8px"
+                >
+                  <div style="margin-bottom: 8px">
+                    <div style="font-size: 11px; margin-bottom: 4px; color: var(--text-secondary)">
+                      CPU:
+                      <span
+                        x-text="c.status === 'running' ? (Math.random() * 5).toFixed(1) + '%' : '0.0%'"
+                      ></span>
+                    </div>
+                    <div
+                      style="
+                        height: 4px;
+                        background: var(--bg-surface);
+                        border-radius: 2px;
+                        overflow: hidden;
+                      "
                     >
-                      <span class="material-icons-round">upgrade</span>
-                    </button>
-                  </template>
-                </div>
-              </td>
+                      <div
+                        :style="`width:${c.status === 'running' ? Math.random()*20+5 : 0}%; background:var(--cyan); height:100%;`"
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; margin-bottom: 4px; color: var(--text-secondary)">
+                      RAM:
+                      <span
+                        x-text="c.status === 'running' ? Math.floor(Math.random() * 400 + 100) + ' MB' : '0 MB'"
+                      ></span>
+                    </div>
+                    <div
+                      style="
+                        height: 4px;
+                        background: var(--bg-surface);
+                        border-radius: 2px;
+                        overflow: hidden;
+                      "
+                    >
+                      <div
+                        :style="`width:${c.status === 'running' ? Math.random()*30+10 : 0}%; background:var(--purple); height:100%;`"
+                      ></div>
+                    </div>
+                  </div>
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td
+                  class="col-adv"
+                  x-show="advancedView"
+                  style="font-size: 12px; color: var(--text-secondary); line-height: 1.4"
+                >
+                  <span
+                    x-html="c.status === 'running' ? 'Uptime: 5 days (healthy)<br>Created: 14 days ago' : '—'"
+                  ></span>
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td>
+                  <div class="port-list">
+                    <template x-for="p in c.ports">
+                      <div class="port-item">
+                        <span class="port-host" x-text="p.host"></span>
+                        <span class="port-arrow">↔</span>
+                        <span x-text="p.container"></span>
+                        <span style="color: var(--text-muted)" x-text="` (${p.proto})`"></span>
+                      </div>
+                    </template>
+                  </div>
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td>
+                  <div class="path-list">
+                    <template x-for="p in c.paths.slice(0, 3)">
+                      <div class="path-item" :title="`${p.host} → ${p.container}`">
+                        <span x-text="p.host"></span> <span class="path-arrow">→</span>
+                        <span x-text="p.container"></span>
+                      </div>
+                    </template>
+                    <template x-if="c.paths.length > 3">
+                      <div
+                        class="path-item"
+                        style="color: var(--accent)"
+                        x-text="`+${c.paths.length - 3} weitere`"
+                      ></div>
+                    </template>
+                  </div>
+                </td>
+              </template>
+
             </tr>
           </template>
         </template>
@@ -366,30 +366,66 @@
   </div>
 
   <!-- Bulk Action Bar -->
-  <div class="bulk-action-bar" :class="selected.length > 0 ? 'active' : ''">
-    <div
-      style="
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--text-primary);
-        font-weight: 600;
-      "
+  <template x-teleport="body">
+    <div class="bulk-action-bar" :class="selected.length > 0 ? 'active' : ''">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--text-primary);
+          font-weight: 600;
+        "
+      >
+        <span class="material-icons-round" style="color: var(--accent)">check_circle</span>
+        <span x-text="`${selected.length} ausgewählt`"></span>
+      </div>
+      <div style="width: 1px; height: 24px; background: var(--border)"></div>
+      <div style="display: flex; gap: 8px">
+        <button class="btn btn-primary" @click="bulkAction('start')">
+          <span class="material-icons-round">play_arrow</span> Starten
+        </button>
+        <button class="btn btn-ghost" @click="bulkAction('stop')">
+          <span class="material-icons-round">stop</span> Stoppen
+        </button>
+        <button class="btn btn-danger" @click="bulkAction('delete')" style="margin-left: 8px">
+          <span class="material-icons-round">delete</span> Löschen
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Docker Context Menu -->
+  <template x-teleport="body">
+    <div 
+      id="docker-ctx-menu"
+      class="docker-context-menu" 
+      x-show="contextMenu.open" 
+      @click.away="closeContextMenu()"
+      x-transition.opacity.duration.150ms
+      :style="`top: ${contextMenu.y}px; left: ${contextMenu.x}px;`"
+      style="display: none;"
     >
-      <span class="material-icons-round" style="color: var(--accent)">check_circle</span>
-      <span x-text="`${selected.length} ausgewählt`"></span>
+      <!-- We can add a small triangle pointer at the top left if desired, or keep it standard float -->
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">public</span> WebUI</div>
+      <div class="ctx-item" @click="typeof openTerminal === 'function' ? openTerminal(contextMenu.container?.id) : null; closeContextMenu()"><span class="material-icons-round">terminal</span> Console</div>
+      <div class="ctx-divider"></div>
+      <template x-if="contextMenu.container?.status === 'running'">
+        <div class="ctx-item" @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"><span class="material-icons-round">stop</span> Stop</div>
+      </template>
+      <template x-if="contextMenu.container?.status !== 'running'">
+        <div class="ctx-item" @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"><span class="material-icons-round">play_arrow</span> Start</div>
+      </template>
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">pause</span> Pause</div>
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">restart_alt</span> Restart</div>
+      <div class="ctx-divider"></div>
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">notes</span> Logs</div>
+      <div class="ctx-item" @click="$dispatch('open-config-modal', {id: contextMenu.container?.id, name: contextMenu.container?.name}); closeContextMenu()"><span class="material-icons-round">build</span> Edit</div>
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">delete</span> Remove</div>
+      <div class="ctx-divider"></div>
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">explore</span> Project Page</div>
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">help</span> Support</div>
+      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">info</span> More Info</div>
     </div>
-    <div style="width: 1px; height: 24px; background: var(--border)"></div>
-    <div style="display: flex; gap: 8px">
-      <button class="btn btn-primary" @click="bulkAction('start')">
-        <span class="material-icons-round">play_arrow</span> Starten
-      </button>
-      <button class="btn btn-ghost" @click="bulkAction('stop')">
-        <span class="material-icons-round">stop</span> Stoppen
-      </button>
-      <button class="btn btn-danger" @click="bulkAction('delete')" style="margin-left: 8px">
-        <span class="material-icons-round">delete</span> Löschen
-      </button>
-    </div>
-  </div>
+  </template>
 </section>

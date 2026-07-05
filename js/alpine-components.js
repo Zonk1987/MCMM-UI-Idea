@@ -104,4 +104,44 @@ export function registerAlpineComponents(Alpine) {
       if (typeof showToast === 'function') showToast('Kopiert!', 'success');
     },
   }));
+
+  // Folder Modal (FolderView3 Clone)
+  Alpine.data('folderModal', () => ({
+    open: false,
+    activeTab: 'basic',
+    folderName: '',
+    // Map of containerId -> boolean (included in folder)
+    includedContainers: {},
+    
+    openModal() {
+      this.folderName = '';
+      this.activeTab = 'basic';
+      this.includedContainers = {};
+      this.open = true;
+    },
+
+    saveFolder() {
+      if (!this.folderName || this.folderName.trim() === '') {
+        if(typeof showToast === 'function') showToast('Ordnername darf nicht leer sein', 'error');
+        return;
+      }
+      const fName = this.folderName.trim();
+      
+      // Save folder to store
+      if (Alpine.store('core')) {
+        Alpine.store('core').addFolder(fName);
+        
+        // Apply labels to checked containers
+        Object.keys(this.includedContainers).forEach(id => {
+          if (this.includedContainers[id]) {
+            Alpine.store('core').setLabel(id, 'folder.view3', fName);
+          }
+        });
+        
+        if (typeof showToast === 'function') showToast('Ordner "' + fName + '" gespeichert', 'success');
+      }
+      
+      this.open = false;
+    }
+  }));
 }

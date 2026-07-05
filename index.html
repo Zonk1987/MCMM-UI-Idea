@@ -244,6 +244,9 @@
           <span class="material-icons-round">notifications</span>
           <span x-text="$store.i18n.t('settings.notifications')">Meldungen</span>
         </button>
+        <button class="settings-nav-btn" data-stab="debug">
+          <span class="material-icons-round">bug_report</span> Debug
+        </button>
       </nav>
 
       <form
@@ -253,6 +256,79 @@
         <!-- Hidden username field for accessibility/password manager compliance -->
         <input type="text" autocomplete="username" style="display:none;" />
         <div class="settings-body" id="settingsBody">
+          <!-- Debug -->
+          <div class="settings-section" id="stab-debug">
+            <div class="settings-group">
+              <div class="settings-group-title">Entwickleroptionen</div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" x-text="$store.i18n.t('settings_debug')">
+                    Entwicklermodus
+                  </div>
+                  <div class="setting-desc" x-text="$store.i18n.t('settings_debug_desc')">
+                    Debug-Logs in der Konsole anzeigen
+                  </div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingDebug" />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Developer Mode (Debug)</div>
+                  <div class="setting-desc">
+                    Erweiterte Logs und API-Outputs in der Browser-Konsole ausgeben
+                  </div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="developerMode" />
+                  <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-group" x-data="debugApp()">
+              <div class="settings-group-title">Ordner & GameServer Zuweisung (DUMMY/DEBUG)</div>
+              <div style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary);">
+                Weise Dummy-Container expliziten Ordnern zu oder markiere sie als GameServer für Testzwecke.
+              </div>
+              
+              <div class="debug-container-list" style="display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 250px); overflow-y: auto; padding-right: 8px;">
+                <template x-for="c in containers" :key="c.id">
+                  <div style="background: var(--bg-surface); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="font-weight: 500; margin-bottom: 8px;" x-text="c.name"></div>
+                    
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                      <div style="flex: 1;">
+                        <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Ordner-Zuweisung</label>
+                        <select class="setting-input" x-bind:value="c.labels && c.labels['folder.view3'] ? c.labels['folder.view3'] : ''" @change="updateLabel(c.id, 'folder.view3', $event.target.value)" style="width: 100%;">
+                          <option value="">Kein Ordner (Unassigned)</option>
+                          <template x-if="$store.core && $store.core.customFolders">
+                            <template x-for="folder in $store.core.customFolders" :key="folder">
+                              <option :value="folder" x-text="folder"></option>
+                            </template>
+                          </template>
+                        </select>
+                      </div>
+                      <div style="flex: 1;">
+                        <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Als GameServer verwalten</label>
+                        <select class="setting-input" x-bind:value="c.labels && c.labels['mcmm.managed'] ? c.labels['mcmm.managed'] : ''" @change="updateLabel(c.id, 'mcmm.managed', $event.target.value)" style="width: 100%;">
+                          <option value="">Nein</option>
+                          <option value="true">Ja</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
           <!-- Allgemein -->
           <div class="settings-section active" id="stab-general">
             <div class="settings-group">
@@ -397,22 +473,6 @@
                 </div>
                 <label class="setting-toggle">
                   <input type="checkbox" id="settingAnimations" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
-                </label>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info">
-                  <div class="setting-label" x-text="$store.i18n.t('settings_debug')">
-                    Entwicklermodus
-                  </div>
-                  <div class="setting-desc" x-text="$store.i18n.t('settings_debug_desc')">
-                    Debug-Logs in der Konsole anzeigen
-                  </div>
-                </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" id="settingDebug" />
                   <div class="toggle-track">
                     <div class="toggle-thumb"></div>
                   </div>
@@ -698,25 +758,6 @@
               </div>
             </div>
 
-            <div class="settings-group">
-              <div class="settings-group-title" style="color: var(--text-muted)">
-                Entwickler-Optionen
-              </div>
-              <div class="setting-row">
-                <div class="setting-info">
-                  <div class="setting-label">Developer Mode (Debug)</div>
-                  <div class="setting-desc">
-                    Erweiterte Logs und API-Outputs in der Browser-Konsole ausgeben
-                  </div>
-                </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" id="developerMode" />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
-                </label>
-              </div>
-            </div>
             <div class="settings-group">
               <div class="settings-group-title">Ereignisse</div>
               <div class="setting-row">
@@ -1711,5 +1752,530 @@
     <script type="module" src="js/players.js"></script>
     <script type="module" src="js/settings.js"></script>
     <script type="module" src="js/main.js"></script>
+    <!-- Folder Modal (FolderView3 Style - Redesigned) -->
+    <div
+      class="modal-backdrop"
+      id="folderModalAlpine"
+      x-data="folderModal()"
+      @open-folder-modal.window="openModal()"
+      x-show="open"
+      style="display: none"
+      x-transition
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="folderModalTitle"
+    >
+      <div
+        class="modal-content"
+        @click.away="open = false"
+        style="
+          max-width: 900px;
+          padding: 0;
+          overflow: hidden;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--border);
+          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+          background: var(--bg-base);
+          backdrop-filter: none;
+        "
+      >
+        <!-- Header -->
+        <div
+          class="modal-header"
+          style="
+            background: var(--bg-card);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+          "
+        >
+          <div
+            style="
+              background: var(--accent-dim);
+              color: var(--accent);
+              width: 48px;
+              height: 48px;
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            "
+          >
+            <span class="material-icons-round" style="font-size: 24px">folder_special</span>
+          </div>
+          <div style="flex: 1">
+            <h2 id="folderModalTitle" style="margin: 0; font-size: 18px; color: var(--text-primary)">
+              Ordner konfigurieren
+            </h2>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px">
+              Organisiere deine Container mit FolderView3
+            </div>
+          </div>
+          <button class="icon-btn" @click="open = false" aria-label="Schließen">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+
+        <!-- Body with Tabs -->
+        <div style="display: flex; flex-direction: column; height: 500px; background: var(--bg-base);">
+          
+          <!-- Tab Navigation -->
+          <div class="dc-tab-nav" style="padding-left: 24px; border-bottom: 1px solid var(--border); background: var(--bg-card);">
+            <button
+              class="dc-tab-btn"
+              @click="activeTab = 'basic'"
+              :class="activeTab === 'basic' ? 'active' : ''"
+              style="display: flex; align-items: center; gap: 6px"
+            >
+              <span class="material-icons-round" style="font-size: 16px">tune</span> Basic
+            </button>
+            <button
+              class="dc-tab-btn"
+              @click="activeTab = 'preview'"
+              :class="activeTab === 'preview' ? 'active' : ''"
+              style="display: flex; align-items: center; gap: 6px"
+            >
+              <span class="material-icons-round" style="font-size: 16px">visibility</span> Preview
+            </button>
+            <button
+              class="dc-tab-btn"
+              @click="activeTab = 'behavior'"
+              :class="activeTab === 'behavior' ? 'active' : ''"
+              style="display: flex; align-items: center; gap: 6px"
+            >
+              <span class="material-icons-round" style="font-size: 16px">settings_suggest</span> Behavior
+            </button>
+            <button
+              class="dc-tab-btn"
+              @click="activeTab = 'containers'"
+              :class="activeTab === 'containers' ? 'active' : ''"
+              style="display: flex; align-items: center; gap: 6px"
+            >
+              <span class="material-icons-round" style="font-size: 16px">view_list</span> Containers / VMs
+            </button>
+            <button
+              class="dc-tab-btn"
+              @click="activeTab = 'custom-actions'"
+              :class="activeTab === 'custom-actions' ? 'active' : ''"
+              style="display: flex; align-items: center; gap: 6px"
+            >
+              <span class="material-icons-round" style="font-size: 16px">extension</span> Custom Actions
+            </button>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="dc-tab-content" style="flex: 1; overflow-y: auto; padding: 24px;">
+            
+            <!-- BASIC TAB -->
+            <div x-show="activeTab === 'basic'" style="display: flex; flex-direction: column; gap: 20px;">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Name
+                  <div class="fv3-tooltip">The name of the folder. Supports Unicode (CJK, Cyrillic, etc). Not allowed: &lt; &gt; &amp; " ' \ : and control characters.</div>
+                </label>
+                </div>
+                <input
+                  type="text"
+                  class="setting-input"
+                  style="width: 320px"
+                  x-model="folderName"
+                />
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Icon
+                  <div class="fv3-tooltip">A link to an image (<a href="#">Supported formats</a>)<br>
+                It also supports <strong>data:image/{type};base64</strong>, format (<a href="#">Convert image to data strings</a>)<br>
+                <a href="#">Thread with some icons.</a><br>
+                You can click the icon of the Docker/VM to set the folder icon.</div>
+                </label>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-muted);">?</div>
+                  <input
+                    type="text"
+                    class="setting-input"
+                    style="width: 272px"
+                    placeholder="e.g. fas fa-server"
+                  />
+                </div>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Folder WebUI
+                  <div class="fv3-tooltip">Default folder WebUI URL.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Orange folder text on update
+                  <div class="fv3-tooltip">On the Docker page, highlights the folder name in orange when any container in the folder has an update available.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Regex
+                  <div class="fv3-tooltip">Automatically include containers whose names match a text pattern.<br>
+                <strong>plex</strong> — matches any container with 'plex' in the name<br>
+                <strong>^media-</strong> — matches containers starting with 'media-'<br>
+                <strong>arr$</strong> — matches containers ending with 'arr' (sonarr, radarr, etc.)<br>
+                <a href="#">Test your pattern here.</a><br>
+                Editing this field will reset manual container selections below.</div>
+                </label>
+                </div>
+                <input
+                  type="text"
+                  class="setting-input"
+                  style="width: 320px"
+                  placeholder="e.g. plex.* or ^my-stack-"
+                />
+              </div>
+              
+            </div>
+
+            <!-- PREVIEW TAB -->
+            <div x-show="activeTab === 'preview'" style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Preview
+                  <div class="fv3-tooltip">Choose how containers/VMs are displayed in the folder preview row.</div>
+                </label>
+                </div>
+                <select class="setting-input" style="width: 240px">
+                  <option>Icon and label</option>
+                  <option>Icon only</option>
+                  <option>Label only</option>
+                  <option>None</option>
+                </select>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Orange container text on update
+                  <div class="fv3-tooltip">On the Docker page, highlights container names in the folder preview in orange when an update is available.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Text width
+                  <div class="fv3-tooltip">Limits the maximum width of container names in the preview, truncating long names with an ellipsis. Enter a CSS value like <strong>80px</strong> or <strong>6rem</strong>. Leave blank for no limit.</div>
+                </label>
+                </div>
+                <input type="text" class="setting-input" style="width: 240px" />
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Show preview only on hover
+                  <div class="fv3-tooltip">Hides the preview until you hover over the folder row.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Preview icon greyscale
+                  <div class="fv3-tooltip">Displays container icons in greyscale instead of color.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Add preview open WebUI
+                  <div class="fv3-tooltip">Adds a globe icon next to containers that have a WebUI configured.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Add preview open logs
+                  <div class="fv3-tooltip">Adds a log icon next to each container for quick access to logs.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Add preview open console
+                  <div class="fv3-tooltip">Adds a console icon next to each container for quick terminal access.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Preview vertical bars
+                  <div class="fv3-tooltip">Shows vertical divider lines between containers in the preview row.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Show preview border
+                  <div class="fv3-tooltip">Draws a border around the preview area.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Preview overflow
+                  <div class="fv3-tooltip">Controls what happens when there are too many containers to fit in the preview area.<br>
+                <strong>Default:</strong> Extra containers are hidden when the row is too narrow.<br>
+                <strong>Expand row:</strong> The preview area grows taller to show all containers on multiple lines.<br>
+                <strong>Scroll:</strong> A horizontal scrollbar appears to access all containers.</div>
+                </label>
+                </div>
+                <select class="setting-input" style="width: 240px">
+                  <option>Default</option>
+                  <option>Expand row</option>
+                  <option>Scroll</option>
+                </select>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Lock colors
+                  <div class="fv3-tooltip">When enabled, this folder's border, vertical bar, and separator colors cannot be overridden by CSS presets, global defaults, or Apply Defaults to All Folders.<br>
+                When disabled (default), these sources can override the colors.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Preview Context
+                  <div class="fv3-tooltip">Controls the detail popup when clicking a container. <strong>Default</strong> shows basic info, <strong>Advanced</strong> shows stats with CPU/memory graphs.</div>
+                </label>
+                </div>
+                <select class="setting-input" style="width: 240px">
+                  <option>Default</option>
+                  <option>Advanced</option>
+                </select>
+              </div>
+              
+              
+            </div>
+
+            <!-- BEHAVIOR TAB -->
+            <div x-show="activeTab === 'behavior'" style="display: flex; flex-direction: column; gap: 20px;">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Hide update column
+                  <div class="fv3-tooltip">Hides the Version/update column for this folder's row, freeing up horizontal space.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Override default actions
+                  <div class="fv3-tooltip">Replaces the folder's default right-click menu with only the custom actions defined below.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Hide default action button
+                  <div class="fv3-tooltip">Removes the default action buttons (start, stop, restart) from the folder's context menu.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Expanded on Docker/VM tab
+                  <div class="fv3-tooltip">The folder will be expanded (showing child containers) by default when the Docker/VMs page loads.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label class="setting-label has-tooltip" tabindex="0">Expanded on Dashboard tab
+                  <div class="fv3-tooltip">The folder will be expanded by default when the Dashboard page loads.</div>
+                </label>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </label>
+              </div>
+              
+            </div>
+
+            <!-- CUSTOM ACTIONS TAB -->
+            <div x-show="activeTab === 'custom-actions'">
+              <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+                <button class="fv3-add-action-btn">
+                  <span class="material-icons-round" style="font-size: 16px;">add</span> Add a custom action
+                </button>
+              </div>
+              <div class="fv3-info-box" style="margin-top: 0;">
+                <strong>Name:</strong> Just the name of the action.<br>
+                <strong>Type:</strong> Type of the action.<br>
+                <strong>Standard</strong> - normal action on docker containers (start, stop, ...).<br>
+                <strong>Custom</strong> - will execute a User Scripts (User Scripts plugin required).<br>
+                <strong>Action:</strong> Action to be performed.<br>
+                <strong>Cycle</strong> - cycle between two states.<br>
+                <strong>Set</strong> - set a state.<br>
+                <strong>Restart</strong> - basic restart.<br>
+                <strong>Containers:</strong> A comma (,) separated list of containers.<br>
+                <strong>Script:</strong> Just the name of the script (Names are case sensitive and need white spaces).<br>
+                <strong>Arguments:</strong> Arguments passed to the script.<br>
+                <strong>Sync:</strong> Whether to run the script in background or not.<br>
+                <strong>Icon:</strong> Icon of the action, leave empty for default.
+              </div>
+            </div>
+
+            <!-- CONTAINERS TAB -->
+            <div x-show="activeTab === 'containers'">
+              <table style="width: 100%; border-collapse: collapse; font-size: 13px; color: var(--text-secondary);">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border);">
+                    <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-primary);">NAME</th>
+                    <th style="padding: 12px 16px; text-align: center; font-weight: 600; color: var(--text-primary); width: 120px;">INCLUDED</th>
+                    <th style="padding: 12px 16px; text-align: center; font-weight: 600; color: var(--text-primary); width: 120px;">HIDE PREVIEW</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-if="$store.core && $store.core.containers">
+                    <template x-for="c in $store.core.containers" :key="c.id">
+                      <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 12px 16px; color: var(--text-primary); font-weight: 500; display: flex; align-items: center; gap: 12px;">
+                          <span class="material-icons-round" style="font-size: 18px; color: var(--text-muted); cursor: grab;">drag_indicator</span>
+                          <span x-text="c.name"></span>
+                        </td>
+                        <td style="padding: 12px 16px; text-align: center;">
+                          <div style="display: flex; justify-content: center;">
+                            <label class="setting-toggle">
+                              <input type="checkbox" x-model="includedContainers[c.id]" />
+                              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                            </label>
+                          </div>
+                        </td>
+                        <td style="padding: 12px 16px; text-align: center;">
+                          <div style="display: flex; justify-content: center;">
+                            <label class="setting-toggle">
+                              <input type="checkbox" />
+                              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-card); display: flex; justify-content: flex-end; gap: 12px;">
+          <button class="btn btn-ghost" @click="open = false">Abbrechen</button>
+          <button class="btn btn-primary" @click="saveFolder()">
+            <span class="material-icons-round">save</span> Speichern
+          </button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
