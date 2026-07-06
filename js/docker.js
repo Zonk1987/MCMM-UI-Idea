@@ -9,6 +9,7 @@ export function dockerApp() {
     get containers() {
       return Alpine.store('core').containers;
     },
+    folderViewEnabled: typeof appSettings !== 'undefined' ? appSettings.folderViewEnabled : true,
     isLoading: false,
     searchQuery: '',
     sortCol: 'name',
@@ -66,7 +67,7 @@ export function dockerApp() {
     },
 
     get useFolders() {
-      if (typeof appSettings !== 'undefined' && appSettings.useFolders === false) return false;
+      if (this.folderViewEnabled === false) return false;
       return this.filteredContainers.some(c => c.labels && c.labels['folder.view3']);
     },
 
@@ -89,7 +90,7 @@ export function dockerApp() {
         const fName = c.labels && c.labels['folder.view3'];
         if (fName) {
           if (!folderMap[fName]) folderMap[fName] = [];
-          folderMap[fName].push({ type: 'container', folder: fName, ...c });
+          folderMap[fName].push({ type: 'container', ...c, folder: fName });
         } else {
           unassigned.push({ type: 'container', ...c });
         }
@@ -97,7 +98,10 @@ export function dockerApp() {
 
       const sortedFolderNames = Object.keys(folderMap).sort();
       sortedFolderNames.forEach(fName => {
-        items.push({ type: 'folder', id: 'folder_' + fName, name: fName, count: folderMap[fName].length });
+        items.push({ type: 'folder', id: 'folder_' + fName, name: fName, count: folderMap[fName].length, containers: folderMap[fName] });
+        if (this.isFolderExpanded(fName)) {
+            items.push({ type: 'folder_header', id: 'folder_header_' + fName, name: fName });
+        }
         items.push(...folderMap[fName]);
       });
       
@@ -108,15 +112,13 @@ export function dockerApp() {
     expandedFolders: {},
 
     toggleFolder(fName) {
-      if (this.expandedFolders[fName] === undefined) {
-         this.expandedFolders[fName] = true; // Default is closed, so toggling makes it open
-      } else {
-         this.expandedFolders[fName] = !this.expandedFolders[fName];
-      }
+      this.expandedFolders = {
+        ...this.expandedFolders,
+        [fName]: !this.isFolderExpanded(fName)
+      };
     },
 
     isFolderExpanded(fName) {
-      // Default to false (closed) if not explicitly set
       return this.expandedFolders[fName] === true;
     },
 
@@ -125,7 +127,26 @@ export function dockerApp() {
       window.dispatchEvent(new CustomEvent('open-folder-modal'));
     },
 
+    editFolder(fName) {
+      window.dispatchEvent(new CustomEvent('open-folder-modal', { detail: { folderName: fName } }));
+    },
+
+    deleteFolder(fName) {
+      if (confirm(`Möchten Sie den Ordner "${fName}" wirklich löschen?\nDie Container darin bleiben erhalten und werden wieder in der normalen Liste angezeigt.`)) {
+        if (Alpine.store('core')) {
+          Alpine.store('core').removeFolder(fName);
+          if (typeof showToast === 'function') {
+            showToast(`Ordner "${fName}" gelöscht`, 'success');
+          }
+        }
+      }
+    },
+
     init() {
+      window.addEventListener('settings-saved', () => {
+        this.folderViewEnabled = typeof appSettings !== 'undefined' ? appSettings.folderViewEnabled : true;
+      });
+
       // Sync to global store
       if (typeof Alpine !== 'undefined') {
         Alpine.effect(() => {
@@ -155,6 +176,11 @@ export function dockerApp() {
       };
     },
 
+    get hasRootContainers() {
+      // Returns true if there is at least one container row that is not in a folder
+      return this.viewItems.some(c => c.type === 'container' && !c.folder);
+    },
+
     toggleSort(col) {
       if (this.sortCol === col) {
         this.sortAsc = !this.sortAsc;
@@ -170,6 +196,25 @@ export function dockerApp() {
       } else {
         this.selected = [];
       }
+    },
+
+    toggleSelectAllInFolder(fName) {
+      const folderContainers = this.filteredContainers.filter(c => c.labels && c.labels['folder.view3'] === fName);
+      if (folderContainers.length === 0) return;
+      const allSelected = folderContainers.every(c => this.selected.includes(c.id));
+      
+      if (allSelected) {
+        this.selected = this.selected.filter(id => !folderContainers.some(c => c.id === id));
+      } else {
+        const idsToAdd = folderContainers.map(c => c.id).filter(id => !this.selected.includes(id));
+        this.selected = [...this.selected, ...idsToAdd];
+      }
+    },
+
+    isAllSelectedInFolder(fName) {
+      const folderContainers = this.filteredContainers.filter(c => c.labels && c.labels['folder.view3'] === fName);
+      if (folderContainers.length === 0) return false;
+      return folderContainers.every(c => this.selected.includes(c.id));
     },
 
     bulkAction(action) {

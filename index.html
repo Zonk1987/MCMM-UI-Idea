@@ -1,41 +1,41 @@
 <!doctype html>
 <html lang="de">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>GameServer Hub — Unraid Plugin</title>
     <meta
       name="description"
       content="Erweitertes Unraid Docker-Menü mit GameServer Hub, Minecraft Mod-Browser und Player Management."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com" >
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin >
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" />
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/layout.css" />
-    <link rel="stylesheet" href="css/modules/buttons.css" />
-    <link rel="stylesheet" href="css/modules/forms.css" />
-    <link rel="stylesheet" href="css/modules/stats.css" />
-    <link rel="stylesheet" href="css/modules/modals.css" />
-    <link rel="stylesheet" href="css/modules/console.css" />
-    <link rel="stylesheet" href="css/modules/badges.css" />
-    <link rel="stylesheet" href="css/modules/states.css" />
-    <link rel="stylesheet" href="css/modules/lists.css" />
-    <link rel="stylesheet" href="css/docker.css" />
-    <link rel="stylesheet" href="css/gameserver.css" />
-    <link rel="stylesheet" href="css/gameAdditions.css" />
-    <link rel="stylesheet" href="games/minecraft/css/minecraft.css" />
-    <link rel="stylesheet" href="games/palworld/css/palworld.css" />
-    <link rel="stylesheet" href="games/valheim/css/valheim.css" />
-    <link rel="stylesheet" href="games/cs2/css/cs2.css" />
-    <link rel="stylesheet" href="css/players.css" />
-    <link rel="stylesheet" href="css/settings.css" />
-    <link rel="stylesheet" href="css/toast.css" />
-    <link rel="stylesheet" href="css/vendor/xterm.css" />
+    >
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" >
+    <link rel="stylesheet" href="css/base.css" >
+    <link rel="stylesheet" href="css/layout.css" >
+    <link rel="stylesheet" href="css/modules/buttons.css" >
+    <link rel="stylesheet" href="css/modules/forms.css" >
+    <link rel="stylesheet" href="css/modules/stats.css" >
+    <link rel="stylesheet" href="css/modules/modals.css" >
+    <link rel="stylesheet" href="css/modules/console.css" >
+    <link rel="stylesheet" href="css/modules/badges.css" >
+    <link rel="stylesheet" href="css/modules/states.css" >
+    <link rel="stylesheet" href="css/modules/lists.css" >
+    <link rel="stylesheet" href="css/docker.css" >
+    <link rel="stylesheet" href="css/gameserver.css" >
+    <link rel="stylesheet" href="css/gameAdditions.css" >
+    <link rel="stylesheet" href="games/minecraft/css/minecraft.css" >
+    <link rel="stylesheet" href="games/palworld/css/palworld.css" >
+    <link rel="stylesheet" href="games/valheim/css/valheim.css" >
+    <link rel="stylesheet" href="games/cs2/css/cs2.css" >
+    <link rel="stylesheet" href="css/players.css" >
+    <link rel="stylesheet" href="css/settings.css" >
+    <link rel="stylesheet" href="css/toast.css" >
+    <link rel="stylesheet" href="css/vendor/xterm.css" >
     <script src="js/vendor/xterm.js"></script>
     <script src="js/vendor/xterm-addon-fit.js"></script>
     <script type="module" src="js/main.js"></script>
@@ -254,7 +254,7 @@
         style="display: flex; flex-direction: column; flex: 1; overflow: hidden"
       >
         <!-- Hidden username field for accessibility/password manager compliance -->
-        <input type="text" autocomplete="username" style="display:none;" />
+        <input id="hiddenUsername" name="hiddenUsername" type="text" autocomplete="username" style="display:none;" />
         <div class="settings-body" id="settingsBody">
           <!-- Debug -->
           <div class="settings-section" id="stab-debug">
@@ -269,11 +269,9 @@
                     Debug-Logs in der Konsole anzeigen
                   </div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingDebug">
                   <input type="checkbox" id="settingDebug" />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -283,11 +281,9 @@
                     Erweiterte Logs und API-Outputs in der Browser-Konsole ausgeben
                   </div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="developerMode">
                   <input type="checkbox" id="developerMode" />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
             </div>
@@ -305,8 +301,8 @@
                     
                     <div style="display: flex; gap: 12px; align-items: center;">
                       <div style="flex: 1;">
-                        <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Ordner-Zuweisung</label>
-                        <select class="setting-input" x-bind:value="c.labels && c.labels['folder.view3'] ? c.labels['folder.view3'] : ''" @change="updateLabel(c.id, 'folder.view3', $event.target.value)" style="width: 100%;">
+                        <div style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Ordner-Zuweisung</div>
+                        <select :id="'field_select_2_' + c.id" :name="'field_select_2_' + c.id" class="setting-input" x-bind:value="c.labels && c.labels['folder.view3'] ? c.labels['folder.view3'] : ''" @change="updateLabel(c.id, 'folder.view3', $event.target.value)" style="width: 100%;">
                           <option value="">Kein Ordner (Unassigned)</option>
                           <template x-if="$store.core && $store.core.customFolders">
                             <template x-for="folder in $store.core.customFolders" :key="folder">
@@ -316,8 +312,8 @@
                         </select>
                       </div>
                       <div style="flex: 1;">
-                        <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Als GameServer verwalten</label>
-                        <select class="setting-input" x-bind:value="c.labels && c.labels['mcmm.managed'] ? c.labels['mcmm.managed'] : ''" @change="updateLabel(c.id, 'mcmm.managed', $event.target.value)" style="width: 100%;">
+                        <div style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Als GameServer verwalten</div>
+                        <select :id="'field_select_3_' + c.id" :name="'field_select_3_' + c.id" class="setting-input" x-bind:value="c.labels && c.labels['mcmm.managed'] ? c.labels['mcmm.managed'] : ''" @change="updateLabel(c.id, 'mcmm.managed', $event.target.value)" style="width: 100%;">
                           <option value="">Nein</option>
                           <option value="true">Ja</option>
                         </select>
@@ -428,11 +424,9 @@
                     Weniger Abstände, mehr Inhalt sichtbar
                   </div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingCompact">
                   <input type="checkbox" id="settingCompact" />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
             </div>
@@ -471,11 +465,9 @@
                     Übergangsanimationen aktivieren
                   </div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingAnimations">
                   <input type="checkbox" id="settingAnimations" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
             </div>
@@ -531,11 +523,9 @@
                   <div class="setting-label">Update-Check beim Start</div>
                   <div class="setting-desc">Auf neue Image-Versionen prüfen</div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingUpdateCheck">
                   <input type="checkbox" id="settingUpdateCheck" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -543,11 +533,9 @@
                   <div class="setting-label">Bestätigung beim Stoppen</div>
                   <div class="setting-desc">Sicherheitsabfrage vor dem Stoppen</div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingStopConfirm">
                   <input type="checkbox" id="settingStopConfirm" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
             </div>
@@ -597,11 +585,9 @@
                   <div class="setting-label">RCON aktivieren</div>
                   <div class="setting-desc">Fernsteuerung über RCON</div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingRconEnabled">
                   <input type="checkbox" id="settingRconEnabled" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -711,11 +697,9 @@
                   <div class="setting-label">EULA automatisch akzeptieren</div>
                   <div class="setting-desc">Fügt EULA=TRUE automatisch hinzu</div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingMcEula">
                   <input type="checkbox" id="settingMcEula" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
             </div>
@@ -730,11 +714,9 @@
                   <div class="setting-label">Meldungen aktivieren</div>
                   <div class="setting-desc">Toast-Benachrichtigungen global an/aus</div>
                 </div>
-                <label class="setting-toggle">
+                <label class="setting-toggle" for="settingToastsEnabled">
                   <input type="checkbox" id="settingToastsEnabled" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -765,10 +747,8 @@
                   <div class="setting-label">Container gestartet / gestoppt</div>
                 </div>
                 <label class="setting-toggle"
-                  ><input type="checkbox" id="notifContainer" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                   for="notifContainer"><input type="checkbox" id="notifContainer" checked />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -776,10 +756,8 @@
                   <div class="setting-label">Spieler tritt bei / verlässt</div>
                 </div>
                 <label class="setting-toggle"
-                  ><input type="checkbox" id="notifPlayer" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                   for="notifPlayer"><input type="checkbox" id="notifPlayer" checked />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -787,10 +765,8 @@
                   <div class="setting-label">Update verfügbar</div>
                 </div>
                 <label class="setting-toggle"
-                  ><input type="checkbox" id="notifUpdate" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                   for="notifUpdate"><input type="checkbox" id="notifUpdate" checked />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -798,10 +774,8 @@
                   <div class="setting-label">Server-Fehler / Crash</div>
                 </div>
                 <label class="setting-toggle"
-                  ><input type="checkbox" id="notifCrash" checked />
-                  <div class="toggle-track">
-                    <div class="toggle-thumb"></div>
-                  </div>
+                   for="notifCrash"><input type="checkbox" id="notifCrash" checked />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
             </div>
@@ -1378,9 +1352,9 @@
                     <div class="setting-label">PVP</div>
                     <div class="setting-desc">Spieler gegen Spieler</div>
                   </div>
-                  <label class="action-toggle">
-                    <input type="checkbox" x-model="data.pvp" />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  <label class="action-toggle" for="data_pvp_4">
+                    <input id="data_pvp_4" name="data_pvp_4" type="checkbox" x-model="data.pvp" />
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1388,9 +1362,9 @@
                     <div class="setting-label">Online Mode (Premium)</div>
                     <div class="setting-desc">Nur gekaufte Accounts</div>
                   </div>
-                  <label class="action-toggle">
-                    <input type="checkbox" x-model="data.onlineMode" />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  <label class="action-toggle" for="data_onlineMode_5">
+                    <input id="data_onlineMode_5" name="data_onlineMode_5" type="checkbox" x-model="data.onlineMode" />
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1398,9 +1372,9 @@
                     <div class="setting-label">Whitelist aktivieren</div>
                     <div class="setting-desc">Nur eingetragene Spieler können beitreten</div>
                   </div>
-                  <label class="action-toggle">
-                    <input type="checkbox" x-model="data.enableWhitelist" />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  <label class="action-toggle" for="data_enableWhitelist_6">
+                    <input id="data_enableWhitelist_6" name="data_enableWhitelist_6" type="checkbox" x-model="data.enableWhitelist" />
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
                 <div
@@ -1458,13 +1432,13 @@
                     <div class="setting-label">Aikar's Flags (G1GC)</div>
                     <div class="setting-desc">Empfohlen für Paper/Spigot Server</div>
                   </div>
-                  <label class="action-toggle">
-                    <input
+                  <label class="action-toggle" for="data_aikar_7">
+                    <input id="data_aikar_7" name="data_aikar_7"
                       type="checkbox"
                       x-model="data.aikar"
                       @change="if(data.aikar) data.meowice = false"
                     />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1472,13 +1446,13 @@
                     <div class="setting-label">MeowIce Flags (ZGC)</div>
                     <div class="setting-desc">Empfohlen für große Heaps (>12GB) / Fabric</div>
                   </div>
-                  <label class="action-toggle">
-                    <input
+                  <label class="action-toggle" for="data_meowice_8">
+                    <input id="data_meowice_8" name="data_meowice_8"
                       type="checkbox"
                       x-model="data.meowice"
                       @change="if(data.meowice) data.aikar = false"
                     />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1486,9 +1460,9 @@
                     <div class="setting-label">Befehlsblöcke</div>
                     <div class="setting-desc">Command Blocks erlauben</div>
                   </div>
-                  <label class="action-toggle">
-                    <input type="checkbox" x-model="data.cmdBlocks" />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  <label class="action-toggle" for="data_cmdBlocks_9">
+                    <input id="data_cmdBlocks_9" name="data_cmdBlocks_9" type="checkbox" x-model="data.cmdBlocks" />
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1496,9 +1470,9 @@
                     <div class="setting-label">Fliegen erlauben</div>
                     <div class="setting-desc">Verhindert Kicks bei Lags</div>
                   </div>
-                  <label class="action-toggle">
-                    <input type="checkbox" x-model="data.flight" />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  <label class="action-toggle" for="data_flight_10">
+                    <input id="data_flight_10" name="data_flight_10" type="checkbox" x-model="data.flight" />
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
                 <div class="setting-row" style="border-bottom: none">
@@ -1506,9 +1480,9 @@
                     <div class="setting-label">Rolling Logs</div>
                     <div class="setting-desc">Server-Logs komprimieren und rotieren</div>
                   </div>
-                  <label class="action-toggle">
-                    <input type="checkbox" x-model="data.rollingLogs" />
-                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  <label class="action-toggle" for="data_rollingLogs_11">
+                    <input id="data_rollingLogs_11" name="data_rollingLogs_11" type="checkbox" x-model="data.rollingLogs" />
+                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
                   </label>
                 </div>
               </div>
@@ -1873,11 +1847,11 @@
             <div x-show="activeTab === 'basic'" style="display: flex; flex-direction: column; gap: 20px;">
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Name
-                  <div class="fv3-tooltip">The name of the folder. Supports Unicode (CJK, Cyrillic, etc). Not allowed: &lt; &gt; &amp; " ' \ : and control characters.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Name
+                  <span class="fv3-tooltip">The name of the folder. Supports Unicode (CJK, Cyrillic, etc). Not allowed: &lt; &gt; &amp; " ' \ : and control characters.</span>
                 </div>
-                <input
+                </div>
+                <input id="folderName_12" name="folderName_12"
                   type="text"
                   class="setting-input"
                   style="width: 320px"
@@ -1888,16 +1862,16 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Icon
-                  <div class="fv3-tooltip">A link to an image (<a href="#">Supported formats</a>)<br>
+                  <div class="setting-label has-tooltip" tabindex="0">Icon
+                  <span class="fv3-tooltip">A link to an image (<a href="#">Supported formats</a>)<br>
                 It also supports <strong>data:image/{type};base64</strong>, format (<a href="#">Convert image to data strings</a>)<br>
                 <a href="#">Thread with some icons.</a><br>
-                You can click the icon of the Docker/VM to set the folder icon.</div>
-                </label>
+                You can click the icon of the Docker/VM to set the folder icon.</span>
+                </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-muted);">?</div>
-                  <input
+                  <input id="field_input_13" name="field_input_13"
                     type="text"
                     class="setting-input"
                     style="width: 272px"
@@ -1909,42 +1883,42 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Folder WebUI
-                  <div class="fv3-tooltip">Default folder WebUI URL.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Folder WebUI
+                  <span class="fv3-tooltip">Default folder WebUI URL.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_14">
+                  <input id="field_input_14" name="field_input_14" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Orange folder text on update
-                  <div class="fv3-tooltip">On the Docker page, highlights the folder name in orange when any container in the folder has an update available.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Orange folder text on update
+                  <span class="fv3-tooltip">On the Docker page, highlights the folder name in orange when any container in the folder has an update available.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_15">
+                  <input id="field_input_15" name="field_input_15" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Regex
-                  <div class="fv3-tooltip">Automatically include containers whose names match a text pattern.<br>
+                  <div class="setting-label has-tooltip" tabindex="0">Regex
+                  <span class="fv3-tooltip">Automatically include containers whose names match a text pattern.<br>
                 <strong>plex</strong> — matches any container with 'plex' in the name<br>
                 <strong>^media-</strong> — matches containers starting with 'media-'<br>
                 <strong>arr$</strong> — matches containers ending with 'arr' (sonarr, radarr, etc.)<br>
                 <a href="#">Test your pattern here.</a><br>
-                Editing this field will reset manual container selections below.</div>
-                </label>
+                Editing this field will reset manual container selections below.</span>
                 </div>
-                <input
+                </div>
+                <input id="field_input_16" name="field_input_16"
                   type="text"
                   class="setting-input"
                   style="width: 320px"
@@ -1959,11 +1933,11 @@
               
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Preview
-                  <div class="fv3-tooltip">Choose how containers/VMs are displayed in the folder preview row.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Preview
+                  <span class="fv3-tooltip">Choose how containers/VMs are displayed in the folder preview row.</span>
                 </div>
-                <select class="setting-input" style="width: 240px">
+                </div>
+                <select id="field_select_17" name="field_select_17" class="setting-input" style="width: 240px">
                   <option>Icon and label</option>
                   <option>Icon only</option>
                   <option>Label only</option>
@@ -1974,128 +1948,128 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Orange container text on update
-                  <div class="fv3-tooltip">On the Docker page, highlights container names in the folder preview in orange when an update is available.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Orange container text on update
+                  <span class="fv3-tooltip">On the Docker page, highlights container names in the folder preview in orange when an update is available.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_18">
+                  <input id="field_input_18" name="field_input_18" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Text width
-                  <div class="fv3-tooltip">Limits the maximum width of container names in the preview, truncating long names with an ellipsis. Enter a CSS value like <strong>80px</strong> or <strong>6rem</strong>. Leave blank for no limit.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Text width
+                  <span class="fv3-tooltip">Limits the maximum width of container names in the preview, truncating long names with an ellipsis. Enter a CSS value like <strong>80px</strong> or <strong>6rem</strong>. Leave blank for no limit.</span>
                 </div>
-                <input type="text" class="setting-input" style="width: 240px" />
+                </div>
+                <input id="field_input_19" name="field_input_19" type="text" class="setting-input" style="width: 240px" />
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Show preview only on hover
-                  <div class="fv3-tooltip">Hides the preview until you hover over the folder row.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Show preview only on hover
+                  <span class="fv3-tooltip">Hides the preview until you hover over the folder row.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                </label>
-              </div>
-              
-
-              <div class="setting-row">
-                <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Preview icon greyscale
-                  <div class="fv3-tooltip">Displays container icons in greyscale instead of color.</div>
-                </label>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                <label class="setting-toggle" for="field_input_20">
+                  <input id="field_input_20" name="field_input_20" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Add preview open WebUI
-                  <div class="fv3-tooltip">Adds a globe icon next to containers that have a WebUI configured.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Preview icon greyscale
+                  <span class="fv3-tooltip">Displays container icons in greyscale instead of color.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_21">
+                  <input id="field_input_21" name="field_input_21" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Add preview open logs
-                  <div class="fv3-tooltip">Adds a log icon next to each container for quick access to logs.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Add preview open WebUI
+                  <span class="fv3-tooltip">Adds a globe icon next to containers that have a WebUI configured.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_22">
+                  <input id="field_input_22" name="field_input_22" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Add preview open console
-                  <div class="fv3-tooltip">Adds a console icon next to each container for quick terminal access.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Add preview open logs
+                  <span class="fv3-tooltip">Adds a log icon next to each container for quick access to logs.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_23">
+                  <input id="field_input_23" name="field_input_23" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Preview vertical bars
-                  <div class="fv3-tooltip">Shows vertical divider lines between containers in the preview row.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Add preview open console
+                  <span class="fv3-tooltip">Adds a console icon next to each container for quick terminal access.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_24">
+                  <input id="field_input_24" name="field_input_24" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Show preview border
-                  <div class="fv3-tooltip">Draws a border around the preview area.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Preview vertical bars
+                  <span class="fv3-tooltip">Shows vertical divider lines between containers in the preview row.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_25">
+                  <input id="field_input_25" name="field_input_25" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Preview overflow
-                  <div class="fv3-tooltip">Controls what happens when there are too many containers to fit in the preview area.<br>
+                  <div class="setting-label has-tooltip" tabindex="0">Show preview border
+                  <span class="fv3-tooltip">Draws a border around the preview area.</span>
+                </div>
+                </div>
+                <label class="setting-toggle" for="field_input_26">
+                  <input id="field_input_26" name="field_input_26" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                </label>
+              </div>
+              
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label has-tooltip" tabindex="0">Preview overflow
+                  <span class="fv3-tooltip">Controls what happens when there are too many containers to fit in the preview area.<br>
                 <strong>Default:</strong> Extra containers are hidden when the row is too narrow.<br>
                 <strong>Expand row:</strong> The preview area grows taller to show all containers on multiple lines.<br>
-                <strong>Scroll:</strong> A horizontal scrollbar appears to access all containers.</div>
-                </label>
+                <strong>Scroll:</strong> A horizontal scrollbar appears to access all containers.</span>
                 </div>
-                <select class="setting-input" style="width: 240px">
+                </div>
+                <select id="field_select_27" name="field_select_27" class="setting-input" style="width: 240px">
                   <option>Default</option>
                   <option>Expand row</option>
                   <option>Scroll</option>
@@ -2105,25 +2079,25 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Lock colors
-                  <div class="fv3-tooltip">When enabled, this folder's border, vertical bar, and separator colors cannot be overridden by CSS presets, global defaults, or Apply Defaults to All Folders.<br>
-                When disabled (default), these sources can override the colors.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Lock colors
+                  <span class="fv3-tooltip">When enabled, this folder's border, vertical bar, and separator colors cannot be overridden by CSS presets, global defaults, or Apply Defaults to All Folders.<br>
+                When disabled (default), these sources can override the colors.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_28">
+                  <input id="field_input_28" name="field_input_28" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Preview Context
-                  <div class="fv3-tooltip">Controls the detail popup when clicking a container. <strong>Default</strong> shows basic info, <strong>Advanced</strong> shows stats with CPU/memory graphs.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Preview Context
+                  <span class="fv3-tooltip">Controls the detail popup when clicking a container. <strong>Default</strong> shows basic info, <strong>Advanced</strong> shows stats with CPU/memory graphs.</span>
                 </div>
-                <select class="setting-input" style="width: 240px">
+                </div>
+                <select id="field_select_29" name="field_select_29" class="setting-input" style="width: 240px">
                   <option>Default</option>
                   <option>Advanced</option>
                 </select>
@@ -2136,65 +2110,65 @@
             <div x-show="activeTab === 'behavior'" style="display: flex; flex-direction: column; gap: 20px;">
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Hide update column
-                  <div class="fv3-tooltip">Hides the Version/update column for this folder's row, freeing up horizontal space.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Hide update column
+                  <span class="fv3-tooltip">Hides the Version/update column for this folder's row, freeing up horizontal space.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_30">
+                  <input id="field_input_30" name="field_input_30" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Override default actions
-                  <div class="fv3-tooltip">Replaces the folder's default right-click menu with only the custom actions defined below.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Override default actions
+                  <span class="fv3-tooltip">Replaces the folder's default right-click menu with only the custom actions defined below.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_31">
+                  <input id="field_input_31" name="field_input_31" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Hide default action button
-                  <div class="fv3-tooltip">Removes the default action buttons (start, stop, restart) from the folder's context menu.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Hide default action button
+                  <span class="fv3-tooltip">Removes the default action buttons (start, stop, restart) from the folder's context menu.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_32">
+                  <input id="field_input_32" name="field_input_32" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Expanded on Docker/VM tab
-                  <div class="fv3-tooltip">The folder will be expanded (showing child containers) by default when the Docker/VMs page loads.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Expanded on Docker/VM tab
+                  <span class="fv3-tooltip">The folder will be expanded (showing child containers) by default when the Docker/VMs page loads.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_33">
+                  <input id="field_input_33" name="field_input_33" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <label class="setting-label has-tooltip" tabindex="0">Expanded on Dashboard tab
-                  <div class="fv3-tooltip">The folder will be expanded by default when the Dashboard page loads.</div>
-                </label>
+                  <div class="setting-label has-tooltip" tabindex="0">Expanded on Dashboard tab
+                  <span class="fv3-tooltip">The folder will be expanded by default when the Dashboard page loads.</span>
                 </div>
-                <label class="setting-toggle">
-                  <input type="checkbox" />
-                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+                <label class="setting-toggle" for="field_input_34">
+                  <input id="field_input_34" name="field_input_34" type="checkbox" />
+                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
                 </label>
               </div>
               
@@ -2245,16 +2219,16 @@
                         <td style="padding: 12px 16px; text-align: center;">
                           <div style="display: flex; justify-content: center;">
                             <label class="setting-toggle">
-                              <input type="checkbox" x-model="includedContainers[c.id]" />
-                              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                              <input :id="'includedContainers_' + c.id" :name="'includedContainers_' + c.id" type="checkbox" x-model="includedContainers[c.id]" />
+                              <span class="toggle-track"><div class="toggle-thumb"></div></span>
                             </label>
                           </div>
                         </td>
                         <td style="padding: 12px 16px; text-align: center;">
                           <div style="display: flex; justify-content: center;">
                             <label class="setting-toggle">
-                              <input type="checkbox" />
-                              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                              <input :id="'field_input_36_' + c.id" :name="'field_input_36_' + c.id" type="checkbox" />
+                              <span class="toggle-track"><div class="toggle-thumb"></div></span>
                             </label>
                           </div>
                         </td>

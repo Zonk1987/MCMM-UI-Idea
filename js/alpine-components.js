@@ -112,11 +112,26 @@ export function registerAlpineComponents(Alpine) {
     folderName: '',
     // Map of containerId -> boolean (included in folder)
     includedContainers: {},
+    originalFolderName: null,
     
-    openModal() {
-      this.folderName = '';
+    openModal(e) {
+      if (e && e.detail && e.detail.folderName) {
+        this.folderName = e.detail.folderName;
+        this.originalFolderName = e.detail.folderName;
+        this.includedContainers = {};
+        if (Alpine.store('core')) {
+          Alpine.store('core').containers.forEach(c => {
+            if (c.labels && c.labels['folder.view3'] === this.folderName) {
+              this.includedContainers[c.id] = true;
+            }
+          });
+        }
+      } else {
+        this.folderName = '';
+        this.originalFolderName = null;
+        this.includedContainers = {};
+      }
       this.activeTab = 'basic';
-      this.includedContainers = {};
       this.open = true;
     },
 
@@ -129,12 +144,18 @@ export function registerAlpineComponents(Alpine) {
       
       // Save folder to store
       if (Alpine.store('core')) {
-        Alpine.store('core').addFolder(fName);
+        if (this.originalFolderName && this.originalFolderName !== fName) {
+          Alpine.store('core').renameFolder(this.originalFolderName, fName);
+        } else {
+          Alpine.store('core').addFolder(fName);
+        }
         
-        // Apply labels to checked containers
-        Object.keys(this.includedContainers).forEach(id => {
-          if (this.includedContainers[id]) {
-            Alpine.store('core').setLabel(id, 'folder.view3', fName);
+        // Apply labels to checked containers, remove from unchecked
+        Alpine.store('core').containers.forEach(c => {
+          if (this.includedContainers[c.id]) {
+            Alpine.store('core').setLabel(c.id, 'folder.view3', fName);
+          } else if (c.labels && c.labels['folder.view3'] === fName) {
+            Alpine.store('core').setLabel(c.id, 'folder.view3', '');
           }
         });
         

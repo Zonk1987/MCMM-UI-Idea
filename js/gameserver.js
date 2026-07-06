@@ -457,6 +457,13 @@ export function openConsole(srv) {
     initTerminal();
     output.innerHTML = '';
     consoleTerminal.open(output);
+    
+    // Fix IDE warning for xterm-helper-textarea missing an id/name
+    const helperTextarea = output.querySelector('.xterm-helper-textarea');
+    if (helperTextarea) {
+      helperTextarea.id = 'xterm-helper-textarea-id';
+      helperTextarea.name = 'xterm-helper-textarea-name';
+    }
   }
 
   if (consoleStreamer) {

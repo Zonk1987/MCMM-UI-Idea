@@ -218,6 +218,30 @@ export function initCoreStore(Alpine) {
       }
     },
 
+    removeFolder(name) {
+      this.customFolders = this.customFolders.filter(f => f !== name);
+      this.containers.forEach(c => {
+        if (c.labels && c.labels['folder.view3'] === name) {
+          delete c.labels['folder.view3'];
+        }
+      });
+      this.containers = [...this.containers];
+    },
+
+    renameFolder(oldName, newName) {
+      if (this.customFolders.includes(oldName)) {
+        this.customFolders = this.customFolders.map(f => f === oldName ? newName : f);
+      } else {
+        this.customFolders.push(newName);
+      }
+      this.containers.forEach(c => {
+        if (c.labels && c.labels['folder.view3'] === oldName) {
+          c.labels['folder.view3'] = newName;
+        }
+      });
+      this.containers = [...this.containers];
+    },
+
     // Getters for specific views
     getGameservers() {
       return this.containers

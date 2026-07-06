@@ -6,7 +6,6 @@
 
 export function playersApp() {
   return {
-    servers: [],
     selectorOpen: false,
 
     playersData: {
@@ -133,6 +132,10 @@ export function playersApp() {
       chatInput: '',
     },
 
+    get servers() {
+      return window.Alpine && Alpine.store('core') ? Alpine.store('core').getGameservers() : [];
+    },
+
     get activeData() {
       return this.playersData[this.state.server] || null;
     },
@@ -150,8 +153,7 @@ export function playersApp() {
     },
 
     init() {
-      // Available servers
-      this.servers = typeof GS_INSTANCES !== 'undefined' ? GS_INSTANCES : [];
+      // Available servers are now fetched dynamically via the servers getter
 
       const autoSelect = () => {
         if (!this.state.server && this.servers.length > 0) {
@@ -170,7 +172,6 @@ export function playersApp() {
       // Listen for tab changes
       window.addEventListener('tab-changed', (e) => {
         if (e.detail === 'players') {
-          this.servers = typeof GS_INSTANCES !== 'undefined' ? GS_INSTANCES : [];
           autoSelect();
         }
       });
@@ -191,7 +192,7 @@ export function playersApp() {
       this.state.banTarget = player;
       this.state.banReason = '';
       this.state.banDuration = 'permanent';
-      if (typeof toggleModal === 'function') toggleModal('banModal', true);
+      if (typeof window.toggleModal === 'function') window.toggleModal('banModal', true);
     },
 
     confirmBan() {
@@ -216,7 +217,7 @@ export function playersApp() {
             : this.state.banDuration,
       });
 
-      if (typeof toggleModal === 'function') toggleModal('banModal', false);
+      if (typeof window.toggleModal === 'function') window.toggleModal('banModal', false);
       if (typeof showToast === 'function')
         showToast(
           `${player} ${typeof t === 'function' ? t('was_banned') || 'wurde gebannt' : 'wurde gebannt'}`,

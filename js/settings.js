@@ -36,6 +36,7 @@ export const DEFAULT_SETTINGS = {
   notifUpdate: true,
   notifCrash: true,
   disabledModules: [],
+  folderViewEnabled: true,
 };
 
 /** @type {Object} Current application settings */
@@ -69,6 +70,7 @@ export function loadSettings() {
   } else {
     appSettings = { ...DEFAULT_SETTINGS };
   }
+  window.appSettings = appSettings;
   applyVisualSettings();
   fillSettingsForm();
 }
@@ -94,6 +96,7 @@ export function saveSettings() {
   }
 
   applyVisualSettings();
+  window.dispatchEvent(new CustomEvent('settings-saved'));
   showToast(t('settings.saved') || 'Einstellungen gespeichert', 'success');
   toggleSettingsPanel(false);
 }
@@ -106,6 +109,7 @@ export function resetSettings() {
     confirm(t('settings.reset_confirm') || 'Einstellungen wirklich auf Standardwerte zurücksetzen?')
   ) {
     appSettings = { ...DEFAULT_SETTINGS };
+    window.appSettings = appSettings;
     localStorage.removeItem('gs_hub_settings');
     applyVisualSettings();
     fillSettingsForm();
@@ -192,6 +196,7 @@ export function fillSettingsForm() {
   setChk('notifPlayer', appSettings.notifPlayer);
   setChk('notifUpdate', appSettings.notifUpdate);
   setChk('notifCrash', appSettings.notifCrash);
+  setChk('settingFolderViewEnabled', appSettings.folderViewEnabled);
 
   // Populate modules
   const modContainer = document.getElementById('settingsModuleList');
@@ -258,6 +263,7 @@ export function readSettingsForm() {
   appSettings.notifPlayer = document.getElementById('notifPlayer').checked;
   appSettings.notifUpdate = document.getElementById('notifUpdate').checked;
   appSettings.notifCrash = document.getElementById('notifCrash').checked;
+  appSettings.folderViewEnabled = document.getElementById('settingFolderViewEnabled').checked;
 
   const disabledModules = [];
   document.querySelectorAll('#settingsModuleList input[type="checkbox"]').forEach((cb) => {

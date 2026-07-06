@@ -312,7 +312,7 @@
                 <div class="setting-desc">Zeitstempel in Logs</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcLogTimestamp" checked />
+                 for="dcLogTimestamp"><input type="checkbox" id="dcLogTimestamp" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -328,7 +328,7 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAikarFlags" checked />
+                 for="dcAikarFlags"><input type="checkbox" id="dcAikarFlags" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -342,7 +342,7 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcMeowices" />
+                 for="dcMeowices"><input type="checkbox" id="dcMeowices" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -354,7 +354,7 @@
                 <div class="setting-desc">Braucht Host-OS HugePages - reduziert TLB Misses</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcLargePages" />
+                 for="dcLargePages"><input type="checkbox" id="dcLargePages" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -368,7 +368,7 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcSimd" />
+                 for="dcSimd"><input type="checkbox" id="dcSimd" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -426,7 +426,7 @@
                 <div class="setting-desc">Mojang-Auth (false = Cracked)</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcOnlineMode" checked />
+                 for="dcOnlineMode"><input type="checkbox" id="dcOnlineMode" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -470,7 +470,7 @@
                 <div class="setting-label">ENABLE_WHITELIST</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcWhitelist" />
+                 for="dcWhitelist"><input type="checkbox" id="dcWhitelist" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -507,7 +507,7 @@
                 <div class="setting-label">ENABLE_RCON</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcRcon" checked />
+                 for="dcRcon"><input type="checkbox" id="dcRcon" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -527,7 +527,7 @@
             </div>
             <form class="setting-row" onsubmit="return false;">
               <!-- Hidden username field for accessibility/password manager compliance -->
-              <input type="text" autocomplete="username" style="display:none;" />
+              <input id="hiddenUsername_gameAdditions" name="hiddenUsername_gameAdditions" type="text" autocomplete="username" style="display:none;" />
               <div class="setting-info">
                 <div class="setting-label">RCON_PASSWORD</div>
               </div>
@@ -573,7 +573,7 @@
                 <div class="setting-label">RESOURCE_PACK_ENFORCE</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcResourcePackEnforce" />
+                 for="dcResourcePackEnforce"><input type="checkbox" id="dcResourcePackEnforce" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -602,7 +602,7 @@
                 <div class="setting-desc">Spieler immer auf Mode setzen</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcForceGamemode" />
+                 for="dcForceGamemode"><input type="checkbox" id="dcForceGamemode" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -614,7 +614,7 @@
                 <div class="setting-desc">Spieler-vs-Spieler Kämpfe</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcPvp" checked />
+                 for="dcPvp"><input type="checkbox" id="dcPvp" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -626,7 +626,7 @@
                 <div class="setting-desc">Hardcore-Modus (1 Leben)</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcHardcore" />
+                 for="dcHardcore"><input type="checkbox" id="dcHardcore" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -638,7 +638,7 @@
                 <div class="setting-desc">Fliegen ohne Plugin erlauben</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAllowFlight" />
+                 for="dcAllowFlight"><input type="checkbox" id="dcAllowFlight" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -691,7 +691,7 @@
                 <div class="setting-label">GENERATE_STRUCTURES</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcGenStructures" checked />
+                 for="dcGenStructures"><input type="checkbox" id="dcGenStructures" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -702,7 +702,7 @@
                 <div class="setting-label">ALLOW_NETHER</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAllowNether" checked />
+                 for="dcAllowNether"><input type="checkbox" id="dcAllowNether" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -719,7 +719,7 @@
                 <div class="setting-label">ENABLE_COMMAND_BLOCK</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcCommandBlock" />
+                 for="dcCommandBlock"><input type="checkbox" id="dcCommandBlock" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -731,7 +731,7 @@
                 <div class="setting-desc">Mojang Telemetrie</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcSnooper" />
+                 for="dcSnooper"><input type="checkbox" id="dcSnooper" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -773,7 +773,7 @@
                 <div class="setting-desc">Server pausieren wenn leer</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAutopause" />
+                 for="dcAutopause"><input type="checkbox" id="dcAutopause" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -798,7 +798,7 @@
                 <div class="setting-desc">Server stoppen wenn leer</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAutostop" />
+                 for="dcAutostop"><input type="checkbox" id="dcAutostop" />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
@@ -838,7 +838,7 @@
                 <div class="setting-desc">Env-Vars immer überschreiben</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcOverrideProps" checked />
+                 for="dcOverrideProps"><input type="checkbox" id="dcOverrideProps" checked />
                 <div class="toggle-track">
                   <div class="toggle-thumb"></div>
                 </div>
