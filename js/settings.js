@@ -229,41 +229,42 @@ export function fillSettingsForm() {
 
 // Read values from UI form inputs into appSettings
 export function readSettingsForm() {
-  appSettings.lang = document.getElementById('settingLang').value;
-  appSettings.theme = document.getElementById('settingTheme').value;
-  appSettings.compactMode = document.getElementById('settingCompact').checked;
-  appSettings.refreshInterval =
-    parseInt(document.getElementById('settingRefreshInterval').value) || 5;
-  appSettings.animations = document.getElementById('settingAnimations').checked;
-  appSettings.debugMode = document.getElementById('settingDebug').checked;
+  const getVal = (id) => document.getElementById(id)?.value ?? '';
+  const getChk = (id) => document.getElementById(id)?.checked ?? false;
 
-  appSettings.dockerSocket = document.getElementById('settingDockerSocket').value;
-  appSettings.unraidApi = document.getElementById('settingUnraidApi').value;
-  appSettings.restartPolicy = document.getElementById('settingRestartPolicy').value;
-  appSettings.updateCheck = document.getElementById('settingUpdateCheck').checked;
-  appSettings.stopConfirm = document.getElementById('settingStopConfirm').checked;
+  appSettings.lang = getVal('settingLang') || 'en';
+  appSettings.theme = getVal('settingTheme') || 'dark';
+  appSettings.compactMode = getChk('settingCompact');
+  appSettings.refreshInterval = parseInt(getVal('settingRefreshInterval')) || 5;
+  appSettings.animations = getChk('settingAnimations');
+  appSettings.debugMode = getChk('settingDebug');
 
-  appSettings.gsDataPath = document.getElementById('settingGsDataPath').value;
-  appSettings.gsRam = parseInt(document.getElementById('settingGsRam').value) || 4096;
-  appSettings.rconEnabled = document.getElementById('settingRconEnabled').checked;
-  appSettings.rconPort = parseInt(document.getElementById('settingRconPort').value) || 25575;
-  appSettings.rconPassword = document.getElementById('settingRconPassword').value;
+  appSettings.dockerSocket = getVal('settingDockerSocket');
+  appSettings.unraidApi = getVal('settingUnraidApi');
+  appSettings.restartPolicy = getVal('settingRestartPolicy');
+  appSettings.updateCheck = getChk('settingUpdateCheck');
+  appSettings.stopConfirm = getChk('settingStopConfirm');
 
-  appSettings.cfApiKey = document.getElementById('settingCfApiKey').value;
-  appSettings.mcType = document.getElementById('settingMcType').value;
-  appSettings.mcVersion = document.getElementById('settingMcVersion').value;
-  appSettings.mcMaxPlayers = parseInt(document.getElementById('settingMcMaxPlayers').value) || 20;
-  appSettings.mcEula = document.getElementById('settingMcEula').checked;
+  appSettings.gsDataPath = getVal('settingGsDataPath');
+  appSettings.gsRam = parseInt(getVal('settingGsRam')) || 4096;
+  appSettings.rconEnabled = getChk('settingRconEnabled');
+  appSettings.rconPort = parseInt(getVal('settingRconPort')) || 25575;
+  appSettings.rconPassword = getVal('settingRconPassword');
 
-  appSettings.toastsEnabled = document.getElementById('settingToastsEnabled').checked;
-  appSettings.toastDuration =
-    parseInt(document.getElementById('settingToastDuration').value) || 3500;
+  appSettings.cfApiKey = getVal('settingCfApiKey');
+  appSettings.mcType = getVal('settingMcType');
+  appSettings.mcVersion = getVal('settingMcVersion');
+  appSettings.mcMaxPlayers = parseInt(getVal('settingMcMaxPlayers')) || 20;
+  appSettings.mcEula = getChk('settingMcEula');
 
-  appSettings.notifContainer = document.getElementById('notifContainer').checked;
-  appSettings.notifPlayer = document.getElementById('notifPlayer').checked;
-  appSettings.notifUpdate = document.getElementById('notifUpdate').checked;
-  appSettings.notifCrash = document.getElementById('notifCrash').checked;
-  appSettings.folderViewEnabled = document.getElementById('settingFolderViewEnabled').checked;
+  appSettings.toastsEnabled = getChk('settingToastsEnabled');
+  appSettings.toastDuration = parseInt(getVal('settingToastDuration')) || 3500;
+
+  appSettings.notifContainer = getChk('notifContainer');
+  appSettings.notifPlayer = getChk('notifPlayer');
+  appSettings.notifUpdate = getChk('notifUpdate');
+  appSettings.notifCrash = getChk('notifCrash');
+  appSettings.folderViewEnabled = getChk('settingFolderViewEnabled');
 
   const disabledModules = [];
   document.querySelectorAll('#settingsModuleList input[type="checkbox"]').forEach((cb) => {

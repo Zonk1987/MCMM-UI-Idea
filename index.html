@@ -14,7 +14,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" >
+    <link rel="icon" href="data:," >
+    <link rel="stylesheet" href="css/vendor/material-icons.css" >
     <link rel="stylesheet" href="css/base.css" >
     <link rel="stylesheet" href="css/layout.css" >
     <link rel="stylesheet" href="css/modules/buttons.css" >
@@ -36,6 +37,15 @@
     <link rel="stylesheet" href="css/settings.css" >
     <link rel="stylesheet" href="css/toast.css" >
     <link rel="stylesheet" href="css/vendor/xterm.css" >
+    <script>
+      // Load WebKit-specific styles only if not Firefox, to prevent harmless console warnings
+      if (!navigator.userAgent.toLowerCase().includes('firefox')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'css/vendor/webkit-only.css';
+        document.head.appendChild(link);
+      }
+    </script>
     <script src="js/vendor/xterm.js"></script>
     <script src="js/vendor/xterm-addon-fit.js"></script>
     <script type="module" src="js/main.js"></script>
@@ -798,10 +808,10 @@
         <!-- /settings-body -->
 
         <div class="settings-footer">
-          <button class="btn btn-ghost" id="resetSettingsBtn">
+          <button type="button" class="btn btn-ghost" id="resetSettingsBtn">
             <span class="material-icons-round">restart_alt</span> Zurücksetzen
           </button>
-          <button class="btn btn-primary" id="saveSettingsBtn">
+          <button type="button" class="btn btn-primary" id="saveSettingsBtn">
             <span class="material-icons-round">save</span> Speichern
           </button>
         </div>

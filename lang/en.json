@@ -120,7 +120,8 @@
     "running": "Running",
     "stopped": "Stopped",
     "updates": "Updates",
-    "total": "Total"
+    "total": "Total",
+    "healthy": "Healthy"
   },
   "btn": {
     "new_container": "New Container",

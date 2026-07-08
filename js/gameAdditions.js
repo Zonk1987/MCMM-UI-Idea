@@ -97,7 +97,9 @@ export const GameAdditions = {
     try {
       const stored = localStorage.getItem('gs_hub_settings');
       if (stored) disabled = JSON.parse(stored).disabledModules || [];
-    } catch (e) {}
+    } catch {
+      // ignore
+    }
 
     for (const [id, game] of Object.entries(this.games)) {
       if (id !== 'minecraft' && disabled.includes(id)) continue;
@@ -279,7 +281,7 @@ export const GameAdditions = {
     let body;
     try {
       body = await res.json();
-    } catch (err) {
+    } catch {
       throw new Error(`CurseForge Parse Error: ${res.status} ${res.statusText}`);
     }
 

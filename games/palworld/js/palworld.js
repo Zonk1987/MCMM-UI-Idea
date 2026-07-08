@@ -3,7 +3,7 @@
 ═══════════════════════════════════════════════════════════ */
 
 import { GameAdditions } from '../../../js/gameAdditions.js';
-import { appSettings } from '../../../js/settings.js';
+
 
 GameAdditions.registerGame('palworld', {
   name: 'Palworld',

@@ -25,7 +25,7 @@ export function foldersApp() {
       return Object.values(folderMap);
     },
     
-    toggleFolder(folderName) {
+    toggleFolder() {
        // Logic to persist expanded state could go here
     }
   };

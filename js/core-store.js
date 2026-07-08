@@ -301,6 +301,27 @@ export function initCoreStore(Alpine) {
         // Force reactivity for nested object
         this.containers = [...this.containers];
       }
+    },
+
+    init() {
+      // Initialize mock CPU/RAM for all containers
+      this.containers.forEach(c => {
+        c.cpu = c.status === 'running' ? Math.random() * 5 : 0;
+        c.ram = c.status === 'running' ? Math.floor(Math.random() * 400 + 100) : 0;
+      });
+
+      // Live simulation for CPU/RAM for all containers
+      setInterval(() => {
+        this.containers.forEach(c => {
+          if (c.status === 'running') {
+            c.cpu = Math.max(0.1, Math.min(95, c.cpu + (Math.random() - 0.5) * 2));
+            c.ram = Math.max(50, Math.min(8192, c.ram + (Math.random() - 0.5) * 50));
+          } else {
+            c.cpu = 0;
+            c.ram = 0;
+          }
+        });
+      }, 2000);
     }
   });
 }

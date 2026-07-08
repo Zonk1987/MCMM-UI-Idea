@@ -74,6 +74,13 @@
       </div>
     </div>
     <div class="stat-card">
+      <span class="material-icons-round stat-icon running" style="color: var(--green);">favorite</span>
+      <div>
+        <div class="stat-value" x-text="stats.healthy">0</div>
+        <div class="stat-label" x-text="$store.i18n.t('stat.healthy') || 'Healthy'">Healthy</div>
+      </div>
+    </div>
+    <div class="stat-card">
       <span class="material-icons-round stat-icon total">grid_view</span>
       <div>
         <div class="stat-value" x-text="stats.total">0</div>
@@ -100,14 +107,12 @@
             <span x-text="$store.i18n.t('col.name')">Name</span>
             <span class="material-icons-round sort-icon">unfold_more</span>
           </th>
-          <th class="col-status sortable" @click="toggleSort('status')">
-            <span x-text="$store.i18n.t('col.status')">Status</span>
-            <span class="material-icons-round sort-icon">unfold_more</span>
-          </th>
+
+          <th class="col-ports" x-text="$store.i18n.t('col.ports')">Ports</th>
+          <th class="col-paths" x-text="$store.i18n.t('col.paths')">Pfade</th>
           <th
             class="col-adv"
-            x-show="advancedView"
-            style="width: 80px; text-align: center"
+            style="width: 1%; text-align: right; padding-right: 16px; white-space: nowrap;"
             x-text="$store.i18n.t('col.autostart')"
           >
             Autostart
@@ -115,7 +120,7 @@
           <th
             class="col-adv"
             x-show="advancedView"
-            style="width: 180px"
+            style="width: 1%; text-align: center; white-space: nowrap;"
             x-text="$store.i18n.t('col.cpu_ram')"
           >
             CPU / RAM
@@ -123,16 +128,14 @@
           <th
             class="col-adv"
             x-show="advancedView"
-            style="width: 160px"
+            style="width: 1%; text-align: center; white-space: nowrap;"
             x-text="$store.i18n.t('col.uptime')"
           >
             Uptime
           </th>
-          <th class="col-ports" x-text="$store.i18n.t('col.ports')">Ports</th>
-          <th class="col-paths" x-text="$store.i18n.t('col.paths')">Pfade</th>
         </tr>
       </thead>
-      <tbody x-init="typeof autoAnimate !== 'undefined' ? autoAnimate($el) : null">
+      <tbody>
         <template x-if="isLoading">
           <template x-for="i in 5">
             <tr>
@@ -144,21 +147,21 @@
                 <div class="skeleton skeleton-title"></div>
                 <div class="skeleton skeleton-text" style="width: 40%"></div>
               </td>
-              <td>
-                <div class="skeleton skeleton-btn"></div>
-              </td>
-              <td class="col-adv" x-show="advancedView"></td>
-              <td class="col-adv" x-show="advancedView">
-                <div class="skeleton skeleton-text" style="margin-bottom: 8px"></div>
-                <div class="skeleton skeleton-text"></div>
-              </td>
-              <td class="col-adv" x-show="advancedView"></td>
+
               <td>
                 <div class="skeleton skeleton-text" style="width: 80%"></div>
               </td>
               <td>
                 <div class="skeleton skeleton-text" style="width: 90%"></div>
               </td>
+              <td class="col-adv"></td>
+              <td class="col-adv" x-show="advancedView" style="text-align: right; padding-right: 16px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                  <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                  <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                </div>
+              </td>
+              <td class="col-adv" x-show="advancedView"></td>
             </tr>
           </template>
         </template>
@@ -180,20 +183,31 @@
           <template x-for="c in viewItems" :key="c.id">
             <tr
               style="border-bottom: 1px solid var(--border);"
-              :class="{'folder-row': c.type === 'folder', 'sub-header-row': c.type === 'folder_header'}"
+              :class="{
+                'folder-row': c.type === 'folder', 
+                'sub-header-row': c.type === 'folder_header',
+                'drag-over': (c.type === 'folder' && dragOverFolder === c.name) || (c.type === 'container' && !c.folder && dragOverRoot)
+              }"
               x-show="c.type === 'folder' || (!c.folder || isFolderExpanded(c.folder))"
               :style="{
-                'background': c.type === 'container' && selected.includes(c.id) ? 'var(--bg-card-hover)' : (c.type === 'folder_header' ? 'var(--bg-surface)' : '')
+                'background': c.type === 'container' && selected.includes(c.id) ? 'var(--bg-card-hover)' : (c.type === 'folder_header' ? 'var(--bg-surface)' : ''),
+                'cursor': c.type === 'container' ? 'grab' : 'default'
               }"
+              :draggable="c.type === 'container' ? 'true' : 'false'"
+              @dragstart="if(c.type === 'container') startDrag($event, c.id)"
+              @dragend="if(c.type === 'container') endDrag($event)"
+              @dragover.prevent="if(c.type === 'folder') handleDragOver($event, c.name); else if (c.type === 'container' && !c.folder) handleDragOver($event, null)"
+              @dragleave="if(c.type === 'folder') handleDragLeave($event, c.name); else if (c.type === 'container' && !c.folder) handleDragLeave($event, null)"
+              @drop="if(c.type === 'folder') handleDrop($event, c.name); else if (c.type === 'container' && !c.folder) handleDrop($event, null)"
             >
               <!-- Folder Cell -->
               <template x-if="c.type === 'folder'">
-                <td :colspan="advancedView ? 9 : 6" class="folder-cell">
+                <td colspan="5" class="folder-cell">
                   <div class="folder-title" style="display: flex; align-items: center; width: 100%;">
                     
                     <!-- Folder Info -->
                     <div style="display: flex; align-items: center; width: 220px; flex-shrink: 0; margin-right: 16px; overflow: hidden; white-space: nowrap;">
-                      <span class="folder-icon" style="flex-shrink: 0;" x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
+                      <span class="folder-icon cursor-pointer hover-glow" style="flex-shrink: 0;" @click.stop="openContextMenu($event, c)" x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
                       <div style="display: flex; flex-direction: column; line-height: 1.2; margin: 0 6px; overflow: hidden;">
                         <span style="font-weight: 500; font-size: 14px; overflow: hidden; text-overflow: ellipsis;" x-text="c.name"></span>
                         <span style="font-size: 10px; display: flex; align-items: center; gap: 3px; color: var(--green);">
@@ -214,11 +228,11 @@
                       <template x-for="preview in c.containers" :key="preview.id">
                         <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); max-width: 140px; margin-right: 16px; vertical-align: middle; height: 100%;">
                           <template x-if="preview.icon">
-                            <img :src="preview.icon" style="width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;" />
-                          </template>
-                          <template x-if="!preview.icon">
-                            <span style="font-size: 16px; line-height: 1; flex-shrink: 0;" x-text="preview.iconFallback || '📦'"></span>
-                          </template>
+            <img :src="preview.icon" class="cursor-pointer hover-glow" @click.stop="openContextMenu($event, preview)" style="width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;" />
+          </template>
+          <template x-if="!preview.icon">
+            <span class="cursor-pointer hover-glow" @click.stop="openContextMenu($event, preview)" style="font-size: 16px; line-height: 1; flex-shrink: 0;" x-text="preview.iconFallback || '📦'"></span>
+          </template>
                           <div style="display: flex; flex-direction: column; line-height: 1.1; overflow: hidden; white-space: nowrap; justify-content: center;">
                             <span x-text="preview.name" :style="`color: ${preview.upToDate === false ? 'var(--accent)' : 'var(--text-primary)'}; font-weight: 500; overflow: hidden; text-overflow: ellipsis; display: block;`"></span>
                             <span style="font-size: 10px; display: flex; align-items: center; gap: 3px;" :style="`color: ${preview.status === 'running' ? 'var(--green)' : 'var(--red)'}`">
@@ -229,18 +243,46 @@
                         </div>
                       </template>
                     </div>
+                  </div>
+                </td>
+              </template>
 
-                    <div x-show="isFolderExpanded(c.name) || !c.containers || c.containers.length === 0" style="flex: 1;"></div>
+              <!-- Empty Autostart cell for Folder -->
+              <template x-if="c.type === 'folder'">
+                <td class="col-adv" style="padding: 0 16px 0 16px; vertical-align: middle; width: 1%; white-space: nowrap; text-align: right;">
+                  <span style="visibility: hidden; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;" x-text="$store.i18n.t('col.autostart')">Autostart</span>
+                </td>
+              </template>
 
-                    <!-- Actions -->
-                    <div class="folder-actions" style="display: flex; gap: 8px; margin-left: 16px; flex-shrink: 0;">
-                      <button class="btn btn-icon btn-ghost" @click.stop="editFolder(c.name)" title="Ordner bearbeiten">
-                        <span class="material-icons-round" style="font-size: 18px;">edit</span>
-                      </button>
-                      <button class="btn btn-icon btn-ghost" style="color: var(--danger);" @click.stop="deleteFolder(c.name)" title="Ordner löschen">
-                        <span class="material-icons-round" style="font-size: 18px;">delete</span>
-                      </button>
+              <!-- CPU/RAM cell for Folder -->
+              <template x-if="c.type === 'folder'">
+                <td class="col-adv" x-show="advancedView" style="padding: 0 16px 0 0; vertical-align: middle; width: 1%; white-space: nowrap;">
+                  <div x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0" style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end; border-left: 1px solid var(--border); padding-left: 16px;">
+                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; line-height: 1;">
+                      <span style="color: var(--text-muted); text-transform: uppercase; font-size: 10px; width: 25px; display: inline-block;">CPU</span>
+                      <div style="width: 60px; height: 6px; background: var(--bg-surface); border-radius: 3px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border);">
+                        <div :style="`width:${c.containers.some(cnt => cnt.status === 'running') ? Math.min(100, c.containers.reduce((sum, cnt) => sum + (cnt.cpu || 0), 0)) : 0}%; background:var(--cyan); height:100%; transition: width 0.3s ease;`"></div>
+                      </div>
+                      <span style="color: var(--text-primary); font-weight: 500; font-size: 12px; text-align: left; width: 50px; display: inline-block;" x-text="c.containers.some(cnt => cnt.status === 'running') ? `${c.containers.reduce((sum, cnt) => sum + (cnt.cpu || 0), 0).toFixed(1)}%` : '0.0%'"></span>
                     </div>
+
+                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; line-height: 1;">
+                      <span style="color: var(--text-muted); text-transform: uppercase; font-size: 10px; width: 25px; display: inline-block;">RAM</span>
+                      <div style="width: 60px; height: 6px; background: var(--bg-surface); border-radius: 3px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border);">
+                        <div :style="`width:${c.containers.some(cnt => cnt.status === 'running') ? Math.min(100, (c.containers.reduce((sum, cnt) => sum + (cnt.ram || 0), 0) / (c.containers.length * 4096)) * 100) : 0}%; background:var(--purple); height:100%; transition: width 0.3s ease;`"></div>
+                      </div>
+                      <span style="color: var(--text-primary); font-weight: 500; font-size: 12px; text-align: left; width: 50px; display: inline-block;" x-text="c.containers.some(cnt => cnt.status === 'running') ? `${Math.floor(c.containers.reduce((sum, cnt) => sum + (cnt.ram || 0), 0))} MB` : '0 MB'"></span>
+                    </div>
+                  </div>
+                </td>
+              </template>
+
+              <!-- Uptime cell for Folder -->
+              <template x-if="c.type === 'folder'">
+                <td class="col-adv" x-show="advancedView" style="padding: 0 16px 0 0; vertical-align: middle; width: 1%; white-space: nowrap;">
+                  <div x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0" style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; white-space: nowrap; border-left: 1px solid var(--border); padding-left: 16px;">
+                    <span style="color: var(--text-muted); text-transform: uppercase; font-size: 10px;">Uptime</span>
+                    <span style="color: var(--text-primary); font-weight: 500; font-size: 12px; display: inline-block; width: 45px; text-align: right;" x-text="c.containers.some(cnt => cnt.status === 'running') ? '5 days' : '—'"></span>
                   </div>
                 </td>
               </template>
@@ -260,30 +302,26 @@
                   <span x-text="$store.i18n.t('col.name')">Name</span>
                 </td>
               </template>
-              <template x-if="c.type === 'folder_header'">
-                <td class="col-status" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;">
-                  <span x-text="$store.i18n.t('col.status')">Status</span>
-                </td>
-              </template>
-              <template x-if="c.type === 'folder_header'">
-                <td class="col-adv" x-show="advancedView" style="width: 80px; text-align: center; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.autostart')">Autostart</td>
-              </template>
-              <template x-if="c.type === 'folder_header'">
-                <td class="col-adv" x-show="advancedView" style="width: 180px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.cpu_ram')">CPU / RAM</td>
-              </template>
-              <template x-if="c.type === 'folder_header'">
-                <td class="col-adv" x-show="advancedView" style="width: 160px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.uptime')">Uptime</td>
-              </template>
+
               <template x-if="c.type === 'folder_header'">
                 <td class="col-ports" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.ports')">Ports</td>
               </template>
               <template x-if="c.type === 'folder_header'">
                 <td class="col-paths" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.paths')">Pfade</td>
               </template>
+              <template x-if="c.type === 'folder_header'">
+                <td class="col-adv" style="width: 1%; text-align: right; padding-right: 16px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px; white-space: nowrap;" x-text="$store.i18n.t('col.autostart')">Autostart</td>
+              </template>
+              <template x-if="c.type === 'folder_header'">
+                <td class="col-adv" x-show="advancedView" style="width: 1%; text-align: center; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px; white-space: nowrap;" x-text="$store.i18n.t('col.cpu_ram')">CPU / RAM</td>
+              </template>
+              <template x-if="c.type === 'folder_header'">
+                <td class="col-adv" x-show="advancedView" style="width: 1%; text-align: center; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px; white-space: nowrap;" x-text="$store.i18n.t('col.uptime')">Uptime</td>
+              </template>
 
               <!-- Container Cells -->
               <template x-if="c.type === 'container'">
-                <td style="text-align: center">
+                <td style="text-align: center" :style="`box-shadow: inset 4px 0 0 0 ${c.status === 'running' ? 'var(--green)' : 'var(--red)'};`">
                   <input
                     type="checkbox"
                     style="cursor: pointer"
@@ -296,21 +334,28 @@
               
               <template x-if="c.type === 'container'">
                 <td>
-                  <template x-if="c.icon">
-                    <div class="container-icon-wrap cursor-pointer hover-glow" @click.prevent="openContextMenu($event, c)">
-                      <img
-                        :src="c.icon"
-                        :alt="c.name"
-                        onerror="
-                          this.parentElement.className = 'container-icon-fallback cursor-pointer hover-glow';
-                          this.parentElement.innerHTML = 'x';
-                        "
-                      />
-                    </div>
-                  </template>
-                  <template x-if="!c.icon">
-                    <div class="container-icon-fallback cursor-pointer hover-glow" @click.prevent="openContextMenu($event, c)" x-text="c.iconFallback"></div>
-                  </template>
+                  <div style="position: relative; display: inline-block;">
+                    <template x-if="c.icon">
+                      <div class="container-icon-wrap cursor-pointer hover-glow" :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''" @click.prevent="openContextMenu($event, c)">
+                        <img
+                          :src="c.icon"
+                          :alt="c.name"
+                          onerror="
+                            this.parentElement.className = 'container-icon-fallback cursor-pointer hover-glow';
+                            this.parentElement.innerHTML = 'x';
+                          "
+                        />
+                      </div>
+                    </template>
+                    <template x-if="!c.icon">
+                      <div class="container-icon-fallback cursor-pointer hover-glow" :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''" @click.prevent="openContextMenu($event, c)" x-text="c.iconFallback"></div>
+                    </template>
+                    <template x-if="c.upToDate === false">
+                      <div style="position: absolute; top: -8px; right: -8px; background: var(--accent); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; z-index: 10; border: 2px solid var(--bg-surface); box-sizing: content-box;">
+                        <span class="material-icons-round" style="font-size: 18px; color: black; font-weight: bold;">update</span>
+                      </div>
+                    </template>
+                  </div>
                 </td>
               </template>
               
@@ -318,94 +363,6 @@
                 <td>
                   <div class="container-name" :style="c.upToDate === false ? 'color: var(--accent)' : ''" x-text="c.name"></div>
                   <div class="container-image" x-text="c.image"></div>
-                </td>
-              </template>
-              
-              <template x-if="c.type === 'container'">
-                <td>
-                  <div :class="'status-badge ' + c.status">
-                    <span class="dot"></span>
-                    <span x-text="c.status === 'running' ? 'Läuft' : 'Gestoppt'"></span>
-                  </div>
-                  <template x-if="!c.upToDate">
-                    <div class="update-badge">Update verfügbar</div>
-                  </template>
-                </td>
-              </template>
-              
-              <template x-if="c.type === 'container'">
-                <td
-                  class="col-adv"
-                  x-show="advancedView"
-                  style="text-align: center; vertical-align: middle"
-                >
-                  <label class="action-toggle" style="margin: 0" title="Autostart">
-                    <input type="checkbox" :checked="c.id==='nginx01' || c.id==='portainer01'" />
-                    <div class="toggle-track">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                  </label>
-                </td>
-              </template>
-              
-              <template x-if="c.type === 'container'">
-                <td
-                  class="col-adv"
-                  x-show="advancedView"
-                  style="vertical-align: middle; padding-top: 8px; padding-bottom: 8px"
-                >
-                  <div style="margin-bottom: 8px">
-                    <div style="font-size: 11px; margin-bottom: 4px; color: var(--text-secondary)">
-                      CPU:
-                      <span
-                        x-text="c.status === 'running' ? (Math.random() * 5).toFixed(1) + '%' : '0.0%'"
-                      ></span>
-                    </div>
-                    <div
-                      style="
-                        height: 4px;
-                        background: var(--bg-surface);
-                        border-radius: 2px;
-                        overflow: hidden;
-                      "
-                    >
-                      <div
-                        :style="`width:${c.status === 'running' ? Math.random()*20+5 : 0}%; background:var(--cyan); height:100%;`"
-                      ></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div style="font-size: 11px; margin-bottom: 4px; color: var(--text-secondary)">
-                      RAM:
-                      <span
-                        x-text="c.status === 'running' ? Math.floor(Math.random() * 400 + 100) + ' MB' : '0 MB'"
-                      ></span>
-                    </div>
-                    <div
-                      style="
-                        height: 4px;
-                        background: var(--bg-surface);
-                        border-radius: 2px;
-                        overflow: hidden;
-                      "
-                    >
-                      <div
-                        :style="`width:${c.status === 'running' ? Math.random()*30+10 : 0}%; background:var(--purple); height:100%;`"
-                      ></div>
-                    </div>
-                  </div>
-                </td>
-              </template>
-              
-              <template x-if="c.type === 'container'">
-                <td
-                  class="col-adv"
-                  x-show="advancedView"
-                  style="font-size: 12px; color: var(--text-secondary); line-height: 1.4"
-                >
-                  <span
-                    x-html="c.status === 'running' ? 'Uptime: 5 days (healthy)<br>Created: 14 days ago' : '—'"
-                  ></span>
                 </td>
               </template>
               
@@ -440,6 +397,61 @@
                         x-text="`+${c.paths.length - 3} weitere`"
                       ></div>
                     </template>
+                  </div>
+                </td>
+              </template>
+
+              <template x-if="c.type === 'container'">
+                <td
+                  class="col-adv"
+                  style="padding: 0 16px 0 16px; vertical-align: middle; width: 1%; white-space: nowrap;"
+                >
+                  <div style="display: flex; justify-content: flex-end;">
+                    <label class="action-toggle" style="margin: 0" title="Autostart">
+                      <input type="checkbox" :checked="c.id==='nginx01' || c.id==='portainer01'" />
+                      <div class="toggle-track">
+                        <div class="toggle-thumb"></div>
+                      </div>
+                    </label>
+                  </div>
+                </td>
+              </template>
+
+              <template x-if="c.type === 'container'">
+                <td
+                  class="col-adv"
+                  x-show="advancedView"
+                  style="padding: 0 16px 0 0; vertical-align: middle; width: 1%; white-space: nowrap;"
+                >
+                  <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end; border-left: 1px solid var(--border); padding-left: 16px;">
+                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; line-height: 1;">
+                      <span style="color: var(--text-muted); text-transform: uppercase; font-size: 10px; width: 25px; display: inline-block;">CPU</span>
+                      <div style="width: 60px; height: 6px; background: var(--bg-surface); border-radius: 3px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border);">
+                        <div :style="`width:${c.status === 'running' ? Math.min(100, c.cpu) : 0}%; background:var(--cyan); height:100%; transition: width 0.3s ease;`"></div>
+                      </div>
+                      <span style="color: var(--text-primary); font-weight: 500; font-size: 12px; text-align: left; width: 50px; display: inline-block;" x-text="c.status === 'running' ? `${c.cpu.toFixed(1)}%` : '0.0%'"></span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; line-height: 1;">
+                      <span style="color: var(--text-muted); text-transform: uppercase; font-size: 10px; width: 25px; display: inline-block;">RAM</span>
+                      <div style="width: 60px; height: 6px; background: var(--bg-surface); border-radius: 3px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border);">
+                        <div :style="`width:${c.status === 'running' ? Math.min(100, (c.ram / 4096) * 100) : 0}%; background:var(--purple); height:100%; transition: width 0.3s ease;`"></div>
+                      </div>
+                      <span style="color: var(--text-primary); font-weight: 500; font-size: 12px; text-align: left; width: 50px; display: inline-block;" x-text="c.status === 'running' ? `${Math.floor(c.ram)} MB` : '0 MB'"></span>
+                    </div>
+                  </div>
+                </td>
+              </template>
+              
+              <template x-if="c.type === 'container'">
+                <td
+                  class="col-adv"
+                  x-show="advancedView"
+                  style="padding: 0 16px 0 0; vertical-align: middle; width: 1%; white-space: nowrap;"
+                >
+                  <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; white-space: nowrap; border-left: 1px solid var(--border); padding-left: 16px;">
+                    <span style="color: var(--text-muted); text-transform: uppercase; font-size: 10px;">Uptime</span>
+                    <span style="color: var(--text-primary); font-weight: 500; font-size: 12px; display: inline-block; width: 45px; text-align: right;" x-text="c.status === 'running' ? '5 days' : '—'"></span>
                   </div>
                 </td>
               </template>
@@ -483,35 +495,56 @@
 
   <!-- Docker Context Menu -->
   <template x-teleport="body">
-    <div 
+    <div
       id="docker-ctx-menu"
-      class="docker-context-menu" 
-      x-show="contextMenu.open" 
+      class="docker-context-menu"
+      x-show="contextMenu.open"
       @click.away="closeContextMenu()"
       x-transition.opacity.duration.150ms
       :style="`top: ${contextMenu.y}px; left: ${contextMenu.x}px;`"
       style="display: none;"
     >
-      <!-- We can add a small triangle pointer at the top left if desired, or keep it standard float -->
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">public</span> WebUI</div>
-      <div class="ctx-item" @click="typeof openTerminal === 'function' ? openTerminal(contextMenu.container?.id) : null; closeContextMenu()"><span class="material-icons-round">terminal</span> Console</div>
-      <div class="ctx-divider"></div>
-      <template x-if="contextMenu.container?.status === 'running'">
-        <div class="ctx-item" @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"><span class="material-icons-round">stop</span> Stop</div>
+      <!-- Folder Actions -->
+      <template x-if="contextMenu.container?.type === 'folder'">
+        <div>
+          <div class="ctx-item" @click="editFolder(contextMenu.container?.name); closeContextMenu()"><span class="material-icons-round">edit</span> Bearbeiten</div>
+          <div class="ctx-item" style="color: var(--danger)" @click="deleteFolder(contextMenu.container?.name); closeContextMenu()"><span class="material-icons-round">delete</span> Löschen</div>
+        </div>
       </template>
-      <template x-if="contextMenu.container?.status !== 'running'">
-        <div class="ctx-item" @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"><span class="material-icons-round">play_arrow</span> Start</div>
+
+      <!-- Container Actions -->
+      <template x-if="contextMenu.container?.type !== 'folder'">
+        <div>
+          <template x-if="!contextMenu.container?.gsData">
+            <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">public</span> WebUI</div>
+          </template>
+          <div class="ctx-item" @click="typeof openTerminal === 'function' ? openTerminal(contextMenu.container?.id) : null; closeContextMenu()"><span class="material-icons-round">terminal</span> Console</div>
+          <template x-if="contextMenu.container?.upToDate === false">
+            <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">cloud_download</span> Update</div>
+          </template>
+          <div class="ctx-divider"></div>
+          <template x-if="contextMenu.container?.status === 'running'">
+            <div class="ctx-item" @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"><span class="material-icons-round">stop</span> Stop</div>
+          </template>
+          <template x-if="contextMenu.container?.status !== 'running'">
+            <div class="ctx-item" @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"><span class="material-icons-round">play_arrow</span> Start</div>
+          </template>
+          <template x-if="contextMenu.container?.status === 'running'">
+            <div>
+              <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">pause</span> Pause</div>
+              <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">restart_alt</span> Restart</div>
+            </div>
+          </template>
+          <div class="ctx-divider"></div>
+          <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">notes</span> Logs</div>
+          <div class="ctx-item" @click="$dispatch('open-config-modal', {id: contextMenu.container?.id, name: contextMenu.container?.name}); closeContextMenu()"><span class="material-icons-round">build</span> Edit</div>
+          <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">delete</span> Remove</div>
+          <div class="ctx-divider"></div>
+          <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">explore</span> Project Page</div>
+          <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">help</span> Support</div>
+          <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">info</span> More Info</div>
+        </div>
       </template>
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">pause</span> Pause</div>
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">restart_alt</span> Restart</div>
-      <div class="ctx-divider"></div>
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">notes</span> Logs</div>
-      <div class="ctx-item" @click="$dispatch('open-config-modal', {id: contextMenu.container?.id, name: contextMenu.container?.name}); closeContextMenu()"><span class="material-icons-round">build</span> Edit</div>
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">delete</span> Remove</div>
-      <div class="ctx-divider"></div>
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">explore</span> Project Page</div>
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">help</span> Support</div>
-      <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">info</span> More Info</div>
     </div>
   </template>
 </section>

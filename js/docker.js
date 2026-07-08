@@ -14,6 +14,10 @@ export function dockerApp() {
     searchQuery: '',
     sortCol: 'name',
     sortAsc: true,
+    draggedContainerId: null,
+    dragOverFolder: null,
+    dragOverRoot: false,
+    updateTick: 0,
     advancedView: false,
     selected: [],
     selectAll: false,
@@ -72,6 +76,9 @@ export function dockerApp() {
     },
 
     get viewItems() {
+      // Access updateTick to create a dependency
+      this.updateTick;
+      
       if (!this.useFolders) {
         return this.filteredContainers.map(c => ({ type: 'container', ...c }));
       }
@@ -135,11 +142,74 @@ export function dockerApp() {
       if (confirm(`Möchten Sie den Ordner "${fName}" wirklich löschen?\nDie Container darin bleiben erhalten und werden wieder in der normalen Liste angezeigt.`)) {
         if (Alpine.store('core')) {
           Alpine.store('core').removeFolder(fName);
+          this.updateTick++; // Force reactivity
           if (typeof showToast === 'function') {
             showToast(`Ordner "${fName}" gelöscht`, 'success');
           }
         }
       }
+    },
+
+    // Drag & Drop Handlers
+    startDrag(e, containerId) {
+      this.draggedContainerId = containerId;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', containerId);
+    },
+
+    endDrag(e) {
+      this.draggedContainerId = null;
+      this.dragOverFolder = null;
+      this.dragOverRoot = false;
+    },
+
+    handleDragOver(e, folderName) {
+      if (!this.draggedContainerId) return;
+      const container = this.containers.find(c => c.id === this.draggedContainerId);
+      if (!container) return;
+
+      if (folderName) {
+        if (container.labels && container.labels['folder.view3'] === folderName) return;
+        this.dragOverFolder = folderName;
+        this.dragOverRoot = false;
+      } else {
+        if (!container.labels || !container.labels['folder.view3']) return;
+        this.dragOverRoot = true;
+        this.dragOverFolder = null;
+      }
+    },
+
+    handleDragLeave(e, folderName) {
+      if (folderName && this.dragOverFolder === folderName) {
+        this.dragOverFolder = null;
+      } else if (!folderName && this.dragOverRoot) {
+        this.dragOverRoot = false;
+      }
+    },
+
+    handleDrop(e, folderName) {
+      if (!this.draggedContainerId) return;
+      
+      const container = Alpine.store('core').containers.find(c => c.id === this.draggedContainerId);
+      if (!container) return;
+      
+      if (!container.labels) container.labels = {};
+      
+      if (folderName) {
+        container.labels['folder.view3'] = folderName;
+        if (typeof showToast === 'function') showToast(`Container verschoben nach "${folderName}"`, 'success');
+      } else {
+        delete container.labels['folder.view3'];
+        if (typeof showToast === 'function') showToast(`Container aus dem Ordner entfernt`, 'success');
+      }
+      
+      // Trigger Alpine reactivity
+      Alpine.store('core').containers = [...Alpine.store('core').containers];
+      this.updateTick++;
+      
+      this.draggedContainerId = null;
+      this.dragOverFolder = null;
+      this.dragOverRoot = false;
     },
 
     init() {
@@ -172,6 +242,7 @@ export function dockerApp() {
         running: this.containers.filter((c) => c.status === 'running').length,
         stopped: this.containers.filter((c) => c.status === 'stopped').length,
         updates: this.containers.filter((c) => !c.upToDate).length,
+        healthy: this.containers.filter((c) => c.status === 'running').length,
         total: this.containers.length,
       };
     },
