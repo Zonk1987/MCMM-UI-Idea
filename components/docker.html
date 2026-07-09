@@ -44,7 +44,7 @@
           aria-label="Container suchen"
         />
       </div>
-      <button class="btn btn-secondary" style="height: 38px" x-show="folderViewEnabled" @click="createFolderPrompt()">
+      <button class="btn btn-secondary" style="height: 38px" x-show="folderViewEnabled" @click.stop="createFolderPrompt()">
         <span class="material-icons-round">create_new_folder</span>
         Neuer Ordner
       </button>
@@ -107,8 +107,9 @@
             <span x-text="$store.i18n.t('col.name')">Name</span>
             <span class="material-icons-round sort-icon">unfold_more</span>
           </th>
-
-          <th class="col-ports" x-text="$store.i18n.t('col.ports')">Ports</th>
+          <th class="col-network">Network</th>
+          <th class="col-ip">Container IP / MAC</th>
+          <th class="col-lan">LAN IP:Port</th>
           <th class="col-paths" x-text="$store.i18n.t('col.paths')">Pfade</th>
           <th
             class="col-adv"
@@ -147,18 +148,20 @@
                 <div class="skeleton skeleton-title"></div>
                 <div class="skeleton skeleton-text" style="width: 40%"></div>
               </td>
-
+              <td><div class="skeleton skeleton-text" style="width: 80%"></div></td>
               <td>
-                <div class="skeleton skeleton-text" style="width: 80%"></div>
+                <div class="skeleton skeleton-text" style="width: 150px; margin-bottom: 6px;"></div>
+                <div class="skeleton skeleton-text" style="width: 100px;"></div>
+              </td>
+              <td><div class="skeleton skeleton-text" style="width: 60px;"></div></td>
+              <td>
+                <div class="skeleton skeleton-text" style="width: 100px; margin-bottom: 6px;"></div>
+                <div class="skeleton skeleton-text" style="width: 120px;"></div>
               </td>
               <td>
-                <div class="skeleton skeleton-text" style="width: 90%"></div>
-              </td>
-              <td class="col-adv"></td>
-              <td class="col-adv" x-show="advancedView" style="text-align: right; padding-right: 16px;">
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                  <div class="skeleton skeleton-text" style="width: 100px;"></div>
-                  <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div class="skeleton skeleton-text" style="width: 140px;"></div>
+                  <div class="skeleton skeleton-text" style="width: 140px;"></div>
                 </div>
               </td>
               <td class="col-adv" x-show="advancedView"></td>
@@ -186,36 +189,86 @@
               :class="{
                 'folder-row': c.type === 'folder', 
                 'sub-header-row': c.type === 'folder_header',
-                'drag-over': (c.type === 'folder' && dragOverFolder === c.name) || (c.type === 'container' && !c.folder && dragOverRoot)
+                'drag-over': (c.type === 'folder' || c.type === 'folder_header') && dragOverFolder === c.name
               }"
               x-show="c.type === 'folder' || (!c.folder || isFolderExpanded(c.folder))"
               :style="{
                 'background': c.type === 'container' && selected.includes(c.id) ? 'var(--bg-card-hover)' : (c.type === 'folder_header' ? 'var(--bg-surface)' : ''),
-                'cursor': c.type === 'container' ? 'grab' : 'default'
+                'cursor': c.type === 'container' || c.type === 'folder' ? 'grab' : 'default',
+                'border-top': (c.type === 'container' || c.type === 'folder' || c.type === 'folder_header') && dragOverTargetId === (c.type === 'container' ? c.id : c.name) && dragOverPosition === 'before' ? '2px solid var(--accent)' : '',
+                'border-bottom': (c.type === 'container' || c.type === 'folder' || c.type === 'folder_header') && dragOverTargetId === (c.type === 'container' ? c.id : c.name) && dragOverPosition === 'after' ? '2px solid var(--accent)' : (c.type === 'container' ? '1px solid var(--border)' : '')
               }"
-              :draggable="c.type === 'container' ? 'true' : 'false'"
-              @dragstart="if(c.type === 'container') startDrag($event, c.id)"
-              @dragend="if(c.type === 'container') endDrag($event)"
-              @dragover.prevent="if(c.type === 'folder') handleDragOver($event, c.name); else if (c.type === 'container' && !c.folder) handleDragOver($event, null)"
-              @dragleave="if(c.type === 'folder') handleDragLeave($event, c.name); else if (c.type === 'container' && !c.folder) handleDragLeave($event, null)"
-              @drop="if(c.type === 'folder') handleDrop($event, c.name); else if (c.type === 'container' && !c.folder) handleDrop($event, null)"
+              :draggable="c.type === 'container' || c.type === 'folder' ? 'true' : 'false'"
+              @dragstart="
+                if (c.type === 'container') startDrag($event, c.id, 'container');
+                else if (c.type === 'folder') startDrag($event, c.name, 'folder');
+              "
+              @dragend="if (c.type === 'container' || c.type === 'folder') endDrag($event)"
+              @dragover.prevent="
+                if (draggedFolder) {
+                  if (c.type === 'folder' || c.type === 'folder_header') handleSortDragOver($event, c.name, false, 'folder');
+                } else {
+                  if (c.type === 'folder' || c.type === 'folder_header') handleDragOver($event, c.name);
+                  else if (c.type === 'container') handleSortDragOver($event, c.id, false, 'container');
+                }
+              "
+              @dragleave="
+                if (draggedFolder) {
+                  if (c.type === 'folder' || c.type === 'folder_header') handleSortDragLeave();
+                } else {
+                  if (c.type === 'folder' || c.type === 'folder_header') handleDragLeave(c.name);
+                  else if (c.type === 'container') handleSortDragLeave();
+                }
+              "
+              @drop="
+                if (draggedFolder) {
+                  if (c.type === 'folder' || c.type === 'folder_header') handleSortDrop();
+                } else {
+                  if (c.type === 'folder' || c.type === 'folder_header') handleDrop(c.name);
+                  else if (c.type === 'container') handleSortDrop();
+                }
+              "
             >
-              <!-- Folder Cell -->
+              <!-- Folder Name row (spanning the first 7 columns) -->
               <template x-if="c.type === 'folder'">
-                <td colspan="5" class="folder-cell">
+                <td colspan="7" class="folder-cell">
                   <div class="folder-title" style="display: flex; align-items: center; width: 100%;">
                     
                     <!-- Folder Info -->
-                    <div style="display: flex; align-items: center; width: 220px; flex-shrink: 0; margin-right: 16px; overflow: hidden; white-space: nowrap;">
-                      <span class="folder-icon cursor-pointer hover-glow" style="flex-shrink: 0;" @click.stop="openContextMenu($event, c)" x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
-                      <div style="display: flex; flex-direction: column; line-height: 1.2; margin: 0 6px; overflow: hidden;">
-                        <span style="font-weight: 500; font-size: 14px; overflow: hidden; text-overflow: ellipsis;" x-text="c.name"></span>
-                        <span style="font-size: 10px; display: flex; align-items: center; gap: 3px; color: var(--green);">
-                          <span>▶</span>
-                          <span x-text="`${c.containers ? c.containers.filter(cnt => cnt.status === 'running').length : 0}/${c.count} started`"></span>
+                    <template x-if="editingFolderName !== c.name">
+                      <div style="display: flex; align-items: center; width: 220px; flex-shrink: 0; margin-right: 16px; overflow: hidden; white-space: nowrap;">
+                        <span class="folder-icon cursor-pointer hover-glow" style="flex-shrink: 0; display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; overflow: hidden;" @click.stop="openContextMenu($event, c)">
+                          <template x-if="c.icon">
+                            <img :src="c.icon" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;" alt="Icon">
+                          </template>
+                          <template x-if="!c.icon">
+                            <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
+                          </template>
                         </span>
+                        <div style="display: flex; flex-direction: column; line-height: 1.2; margin: 0 6px; overflow: hidden;">
+                          <span style="font-weight: 500; font-size: 14px; overflow: hidden; text-overflow: ellipsis;" x-text="c.name"></span>
+                          <span style="font-size: 10px; display: flex; align-items: center; gap: 3px; color: var(--green);">
+                            <span>▶</span>
+                            <span x-text="`${c.containers ? c.containers.filter(cnt => cnt.status === 'running').length : 0}/${c.count} started`"></span>
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </template>
+                    
+                    <template x-if="editingFolderName === c.name">
+                      <div style="display: flex; align-items: center; width: 280px; flex-shrink: 0; margin-right: 16px;">
+                        <span class="folder-icon" style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
+                          <template x-if="c.icon">
+                            <img :src="c.icon" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;" alt="Icon">
+                          </template>
+                          <template x-if="!c.icon">
+                            <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
+                          </template>
+                        </span>
+                        <input type="text" :id="'edit-folder-input-' + c.name" x-model="editFolderNameInput" @keydown.enter.prevent="saveEditFolder()" @keydown.escape.prevent="cancelEditFolder()" @click.away="cancelEditFolder()" class="form-input" style="margin-left: 12px; height: 32px; font-size: 14px; width: 100%; border-radius: var(--radius-md); padding: 0 12px; border: 1px solid var(--border); background: var(--bg-base); color: var(--text-primary); outline: none;">
+                        <button class="btn btn-primary" @click.stop="saveEditFolder()" style="height: 32px; padding: 0 16px; font-size: 13px; font-weight: 500; margin-left: 8px;">OK</button>
+                      </div>
+                    </template>
 
                     <!-- Expand/Collapse Arrow -->
                     <button class="btn btn-icon btn-ghost" @click.stop="toggleFolder(c.name)" style="margin-right: 16px; flex-shrink: 0; border: 1px solid var(--border);" title="Ordner auf/zu klappen">
@@ -226,7 +279,19 @@
                     <div class="folder-preview" x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0" 
                          style="flex: 1; overflow: hidden; white-space: nowrap; height: 38px; line-height: 38px;">
                       <template x-for="preview in c.containers" :key="preview.id">
-                        <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); max-width: 140px; margin-right: 16px; vertical-align: middle; height: 100%;">
+                        <div :draggable="true" 
+                             @dragstart.stop="startDrag($event, preview.id)" 
+                             @dragend.stop="endDrag($event)" 
+                             @dragover.prevent.stop="handleSortDragOver($event, preview.id, true)"
+                             @dragleave.stop="handleSortDragLeave()"
+                             @drop.stop="handleSortDrop()"
+                             :style="{
+                               'border-left': dragOverTargetId === preview.id && dragOverPosition === 'before' ? '2px solid var(--accent)' : '2px solid transparent',
+                               'border-right': dragOverTargetId === preview.id && dragOverPosition === 'after' ? '2px solid var(--accent)' : '2px solid transparent',
+                               'margin-left': dragOverTargetId === preview.id && dragOverPosition === 'before' ? '-2px' : '0',
+                               'margin-right': dragOverTargetId === preview.id && dragOverPosition === 'after' ? '14px' : '16px'
+                             }"
+                             class="cursor-pointer" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); max-width: 140px; vertical-align: middle; height: 100%;">
                           <template x-if="preview.icon">
             <img :src="preview.icon" class="cursor-pointer hover-glow" @click.stop="openContextMenu($event, preview)" style="width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;" />
           </template>
@@ -289,7 +354,6 @@
 
               <!-- Sub-header for Expanded Folders -->
               <template x-if="c.type === 'folder_header'">
-                <!-- We use tds instead of ths to avoid layout weirdness, but style them like headers -->
                 <td class="col-bulk" style="width: 40px; text-align: center; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;">
                   <input type="checkbox" style="cursor: pointer" :checked="isAllSelectedInFolder(c.name)" @change="toggleSelectAllInFolder(c.name)" aria-label="Alle im Ordner auswählen" />
                 </td>
@@ -298,13 +362,16 @@
                 <td class="col-icon" style="width: 48px; border-bottom: 1px solid var(--border);"></td>
               </template>
               <template x-if="c.type === 'folder_header'">
-                <td class="col-name" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;">
-                  <span x-text="$store.i18n.t('col.name')">Name</span>
-                </td>
+                <td class="col-name" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.name')">Name</td>
               </template>
-
               <template x-if="c.type === 'folder_header'">
-                <td class="col-ports" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.ports')">Ports</td>
+                <td class="col-network" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;">Network</td>
+              </template>
+              <template x-if="c.type === 'folder_header'">
+                <td class="col-ip" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;">Container IP / MAC</td>
+              </template>
+              <template x-if="c.type === 'folder_header'">
+                <td class="col-lan" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;">LAN IP:Port</td>
               </template>
               <template x-if="c.type === 'folder_header'">
                 <td class="col-paths" style="border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; padding-top: 12px; padding-bottom: 12px;" x-text="$store.i18n.t('col.paths')">Pfade</td>
@@ -365,13 +432,26 @@
                   <div class="container-image" x-text="c.image"></div>
                 </td>
               </template>
+
+              <template x-if="c.type === 'container'">
+                <td>
+                  <div style="font-size: 12px; color: var(--text-primary);" x-text="c.network || 'bridge'"></div>
+                </td>
+              </template>
+
+              <template x-if="c.type === 'container'">
+                <td>
+                  <div style="font-size: 12px; color: var(--text-primary); font-family: monospace;" x-text="c.ip || '-'"></div>
+                  <div style="font-size: 11px; color: var(--text-muted); font-family: monospace;" x-text="c.mac || '-'"></div>
+                </td>
+              </template>
               
               <template x-if="c.type === 'container'">
                 <td>
                   <div class="port-list">
                     <template x-for="p in c.ports">
                       <div class="port-item">
-                        <span class="port-host" x-text="p.host"></span>
+                        <span class="port-host" x-text="(c.lanIp ? c.lanIp + ':' : '') + p.host"></span>
                         <span class="port-arrow">↔</span>
                         <span x-text="p.container"></span>
                         <span style="color: var(--text-muted)" x-text="` (${p.proto})`"></span>
@@ -459,6 +539,22 @@
             </tr>
           </template>
         </template>
+        
+        <!-- Inline Folder Creation Row -->
+        <template x-if="isCreatingFolder">
+          <tr class="folder-row" style="background: var(--bg-surface);">
+            <td colspan="7" class="folder-cell">
+              <div class="folder-title" style="display: flex; align-items: center; width: 100%;">
+                <div style="display: flex; align-items: center; width: 280px; flex-shrink: 0; margin-right: 16px;">
+                  <span class="folder-icon" style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;">📁</span>
+                  <input type="text" id="new-folder-input" x-model="newFolderName" @keydown.enter.prevent="saveNewFolder()" @keydown.escape.prevent="cancelNewFolder()" @click.away="cancelNewFolder()" class="form-input" placeholder="Neuer Ordner..." style="margin-left: 12px; height: 32px; font-size: 14px; width: 100%; border-radius: var(--radius-md); padding: 0 12px; border: 1px solid var(--border); background: var(--bg-base); color: var(--text-primary); outline: none;">
+                </div>
+                <button class="btn btn-primary" @click.stop="saveNewFolder()" style="height: 32px; padding: 0 16px; font-size: 13px; font-weight: 500; margin-right: 8px;">OK</button>
+              </div>
+            </td>
+          </tr>
+        </template>
+
       </tbody>
     </table>
   </div>
@@ -507,8 +603,9 @@
       <!-- Folder Actions -->
       <template x-if="contextMenu.container?.type === 'folder'">
         <div>
-          <div class="ctx-item" @click="editFolder(contextMenu.container?.name); closeContextMenu()"><span class="material-icons-round">edit</span> Bearbeiten</div>
-          <div class="ctx-item" style="color: var(--danger)" @click="deleteFolder(contextMenu.container?.name); closeContextMenu()"><span class="material-icons-round">delete</span> Löschen</div>
+          <div class="ctx-item" @click.stop="editFolder(contextMenu.container?.name); closeContextMenu()"><span class="material-icons-round">edit</span> Bearbeiten</div>
+          <div class="ctx-item" @click.stop="openIconModal(contextMenu.container?.name); closeContextMenu()"><span class="material-icons-round">image</span> Icon ändern</div>
+          <div class="ctx-item" style="color: var(--danger)" @click.stop="deleteFolder(contextMenu.container?.name)"><span class="material-icons-round">delete</span> Löschen</div>
         </div>
       </template>
 
@@ -545,6 +642,94 @@
           <div class="ctx-item" @click="closeContextMenu()"><span class="material-icons-round">info</span> More Info</div>
         </div>
       </template>
+    </div>
+  </template>
+
+  <!-- Delete Folder Modal -->
+  <style>
+    .docker-delete-modal-overlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+  </style>
+  <template x-teleport="body">
+    <div
+      class="docker-delete-modal-overlay"
+      x-show="showDeleteFolderModal"
+      @click="closeDeleteFolderModal()"
+      x-transition.opacity.duration.200ms
+    >
+      <div 
+        class="modal-content"
+        @click.stop
+        style="background: var(--bg-surface); padding: 24px; border-radius: var(--radius-lg); width: 400px; max-width: 90vw; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border);"
+      >
+        <h3 style="margin-top: 0; color: var(--text-primary); font-size: 18px; display: flex; align-items: center; gap: 8px;">
+          <span class="material-icons-round" style="color: var(--danger);">warning</span>
+          Ordner löschen
+        </h3>
+        <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+          Möchten Sie den Ordner <strong style="color: var(--text-primary);" x-text="folderToDelete"></strong> wirklich löschen? <br><br>
+          Die Container darin bleiben erhalten und werden wieder in der normalen Liste angezeigt.
+        </p>
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button class="btn btn-ghost" @click="closeDeleteFolderModal()">Abbrechen</button>
+          <button class="btn btn-danger" @click="confirmDeleteFolder()">Löschen</button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Icon Modal -->
+  <template x-teleport="body">
+    <div
+      class="docker-delete-modal-overlay"
+      x-show="showIconModal"
+      @click="closeIconModal()"
+      x-transition.opacity.duration.200ms
+    >
+      <div 
+        class="modal-content"
+        @click.stop
+        style="background: var(--bg-surface); padding: 24px; border-radius: var(--radius-lg); width: 450px; max-width: 90vw; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border);"
+      >
+        <h3 style="margin-top: 0; color: var(--text-primary); font-size: 18px; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+          <span class="material-icons-round">image</span>
+          Ordner-Icon ändern (<span x-text="iconTargetFolder"></span>)
+        </h3>
+
+        <div style="margin-bottom: 16px;">
+          <label for="folder-icon-url-input" style="display: block; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Bild-URL</label>
+          <input type="text" id="folder-icon-url-input" name="folderIconUrl" class="form-input" x-model="iconInputValue" placeholder="https://beispiel.de/icon.png" style="width: 100%; border-radius: var(--radius-md); padding: 0 12px; height: 38px; border: 1px solid var(--border); background: var(--bg-base); color: var(--text-primary); outline: none;">
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <label for="folder-icon-upload-input" style="display: block; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Oder lokales Bild hochladen</label>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <label class="btn btn-secondary cursor-pointer" style="margin: 0;">
+              <span class="material-icons-round">upload</span> Bild wählen
+              <input type="file" id="folder-icon-upload-input" name="folderIconUpload" accept="image/*" @change="handleIconUpload($event)" style="display: none;">
+            </label>
+            <template x-if="iconInputValue">
+              <div style="width: 38px; height: 38px; border-radius: 4px; border: 1px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg-base);">
+                <img :src="iconInputValue" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button class="btn btn-ghost" @click="iconInputValue = ''">Icon entfernen</button>
+          <div style="flex: 1;"></div>
+          <button class="btn btn-ghost" @click="closeIconModal()">Abbrechen</button>
+          <button class="btn btn-primary" @click="saveIcon()">Speichern</button>
+        </div>
+      </div>
     </div>
   </template>
 </section>

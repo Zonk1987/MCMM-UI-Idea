@@ -15,12 +15,29 @@ export function dockerApp() {
     sortCol: 'name',
     sortAsc: true,
     draggedContainerId: null,
+    draggedFolder: null,
     dragOverFolder: null,
     dragOverRoot: false,
+    dragOverTargetId: null,
+    dragOverTargetType: null,
+    dragOverPosition: null, // 'before' or 'after'
     updateTick: 0,
     advancedView: false,
     selected: [],
     selectAll: false,
+    isCreatingFolder: false,
+    newFolderName: '',
+    editingFolderName: null,
+    editFolderNameInput: '',
+    
+    // Delete Folder Modal State
+    showDeleteFolderModal: false,
+    folderToDelete: null,
+
+    // Icon Modal State
+    showIconModal: false,
+    iconTargetFolder: null,
+    iconInputValue: '',
 
     contextMenu: {
       open: false,
@@ -53,26 +70,29 @@ export function dockerApp() {
     },
 
     get filteredContainers() {
-      let list = this.containers.filter((c) =>
+      let list = [...this.containers].filter((c) =>
         c.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
 
-      list.sort((a, b) => {
-        let av = a[this.sortCol] ?? '';
-        let bv = b[this.sortCol] ?? '';
-        if (typeof av === 'string') av = av.toLowerCase();
-        if (typeof bv === 'string') bv = bv.toLowerCase();
-        if (av < bv) return this.sortAsc ? -1 : 1;
-        if (av > bv) return this.sortAsc ? 1 : -1;
-        return 0;
-      });
+      if (this.sortCol !== 'custom') {
+        list.sort((a, b) => {
+          let av = a[this.sortCol] ?? '';
+          let bv = b[this.sortCol] ?? '';
+          if (typeof av === 'string') av = av.toLowerCase();
+          if (typeof bv === 'string') bv = bv.toLowerCase();
+          if (av < bv) return this.sortAsc ? -1 : 1;
+          if (av > bv) return this.sortAsc ? 1 : -1;
+          return 0;
+        });
+      }
 
       return list;
     },
 
     get useFolders() {
       if (this.folderViewEnabled === false) return false;
-      return this.filteredContainers.some(c => c.labels && c.labels['folder.view3']);
+      const hasCustomFolders = Alpine.store('core') && Alpine.store('core').customFolders && Alpine.store('core').customFolders.length > 0;
+      return hasCustomFolders || this.filteredContainers.some(c => c.labels && c.labels['folder.view3']);
     },
 
     get viewItems() {
@@ -103,9 +123,24 @@ export function dockerApp() {
         }
       });
 
-      const sortedFolderNames = Object.keys(folderMap).sort();
+      const customFolders = (Alpine.store('core') && Alpine.store('core').customFolders) || [];
+      const sortedFolderNames = [];
+      customFolders.forEach(f => {
+        sortedFolderNames.push(f);
+        if (!folderMap[f]) folderMap[f] = [];
+      });
+      Object.keys(folderMap).forEach(f => {
+        if (!sortedFolderNames.includes(f)) sortedFolderNames.push(f);
+      });
       sortedFolderNames.forEach(fName => {
-        items.push({ type: 'folder', id: 'folder_' + fName, name: fName, count: folderMap[fName].length, containers: folderMap[fName] });
+        items.push({ 
+          type: 'folder', 
+          id: 'folder_' + fName, 
+          name: fName, 
+          count: folderMap[fName].length, 
+          containers: folderMap[fName],
+          icon: Alpine.store('core') && Alpine.store('core').folderIcons ? Alpine.store('core').folderIcons[fName] : null
+        });
         if (this.isFolderExpanded(fName)) {
             items.push({ type: 'folder_header', id: 'folder_header_' + fName, name: fName });
         }
@@ -130,56 +165,277 @@ export function dockerApp() {
     },
 
     createFolderPrompt() {
-      // Dispatch event to open the Alpine modal for FolderView3
-      window.dispatchEvent(new CustomEvent('open-folder-modal'));
+      this.isCreatingFolder = true;
+      this.newFolderName = '';
+      setTimeout(() => {
+        const input = document.getElementById('new-folder-input');
+        if (input) input.focus();
+      }, 50);
+    },
+
+    saveNewFolder() {
+      const name = this.newFolderName.trim();
+      if (name) {
+        Alpine.store('core').addFolder(name);
+        this.updateTick++;
+      }
+      this.isCreatingFolder = false;
+      this.newFolderName = '';
+    },
+
+    cancelNewFolder() {
+      this.isCreatingFolder = false;
+      this.newFolderName = '';
     },
 
     editFolder(fName) {
-      window.dispatchEvent(new CustomEvent('open-folder-modal', { detail: { folderName: fName } }));
+      this.editingFolderName = fName;
+      this.editFolderNameInput = fName;
+      setTimeout(() => {
+        const input = document.getElementById('edit-folder-input-' + fName);
+        if (input) input.focus();
+      }, 50);
+    },
+
+    saveEditFolder() {
+      const name = this.editFolderNameInput.trim();
+      if (name && name !== this.editingFolderName) {
+        Alpine.store('core').renameFolder(this.editingFolderName, name);
+        this.updateTick++;
+      }
+      this.editingFolderName = null;
+      this.editFolderNameInput = '';
+    },
+
+    cancelEditFolder() {
+      this.editingFolderName = null;
+      this.editFolderNameInput = '';
     },
 
     deleteFolder(fName) {
-      if (confirm(`Möchten Sie den Ordner "${fName}" wirklich löschen?\nDie Container darin bleiben erhalten und werden wieder in der normalen Liste angezeigt.`)) {
+      this.folderToDelete = fName;
+      this.showDeleteFolderModal = true;
+      this.closeContextMenu();
+    },
+
+    confirmDeleteFolder() {
+      if (this.folderToDelete) {
         if (Alpine.store('core')) {
-          Alpine.store('core').removeFolder(fName);
+          Alpine.store('core').removeFolder(this.folderToDelete);
           this.updateTick++; // Force reactivity
           if (typeof showToast === 'function') {
-            showToast(`Ordner "${fName}" gelöscht`, 'success');
+            showToast(`Ordner "${this.folderToDelete}" gelöscht`, 'success');
           }
         }
       }
+      this.closeDeleteFolderModal();
+    },
+
+    closeDeleteFolderModal() {
+      this.showDeleteFolderModal = false;
+      this.folderToDelete = null;
+    },
+
+    // Icon Handlers
+    openIconModal(folderName) {
+      this.iconTargetFolder = folderName;
+      this.iconInputValue = Alpine.store('core').folderIcons[folderName] || '';
+      this.showIconModal = true;
+    },
+
+    closeIconModal() {
+      this.showIconModal = false;
+      this.iconTargetFolder = null;
+      this.iconInputValue = '';
+    },
+
+    saveIcon() {
+      if (this.iconTargetFolder) {
+        Alpine.store('core').setFolderIcon(this.iconTargetFolder, this.iconInputValue.trim());
+        this.updateTick++; // force reactivity
+      }
+      this.closeIconModal();
+    },
+
+    handleIconUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.iconInputValue = e.target.result;
+      };
+      reader.readAsDataURL(file);
     },
 
     // Drag & Drop Handlers
-    startDrag(e, containerId) {
-      this.draggedContainerId = containerId;
+    startDrag(e, id, type = 'container') {
+      if (type === 'folder') {
+        this.draggedFolder = id;
+      } else {
+        this.draggedContainerId = id;
+      }
       e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', containerId);
+      e.dataTransfer.setData('text/plain', id);
     },
 
     endDrag(e) {
+      void e;
       this.draggedContainerId = null;
+      this.draggedFolder = null;
+      this.dragOverFolder = null;
+      this.dragOverRoot = false;
+      this.dragOverTargetId = null;
+      this.dragOverPosition = null;
+    },
+
+    handleSortDragOver(e, targetId, isHorizontal = false, type = 'container') {
+      if (!this.draggedContainerId && !this.draggedFolder) return;
+      if (type === 'container' && this.draggedContainerId === targetId) return;
+      if (type === 'folder' && this.draggedFolder === targetId) return;
+      if (this.draggedFolder && type === 'container') return; // Don't allow dropping folder on container
+      
+      const targetElement = e.currentTarget;
+      const rect = targetElement.getBoundingClientRect();
+      
+      if (isHorizontal) {
+        const midX = rect.left + rect.width / 2;
+        this.dragOverPosition = e.clientX < midX ? 'before' : 'after';
+      } else {
+        const midY = rect.top + rect.height / 2;
+        this.dragOverPosition = e.clientY < midY ? 'before' : 'after';
+      }
+      this.dragOverTargetId = targetId;
+      this.dragOverTargetType = type;
+      
+      // Clear folder drop states
       this.dragOverFolder = null;
       this.dragOverRoot = false;
     },
 
+    handleSortDragLeave() {
+      this.dragOverTargetId = null;
+      this.dragOverTargetType = null;
+      this.dragOverPosition = null;
+    },
+
+    handleSortDrop() {
+      if ((!this.draggedContainerId && !this.draggedFolder) || !this.dragOverTargetId) return;
+      
+      let allContainers = [...Alpine.store('core').containers];
+      
+      if (this.draggedFolder && this.dragOverTargetType === 'folder') {
+        const itemsToMove = [];
+        for (let i = allContainers.length - 1; i >= 0; i--) {
+          if (allContainers[i].labels && allContainers[i].labels['folder.view3'] === this.draggedFolder) {
+            itemsToMove.unshift(allContainers[i]);
+            allContainers.splice(i, 1);
+          }
+        }
+        
+        let insertIndex = allContainers.length;
+        if (this.dragOverPosition === 'before') {
+          const firstIdx = allContainers.findIndex(c => c.labels && c.labels['folder.view3'] === this.dragOverTargetId);
+          if (firstIdx !== -1) insertIndex = firstIdx;
+        } else {
+          let lastIdx = -1;
+          allContainers.forEach((c, idx) => {
+             if (c.labels && c.labels['folder.view3'] === this.dragOverTargetId) lastIdx = idx;
+          });
+          if (lastIdx !== -1) insertIndex = lastIdx + 1;
+        }
+        
+        allContainers.splice(insertIndex, 0, ...itemsToMove);
+        Alpine.store('core').containers = allContainers;
+        
+        let cFolders = [...(Alpine.store('core').customFolders || [])];
+        if (!cFolders.includes(this.draggedFolder)) cFolders.push(this.draggedFolder);
+        cFolders = cFolders.filter(f => f !== this.draggedFolder);
+        
+        let folderInsertIdx = cFolders.length;
+        let tIdx = cFolders.indexOf(this.dragOverTargetId);
+        if (tIdx !== -1) folderInsertIdx = this.dragOverPosition === 'before' ? tIdx : tIdx + 1;
+        cFolders.splice(folderInsertIdx, 0, this.draggedFolder);
+        Alpine.store('core').customFolders = cFolders;
+        
+      } else if (this.draggedContainerId && this.dragOverTargetType === 'container') {
+        let idsToMove = [this.draggedContainerId];
+        if (this.selected.includes(this.draggedContainerId)) {
+          idsToMove = this.selected;
+        }
+        
+        const targetIndex = allContainers.findIndex(c => c.id === this.dragOverTargetId);
+        if (targetIndex === -1) return;
+        
+        const targetContainer = allContainers[targetIndex];
+        const targetFolder = targetContainer && targetContainer.labels ? targetContainer.labels['folder.view3'] : undefined;
+        
+        const itemsToMove = [];
+        idsToMove.forEach(id => {
+          const idx = allContainers.findIndex(c => c.id === id);
+          if (idx !== -1) {
+            const c = allContainers[idx];
+            if (!c.labels) c.labels = {};
+            if (targetFolder) {
+              c.labels['folder.view3'] = targetFolder;
+            } else {
+              delete c.labels['folder.view3'];
+            }
+            itemsToMove.push(c);
+            allContainers.splice(idx, 1);
+          }
+        });
+        
+        let newTargetIndex = allContainers.findIndex(c => c.id === this.dragOverTargetId);
+        if (newTargetIndex === -1) newTargetIndex = allContainers.length;
+        
+        const insertIndex = this.dragOverPosition === 'before' ? newTargetIndex : newTargetIndex + 1;
+        allContainers.splice(insertIndex, 0, ...itemsToMove);
+        
+        Alpine.store('core').containers = allContainers;
+      }
+
+      this.sortCol = 'custom';
+      this.updateTick++;
+      
+      this.draggedContainerId = null;
+      this.draggedFolder = null;
+      this.dragOverTargetId = null;
+      this.dragOverPosition = null;
+    },
+
     handleDragOver(e, folderName) {
+      void e;
       if (!this.draggedContainerId) return;
-      const container = this.containers.find(c => c.id === this.draggedContainerId);
-      if (!container) return;
+      
+      let idsToMove = [this.draggedContainerId];
+      if (this.selected.includes(this.draggedContainerId)) {
+        idsToMove = this.selected;
+      }
+
+      let canDrop = false;
+      for (const id of idsToMove) {
+        const c = this.containers.find(x => x.id === id);
+        if (c) {
+          if (folderName) {
+            if (!c.labels || c.labels['folder.view3'] !== folderName) canDrop = true;
+          } else {
+            if (c.labels && c.labels['folder.view3']) canDrop = true;
+          }
+        }
+      }
+
+      if (!canDrop) return;
 
       if (folderName) {
-        if (container.labels && container.labels['folder.view3'] === folderName) return;
         this.dragOverFolder = folderName;
         this.dragOverRoot = false;
       } else {
-        if (!container.labels || !container.labels['folder.view3']) return;
         this.dragOverRoot = true;
         this.dragOverFolder = null;
       }
     },
 
-    handleDragLeave(e, folderName) {
+    handleDragLeave(folderName) {
       if (folderName && this.dragOverFolder === folderName) {
         this.dragOverFolder = null;
       } else if (!folderName && this.dragOverRoot) {
@@ -187,20 +443,39 @@ export function dockerApp() {
       }
     },
 
-    handleDrop(e, folderName) {
+    handleDrop(folderName) {
       if (!this.draggedContainerId) return;
       
-      const container = Alpine.store('core').containers.find(c => c.id === this.draggedContainerId);
-      if (!container) return;
+      let idsToMove = [this.draggedContainerId];
+      if (this.selected.includes(this.draggedContainerId)) {
+        idsToMove = this.selected;
+      }
       
-      if (!container.labels) container.labels = {};
+      let moveCount = 0;
+      idsToMove.forEach(id => {
+        const c = Alpine.store('core').containers.find(x => x.id === id);
+        if (c) {
+          if (!c.labels) c.labels = {};
+          if (folderName) {
+            if (c.labels['folder.view3'] !== folderName) {
+              c.labels['folder.view3'] = folderName;
+              moveCount++;
+            }
+          } else {
+            if (c.labels['folder.view3']) {
+              delete c.labels['folder.view3'];
+              moveCount++;
+            }
+          }
+        }
+      });
       
-      if (folderName) {
-        container.labels['folder.view3'] = folderName;
-        if (typeof showToast === 'function') showToast(`Container verschoben nach "${folderName}"`, 'success');
-      } else {
-        delete container.labels['folder.view3'];
-        if (typeof showToast === 'function') showToast(`Container aus dem Ordner entfernt`, 'success');
+      if (moveCount > 0) {
+        if (folderName) {
+          if (typeof showToast === 'function') showToast(`${moveCount} Container verschoben nach "${folderName}"`, 'success');
+        } else {
+          if (typeof showToast === 'function') showToast(`${moveCount} Container aus dem Ordner entfernt`, 'success');
+        }
       }
       
       // Trigger Alpine reactivity
@@ -208,8 +483,11 @@ export function dockerApp() {
       this.updateTick++;
       
       this.draggedContainerId = null;
+      this.draggedFolder = null;
       this.dragOverFolder = null;
       this.dragOverRoot = false;
+      this.dragOverTargetId = null;
+      this.dragOverPosition = null;
     },
 
     init() {

@@ -153,6 +153,10 @@ export function initCoreStore(Alpine) {
       upToDate: true,
       ports: [{ host: '3000', container: '3000', proto: 'tcp' }],
       paths: [{ host: '/mnt/user/appdata/grafana', container: '/var/lib/grafana' }],
+      network: 'bridge',
+      ip: '172.17.0.3',
+      mac: '02:42:ac:11:00:03',
+      lanIp: '192.168.1.100',
       labels: {
         'folder.view3': 'Monitoring',
       }
@@ -171,6 +175,10 @@ export function initCoreStore(Alpine) {
         { host: '81', container: '81', proto: 'tcp' },
       ],
       paths: [{ host: '/mnt/user/appdata/npm', container: '/data' }],
+      network: 'custom-br0',
+      ip: '192.168.1.200',
+      mac: '02:42:c0:a8:01:c8',
+      lanIp: '192.168.1.200',
       labels: {
         'folder.view3': 'Network',
       }
@@ -185,6 +193,10 @@ export function initCoreStore(Alpine) {
       upToDate: false,
       ports: [{ host: '9443', container: '9443', proto: 'tcp' }],
       paths: [{ host: '/var/run/docker.sock', container: '/var/run/docker.sock' }],
+      network: 'bridge',
+      ip: '172.17.0.4',
+      mac: '02:42:ac:11:00:04',
+      lanIp: '192.168.1.100',
       labels: {
         'folder.view3': 'System',
       }
@@ -211,15 +223,20 @@ export function initCoreStore(Alpine) {
   Alpine.store('core', {
     containers: MOCK_CONTAINERS,
     customFolders: ['Media', 'Game Servers', 'System'],
+    folderIcons: {},
 
     addFolder(name) {
       if (name && !this.customFolders.includes(name)) {
-        this.customFolders.push(name);
+        this.customFolders = [...this.customFolders, name];
       }
     },
 
     removeFolder(name) {
       this.customFolders = this.customFolders.filter(f => f !== name);
+      if (this.folderIcons[name]) {
+        delete this.folderIcons[name];
+        this.folderIcons = { ...this.folderIcons };
+      }
       this.containers.forEach(c => {
         if (c.labels && c.labels['folder.view3'] === name) {
           delete c.labels['folder.view3'];
@@ -234,12 +251,24 @@ export function initCoreStore(Alpine) {
       } else {
         this.customFolders.push(newName);
       }
+      if (this.folderIcons[oldName]) {
+        this.folderIcons[newName] = this.folderIcons[oldName];
+        delete this.folderIcons[oldName];
+        this.folderIcons = { ...this.folderIcons };
+      }
       this.containers.forEach(c => {
         if (c.labels && c.labels['folder.view3'] === oldName) {
           c.labels['folder.view3'] = newName;
         }
       });
       this.containers = [...this.containers];
+    },
+
+    setFolderIcon(folderName, iconUrl) {
+      this.folderIcons = {
+        ...this.folderIcons,
+        [folderName]: iconUrl
+      };
     },
 
     // Getters for specific views
