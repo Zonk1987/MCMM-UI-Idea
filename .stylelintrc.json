@@ -1,0 +1,16 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "overrides": [
+    {
+      "files": ["*.html", "*.php", "*.page"],
+      "customSyntax": "postcss-html"
+    }
+  ],
+  "rules": {
+    "no-descending-specificity": null,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "selector-id-pattern": null,
+    "keyframes-name-pattern": null
+  }
+}

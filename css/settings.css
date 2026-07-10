@@ -3,7 +3,7 @@
 .settings-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   backdrop-filter: blur(4px);
   z-index: 100;
   opacity: 0;
@@ -25,7 +25,7 @@
   max-width: 100%;
   background: var(--bg-surface);
   border-left: 1px solid var(--border);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  box-shadow: -10px 0 30px rgb(0 0 0 / 50%);
   z-index: 101;
   display: flex;
   transform: translateX(100%);
@@ -280,7 +280,7 @@
   background: #fff;
   border-radius: 50%;
   transition: transform var(--trans-fast);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
 }
 
 .setting-toggle input:checked + .toggle-track {
@@ -326,9 +326,11 @@
 .compact-mode .tab-panel {
   padding: 16px;
 }
+
 .compact-mode .gs-card-body {
   padding: 12px;
 }
+
 .compact-mode .docker-table td,
 .compact-mode .player-table td {
   padding: 8px 12px;
@@ -342,12 +344,14 @@
   cursor: help;
   position: relative;
 }
+
 .setting-label.has-tooltip::after {
   content: 'info';
-  font-family: 'Material Icons Round';
+  font-family: 'Material Icons Round', sans-serif;
   font-size: 15px;
   color: var(--text-muted);
 }
+
 .fv3-tooltip {
   visibility: hidden;
   opacity: 0;
@@ -364,25 +368,29 @@
   line-height: 1.5;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 40%);
   font-weight: normal;
   text-transform: none;
   pointer-events: none;
   transition: opacity 0.2s, visibility 0.2s;
 }
+
 .setting-label.has-tooltip:hover .fv3-tooltip,
 .setting-label.has-tooltip:focus-within .fv3-tooltip {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
 }
+
 .fv3-tooltip a {
   color: var(--accent);
   text-decoration: none;
 }
+
 .fv3-tooltip a:hover {
   text-decoration: underline;
 }
+
 .fv3-tooltip strong {
   color: var(--text-primary);
 }
@@ -399,6 +407,7 @@
   padding: 8px 0;
   margin-bottom: 12px;
 }
+
 .fv3-add-action-btn:hover {
   text-decoration: underline;
 }

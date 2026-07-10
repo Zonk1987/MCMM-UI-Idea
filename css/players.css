@@ -82,8 +82,9 @@
 .player-table tbody tr:last-child td {
   border-bottom: none;
 }
+
 .player-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgb(255 255 255 / 2%);
 }
 
 .player-avatar {
@@ -109,6 +110,7 @@
   font-weight: 600;
   color: var(--text-primary);
 }
+
 .player-uuid {
   font-size: 10px;
   font-family: monospace;
@@ -129,10 +131,12 @@
   background: var(--green-dim);
   color: var(--green);
 }
+
 .ping-ok {
   background: var(--yellow-dim);
   color: var(--yellow);
 }
+
 .ping-bad {
   background: var(--red-dim);
   color: var(--red);
@@ -175,15 +179,18 @@
   white-space: nowrap;
   margin-top: 2px;
 }
+
 .chat-msg-player {
   font-size: 12px;
   font-weight: 600;
   color: var(--accent);
   white-space: nowrap;
 }
+
 .chat-msg-player.chat-op {
   color: var(--yellow);
 }
+
 .chat-msg-text {
   font-size: 13px;
   color: var(--text-secondary);

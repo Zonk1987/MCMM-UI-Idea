@@ -26,6 +26,7 @@
 .toast-icon {
   font-size: 18px;
 }
+
 .toast-msg {
   flex: 1;
   font-size: 13px;
@@ -34,20 +35,25 @@
 }
 
 .toast.success {
-  border-color: rgba(34, 197, 94, 0.3);
+  border-color: rgb(34 197 94 / 30%);
 }
+
 .toast.success .toast-icon {
   color: var(--green);
 }
+
 .toast.error {
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: rgb(239 68 68 / 30%);
 }
+
 .toast.error .toast-icon {
   color: var(--red);
 }
+
 .toast.info {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgb(59 130 246 / 30%);
 }
+
 .toast.info .toast-icon {
   color: var(--blue);
 }

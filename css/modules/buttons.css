@@ -54,7 +54,7 @@
 }
 
 .btn-danger:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgb(239 68 68 / 25%);
 }
 
 .btn-success {
@@ -64,5 +64,5 @@
 }
 
 .btn-success:hover {
-  background: rgba(34, 197, 94, 0.25);
+  background: rgb(34 197 94 / 25%);
 }

@@ -122,12 +122,13 @@
 .tab-badge.live {
   background: var(--green-dim);
   color: var(--green);
-  border-color: rgba(34, 197, 94, 0.3);
+  border-color: rgb(34 197 94 / 30%);
 }
+
 .tab-badge.online {
   background: var(--blue-dim);
   color: var(--blue);
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgb(59 130 246 / 30%);
 }
 
 /* Topbar Right */
@@ -145,7 +146,7 @@
   gap: 6px;
   padding: 5px 12px;
   background: var(--green-dim);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border: 1px solid rgb(34 197 94 / 30%);
   border-radius: 20px;
 }
 
@@ -160,10 +161,11 @@
 @keyframes pulse-green {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 0 0 rgb(34 197 94 / 50%);
   }
+
   50% {
-    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 4px rgb(34 197 94 / 0%);
   }
 }
 
@@ -221,6 +223,7 @@
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: none;

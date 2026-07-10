@@ -37,6 +37,7 @@
 .docker-table th.sortable {
   cursor: pointer;
 }
+
 .docker-table th.sortable:hover {
   color: var(--text-secondary);
 }
@@ -50,24 +51,31 @@
 .col-icon {
   width: 52px;
 }
+
 .col-name {
   width: 310px;
 }
+
 .col-ports {
   width: 220px;
 }
+
 .col-paths {
   min-width: 0;
 }
+
 .col-network {
   width: 120px;
 }
+
 .col-ip {
   width: 160px;
 }
+
 .col-lan {
   width: 180px;
 }
+
 .col-actions {
   width: 180px;
 }
@@ -80,8 +88,9 @@
 .docker-table tbody tr:last-child {
   border-bottom: none;
 }
+
 .docker-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgb(255 255 255 / 3%);
 }
 
 .docker-table tbody tr.drag-over {
@@ -130,18 +139,6 @@
   border: 1px solid var(--border);
 }
 
-/* Container name */
-.container-name {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-.container-image {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  font-family: monospace;
-}
-
 /* Status badge */
 .status-badge {
   display: inline-flex;
@@ -162,8 +159,9 @@
 .status-badge.running {
   background: var(--green-dim);
   color: var(--green);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border: 1px solid rgb(34 197 94 / 30%);
 }
+
 .status-badge.running .dot {
   background: var(--green);
   animation: pulse-green 2s infinite;
@@ -172,8 +170,9 @@
 .status-badge.stopped {
   background: var(--red-dim);
   color: var(--red);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgb(239 68 68 / 30%);
 }
+
 .status-badge.stopped .dot {
   background: var(--red);
 }
@@ -198,14 +197,17 @@
   flex-direction: column;
   gap: 3px;
 }
+
 .port-item {
   font-size: 11px;
   font-family: monospace;
   color: var(--text-secondary);
 }
+
 .port-item .port-host {
   color: var(--cyan);
 }
+
 .port-item .port-arrow {
   color: var(--text-muted);
   margin: 0 4px;
@@ -217,6 +219,7 @@
   flex-direction: column;
   gap: 3px;
 }
+
 .path-item {
   font-size: 10px;
   font-family: monospace;
@@ -226,6 +229,7 @@
   text-overflow: ellipsis;
   max-width: 340px;
 }
+
 .path-arrow {
   color: var(--text-muted);
   margin: 0 4px;
@@ -254,11 +258,11 @@
 .toggle-track {
   position: absolute;
   inset: 0;
-  background: rgba(239, 68, 68, 0.3);
+  background: rgb(239 68 68 / 30%);
   border-radius: 12px;
   cursor: pointer;
   transition: background var(--trans-fast);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  border: 1px solid rgb(239 68 68 / 40%);
 }
 
 .toggle-thumb {
@@ -273,12 +277,12 @@
   transition:
     transform var(--trans-fast),
     background var(--trans-fast);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
 }
 
 .action-toggle input:checked ~ .toggle-track {
   background: var(--green-dim);
-  border-color: rgba(34, 197, 94, 0.4);
+  border-color: rgb(34 197 94 / 40%);
 }
 
 .action-toggle input:checked ~ .toggle-track .toggle-thumb {
@@ -305,6 +309,7 @@
   color: var(--text-primary);
   border-color: var(--border-hover);
 }
+
 .action-btn .material-icons-round {
   font-size: 14px;
 }
@@ -358,10 +363,12 @@
   border-bottom: 2px solid transparent;
   white-space: nowrap;
 }
+
 .dc-tab-btn:hover {
   color: var(--text-primary);
   background: var(--bg-card);
 }
+
 .dc-tab-btn.active {
   color: var(--accent);
   border-bottom-color: var(--accent);
@@ -416,7 +423,7 @@
 
 .dc-info-box {
   background: var(--accent-dim);
-  border: 1px solid rgba(245, 124, 0, 0.3);
+  border: 1px solid rgb(245 124 0 / 30%);
   border-radius: 8px;
   padding: 12px;
   flex-shrink: 0;
@@ -484,7 +491,7 @@
   transform: translateX(-50%) translateY(100px);
   background: var(--bg-card);
   border: 1px solid var(--border);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px rgb(0 0 0 / 50%);
   padding: 12px 24px;
   border-radius: 12px;
   display: flex;
@@ -497,6 +504,7 @@
   opacity: 0;
   pointer-events: none;
 }
+
 .bulk-action-bar.active {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
@@ -509,7 +517,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 40%);
   padding: 8px;
   z-index: 9999;
   min-width: 200px;
@@ -582,7 +590,7 @@
 
 .docker-context-menu .ctx-item:hover {
   background: var(--accent);
-  color: #ffffff;
+  color: #fff;
 }
 
 .docker-context-menu .ctx-item .material-icons-round {

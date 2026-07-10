@@ -66,6 +66,7 @@
 .form-input:focus {
   border-color: var(--accent);
 }
+
 .form-input[readonly] {
   color: var(--text-muted);
   cursor: default;
@@ -89,6 +90,7 @@
 .wizard-step.done {
   background: var(--green);
 }
+
 .wizard-step.active {
   background: var(--accent);
 }
@@ -113,6 +115,7 @@
 .wizard-game-card:hover {
   border-color: var(--border-hover);
 }
+
 .wizard-game-card.selected {
   border-color: var(--accent);
   background: var(--accent-dim);
@@ -123,11 +126,13 @@
   display: block;
   margin-bottom: 6px;
 }
+
 .wizard-game-name {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
 }
+
 .wizard-game-card.selected .wizard-game-name {
   color: var(--accent);
 }

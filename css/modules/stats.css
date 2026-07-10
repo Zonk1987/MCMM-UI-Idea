@@ -25,15 +25,19 @@
 .stat-icon {
   font-size: 28px !important;
 }
+
 .stat-icon.running {
   color: var(--green);
 }
+
 .stat-icon.stopped {
   color: var(--red);
 }
+
 .stat-icon.update {
   color: var(--yellow);
 }
+
 .stat-icon.total {
   color: var(--blue);
 }
@@ -43,6 +47,7 @@
   font-weight: 800;
   color: var(--text-primary);
 }
+
 .stat-label {
   font-size: 12px;
   color: var(--text-secondary);

@@ -39,8 +39,6 @@
   cursor: text;
   position: relative;
   user-select: none;
-  -ms-user-select: none;
-  -webkit-user-select: none;
 }
 
 .xterm.focus,
@@ -51,6 +49,7 @@
 .xterm .xterm-helpers {
   position: absolute;
   top: 0;
+
   /**
      * The z-index of the helpers must be higher than the canvases in order for
      * IMEs to appear on top.
@@ -62,6 +61,7 @@
   padding: 0;
   border: 0;
   margin: 0;
+
   /* Move textarea out of the screen to the far left, so that the cursor is not visible */
   position: absolute;
   opacity: 0;
@@ -70,6 +70,7 @@
   width: 0;
   height: 0;
   z-index: -5;
+
   /** Prevent wrapping so the IME appears against the textarea at the correct position */
   white-space: nowrap;
   overflow: hidden;
@@ -96,10 +97,7 @@
   overflow-y: scroll;
   cursor: default;
   position: absolute;
-  right: 0;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  inset: 0;
 }
 
 .xterm .xterm-screen {
@@ -143,10 +141,7 @@
 .xterm .xterm-accessibility,
 .xterm .xterm-message {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
   z-index: 10;
   color: transparent;
   pointer-events: none;
@@ -169,15 +164,19 @@
 .xterm-underline-1 {
   text-decoration: underline;
 }
+
 .xterm-underline-2 {
   text-decoration: double underline;
 }
+
 .xterm-underline-3 {
   text-decoration: wavy underline;
 }
+
 .xterm-underline-4 {
   text-decoration: dotted underline;
 }
+
 .xterm-underline-5 {
   text-decoration: dashed underline;
 }

@@ -16,6 +16,7 @@
   font-weight: 600;
   flex: 1;
 }
+
 .list-entry-meta {
   font-size: 11px;
   color: var(--text-muted);

@@ -5,14 +5,18 @@
   "type": "module",
   "scripts": {
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint:css": "stylelint \"**/*.{css,html,php,page}\""
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.0.0",
-    "prettier": "^3.2.0"
+    "postcss-html": "^1.8.1",
+    "prettier": "^3.2.0",
+    "stylelint": "^17.14.0",
+    "stylelint-config-standard": "^40.0.0"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.9.0"

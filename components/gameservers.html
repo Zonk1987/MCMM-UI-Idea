@@ -13,7 +13,7 @@
       </p>
     </div>
     <div class="panel-actions">
-      <button class="btn btn-primary" @click="openCreateWizard()">
+      <button type="button" class="btn btn-primary" @click="openCreateWizard()">
         <span class="material-icons-round">add</span>
         <span x-text="$store.i18n.t('btn.new_server')">Neuen Server erstellen</span>
       </button>
@@ -78,7 +78,7 @@
               style="
                 height: 28px;
                 background: transparent;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                border-bottom: 1px solid rgb(255 255 255 / 5%);
                 border-radius: 0;
               "
             >
@@ -106,7 +106,7 @@
               style="
                 height: 28px;
                 background: transparent;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                border-bottom: 1px solid rgb(255 255 255 / 5%);
                 border-radius: 0;
               "
             >
@@ -140,7 +140,7 @@
           >
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px">
               <template x-if="srv.status === 'online'">
-                <button
+                <button type="button"
                   class="btn btn-danger gs-stop-btn"
                   style="
                     height: 36px;
@@ -156,7 +156,7 @@
                 </button>
               </template>
               <template x-if="srv.status !== 'online'">
-                <button
+                <button type="button"
                   class="btn btn-success gs-start-btn"
                   style="
                     height: 36px;
@@ -171,7 +171,7 @@
                   <span x-text="t('btn.start') || 'Starten'"></span>
                 </button>
               </template>
-              <button
+              <button type="button"
                 class="btn btn-ghost gs-players-btn"
                 style="
                   height: 36px;
@@ -187,7 +187,7 @@
                 <span class="material-icons-round">group</span>
                 <span x-text="$store.i18n.t('general.players')">Spieler</span>
               </button>
-              <button
+              <button type="button"
                 class="btn btn-ghost gs-edit-btn"
                 :title="$store.i18n.t('btn.edit')"
                 style="
@@ -203,7 +203,7 @@
               </button>
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px">
-              <button
+              <button type="button"
                 class="btn btn-ghost gs-console-btn"
                 :title="$store.i18n.t('general.tooltip_terminal')"
                 style="
@@ -218,7 +218,7 @@
                 <span class="material-icons-round">terminal</span>
                 <span x-text="$store.i18n.t('btn.terminal')">Terminal</span>
               </button>
-              <button
+              <button type="button"
                 class="btn btn-ghost gs-files-btn"
                 :title="$store.i18n.t('general.tooltip_files')"
                 style="
@@ -233,7 +233,7 @@
                 <span class="material-icons-round">folder</span>
                 <span x-text="$store.i18n.t('btn.files')">Dateien</span>
               </button>
-              <button
+              <button type="button"
                 class="btn btn-ghost gs-backup-btn"
                 :title="$store.i18n.t('general.tooltip_backups')"
                 style="
@@ -260,7 +260,7 @@
     <div class="modal glass-card">
       <div class="modal-header">
         <h2 x-text="$store.i18n.t('btn.new_server')">Neuen Server erstellen</h2>
-        <button class="icon-btn" @click="closeCreateWizard()">
+        <button type="button" class="icon-btn" @click="closeCreateWizard()">
           <span class="material-icons-round">close</span>
         </button>
       </div>
@@ -304,7 +304,7 @@
               </template>
             </div>
             <div style="display: flex; justify-content: flex-end; margin-top: 8px">
-              <button class="btn btn-primary" :disabled="!wizardGame" @click="nextWizardStep()">
+              <button type="button" class="btn btn-primary" :disabled="!wizardGame" @click="nextWizardStep()">
                 <span x-text="$store.i18n.t('btn.next')">Weiter</span>
                 <span class="material-icons-round">chevron_right</span>
               </button>
@@ -319,30 +319,30 @@
               <label for="wFormName" x-text="$store.i18n.t('general.server_name')"
                 >Server-Name</label
               >
-              <input class="form-input" id="wFormName" x-model="wForm.name" />
+              <input type="text" class="form-input" id="wFormName" x-model="wForm.name" >
             </div>
             <div class="form-group">
               <label for="wFormImage">Docker Image</label>
-              <input class="form-input" id="wFormImage" x-model="wForm.image" />
+              <input type="text" class="form-input" id="wFormImage" x-model="wForm.image" >
             </div>
             <div class="form-group">
               <label for="wFormPort">Port (Host)</label>
-              <input class="form-input" id="wFormPort" type="number" x-model="wForm.port" />
+              <input class="form-input" id="wFormPort" type="number" x-model="wForm.port" >
             </div>
             <div class="form-group">
               <label for="wFormRam" x-text="$store.i18n.t('general.ram')">RAM (MB)</label>
-              <input class="form-input" id="wFormRam" type="number" x-model="wForm.ram" />
+              <input class="form-input" id="wFormRam" type="number" x-model="wForm.ram" >
             </div>
             <div class="form-group">
               <label for="wFormPath" x-text="$store.i18n.t('general.data_path')">Datenpfad</label>
-              <input class="form-input" id="wFormPath" x-model="wForm.path" />
+              <input type="text" class="form-input" id="wFormPath" x-model="wForm.path" >
             </div>
             <div style="display: flex; gap: 8px; justify-content: flex-end">
-              <button class="btn btn-ghost" @click="prevWizardStep()">
+              <button type="button" class="btn btn-ghost" @click="prevWizardStep()">
                 <span class="material-icons-round">chevron_left</span>
                 <span x-text="$store.i18n.t('btn.back')">Zurück</span>
               </button>
-              <button class="btn btn-primary" @click="nextWizardStep()">
+              <button type="button" class="btn btn-primary" @click="nextWizardStep()">
                 <span x-text="$store.i18n.t('step.preview')">Vorschau</span>
                 <span class="material-icons-round">chevron_right</span>
               </button>
@@ -361,11 +361,11 @@
             </p>
             <div class="code-preview" x-text="getWizardCmd()" style="white-space: pre-wrap"></div>
             <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px">
-              <button class="btn btn-ghost" @click="prevWizardStep()">
+              <button type="button" class="btn btn-ghost" @click="prevWizardStep()">
                 <span class="material-icons-round">chevron_left</span>
                 <span x-text="$store.i18n.t('btn.back')">Zurück</span>
               </button>
-              <button class="btn btn-primary" @click="createWizardServer()">
+              <button type="button" class="btn btn-primary" @click="createWizardServer()">
                 <span class="material-icons-round">rocket_launch</span>
                 <span x-text="$store.i18n.t('btn.create')">Server erstellen</span>
               </button>
@@ -377,18 +377,7 @@
   </div>
 
   <!-- Server Console Modal -->
-  <style>
-    .console-output {
-      height: 500px !important;
-      flex: none !important;
-      position: relative !important;
-      overflow-y: hidden !important;
-      overflow-x: hidden !important;
-      padding: 12px 0 12px 16px !important;
-      background: #080a0d !important;
-      display: block !important;
-    }
-  </style>
+
   <div class="modal-backdrop" id="consoleModal" hidden>
     <div
       class="modal modal-large glass-card"
@@ -415,16 +404,16 @@
               cursor: pointer;
               color: var(--text-secondary);
             "
-           for="consoleAutoScroll">
+           >
             Auto-Scroll
-            <div class="setting-toggle" style="margin: 0">
-              <input type="checkbox" id="consoleAutoScroll" checked />
-              <div class="toggle-track">
-                <div class="toggle-thumb"></div>
-              </div>
-            </div>
+            <span class="setting-toggle" style="margin: 0">
+              <input type="checkbox" id="consoleAutoScroll" checked >
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </span>
           </label>
-          <button
+          <button type="button"
             class="btn btn-ghost"
             style="padding: 4px 8px; font-size: 12px"
             onclick="if (window.clearConsole) window.clearConsole();"
@@ -432,7 +421,7 @@
           >
             <span class="material-icons-round" style="font-size: 16px">delete_sweep</span>
           </button>
-          <button class="icon-btn" id="closeConsoleModal" @click="window.closeConsole()">
+          <button type="button" class="icon-btn" id="closeConsoleModal" @click="window.closeConsole()">
             <span class="material-icons-round">close</span>
           </button>
         </div>
@@ -452,8 +441,8 @@
             autocomplete="off"
             spellcheck="false"
             @keydown.enter="window.consoleSend()"
-          />
-          <button
+          >
+          <button type="button"
             class="btn btn-primary"
             id="consoleSendBtn"
             style="padding: 6px 14px; font-size: 12px"
@@ -490,7 +479,7 @@
             >/data/</span
           >
         </div>
-        <button class="icon-btn" id="closeFmModal" @click="window.closeFm()">
+        <button type="button" class="icon-btn" id="closeFmModal" @click="window.closeFm()">
           <span class="material-icons-round">close</span>
         </button>
       </div>
@@ -517,14 +506,14 @@
             Verzeichnis
           </div>
           <div id="fmFileTree" style="display: flex; flex-direction: column; gap: 4px">
-            <button
+            <button type="button"
               class="settings-nav-btn active"
               data-type="folder"
               @click="window.fmSelectFile($el)"
             >
               <span class="material-icons-round" style="color: var(--yellow)">folder</span> root
             </button>
-            <button
+            <button type="button"
               class="settings-nav-btn"
               data-type="folder"
               style="padding-left: 24px"
@@ -532,7 +521,7 @@
             >
               <span class="material-icons-round" style="color: var(--yellow)">folder</span> plugins
             </button>
-            <button
+            <button type="button"
               class="settings-nav-btn"
               data-type="folder"
               style="padding-left: 24px"
@@ -540,7 +529,7 @@
             >
               <span class="material-icons-round" style="color: var(--yellow)">folder</span> world
             </button>
-            <button
+            <button type="button"
               class="settings-nav-btn"
               data-type="file"
               style="padding-left: 24px"
@@ -549,7 +538,7 @@
               <span class="material-icons-round" style="color: var(--text-muted)">description</span>
               server.properties
             </button>
-            <button
+            <button type="button"
               class="settings-nav-btn"
               data-type="file"
               style="padding-left: 24px"
@@ -558,7 +547,7 @@
               <span class="material-icons-round" style="color: var(--text-muted)">description</span>
               eula.txt
             </button>
-            <button
+            <button type="button"
               class="settings-nav-btn"
               data-type="file"
               style="padding-left: 24px"
@@ -588,7 +577,7 @@
               server.properties
             </div>
             <div style="display: flex; gap: 8px">
-              <button
+              <button type="button"
                 id="fmDownloadBtn"
                 class="btn btn-ghost"
                 style="padding: 4px 12px; font-size: 11px"
@@ -597,7 +586,7 @@
                 <span class="material-icons-round" style="font-size: 14px">download</span>
                 <span x-text="$store.i18n.t('btn.download')">Herunterladen</span>
               </button>
-              <button
+              <button type="button"
                 id="fmSaveBtn"
                 class="btn btn-primary"
                 style="padding: 4px 12px; font-size: 11px"
@@ -684,7 +673,7 @@ max-world-size=29999984
           </textarea>
         </div>
       </div>
-      <!-- Drag & Drop Overlay -->
+      <!-- Drag &amp; Drop Overlay -->
       <div id="fmDragOverlay" class="drag-overlay">
         <span class="material-icons-round">cloud_upload</span>
         <h3
@@ -705,7 +694,7 @@ max-world-size=29999984
           <span class="material-icons-round" style="color: var(--purple)">backup</span>
           <h2 id="backupTitle" x-text="$store.i18n.t('general.backup_title')">Backups</h2>
         </div>
-        <button class="icon-btn" id="closeBackupModal" @click="window.closeBackup()">
+        <button type="button" class="icon-btn" id="closeBackupModal" @click="window.closeBackup()">
           <span class="material-icons-round">close</span>
         </button>
       </div>
@@ -724,7 +713,7 @@ max-world-size=29999984
           >
             Automatische und manuelle Sicherungen von /data.
           </p>
-          <button class="btn btn-primary" onclick="showToast('Backup wird erstellt...', 'info')">
+          <button type="button" class="btn btn-primary" onclick="showToast('Backup wird erstellt...', 'info')">
             <span class="material-icons-round">add</span>
             <span x-text="$store.i18n.t('btn.create_backup')">Backup erstellen</span>
           </button>
@@ -751,7 +740,7 @@ max-world-size=29999984
                 <td style="color: var(--text-secondary); font-size: 12px">485 MB</td>
                 <td>
                   <div style="display: flex; gap: 6px">
-                    <button
+                    <button type="button"
                       class="action-btn"
                       :title="$store.i18n.t('btn.restore')"
                       onclick="showToast('Backup wird wiederhergestellt', 'info')"
@@ -759,7 +748,7 @@ max-world-size=29999984
                     >
                       <span class="material-icons-round">restore</span>
                     </button>
-                    <button
+                    <button type="button"
                       class="action-btn"
                       :title="$store.i18n.t('btn.download')"
                       onclick="showToast('Download startet...', 'success')"
@@ -767,7 +756,7 @@ max-world-size=29999984
                     >
                       <span class="material-icons-round">download</span>
                     </button>
-                    <button
+                    <button type="button"
                       class="action-btn"
                       :title="$store.i18n.t('btn.delete')"
                       onclick="showToast('Backup gelöscht', 'error')"
@@ -788,7 +777,7 @@ max-world-size=29999984
                 <td style="color: var(--text-secondary); font-size: 12px">480 MB</td>
                 <td>
                   <div style="display: flex; gap: 6px">
-                    <button
+                    <button type="button"
                       class="action-btn"
                       data-i18n="btn_restore"
                       data-i18n-attr="title"
@@ -797,7 +786,7 @@ max-world-size=29999984
                     >
                       <span class="material-icons-round">restore</span>
                     </button>
-                    <button
+                    <button type="button"
                       class="action-btn"
                       data-i18n="btn_download"
                       data-i18n-attr="title"
@@ -806,7 +795,7 @@ max-world-size=29999984
                     >
                       <span class="material-icons-round">download</span>
                     </button>
-                    <button
+                    <button type="button"
                       class="action-btn"
                       data-i18n="btn_delete"
                       data-i18n-attr="title"
@@ -825,3 +814,15 @@ max-world-size=29999984
     </div>
   </div>
 </section>
+
+<style>
+    .console-output {
+      height: 500px !important;
+      flex: none !important;
+      position: relative !important;
+      overflow: hidden !important;
+      padding: 12px 0 12px 16px !important;
+      background: #080a0d !important;
+      display: block !important;
+    }
+  </style>

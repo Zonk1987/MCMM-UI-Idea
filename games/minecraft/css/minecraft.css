@@ -14,6 +14,7 @@
 .sidebar-section {
   margin-bottom: 20px;
 }
+
 .sidebar-section:last-child {
   margin-bottom: 0;
 }
@@ -75,7 +76,6 @@
   cursor: pointer;
   transition: border-color var(--trans-fast);
   appearance: none;
-  -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%238892a4'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
@@ -106,28 +106,33 @@
 .mc-tag.fabric {
   background: var(--blue-dim);
   color: var(--blue);
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgb(59 130 246 / 30%);
 }
+
 .mc-tag.forge {
   background: var(--yellow-dim);
   color: var(--yellow);
-  border-color: rgba(234, 179, 8, 0.3);
+  border-color: rgb(234 179 8 / 30%);
 }
+
 .mc-tag.neoforge {
-  background: var(--orange-dim, rgba(249, 115, 22, 0.15));
+  background: var(--orange-dim, rgb(249 115 22 / 15%));
   color: var(--accent);
-  border-color: rgba(249, 115, 22, 0.3);
+  border-color: rgb(249 115 22 / 30%);
 }
+
 .mc-tag.paper {
   background: var(--green-dim);
   color: var(--green);
   border-color: var(--green-dim);
 }
+
 .mc-tag.quilt {
   background: var(--purple-dim);
   color: var(--purple);
-  border-color: rgba(168, 85, 247, 0.3);
+  border-color: rgb(168 85 247 / 30%);
 }
+
 .mc-tag.spigot {
   background: var(--red-dim);
   color: var(--red);

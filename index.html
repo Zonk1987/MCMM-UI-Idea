@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" >
@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" >
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin >
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
       rel="stylesheet"
     >
     <link rel="icon" href="data:," >
@@ -66,7 +66,7 @@
       </div>
 
       <nav class="tab-nav" id="tabNav" role="tablist">
-        <button
+        <button type="button"
           class="tab-btn active"
           data-tab="docker"
           id="tab-docker"
@@ -80,7 +80,7 @@
             >0</span
           >
         </button>
-        <button
+        <button type="button"
           class="tab-btn"
           data-tab="gameserver"
           id="tab-gameserver"
@@ -98,7 +98,7 @@
             >0</span
           >
         </button>
-        <button
+        <button type="button"
           class="tab-btn"
           data-tab="game-additions"
           id="tab-game-additions"
@@ -109,7 +109,7 @@
           <span class="material-icons-round">extension</span>
           <span x-text="$store.i18n.t('nav.game_additions')">Game Additions</span>
         </button>
-        <button
+        <button type="button"
           class="tab-btn"
           data-tab="players"
           id="tab-players"
@@ -130,7 +130,7 @@
       </nav>
 
       <div class="topbar-right">
-        <button
+        <button type="button"
           class="icon-btn"
           id="refreshBtn"
           :aria-label="$store.i18n.t('btn.refresh')"
@@ -138,7 +138,7 @@
         >
           <span class="material-icons-round">refresh</span>
         </button>
-        <button
+        <button type="button"
           class="icon-btn"
           id="settingsBtn"
           :aria-label="$store.i18n.t('nav.settings')"
@@ -219,7 +219,7 @@
           <span class="material-icons-round">settings</span>
           <h2 x-text="$store.i18n.t('settings.title')">Einstellungen</h2>
         </div>
-        <button
+        <button type="button"
           class="icon-btn"
           id="closeSettingsBtn"
           :aria-label="$store.i18n.t('btn.close') || 'Schließen'"
@@ -229,32 +229,32 @@
       </div>
 
       <nav class="settings-nav" id="settingsNav">
-        <button class="settings-nav-btn active" data-stab="general">
+        <button type="button" class="settings-nav-btn active" data-stab="general">
           <span class="material-icons-round">tune</span>
           <span x-text="$store.i18n.t('settings.general')">Allgemein</span>
         </button>
-        <button class="settings-nav-btn" data-stab="docker">
+        <button type="button" class="settings-nav-btn" data-stab="docker">
           <span class="material-icons-round">view_list</span>
           <span x-text="$store.i18n.t('nav.docker')">Docker</span>
         </button>
-        <button class="settings-nav-btn" data-stab="gameserver">
+        <button type="button" class="settings-nav-btn" data-stab="gameserver">
           <span class="material-icons-round">sports_esports</span>
           <span x-text="$store.i18n.t('nav.gameservers')">GameServer</span>
         </button>
-        <button class="settings-nav-btn" data-stab="minecraft">
+        <button type="button" class="settings-nav-btn" data-stab="minecraft">
           <span style="font-size: 16px; width: 24px; text-align: center; display: inline-block"
             >&#x26CF;</span
           >
           Minecraft
         </button>
-        <button class="settings-nav-btn" data-stab="modules">
+        <button type="button" class="settings-nav-btn" data-stab="modules">
           <span class="material-icons-round">extension</span> Module
         </button>
-        <button class="settings-nav-btn" data-stab="notifications">
+        <button type="button" class="settings-nav-btn" data-stab="notifications">
           <span class="material-icons-round">notifications</span>
           <span x-text="$store.i18n.t('settings.notifications')">Meldungen</span>
         </button>
-        <button class="settings-nav-btn" data-stab="debug">
+        <button type="button" class="settings-nav-btn" data-stab="debug">
           <span class="material-icons-round">bug_report</span> Debug
         </button>
       </nav>
@@ -264,7 +264,7 @@
         style="display: flex; flex-direction: column; flex: 1; overflow: hidden"
       >
         <!-- Hidden username field for accessibility/password manager compliance -->
-        <input id="hiddenUsername" name="hiddenUsername" type="text" autocomplete="username" style="display:none;" />
+        <input id="hiddenUsername" name="hiddenUsername" type="text" autocomplete="username" style="display:none;" >
         <div class="settings-body" id="settingsBody">
           <!-- Debug -->
           <div class="settings-section" id="stab-debug">
@@ -279,9 +279,9 @@
                     Debug-Logs in der Konsole anzeigen
                   </div>
                 </div>
-                <label class="setting-toggle" for="settingDebug">
-                  <input type="checkbox" id="settingDebug" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingDebug" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -291,24 +291,24 @@
                     Erweiterte Logs und API-Outputs in der Browser-Konsole ausgeben
                   </div>
                 </div>
-                <label class="setting-toggle" for="developerMode">
-                  <input type="checkbox" id="developerMode" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="developerMode" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
             </div>
 
             <div class="settings-group" x-data="debugApp()">
-              <div class="settings-group-title">Ordner & GameServer Zuweisung (DUMMY/DEBUG)</div>
+              <div class="settings-group-title">Ordner &amp; GameServer Zuweisung (DUMMY/DEBUG)</div>
               <div style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary);">
                 Weise Dummy-Container expliziten Ordnern zu oder markiere sie als GameServer für Testzwecke.
               </div>
-              
+
               <div class="debug-container-list" style="display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 250px); overflow-y: auto; padding-right: 8px;">
                 <template x-for="c in containers" :key="c.id">
                   <div style="background: var(--bg-surface); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
                     <div style="font-weight: 500; margin-bottom: 8px;" x-text="c.name"></div>
-                    
+
                     <div style="display: flex; gap: 12px; align-items: center;">
                       <div style="flex: 1;">
                         <div style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Ordner-Zuweisung</div>
@@ -351,37 +351,37 @@
                   </div>
                 </div>
                 <div class="color-swatches" id="accentSwatches">
-                  <button
+                  <button type="button" aria-label="Color Swatch"
                     class="swatch active"
                     data-color="#f57c00"
                     style="background: #f57c00"
                     title="Unraid Orange"
                   ></button>
-                  <button
+                  <button type="button" aria-label="Color Swatch"
                     class="swatch"
                     data-color="#3b82f6"
                     style="background: #3b82f6"
                     title="Blau"
                   ></button>
-                  <button
+                  <button type="button" aria-label="Color Swatch"
                     class="swatch"
                     data-color="#22c55e"
                     style="background: #22c55e"
                     title="Grün"
                   ></button>
-                  <button
+                  <button type="button" aria-label="Color Swatch"
                     class="swatch"
                     data-color="#a855f7"
                     style="background: #a855f7"
                     title="Lila"
                   ></button>
-                  <button
+                  <button type="button" aria-label="Color Swatch"
                     class="swatch"
                     data-color="#ef4444"
                     style="background: #ef4444"
                     title="Rot"
                   ></button>
-                  <button
+                  <button type="button" aria-label="Color Swatch"
                     class="swatch"
                     data-color="#06b6d4"
                     style="background: #06b6d4"
@@ -393,7 +393,7 @@
                     class="swatch swatch-custom"
                     value="#f57c00"
                     title="Eigene Farbe"
-                  />
+                  >
                 </div>
               </div>
               <div class="setting-row">
@@ -434,9 +434,9 @@
                     Weniger Abstände, mehr Inhalt sichtbar
                   </div>
                 </div>
-                <label class="setting-toggle" for="settingCompact">
-                  <input type="checkbox" id="settingCompact" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingCompact" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
             </div>
@@ -462,7 +462,7 @@
                     min="1"
                     max="60"
                     style="width: 70px"
-                  />
+                  >
                   <span class="setting-unit">Sek.</span>
                 </div>
               </div>
@@ -475,9 +475,9 @@
                     Übergangsanimationen aktivieren
                   </div>
                 </div>
-                <label class="setting-toggle" for="settingAnimations">
-                  <input type="checkbox" id="settingAnimations" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingAnimations" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
             </div>
@@ -498,7 +498,7 @@
                   id="settingDockerSocket"
                   value="/var/run/docker.sock"
                   style="width: 210px; font-family: monospace; font-size: 12px"
-                />
+                >
               </div>
               <div class="setting-row">
                 <div class="setting-info">
@@ -511,7 +511,7 @@
                   id="settingUnraidApi"
                   value="http://localhost/api"
                   style="width: 210px; font-family: monospace; font-size: 12px"
-                />
+                >
               </div>
             </div>
             <div class="settings-group">
@@ -533,9 +533,9 @@
                   <div class="setting-label">Update-Check beim Start</div>
                   <div class="setting-desc">Auf neue Image-Versionen prüfen</div>
                 </div>
-                <label class="setting-toggle" for="settingUpdateCheck">
-                  <input type="checkbox" id="settingUpdateCheck" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingUpdateCheck" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -543,9 +543,9 @@
                   <div class="setting-label">Bestätigung beim Stoppen</div>
                   <div class="setting-desc">Sicherheitsabfrage vor dem Stoppen</div>
                 </div>
-                <label class="setting-toggle" for="settingStopConfirm">
-                  <input type="checkbox" id="settingStopConfirm" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingStopConfirm" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
             </div>
@@ -567,7 +567,7 @@
                   value="/mnt/user/gameservers"
                   autocomplete="off"
                   style="width: 210px; font-family: monospace; font-size: 12px"
-                />
+                >
               </div>
               <div class="setting-row">
                 <div class="setting-info">
@@ -583,7 +583,7 @@
                     min="512"
                     step="512"
                     style="width: 90px"
-                  />
+                  >
                   <span class="setting-unit">MB</span>
                 </div>
               </div>
@@ -595,9 +595,9 @@
                   <div class="setting-label">RCON aktivieren</div>
                   <div class="setting-desc">Fernsteuerung über RCON</div>
                 </div>
-                <label class="setting-toggle" for="settingRconEnabled">
-                  <input type="checkbox" id="settingRconEnabled" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingRconEnabled" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -611,7 +611,7 @@
                   id="settingRconPort"
                   value="25575"
                   style="width: 90px"
-                />
+                >
               </div>
               <div class="setting-row">
                 <div class="setting-info">
@@ -625,7 +625,7 @@
                   placeholder="••••••••"
                   autocomplete="new-password"
                   style="width: 180px"
-                />
+                >
               </div>
             </div>
           </div>
@@ -646,7 +646,7 @@
                   placeholder="Schlüssel eingeben..."
                   autocomplete="new-password"
                   style="width: 190px"
-                />
+                >
               </div>
               <div class="setting-row">
                 <div class="setting-info">
@@ -700,16 +700,16 @@
                   min="1"
                   max="500"
                   style="width: 80px"
-                />
+                >
               </div>
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label">EULA automatisch akzeptieren</div>
                   <div class="setting-desc">Fügt EULA=TRUE automatisch hinzu</div>
                 </div>
-                <label class="setting-toggle" for="settingMcEula">
-                  <input type="checkbox" id="settingMcEula" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingMcEula" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
             </div>
@@ -724,9 +724,9 @@
                   <div class="setting-label">Meldungen aktivieren</div>
                   <div class="setting-desc">Toast-Benachrichtigungen global an/aus</div>
                 </div>
-                <label class="setting-toggle" for="settingToastsEnabled">
-                  <input type="checkbox" id="settingToastsEnabled" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingToastsEnabled" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
               <div class="setting-row">
@@ -744,7 +744,7 @@
                     max="10000"
                     step="500"
                     style="width: 90px"
-                  />
+                  >
                   <span class="setting-unit">ms</span>
                 </div>
               </div>
@@ -756,36 +756,32 @@
                 <div class="setting-info">
                   <div class="setting-label">Container gestartet / gestoppt</div>
                 </div>
-                <label class="setting-toggle"
-                   for="notifContainer"><input type="checkbox" id="notifContainer" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle"><input type="checkbox" id="notifContainer" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label">Spieler tritt bei / verlässt</div>
                 </div>
-                <label class="setting-toggle"
-                   for="notifPlayer"><input type="checkbox" id="notifPlayer" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle"><input type="checkbox" id="notifPlayer" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label">Update verfügbar</div>
                 </div>
-                <label class="setting-toggle"
-                   for="notifUpdate"><input type="checkbox" id="notifUpdate" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle"><input type="checkbox" id="notifUpdate" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label">Server-Fehler / Crash</div>
                 </div>
-                <label class="setting-toggle"
-                   for="notifCrash"><input type="checkbox" id="notifCrash" checked />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle"><input type="checkbox" id="notifCrash" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
             </div>
@@ -815,7 +811,8 @@
             <span class="material-icons-round">save</span> Speichern
           </button>
         </div>
-      </form>
+        <button type="submit" style="display:none;" aria-hidden="true" tabindex="-1"></button>
+</form>
     </aside>
 
     <!-- ── Backup Modal (Mockup) ── -->
@@ -875,14 +872,13 @@
           <!-- Step 2 -->
           <div
             x-show="step === 2"
-            style="display: flex; flex-direction: column; align-items: center; gap: 16px"
-            style="display: none"
+            style="flex-direction: column; align-items: center; gap: 16px; display: none"
           >
             <div
               style="
                 width: 80px;
                 height: 80px;
-                background: rgba(59, 130, 246, 0.15);
+                background: rgb(59 130 246 / 15%);
                 color: #3b82f6;
                 border-radius: 20px;
                 display: flex;
@@ -903,14 +899,13 @@
           <!-- Step 3 -->
           <div
             x-show="step === 3"
-            style="display: flex; flex-direction: column; align-items: center; gap: 16px"
-            style="display: none"
+            style="flex-direction: column; align-items: center; gap: 16px; display: none"
           >
             <div
               style="
                 width: 80px;
                 height: 80px;
-                background: rgba(34, 197, 94, 0.15);
+                background: rgb(34 197 94 / 15%);
                 color: #22c55e;
                 border-radius: 20px;
                 display: flex;
@@ -929,16 +924,13 @@
 
           <div style="display: flex; gap: 8px; margin-top: 10px">
             <div
-              :style="step === 1 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+              :style="step === 1 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'" style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
             ></div>
             <div
-              :style="step === 2 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+              :style="step === 2 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'" style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
             ></div>
             <div
-              :style="step === 3 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+              :style="step === 3 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'" style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
             ></div>
           </div>
         </div>
@@ -951,7 +943,7 @@
             position: relative;
           "
         >
-          <button
+          <button type="button"
             class="btn btn-ghost"
             x-show="step > 1"
             @click="step--"
@@ -959,10 +951,10 @@
           >
             Zurück
           </button>
-          <button class="btn btn-primary" x-show="step < 3" @click="step++" style="width: 200px">
+          <button type="button" class="btn btn-primary" x-show="step < 3" @click="step++" style="width: 200px">
             Weiter
           </button>
-          <button
+          <button type="button"
             class="btn btn-primary"
             x-show="step === 3"
             @click="typeof window.finishOnboarding === 'function' ? window.finishOnboarding() : null"
@@ -989,7 +981,7 @@
       <div class="modal glass-card" @click.away="$store.modals.config.open = false">
         <div class="modal-header">
           <h2 id="configModalTitle" x-text="$store.i18n.t('config_title')">Einstellungen</h2>
-          <button
+          <button type="button"
             class="icon-btn"
             @click="$store.modals.config.open = false"
             aria-label="Schließen"
@@ -1007,7 +999,7 @@
               type="text"
               class="form-input"
               x-model="$store.modals.config.data.name"
-            />
+            >
           </div>
           <div class="form-group">
             <label for="cfgContPort">Port (Host)</label>
@@ -1016,7 +1008,7 @@
               type="number"
               class="form-input"
               x-model="$store.modals.config.data.port"
-            />
+            >
           </div>
           <div class="form-group">
             <label for="cfgContRam">Max. RAM (MB)</label>
@@ -1025,7 +1017,7 @@
               type="number"
               class="form-input"
               x-model="$store.modals.config.data.ram"
-            />
+            >
           </div>
           <div class="form-group">
             <label for="cfgContRestart">Restart Policy</label>
@@ -1040,7 +1032,6 @@
                 padding: 8px;
                 border-radius: 6px;
                 outline: none;
-                -webkit-appearance: none;
                 appearance: none;
               "
             >
@@ -1051,10 +1042,10 @@
           </div>
         </div>
         <div class="modal-footer" style="margin-top: 20px">
-          <button class="btn btn-ghost" @click="$store.modals.config.open = false">
+          <button type="button" class="btn btn-ghost" @click="$store.modals.config.open = false">
             <span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span>
           </button>
-          <button
+          <button type="button"
             class="btn btn-primary"
             @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings.saved') || 'Einstellungen gespeichert!') : 'Einstellungen gespeichert!', 'success');"
           >
@@ -1087,7 +1078,7 @@
           overflow: hidden;
           border-radius: var(--radius-lg);
           border: 1px solid var(--border);
-          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+          box-shadow: 0 24px 48px rgb(0 0 0 / 60%);
           background: var(--bg-base);
           backdrop-filter: none;
         "
@@ -1128,7 +1119,7 @@
               itzg/minecraft-server · von <span x-text="data.author"></span>
             </div>
           </div>
-          <button class="icon-btn" @click="open = false" aria-label="Schließen">
+          <button type="button" class="icon-btn" @click="open = false" aria-label="Schließen">
             <span class="material-icons-round">close</span>
           </button>
         </div>
@@ -1141,7 +1132,7 @@
           >
             <!-- Tab Navigation -->
             <div class="dc-tab-nav" style="padding-left: 16px">
-              <button
+              <button type="button"
                 class="dc-tab-btn"
                 @click="activeTab = 'config'"
                 :class="activeTab === 'config' ? 'active' : ''"
@@ -1149,7 +1140,7 @@
               >
                 <span class="material-icons-round" style="font-size: 16px">dns</span> Basis
               </button>
-              <button
+              <button type="button"
                 class="dc-tab-btn"
                 @click="activeTab = 'gameplay'"
                 :class="activeTab === 'gameplay' ? 'active' : ''"
@@ -1158,7 +1149,7 @@
                 <span class="material-icons-round" style="font-size: 16px">sports_esports</span>
                 Gameplay
               </button>
-              <button
+              <button type="button"
                 class="dc-tab-btn"
                 @click="activeTab = 'performance'"
                 :class="activeTab === 'performance' ? 'active' : ''"
@@ -1166,7 +1157,7 @@
               >
                 <span class="material-icons-round" style="font-size: 16px">speed</span> Performance
               </button>
-              <button
+              <button type="button"
                 class="dc-tab-btn"
                 @click="activeTab = 'cronjobs'"
                 :class="activeTab === 'cronjobs' ? 'active' : ''"
@@ -1192,7 +1183,7 @@
                     class="setting-input"
                     style="width: 240px"
                     x-model="data.safeName"
-                  />
+                  >
                 </div>
 
                 <div class="setting-row">
@@ -1207,7 +1198,7 @@
                     class="setting-input"
                     style="width: 240px"
                     x-model="data.serverName"
-                  />
+                  >
                 </div>
 
                 <div class="setting-row">
@@ -1222,7 +1213,7 @@
                     class="setting-input"
                     style="width: 240px"
                     x-model="data.port"
-                  />
+                  >
                 </div>
 
                 <div class="setting-row">
@@ -1237,7 +1228,7 @@
                     class="setting-input"
                     style="width: 240px"
                     placeholder="URL zum Icon..."
-                  />
+                  >
                 </div>
 
                 <div class="setting-row">
@@ -1253,7 +1244,7 @@
                       class="setting-input"
                       style="width: 100%; padding-right: 32px"
                       x-model="data.ram"
-                    />
+                    >
                     <span
                       style="
                         position: absolute;
@@ -1280,7 +1271,7 @@
                     class="setting-input"
                     style="width: 240px; font-family: 'JetBrains Mono', monospace; font-size: 11px"
                     x-model="data.path"
-                  />
+                  >
                 </div>
 
                 <div class="setting-row">
@@ -1337,7 +1328,7 @@
                     class="setting-input"
                     style="width: 160px"
                     x-model="data.maxPlayers"
-                  />
+                  >
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
@@ -1362,9 +1353,9 @@
                     <div class="setting-label">PVP</div>
                     <div class="setting-desc">Spieler gegen Spieler</div>
                   </div>
-                  <label class="action-toggle" for="data_pvp_4">
-                    <input id="data_pvp_4" name="data_pvp_4" type="checkbox" x-model="data.pvp" />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                  <label class="action-toggle">
+                    <input id="data_pvp_4" name="data_pvp_4" type="checkbox" x-model="data.pvp" >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1372,9 +1363,9 @@
                     <div class="setting-label">Online Mode (Premium)</div>
                     <div class="setting-desc">Nur gekaufte Accounts</div>
                   </div>
-                  <label class="action-toggle" for="data_onlineMode_5">
-                    <input id="data_onlineMode_5" name="data_onlineMode_5" type="checkbox" x-model="data.onlineMode" />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                  <label class="action-toggle">
+                    <input id="data_onlineMode_5" name="data_onlineMode_5" type="checkbox" x-model="data.onlineMode" >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1382,9 +1373,9 @@
                     <div class="setting-label">Whitelist aktivieren</div>
                     <div class="setting-desc">Nur eingetragene Spieler können beitreten</div>
                   </div>
-                  <label class="action-toggle" for="data_enableWhitelist_6">
-                    <input id="data_enableWhitelist_6" name="data_enableWhitelist_6" type="checkbox" x-model="data.enableWhitelist" />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                  <label class="action-toggle">
+                    <input id="data_enableWhitelist_6" name="data_enableWhitelist_6" type="checkbox" x-model="data.enableWhitelist" >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
                 <div
@@ -1404,7 +1395,7 @@
                     style="width: 240px"
                     placeholder="z.B. Spieler1,Spieler2"
                     x-model="data.whitelist"
-                  />
+                  >
                 </div>
               </div>
 
@@ -1423,7 +1414,7 @@
                       class="setting-input"
                       style="width: 100%; padding-right: 32px"
                       x-model="data.initRam"
-                    />
+                    >
                     <span
                       style="
                         position: absolute;
@@ -1442,13 +1433,13 @@
                     <div class="setting-label">Aikar's Flags (G1GC)</div>
                     <div class="setting-desc">Empfohlen für Paper/Spigot Server</div>
                   </div>
-                  <label class="action-toggle" for="data_aikar_7">
+                  <label class="action-toggle">
                     <input id="data_aikar_7" name="data_aikar_7"
                       type="checkbox"
                       x-model="data.aikar"
                       @change="if(data.aikar) data.meowice = false"
-                    />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                    >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1456,13 +1447,13 @@
                     <div class="setting-label">MeowIce Flags (ZGC)</div>
                     <div class="setting-desc">Empfohlen für große Heaps (>12GB) / Fabric</div>
                   </div>
-                  <label class="action-toggle" for="data_meowice_8">
+                  <label class="action-toggle">
                     <input id="data_meowice_8" name="data_meowice_8"
                       type="checkbox"
                       x-model="data.meowice"
                       @change="if(data.meowice) data.aikar = false"
-                    />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                    >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1470,9 +1461,9 @@
                     <div class="setting-label">Befehlsblöcke</div>
                     <div class="setting-desc">Command Blocks erlauben</div>
                   </div>
-                  <label class="action-toggle" for="data_cmdBlocks_9">
-                    <input id="data_cmdBlocks_9" name="data_cmdBlocks_9" type="checkbox" x-model="data.cmdBlocks" />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                  <label class="action-toggle">
+                    <input id="data_cmdBlocks_9" name="data_cmdBlocks_9" type="checkbox" x-model="data.cmdBlocks" >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
                 <div class="setting-row">
@@ -1480,9 +1471,9 @@
                     <div class="setting-label">Fliegen erlauben</div>
                     <div class="setting-desc">Verhindert Kicks bei Lags</div>
                   </div>
-                  <label class="action-toggle" for="data_flight_10">
-                    <input id="data_flight_10" name="data_flight_10" type="checkbox" x-model="data.flight" />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                  <label class="action-toggle">
+                    <input id="data_flight_10" name="data_flight_10" type="checkbox" x-model="data.flight" >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
                 <div class="setting-row" style="border-bottom: none">
@@ -1490,9 +1481,9 @@
                     <div class="setting-label">Rolling Logs</div>
                     <div class="setting-desc">Server-Logs komprimieren und rotieren</div>
                   </div>
-                  <label class="action-toggle" for="data_rollingLogs_11">
-                    <input id="data_rollingLogs_11" name="data_rollingLogs_11" type="checkbox" x-model="data.rollingLogs" />
-                    <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                  <label class="action-toggle">
+                    <input id="data_rollingLogs_11" name="data_rollingLogs_11" type="checkbox" x-model="data.rollingLogs" >
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
               </div>
@@ -1500,8 +1491,7 @@
               <!-- CRONJOBS TAB -->
               <div x-show="activeTab === 'cronjobs'" style="display: none; padding: 16px">
                 <div style="margin-bottom: 24px" x-data="{ mode: 'preset' }">
-                  <label
-                    for="cronJobSelect"
+                  <label for="cronJobSelect"
                     style="
                       display: block;
                       font-size: 14px;
@@ -1543,9 +1533,9 @@
                         placeholder="Cron-Syntax (z.B. 0 4 * * *)"
                         x-show="mode === 'custom'"
                         style="width: 100%; margin-top: 8px; display: none"
-                      />
+                      >
                     </div>
-                    <button class="btn btn-primary" style="padding: 0 16px; height: 40px">
+                    <button type="button" class="btn btn-primary" style="padding: 0 16px; height: 40px">
                       <span class="material-icons-round">add</span>
                     </button>
                   </div>
@@ -1577,7 +1567,7 @@
                         0 * * * * <span style="color: var(--text-secondary)">(Stündlich)</span>
                       </div>
                     </div>
-                    <button
+                    <button type="button"
                       class="icon-btn"
                       style="color: var(--red); opacity: 0.7"
                       onmouseover="this.style.opacity = 1"
@@ -1611,7 +1601,7 @@
                         <span style="color: var(--text-secondary)">(Täglich um 04:00)</span>
                       </div>
                     </div>
-                    <button
+                    <button type="button"
                       class="icon-btn"
                       style="color: var(--red); opacity: 0.7"
                       onmouseover="this.style.opacity = 1"
@@ -1643,15 +1633,14 @@
             <div
               style="
                 background: #0d0f13;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgb(255 255 255 / 5%);
                 border-radius: 12px;
                 padding: 16px;
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 12px;
                 color: var(--green);
                 line-height: 1.6;
-                overflow-y: auto;
-                overflow-x: auto;
+                overflow: auto;
                 margin-bottom: 16px;
                 white-space: pre-wrap;
                 flex: 1;
@@ -1661,8 +1650,8 @@
             ></div>
             <div
               style="
-                background: rgba(249, 115, 22, 0.05);
-                border: 1px solid rgba(249, 115, 22, 0.3);
+                background: rgb(249 115 22 / 5%);
+                border: 1px solid rgb(249 115 22 / 30%);
                 border-radius: 8px;
                 padding: 16px;
                 flex-shrink: 0;
@@ -1703,14 +1692,14 @@
             background: var(--bg-base);
           "
         >
-          <button class="btn btn-ghost" @click="copyCmd()">
+          <button type="button" class="btn btn-ghost" @click="copyCmd()">
             <span class="material-icons-round">content_copy</span>
             <span x-text="$store.i18n.t('general.tooltip_msg')">Befehl kopieren</span>
           </button>
-          <button class="btn btn-ghost" @click="open = false">
+          <button type="button" class="btn btn-ghost" @click="open = false">
             <span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span>
           </button>
-          <button
+          <button type="button"
             class="btn btn-primary"
             style="background: var(--accent); border-color: var(--accent)"
             @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');"
@@ -1758,7 +1747,7 @@
           overflow: hidden;
           border-radius: var(--radius-lg);
           border: 1px solid var(--border);
-          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+          box-shadow: 0 24px 48px rgb(0 0 0 / 60%);
           background: var(--bg-base);
           backdrop-filter: none;
         "
@@ -1798,17 +1787,17 @@
               Organisiere deine Container mit FolderView3
             </div>
           </div>
-          <button class="icon-btn" @click="open = false" aria-label="Schließen">
+          <button type="button" class="icon-btn" @click="open = false" aria-label="Schließen">
             <span class="material-icons-round">close</span>
           </button>
         </div>
 
         <!-- Body with Tabs -->
         <div style="display: flex; flex-direction: column; height: 500px; background: var(--bg-base);">
-          
+
           <!-- Tab Navigation -->
           <div class="dc-tab-nav" style="padding-left: 24px; border-bottom: 1px solid var(--border); background: var(--bg-card);">
-            <button
+            <button type="button"
               class="dc-tab-btn"
               @click="activeTab = 'basic'"
               :class="activeTab === 'basic' ? 'active' : ''"
@@ -1816,7 +1805,7 @@
             >
               <span class="material-icons-round" style="font-size: 16px">tune</span> Basic
             </button>
-            <button
+            <button type="button"
               class="dc-tab-btn"
               @click="activeTab = 'preview'"
               :class="activeTab === 'preview' ? 'active' : ''"
@@ -1824,7 +1813,7 @@
             >
               <span class="material-icons-round" style="font-size: 16px">visibility</span> Preview
             </button>
-            <button
+            <button type="button"
               class="dc-tab-btn"
               @click="activeTab = 'behavior'"
               :class="activeTab === 'behavior' ? 'active' : ''"
@@ -1832,7 +1821,7 @@
             >
               <span class="material-icons-round" style="font-size: 16px">settings_suggest</span> Behavior
             </button>
-            <button
+            <button type="button"
               class="dc-tab-btn"
               @click="activeTab = 'containers'"
               :class="activeTab === 'containers' ? 'active' : ''"
@@ -1840,7 +1829,7 @@
             >
               <span class="material-icons-round" style="font-size: 16px">view_list</span> Containers / VMs
             </button>
-            <button
+            <button type="button"
               class="dc-tab-btn"
               @click="activeTab = 'custom-actions'"
               :class="activeTab === 'custom-actions' ? 'active' : ''"
@@ -1852,7 +1841,7 @@
 
           <!-- Tab Content -->
           <div class="dc-tab-content" style="flex: 1; overflow-y: auto; padding: 24px;">
-            
+
             <!-- BASIC TAB -->
             <div x-show="activeTab === 'basic'" style="display: flex; flex-direction: column; gap: 20px;">
               <div class="setting-row">
@@ -1866,9 +1855,9 @@
                   class="setting-input"
                   style="width: 320px"
                   x-model="folderName"
-                />
+                >
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1886,10 +1875,10 @@
                     class="setting-input"
                     style="width: 272px"
                     placeholder="e.g. fas fa-server"
-                  />
+                  >
                 </div>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1897,12 +1886,12 @@
                   <span class="fv3-tooltip">Default folder WebUI URL.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_14">
-                  <input id="field_input_14" name="field_input_14" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_14" name="field_input_14" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1910,12 +1899,12 @@
                   <span class="fv3-tooltip">On the Docker page, highlights the folder name in orange when any container in the folder has an update available.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_15">
-                  <input id="field_input_15" name="field_input_15" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_15" name="field_input_15" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1933,14 +1922,14 @@
                   class="setting-input"
                   style="width: 320px"
                   placeholder="e.g. plex.* or ^my-stack-"
-                />
+                >
               </div>
-              
+
             </div>
 
             <!-- PREVIEW TAB -->
             <div x-show="activeTab === 'preview'" style="display: flex; flex-direction: column; gap: 20px;">
-              
+
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label has-tooltip" tabindex="0">Preview
@@ -1954,7 +1943,7 @@
                   <option>None</option>
                 </select>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1962,12 +1951,12 @@
                   <span class="fv3-tooltip">On the Docker page, highlights container names in the folder preview in orange when an update is available.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_18">
-                  <input id="field_input_18" name="field_input_18" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_18" name="field_input_18" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1975,9 +1964,9 @@
                   <span class="fv3-tooltip">Limits the maximum width of container names in the preview, truncating long names with an ellipsis. Enter a CSS value like <strong>80px</strong> or <strong>6rem</strong>. Leave blank for no limit.</span>
                 </div>
                 </div>
-                <input id="field_input_19" name="field_input_19" type="text" class="setting-input" style="width: 240px" />
+                <input id="field_input_19" name="field_input_19" type="text" class="setting-input" style="width: 240px" >
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1985,12 +1974,12 @@
                   <span class="fv3-tooltip">Hides the preview until you hover over the folder row.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_20">
-                  <input id="field_input_20" name="field_input_20" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_20" name="field_input_20" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -1998,12 +1987,12 @@
                   <span class="fv3-tooltip">Displays container icons in greyscale instead of color.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_21">
-                  <input id="field_input_21" name="field_input_21" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_21" name="field_input_21" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2011,12 +2000,12 @@
                   <span class="fv3-tooltip">Adds a globe icon next to containers that have a WebUI configured.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_22">
-                  <input id="field_input_22" name="field_input_22" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_22" name="field_input_22" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2024,12 +2013,12 @@
                   <span class="fv3-tooltip">Adds a log icon next to each container for quick access to logs.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_23">
-                  <input id="field_input_23" name="field_input_23" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_23" name="field_input_23" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2037,12 +2026,12 @@
                   <span class="fv3-tooltip">Adds a console icon next to each container for quick terminal access.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_24">
-                  <input id="field_input_24" name="field_input_24" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_24" name="field_input_24" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2050,12 +2039,12 @@
                   <span class="fv3-tooltip">Shows vertical divider lines between containers in the preview row.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_25">
-                  <input id="field_input_25" name="field_input_25" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_25" name="field_input_25" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2063,12 +2052,12 @@
                   <span class="fv3-tooltip">Draws a border around the preview area.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_26">
-                  <input id="field_input_26" name="field_input_26" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_26" name="field_input_26" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2085,7 +2074,7 @@
                   <option>Scroll</option>
                 </select>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2094,12 +2083,12 @@
                 When disabled (default), these sources can override the colors.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_28">
-                  <input id="field_input_28" name="field_input_28" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_28" name="field_input_28" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2112,8 +2101,8 @@
                   <option>Advanced</option>
                 </select>
               </div>
-              
-              
+
+
             </div>
 
             <!-- BEHAVIOR TAB -->
@@ -2124,12 +2113,12 @@
                   <span class="fv3-tooltip">Hides the Version/update column for this folder's row, freeing up horizontal space.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_30">
-                  <input id="field_input_30" name="field_input_30" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_30" name="field_input_30" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2137,12 +2126,12 @@
                   <span class="fv3-tooltip">Replaces the folder's default right-click menu with only the custom actions defined below.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_31">
-                  <input id="field_input_31" name="field_input_31" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_31" name="field_input_31" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2150,12 +2139,12 @@
                   <span class="fv3-tooltip">Removes the default action buttons (start, stop, restart) from the folder's context menu.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_32">
-                  <input id="field_input_32" name="field_input_32" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_32" name="field_input_32" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2163,12 +2152,12 @@
                   <span class="fv3-tooltip">The folder will be expanded (showing child containers) by default when the Docker/VMs page loads.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_33">
-                  <input id="field_input_33" name="field_input_33" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_33" name="field_input_33" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
 
               <div class="setting-row">
                 <div class="setting-info">
@@ -2176,18 +2165,18 @@
                   <span class="fv3-tooltip">The folder will be expanded by default when the Dashboard page loads.</span>
                 </div>
                 </div>
-                <label class="setting-toggle" for="field_input_34">
-                  <input id="field_input_34" name="field_input_34" type="checkbox" />
-                  <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                <label class="setting-toggle">
+                  <input id="field_input_34" name="field_input_34" type="checkbox" >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
-              
+
             </div>
 
             <!-- CUSTOM ACTIONS TAB -->
             <div x-show="activeTab === 'custom-actions'">
               <div style="display: flex; justify-content: center; margin-bottom: 8px;">
-                <button class="fv3-add-action-btn">
+                <button type="button" class="fv3-add-action-btn">
                   <span class="material-icons-round" style="font-size: 16px;">add</span> Add a custom action
                 </button>
               </div>
@@ -2229,16 +2218,16 @@
                         <td style="padding: 12px 16px; text-align: center;">
                           <div style="display: flex; justify-content: center;">
                             <label class="setting-toggle">
-                              <input :id="'includedContainers_' + c.id" :name="'includedContainers_' + c.id" type="checkbox" x-model="includedContainers[c.id]" />
-                              <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                              <input :id="'includedContainers_' + c.id" :name="'includedContainers_' + c.id" type="checkbox" x-model="includedContainers[c.id]" >
+                              <span class="toggle-track"><span class="toggle-thumb"></span></span>
                             </label>
                           </div>
                         </td>
                         <td style="padding: 12px 16px; text-align: center;">
                           <div style="display: flex; justify-content: center;">
                             <label class="setting-toggle">
-                              <input :id="'field_input_36_' + c.id" :name="'field_input_36_' + c.id" type="checkbox" />
-                              <span class="toggle-track"><div class="toggle-thumb"></div></span>
+                              <input :id="'field_input_36_' + c.id" :name="'field_input_36_' + c.id" type="checkbox" >
+                              <span class="toggle-track"><span class="toggle-thumb"></span></span>
                             </label>
                           </div>
                         </td>
@@ -2251,11 +2240,11 @@
 
           </div>
         </div>
-        
+
         <!-- Footer -->
         <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-card); display: flex; justify-content: flex-end; gap: 12px;">
-          <button class="btn btn-ghost" @click="open = false">Abbrechen</button>
-          <button class="btn btn-primary" @click="saveFolder()">
+          <button type="button" class="btn btn-ghost" @click="open = false">Abbrechen</button>
+          <button type="button" class="btn btn-primary" @click="saveFolder()">
             <span class="material-icons-round">save</span> Speichern
           </button>
         </div>
