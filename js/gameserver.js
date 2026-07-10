@@ -132,23 +132,6 @@ export function gameserverApp() {
     init() {
       this.syncStatus();
 
-      if (typeof Alpine !== 'undefined') {
-        Alpine.effect(() => {
-          if (Alpine.store('global')) {
-            Alpine.store('global').onlineGameservers = this.instances.filter(
-              (s) => s.status === 'online'
-            ).length;
-
-            let totalPlayers = 0;
-            this.instances.forEach((s) => {
-              if (s.status === 'online' && s.players && s.players.current) {
-                totalPlayers += s.players.current;
-              }
-            });
-            Alpine.store('global').onlinePlayers = totalPlayers;
-          }
-        });
-      }
 
       // Live simulation for CPU/RAM and sparkline animations
       setInterval(() => {
@@ -441,7 +424,14 @@ function initTerminal() {
  * Open the console modal for a specific game server
  * @param {Object} srv - The server object
  */
-export function openConsole(srv) {
+export async function openConsole(srv) {
+  try {
+    const { loadXterm } = await import('./xterm-loader.js');
+    await loadXterm();
+  } catch (e) {
+    console.error('Failed to load Xterm', e);
+    return;
+  }
   consoleServerId = srv.containerId;
   document.getElementById('consoleTitle').textContent =
     `${t('general.console') || 'Konsole'} — ${srv.serverName}`;

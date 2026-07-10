@@ -94,11 +94,68 @@ export function toggleModal(modalId, open) {
   else el.setAttribute('hidden', '');
 }
 
-export function switchTab(tabId) {
+export async function fetchComponent(id, url) {
+  try {
+    const el = document.getElementById(id);
+    // If it's already loaded (no '<!-- Component loaded dynamically -->' comment inside)
+    if (el && el.innerHTML.trim() !== '<!-- Component loaded dynamically -->') return;
+
+    const response = await fetch(url + '?v=' + new Date().getTime());
+    if (response.ok) {
+      const html = await response.text();
+      if (el) {
+        el.outerHTML = html;
+      }
+    }
+  } catch (e) {
+    console.error(`Error loading ${url}:`, e);
+  }
+}
+
+const loadedModules = new Set();
+
+export async function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === tabId);
     b.setAttribute('aria-selected', b.dataset.tab === tabId);
   });
+
+  if (!loadedModules.has(tabId)) {
+    try {
+      switch (tabId) {
+        case 'docker': {
+          await fetchComponent('panel-docker', 'components/docker.html');
+          break;
+        }
+        case 'gameserver': {
+          const gs = await import('./gameserver.js');
+          window.gameserverApp = gs.gameserverApp;
+          window.openConsole = gs.openConsole;
+          await fetchComponent('panel-gameserver', 'components/gameservers.html');
+          break;
+        }
+        case 'players': {
+          const pl = await import('./players.js');
+          window.playersApp = pl.playersApp;
+          await fetchComponent('panel-players', 'components/players.html');
+          break;
+        }
+        case 'game-additions': {
+          const ga = await import('./gameAdditions.js');
+          window.GameAdditions = ga.GameAdditions;
+          if (ga.GameAdditions && ga.GameAdditions.init) {
+            ga.GameAdditions.init();
+          }
+          await fetchComponent('panel-game-additions', 'components/gameAdditions.html');
+          break;
+        }
+      }
+      loadedModules.add(tabId);
+    } catch (error) {
+      console.error(`Fehler beim Laden des Moduls für ${tabId}:`, error);
+    }
+  }
+
   document.querySelectorAll('.tab-panel').forEach((p) => {
     p.classList.toggle('active', p.id === `panel-${tabId}`);
   });

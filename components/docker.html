@@ -239,7 +239,7 @@
                       <div style="display: flex; align-items: center; width: 220px; flex-shrink: 0; margin-right: 16px; overflow: hidden; white-space: nowrap;">
                         <span class="folder-icon cursor-pointer hover-glow" style="flex-shrink: 0; display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; overflow: hidden;" @click.stop="openContextMenu($event, c)">
                           <template x-if="c.icon">
-                            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="c.icon" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;" alt="Icon">
+                            <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="c.icon" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;" alt="Icon">
                           </template>
                           <template x-if="!c.icon">
                             <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
@@ -259,7 +259,7 @@
                       <div style="display: flex; align-items: center; width: 280px; flex-shrink: 0; margin-right: 16px;">
                         <span class="folder-icon" style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
                           <template x-if="c.icon">
-                            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="c.icon" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;" alt="Icon">
+                            <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="c.icon" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;" alt="Icon">
                           </template>
                           <template x-if="!c.icon">
                             <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
@@ -293,7 +293,7 @@
                              }"
                              class="cursor-pointer" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); max-width: 140px; vertical-align: middle; height: 100%;">
                           <template x-if="preview.icon">
-            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="preview.icon" alt="Image" class="cursor-pointer hover-glow" @click.stop="openContextMenu($event, preview)" style="width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;" >
+            <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="preview.icon" alt="Image" class="cursor-pointer hover-glow" @click.stop="openContextMenu($event, preview)" style="width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;" >
           </template>
           <template x-if="!preview.icon">
             <span class="cursor-pointer hover-glow" @click.stop="openContextMenu($event, preview)" style="font-size: 16px; line-height: 1; flex-shrink: 0;" x-text="preview.iconFallback || '📦'"></span>
@@ -404,7 +404,7 @@
                   <div style="position: relative; display: inline-block;">
                     <template x-if="c.icon">
                       <div class="container-icon-wrap cursor-pointer hover-glow" :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''" @click.prevent="openContextMenu($event, c)">
-                        <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Icon" :src="c.icon" :alt="c.name" onerror="
+                        <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Icon" :src="c.icon" :alt="c.name" onerror="
                             this.parentElement.className = 'container-icon-fallback cursor-pointer hover-glow';
                             this.parentElement.innerHTML = 'x';
                           "
@@ -704,7 +704,7 @@
             </div>
             <template x-if="iconInputValue">
               <div style="width: 38px; height: 38px; border-radius: 4px; border: 1px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg-base);">
-                <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="iconInputValue" alt="Image" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" :src="iconInputValue" alt="Image" style="max-width: 100%; max-height: 100%; object-fit: contain;">
               </div>
             </template>
           </div>

@@ -148,7 +148,7 @@
                   <template x-for="p in activeData.online" :key="p.name">
                     <tr>
                       <td>
-                        <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
+                        <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
                           onerror="playerAvatarError(this)"
                          alt="Image">
                       </td>
@@ -279,7 +279,7 @@
           </div>
           <template x-for="p in activeData.whitelist" :key="p.name">
             <div class="list-entry">
-              <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
+              <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
                 onerror="playerAvatarError(this)"
                alt="Image">
               <div class="list-entry-name" x-text="p.name"></div>
@@ -365,7 +365,7 @@
               <div class="chat-msg">
                 <span class="chat-msg-time" x-text="c.time"></span>
                 <div style="display: flex; align-items: center; gap: 6px; margin-top: 1px">
-                  <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                  <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                     :src="'https://mc-heads.net/avatar/' + c.player + '/16'"
                     style="
                       width: 16px;

@@ -8,35 +8,10 @@
       name="description"
       content="Erweitertes Unraid Docker-Menü mit GameServer Hub, Minecraft Mod-Browser und Player Management."
     >
-    <link rel="preconnect" href="https://fonts.googleapis.com" >
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin >
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <link rel="preload" href="fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="fonts/inter-semibold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
     <link rel="icon" href="data:," >
-    <link rel="stylesheet" href="css/vendor/material-icons.css" >
-    <link rel="stylesheet" href="css/base.css" >
-    <link rel="stylesheet" href="css/layout.css" >
-    <link rel="stylesheet" href="css/modules/buttons.css" >
-    <link rel="stylesheet" href="css/modules/forms.css" >
-    <link rel="stylesheet" href="css/modules/stats.css" >
-    <link rel="stylesheet" href="css/modules/modals.css" >
-    <link rel="stylesheet" href="css/modules/console.css" >
-    <link rel="stylesheet" href="css/modules/badges.css" >
-    <link rel="stylesheet" href="css/modules/states.css" >
-    <link rel="stylesheet" href="css/modules/lists.css" >
-    <link rel="stylesheet" href="css/docker.css" >
-    <link rel="stylesheet" href="css/gameserver.css" >
-    <link rel="stylesheet" href="css/gameAdditions.css" >
-    <link rel="stylesheet" href="games/minecraft/css/minecraft.css" >
-    <link rel="stylesheet" href="games/palworld/css/palworld.css" >
-    <link rel="stylesheet" href="games/valheim/css/valheim.css" >
-    <link rel="stylesheet" href="games/cs2/css/cs2.css" >
-    <link rel="stylesheet" href="css/players.css" >
-    <link rel="stylesheet" href="css/settings.css" >
-    <link rel="stylesheet" href="css/toast.css" >
-    <link rel="stylesheet" href="css/vendor/xterm.css" >
+    <link rel="stylesheet" href="css/main.css" >
     <script>
       // Load WebKit-specific styles only if not Firefox, to prevent harmless console warnings
       if (!navigator.userAgent.toLowerCase().includes('firefox')) {
@@ -46,8 +21,7 @@
         document.head.appendChild(link);
       }
     </script>
-    <script src="js/vendor/xterm.js"></script>
-    <script src="js/vendor/xterm-addon-fit.js"></script>
+
     <script type="module" src="js/main.js"></script>
     <script defer src="js/alpine-store.js"></script>
   </head>
@@ -157,7 +131,6 @@
         id="panel-docker"
         role="tabpanel"
         aria-labelledby="tab-docker"
-        x-data="dockerApp()"
       >
         <!-- Component loaded dynamically -->
       </section>
@@ -168,7 +141,6 @@
         id="panel-gameserver"
         role="tabpanel"
         aria-labelledby="tab-gameserver"
-        x-data="gameserverApp()"
       >
         <!-- Component loaded dynamically -->
       </section>
@@ -189,7 +161,6 @@
         id="panel-players"
         role="tabpanel"
         aria-labelledby="tab-players"
-        x-data="playersApp()"
       >
         <!-- Component loaded dynamically -->
       </section>
@@ -545,6 +516,16 @@
                 </div>
                 <label class="setting-toggle">
                   <input type="checkbox" id="settingStopConfirm" checked >
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label">Ordner-Ansicht (FolderView3)</div>
+                  <div class="setting-desc">Gruppierung der Container in Ordner aktivieren</div>
+                </div>
+                <label class="setting-toggle">
+                  <input type="checkbox" id="settingFolderViewEnabled" checked >
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>

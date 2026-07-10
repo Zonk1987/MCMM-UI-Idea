@@ -495,14 +495,6 @@ export function dockerApp() {
         this.folderViewEnabled = typeof appSettings !== 'undefined' ? appSettings.folderViewEnabled : true;
       });
 
-      // Sync to global store
-      if (typeof Alpine !== 'undefined') {
-        Alpine.effect(() => {
-          if (Alpine.store('global')) {
-            Alpine.store('global').dockerCount = this.containers.length;
-          }
-        });
-      }
 
       // Watch for selection changes to update selectAll
       this.$watch('selected', (value) => {

@@ -19,12 +19,9 @@ import {
 import { initSettings, applyVisualSettings, appSettings, debugApp } from './settings.js';
 import { initCoreStore } from './core-store.js';
 import { dockerApp } from './docker.js';
-import { gameserverApp, openConsole } from './gameserver.js';
-import { playersApp } from './players.js';
 import { foldersApp } from './folders.js';
 import { networksApp } from './networks.js';
 import { composeApp } from './compose.js';
-import { GameAdditions } from './gameAdditions.js';
 import { registerAlpineComponents } from './alpine-components.js';
 import autoAnimate from './vendor/auto-animate.js';
 
@@ -84,14 +81,10 @@ window.openConfigModal = (id, name, port, ram) => {
     Alpine.store('modals').config.open = true;
   }
 };
-window.gameserverApp = gameserverApp;
-window.openConsole = openConsole;
 
-window.playersApp = playersApp;
 window.foldersApp = foldersApp;
 window.networksApp = networksApp;
 window.composeApp = composeApp;
-window.GameAdditions = GameAdditions;
 window.loadLanguage = loadLanguage;
 window.applyVisualSettings = applyVisualSettings;
 window.debugApp = debugApp;
@@ -108,32 +101,6 @@ window.finishOnboarding = function () {
   }
 };
 
-async function loadComponents() {
-  const components = [
-    { id: 'panel-docker', url: 'components/docker.html' },
-    { id: 'panel-gameserver', url: 'components/gameservers.html' },
-    { id: 'panel-game-additions', url: 'components/gameAdditions.html' },
-    { id: 'panel-players', url: 'components/players.html' },
-  ];
-
-  for (const comp of components) {
-    try {
-      const response = await fetch(comp.url + '?v=' + new Date().getTime());
-      if (response.ok) {
-        const html = await response.text();
-        const el = document.getElementById(comp.id);
-        if (el) {
-          el.outerHTML = html;
-        }
-      } else {
-        console.error(`Failed to load ${comp.url}: ${response.status}`);
-      }
-    } catch (e) {
-      console.error(`Error loading ${comp.url}:`, e);
-    }
-  }
-}
-
 async function initApp() {
   // Load settings first since other modules might depend on them
   initSettings();
@@ -142,14 +109,17 @@ async function initApp() {
   await initI18n();
 
   // ── Load Modular HTML Components ──
-  await loadComponents();
+  // Now loaded dynamically when switching tabs
+  const activeTabBtn = document.querySelector('.tab-btn.active');
+  if (activeTabBtn) {
+    switchTab(activeTabBtn.dataset.tab || 'docker');
+  }
 
   // Modals are handled by Alpine.js natively, do not move them manually.
 
   // ── Initialize all modules ────────────────────────────
   // Store initialization moved to top-level alpine:init listener
 
-  GameAdditions.init();
 
   // ── Tab navigation ────────────────────────────────────
   document.getElementById('tabNav')?.addEventListener('click', (e) => {
@@ -168,7 +138,7 @@ async function initApp() {
       /* Alpine handles it */
     }
     if (active === 'game-additions') {
-      GameAdditions.refresh();
+      window.GameAdditions?.refresh();
     }
     if (active === 'players') {
       /* Alpine handles it */

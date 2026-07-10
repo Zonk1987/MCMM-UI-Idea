@@ -351,6 +351,26 @@ export function initCoreStore(Alpine) {
           }
         });
       }, 2000);
+
+      // Sync counts to global store
+      if (typeof Alpine !== 'undefined') {
+        Alpine.effect(() => {
+          if (Alpine.store('global')) {
+            Alpine.store('global').dockerCount = this.containers.length;
+            
+            const gameservers = this.getGameservers();
+            Alpine.store('global').onlineGameservers = gameservers.filter(s => s.status === 'online').length;
+            
+            let totalPlayers = 0;
+            gameservers.forEach(s => {
+              if (s.status === 'online' && s.players && s.players.current) {
+                totalPlayers += s.players.current;
+              }
+            });
+            Alpine.store('global').onlinePlayers = totalPlayers;
+          }
+        });
+      }
     }
   });
 }

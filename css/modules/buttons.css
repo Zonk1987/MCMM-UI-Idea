@@ -30,6 +30,19 @@
   box-shadow: 0 4px 20px var(--accent-glow);
 }
 
+.btn-secondary {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
 .btn-ghost {
   background: var(--bg-card);
   color: var(--text-secondary);

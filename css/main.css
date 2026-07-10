@@ -1,0 +1,27 @@
+/* ═══════════════════════════════════════════════════════════
+   main.css — Zentrale Einbindung aller Stylesheets
+═══════════════════════════════════════════════════════════ */
+
+@import url('./vendor/material-icons.css');
+@import url('./base.css');
+@import url('./layout.css');
+@import url('./modules/buttons.css');
+@import url('./modules/forms.css');
+@import url('./modules/stats.css');
+@import url('./modules/modals.css');
+@import url('./modules/console.css');
+@import url('./modules/badges.css');
+@import url('./modules/states.css');
+@import url('./modules/lists.css');
+@import url('./docker.css');
+@import url('./gameserver.css');
+@import url('./gameAdditions.css');
+@import url('./players.css');
+@import url('./settings.css');
+@import url('./toast.css');
+
+/* Game Specific Styles */
+@import url('../games/minecraft/css/minecraft.css');
+@import url('../games/palworld/css/palworld.css');
+@import url('../games/valheim/css/valheim.css');
+@import url('../games/cs2/css/cs2.css');
