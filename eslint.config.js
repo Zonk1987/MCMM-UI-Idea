@@ -1,14 +1,26 @@
 import js from '@eslint/js';
 import globals from 'globals';
 import prettier from 'eslint-config-prettier';
+import jsonc from 'eslint-plugin-jsonc';
 
 export default [
-  js.configs.recommended,
   {
-    ignores: ['js/vendor/**', 'css/vendor/**'],
+    ignores: [
+      'node_modules/**',
+      'js/vendor/**',
+      'css/vendor/**',
+      'dist/**',
+      'build/**',
+      'package-lock.json',
+    ],
   },
+
+  js.configs.recommended,
+
   prettier,
+
   {
+    files: ['**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -30,4 +42,6 @@ export default [
       ],
     },
   },
+
+  ...jsonc.configs['flat/recommended-with-jsonc'],
 ];

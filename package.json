@@ -4,15 +4,19 @@
   "description": "GameServer Hub Plugin UI",
   "type": "module",
   "scripts": {
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "lint:css": "stylelint \"**/*.{css,html,php,page}\""
+    "lint": "npm run lint:js && npm run lint:json && npm run lint:css",
+    "lint:js": "eslint \"**/*.js\"",
+    "lint:json": "eslint \"**/*.{json,jsonc}\"",
+    "lint:css": "stylelint \"**/*.{css,html,php,page}\"",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsonc": "^3.3.0",
     "globals": "^15.0.0",
+    "jsonc-eslint-parser": "^3.3.0",
     "postcss-html": "^1.8.1",
     "prettier": "^3.2.0",
     "stylelint": "^17.14.0",

@@ -5,6 +5,12 @@
     "*.page": "html"
   },
 
+  "json.validate.enable": true,
+
+  "eslint.enable": true,
+
+  "eslint.validate": ["javascript", "javascriptreact", "json", "jsonc"],
+
   "css.validate": false,
   "scss.validate": false,
   "less.validate": false,
@@ -14,6 +20,7 @@
   "stylelint.validate": ["css", "scss", "less", "postcss", "html", "php"],
 
   "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
     "source.fixAll.stylelint": "explicit"
   }
 }
