@@ -403,7 +403,7 @@
                     Helles oder dunkles Erscheinungsbild
                   </div>
                 </div>
-                <select class="setting-select" id="settingTheme">
+                <select class="setting-select" id="settingTheme" :aria-label="$store.i18n.t('settings.theme')">
                   <option value="dark" x-text="$store.i18n.t('settings.theme_dark')">Dunkel</option>
                   <option value="light" x-text="$store.i18n.t('settings.theme_light')">Hell</option>
                 </select>
@@ -417,7 +417,7 @@
                     Anzeigesprache der Benutzeroberfläche
                   </div>
                 </div>
-                <select class="setting-select" id="settingLang">
+                <select class="setting-select" id="settingLang" :aria-label="$store.i18n.t('settings.language')">
                   <option value="en">English</option>
                   <option value="de">Deutsch</option>
                   <option value="es">Español</option>
@@ -435,7 +435,7 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingCompact" >
+                  <input type="checkbox" id="settingCompact" :aria-label="$store.i18n.t('settings.compact')">
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>

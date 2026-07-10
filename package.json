@@ -2,25 +2,37 @@
   "name": "mcmm-ui-idea",
   "version": "1.0.0",
   "description": "GameServer Hub Plugin UI",
+  "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.19.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "lint": "npm run lint:js && npm run lint:json && npm run lint:css",
     "lint:js": "eslint \"**/*.js\"",
     "lint:json": "eslint \"**/*.{json,jsonc}\"",
     "lint:css": "stylelint \"**/*.{css,html,php,page}\"",
+    "lint:fix": "npm run lint:js -- --fix && npm run lint:json -- --fix && npm run lint:css -- --fix",
     "format": "prettier --write .",
-    "audit:lighthouse": "lighthouse http://localhost:3000 --view"
+    "format:check": "prettier --check .",
+    "audit:lighthouse": "lighthouse http://localhost:5500 --output=html --output-path=./reports/lighthouse.html --view",
+    "audit:lighthouse:desktop": "lighthouse http://localhost:5500 --preset=desktop --output=html --output-path=./reports/lighthouse-desktop.html --view",
+    "outdated": "npm outdated",
+    "update:check": "ncu",
+    "update": "ncu -u && npm install"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
-    "eslint": "^9.0.0",
-    "eslint-config-prettier": "^9.1.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsonc": "^3.3.0",
-    "globals": "^15.0.0",
+    "globals": "^17.7.0",
     "jsonc-eslint-parser": "^3.1.0",
     "lighthouse": "^13.4.0",
+    "npm-check-updates": "^22.2.9",
     "postcss-html": "^1.8.1",
-    "prettier": "^3.2.0",
+    "prettier": "^3.9.5",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0"
   },

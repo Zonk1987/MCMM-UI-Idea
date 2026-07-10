@@ -275,7 +275,9 @@ export const GameAdditions = {
     try {
       res = await fetch(`https://api.curseforge.com/v1/mods/search?${params}`, { headers });
     } catch (err) {
-      throw new Error(`CurseForge Network Error: ${err.message}`);
+      throw new Error('CurseForge Network Error', {
+        cause: err,
+      });
     }
 
     let body;

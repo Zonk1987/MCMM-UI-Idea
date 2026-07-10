@@ -259,3 +259,65 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+
+/* ─── Sticky Action Bar ─── */
+.sticky-action-bar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-topbar);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  z-index: 90;
+  margin: 24px -24px -24px;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+/* ─── Accordion ─── */
+.accordion {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: all var(--trans-med);
+}
+
+.accordion:hover {
+  border-color: var(--border-hover);
+}
+
+.accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary);
+  user-select: none;
+  background: var(--bg-card);
+}
+
+.accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-summary .material-icons-round {
+  transition: transform var(--trans-med);
+}
+
+details[open] .accordion-summary .material-icons-round {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-surface);
+}

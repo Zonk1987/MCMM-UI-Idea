@@ -3,4 +3,5 @@ dist/
 build/
 .cache/
 coverage/
+reports/
 *.log
