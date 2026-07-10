@@ -8,7 +8,8 @@
     "lint:js": "eslint \"**/*.js\"",
     "lint:json": "eslint \"**/*.{json,jsonc}\"",
     "lint:css": "stylelint \"**/*.{css,html,php,page}\"",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "audit:lighthouse": "lighthouse http://localhost:3000 --view"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
@@ -16,7 +17,8 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsonc": "^3.3.0",
     "globals": "^15.0.0",
-    "jsonc-eslint-parser": "^3.3.0",
+    "jsonc-eslint-parser": "^3.1.0",
+    "lighthouse": "^13.4.0",
     "postcss-html": "^1.8.1",
     "prettier": "^3.2.0",
     "stylelint": "^17.14.0",
