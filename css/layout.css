@@ -47,7 +47,7 @@
 }
 
 .topbar-title .accent {
-  color: var(--accent);
+  color: var(--text-accent);
 }
 
 .topbar-subtitle {
@@ -98,13 +98,13 @@
 }
 
 .tab-btn.active {
-  color: var(--accent);
+  color: var(--text-accent);
   background: var(--accent-dim);
   border-color: var(--border-accent);
 }
 
 .tab-btn.active .material-icons-round {
-  color: var(--accent);
+  color: var(--text-accent);
 }
 
 .tab-badge {

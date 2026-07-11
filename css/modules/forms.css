@@ -13,7 +13,7 @@
 }
 
 .search-box:focus-within {
-  border-color: var(--accent);
+  border-color: var(--text-accent);
 }
 
 .search-box .material-icons-round {
@@ -64,7 +64,7 @@
 }
 
 .form-input:focus {
-  border-color: var(--accent);
+  border-color: var(--text-accent);
 }
 
 .form-input[readonly] {
@@ -117,7 +117,7 @@
 }
 
 .wizard-game-card.selected {
-  border-color: var(--accent);
+  border-color: var(--text-accent);
   background: var(--accent-dim);
 }
 
@@ -134,7 +134,7 @@
 }
 
 .wizard-game-card.selected .wizard-game-name {
-  color: var(--accent);
+  color: var(--text-accent);
 }
 
 /* Code preview */
@@ -184,7 +184,7 @@
 }
 
 .custom-select-wrap.open .custom-select-trigger {
-  border-color: var(--accent);
+  border-color: var(--text-accent);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -261,7 +261,7 @@
 
 .custom-select-option.active {
   background: var(--accent-dim);
-  color: var(--accent);
+  color: var(--text-accent);
 }
 
 .cso-dot {
@@ -318,12 +318,12 @@
 
 .toggle-switch input:checked + .toggle-slider {
   background-color: var(--accent-dim);
-  border-color: var(--accent);
+  border-color: var(--text-accent);
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(20px);
-  background-color: var(--accent);
+  background-color: var(--text-accent);
   box-shadow: 0 0 8px var(--accent-glow);
 }
 

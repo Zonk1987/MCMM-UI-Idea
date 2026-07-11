@@ -38,7 +38,7 @@
 
 .subtab-btn.active {
   background: var(--accent-dim);
-  color: var(--accent);
+  color: var(--text-accent);
 }
 
 .subtab-btn .material-icons-round {
@@ -183,7 +183,7 @@
 .chat-msg-player {
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text-accent);
   white-space: nowrap;
 }
 

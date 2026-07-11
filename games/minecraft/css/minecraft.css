@@ -59,7 +59,7 @@
 
 .filter-chip.active {
   background: var(--accent-dim);
-  color: var(--accent);
+  color: var(--text-accent);
   border-color: var(--border-accent);
 }
 
@@ -89,7 +89,7 @@
 }
 
 .filter-select:focus {
-  border-color: var(--accent);
+  border-color: var(--text-accent);
 }
 
 /* Loader Tags */
@@ -117,7 +117,7 @@
 
 .mc-tag.neoforge {
   background: var(--orange-dim, rgb(249 115 22 / 15%));
-  color: var(--accent);
+  color: var(--text-accent);
   border-color: rgb(249 115 22 / 30%);
 }
 

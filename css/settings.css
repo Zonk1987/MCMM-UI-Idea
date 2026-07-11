@@ -63,7 +63,7 @@
 }
 
 .settings-header-title .material-icons-round {
-  color: var(--accent);
+  color: var(--text-accent);
 }
 
 /* Left sidebar navigation inside settings */
@@ -100,7 +100,7 @@
 }
 
 .settings-nav-btn.active {
-  color: var(--accent);
+  color: var(--text-accent);
   background: var(--accent-dim);
   font-weight: 600;
 }
@@ -233,7 +233,7 @@
 
 .setting-input:focus,
 .setting-select:focus {
-  border-color: var(--accent);
+  border-color: var(--text-accent);
 }
 
 .setting-input-row {
@@ -385,7 +385,7 @@
 }
 
 .fv3-tooltip a {
-  color: var(--accent);
+  color: var(--text-accent);
   text-decoration: none;
 }
 

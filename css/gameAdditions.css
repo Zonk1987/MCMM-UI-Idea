@@ -61,7 +61,7 @@
 }
 
 .mc-search-bar:focus-within {
-  border-color: var(--accent);
+  border-color: var(--text-accent);
 }
 
 .mc-search-bar .material-icons-round {
@@ -219,7 +219,7 @@
 .btn-install-icon:hover {
   background: var(--accent);
   color: #fff;
-  border-color: var(--accent);
+  border-color: var(--text-accent);
   transform: scale(1.05);
   box-shadow: 0 4px 12px var(--accent-glow);
 }

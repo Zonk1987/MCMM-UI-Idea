@@ -287,7 +287,7 @@
                             <template x-if="c.isStack">
                               <span
                                 class="material-icons-round"
-                                style="font-size: 20px; color: var(--accent)"
+                                style="font-size: 20px; color: var(--text-accent)"
                                 >layers</span
                               >
                             </template>
@@ -965,7 +965,7 @@
                 <td>
                   <div
                     class="container-name"
-                    :style="c.upToDate === false ? 'color: var(--accent)' : ''"
+                    :style="c.upToDate === false ? 'color: var(--text-accent)' : ''"
                     x-text="c.name"
                   ></div>
                   <div class="container-image" x-text="c.image"></div>
@@ -1024,7 +1024,7 @@
                     <template x-if="c.paths.length > 3">
                       <div
                         class="path-item"
-                        style="color: var(--accent)"
+                        style="color: var(--text-accent)"
                         x-text="`+${c.paths.length - 3} weitere`"
                       ></div>
                     </template>
@@ -1501,7 +1501,7 @@
                             <template x-if="c.isStack">
                               <span
                                 class="material-icons-round"
-                                style="font-size: 20px; color: var(--accent)"
+                                style="font-size: 20px; color: var(--text-accent)"
                                 >layers</span
                               >
                             </template>
@@ -2179,7 +2179,7 @@
                 <td>
                   <div
                     class="container-name"
-                    :style="c.upToDate === false ? 'color: var(--accent)' : ''"
+                    :style="c.upToDate === false ? 'color: var(--text-accent)' : ''"
                     x-text="c.name"
                   ></div>
                   <div class="container-image" x-text="c.image"></div>
@@ -2238,7 +2238,7 @@
                     <template x-if="c.paths.length > 3">
                       <div
                         class="path-item"
-                        style="color: var(--accent)"
+                        style="color: var(--text-accent)"
                         x-text="`+${c.paths.length - 3} weitere`"
                       ></div>
                     </template>
@@ -2501,7 +2501,12 @@
 
   <!-- Bulk Action Bar -->
   <template x-teleport="body">
-    <div class="bulk-action-bar" :class="selected.length > 0 ? 'active' : ''">
+    <div
+      class="bulk-action-bar"
+      :class="selected.length > 0 ? 'active' : ''"
+      role="region"
+      aria-label="Bulk Actions"
+    >
       <div
         style="
           display: flex;
@@ -2511,7 +2516,7 @@
           font-weight: 600;
         "
       >
-        <span class="material-icons-round" style="color: var(--accent)">check_circle</span>
+        <span class="material-icons-round" style="color: var(--text-accent)">check_circle</span>
         <span x-text="`${selected.length} ausgewählt`"></span>
       </div>
       <div style="width: 1px; height: 24px; background: var(--border)"></div>

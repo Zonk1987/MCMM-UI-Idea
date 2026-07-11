@@ -370,8 +370,8 @@
 }
 
 .dc-tab-btn.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+  color: var(--text-accent);
+  border-bottom-color: var(--text-accent);
   background: var(--bg-surface);
 }
 
