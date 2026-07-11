@@ -469,7 +469,7 @@
                               decoding="async"
                               src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                               :src="preview.icon"
-                              alt="Image"
+                              alt="Icon"
                               class="cursor-pointer hover-glow"
                               @click.stop="openContextMenu($event, preview)"
                               style="width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0"
@@ -901,6 +901,8 @@
                     <template x-if="c.icon">
                       <div
                         class="container-icon-wrap cursor-pointer hover-glow"
+                        role="button"
+                        tabindex="0"
                         :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
                         @click.prevent="openContextMenu($event, c)"
                       >
@@ -1034,7 +1036,11 @@
                 >
                   <div style="display: flex; justify-content: flex-end">
                     <label class="action-toggle" style="margin: 0" title="Autostart">
-                      <input type="checkbox" :checked="c.id==='nginx01' || c.id==='portainer01'" />
+                      <input
+                        type="checkbox"
+                        aria-label="Autostart"
+                        :checked="c.id==='nginx01' || c.id==='portainer01'"
+                      />
                       <span class="toggle-track">
                         <span class="toggle-thumb"></span>
                       </span>
@@ -1233,7 +1239,7 @@
                   >
                   <input
                     type="text"
-                    id="new-folder-input"
+                    aria-label="Ordnername"
                     x-model="newFolderName"
                     @keydown.enter.prevent="saveNewFolder()"
                     @keydown.escape.prevent="cancelNewFolder()"
@@ -1674,7 +1680,7 @@
                               decoding="async"
                               src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                               :src="preview.icon"
-                              alt="Image"
+                              alt="Icon"
                               class="cursor-pointer hover-glow"
                               @click.stop="openContextMenu($event, preview)"
                               style="width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0"
@@ -2106,6 +2112,8 @@
                     <template x-if="c.icon">
                       <div
                         class="container-icon-wrap cursor-pointer hover-glow"
+                        role="button"
+                        tabindex="0"
                         :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
                         @click.prevent="openContextMenu($event, c)"
                       >
@@ -2239,7 +2247,11 @@
                 >
                   <div style="display: flex; justify-content: flex-end">
                     <label class="action-toggle" style="margin: 0" title="Autostart">
-                      <input type="checkbox" :checked="c.id==='nginx01' || c.id==='portainer01'" />
+                      <input
+                        type="checkbox"
+                        aria-label="Autostart"
+                        :checked="c.id==='nginx01' || c.id==='portainer01'"
+                      />
                       <span class="toggle-track">
                         <span class="toggle-thumb"></span>
                       </span>
@@ -2438,7 +2450,7 @@
                   >
                   <input
                     type="text"
-                    id="new-folder-input"
+                    aria-label="Ordnername"
                     x-model="newFolderName"
                     @keydown.enter.prevent="saveNewFolder()"
                     @keydown.escape.prevent="cancelNewFolder()"
@@ -2878,7 +2890,7 @@
                   decoding="async"
                   src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                   :src="iconInputValue"
-                  alt="Image"
+                  alt="Icon"
                   style="max-width: 100%; max-height: 100%; object-fit: contain"
                 />
               </div>
