@@ -8,8 +8,7 @@
       name="description"
       content="Erweitertes Unraid Docker-Menü mit GameServer Hub, Minecraft Mod-Browser und Player Management."
     >
-    <link rel="preload" href="fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-    <link rel="preload" href="fonts/inter-semibold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
     <link rel="icon" href="data:," >
     <link rel="stylesheet" href="css/main.css" >
     <script>
@@ -1683,6 +1682,7 @@
           <button type="button"
             class="btn btn-primary"
             style="background: var(--accent); border-color: var(--accent)"
+            aria-label="Aktion ausführen"
             @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');"
           >
             <span

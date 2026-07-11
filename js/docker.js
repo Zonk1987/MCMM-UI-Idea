@@ -39,6 +39,15 @@ export function dockerApp() {
     iconTargetFolder: null,
     iconInputValue: '',
 
+    // Compose Modal State
+    showComposeModal: false,
+    composeStackName: '',
+    composeContent: '',
+
+    // Circular Menu State
+    circularMenuMainOpen: false,
+    circularMenuStackOpen: false,
+
     contextMenu: {
       open: false,
       x: 0,
@@ -106,20 +115,23 @@ export function dockerApp() {
       const items = [];
       const folderMap = {};
       const unassigned = [];
-
+      
       // Pre-seed explicitly created folders
       const explicitFolders = (Alpine.store('core') && Alpine.store('core').customFolders) || [];
       explicitFolders.forEach(fName => {
         folderMap[fName] = [];
       });
-
+      
       this.filteredContainers.forEach(c => {
         const fName = c.labels && c.labels['folder.view3'];
         if (fName) {
           if (!folderMap[fName]) folderMap[fName] = [];
           folderMap[fName].push({ type: 'container', ...c, folder: fName });
         } else {
-          unassigned.push({ type: 'container', ...c });
+          // If it's part of a compose stack, don't show it here
+          if (!c.labels || !c.labels['com.docker.compose.project']) {
+            unassigned.push({ type: 'container', ...c });
+          }
         }
       });
 
@@ -139,15 +151,55 @@ export function dockerApp() {
           name: fName, 
           count: folderMap[fName].length, 
           containers: folderMap[fName],
-          icon: Alpine.store('core') && Alpine.store('core').folderIcons ? Alpine.store('core').folderIcons[fName] : null
+          isStack: false,
+          icon: Alpine.store('core')?.folderIcons?.[fName] || null
         });
         if (this.isFolderExpanded(fName)) {
             items.push({ type: 'folder_header', id: 'folder_header_' + fName, name: fName });
+            items.push(...folderMap[fName]);
         }
-        items.push(...folderMap[fName]);
       });
+
+      return [...items, ...unassigned];
+    },
+
+    get stackItems() {
+      // Access updateTick to create a dependency
+      this.updateTick;
       
-      items.push(...unassigned);
+      const items = [];
+      const stackMap = {};
+
+      const customStacks = (Alpine.store('core') && Alpine.store('core').customStacks) || [];
+      customStacks.forEach(s => {
+        stackMap[s.name] = [];
+      });
+
+      this.filteredContainers.forEach(c => {
+        const sName = c.labels && c.labels['com.docker.compose.project'];
+        if (sName) {
+          if (!stackMap[sName]) stackMap[sName] = [];
+          stackMap[sName].push({ type: 'container', ...c, folder: sName });
+        }
+      });
+
+      const sortedStackNames = Object.keys(stackMap);
+      sortedStackNames.forEach(sName => {
+        items.push({ 
+          type: 'folder', 
+          id: 'stack_' + sName, 
+          name: sName, 
+          count: stackMap[sName].length, 
+          containers: stackMap[sName],
+          isStack: true,
+          icon: null
+        });
+        if (this.isFolderExpanded(sName)) {
+            items.push({ type: 'folder_header', id: 'folder_header_' + sName, name: sName });
+            items.push(...stackMap[sName]);
+        }
+      });
+
       return items;
     },
 
@@ -586,14 +638,88 @@ export function dockerApp() {
     },
 
     toggleContainer(id) {
-      Alpine.store('core').toggleContainer(id);
+      const c = this.containers.find((x) => x.id === id);
+      if (c) {
+        c.status = c.status === 'running' ? 'stopped' : 'running';
+        const msg = c.status === 'running' ? 'gestartet' : 'gestoppt';
+        showToast(`Container ${c.name} ${msg}`, 'success');
+      }
     },
+
+    actionAll(action, target) {
+      let count = 0;
+      this.containers.forEach((c) => {
+        const isStack = c.labels && c.labels['com.docker.compose.project'];
+        if ((target === 'main' && !isStack) || (target === 'stack' && isStack)) {
+          if (action === 'start' && c.status !== 'running') {
+            c.status = 'running';
+            count++;
+          } else if (action === 'stop' && c.status === 'running') {
+            c.status = 'stopped';
+            count++;
+          }
+        }
+      });
+
+      if (action === 'update') {
+        showToast('Suche nach Updates...', 'info');
+      } else {
+        const statusWord = action === 'start' ? 'gestartet' : 'gestoppt';
+        showToast(`${count} Container ${statusWord}`, 'success');
+      }
+      
+      // Close menus
+      if (target === 'main') this.circularMenuMainOpen = false;
+      if (target === 'stack') this.circularMenuStackOpen = false;
+    },
+
 
     updateContainer(id) {
       Alpine.store('core').updateContainer(id);
       if (typeof showToast === 'function')
         showToast(t('docker.update_started') || 'Update gestartet...', 'info');
     },
+
+    openComposeModal() {
+      this.composeStackName = '';
+      this.composeContent = '';
+      this.showComposeModal = true;
+    },
+
+    closeComposeModal() {
+      this.showComposeModal = false;
+    },
+
+    deployStack() {
+      if (!this.composeStackName.trim() || !this.composeContent.trim()) {
+        if (typeof showToast === 'function') showToast('Bitte Namen und Inhalt angeben', 'error');
+        return;
+      }
+      
+      const store = Alpine.store('core');
+      if (store && store.addStack) {
+        store.addStack(this.composeStackName.trim(), this.composeContent);
+        if (typeof showToast === 'function') showToast(`Stack ${this.composeStackName} wird deployed...`, 'info');
+        
+        // Simuliere Deployment durch Hinzufügen eines Mock-Containers nach kurzer Zeit
+        setTimeout(() => {
+          store.containers.push({
+            id: 'stack_' + Date.now(),
+            name: this.composeStackName.trim() + '-web',
+            image: 'nginx:latest',
+            status: 'running',
+            upToDate: true,
+            labels: {
+              'com.docker.compose.project': this.composeStackName.trim()
+            }
+          });
+          // Update the list view
+          this.updateTick++;
+          if (typeof showToast === 'function') showToast(`Stack ${this.composeStackName} erfolgreich gestartet!`, 'success');
+        }, 1500);
+      }
+      this.closeComposeModal();
+    }
   };
 }
 

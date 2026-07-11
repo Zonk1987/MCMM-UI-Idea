@@ -218,17 +218,116 @@ export function initCoreStore(Alpine) {
         'folder.view3': 'Media',
       }
     },
+    {
+      id: 'stack_media_plex',
+      name: 'plex-media',
+      image: 'plexinc/pms-docker:latest',
+      iconFallback: '🎬',
+      status: 'running',
+      upToDate: true,
+      ports: [{ host: '32400', container: '32400', proto: 'tcp' }],
+      paths: [],
+      labels: { 'com.docker.compose.project': 'MediaStack' }
+    },
+    {
+      id: 'stack_media_sonarr',
+      name: 'sonarr',
+      image: 'lscr.io/linuxserver/sonarr:latest',
+      iconFallback: '📺',
+      status: 'running',
+      upToDate: true,
+      ports: [{ host: '8989', container: '8989', proto: 'tcp' }],
+      paths: [],
+      labels: { 'com.docker.compose.project': 'MediaStack' }
+    },
+    {
+      id: 'stack_nextcloud_app',
+      name: 'nextcloud-app',
+      image: 'nextcloud:latest',
+      iconFallback: '☁️',
+      status: 'running',
+      upToDate: false,
+      ports: [{ host: '8080', container: '80', proto: 'tcp' }],
+      paths: [],
+      labels: { 'com.docker.compose.project': 'NextcloudStack' }
+    },
+    {
+      id: 'stack_nextcloud_db',
+      name: 'nextcloud-db',
+      image: 'mariadb:10.5',
+      iconFallback: '🗄️',
+      status: 'running',
+      upToDate: true,
+      ports: [],
+      paths: [],
+      labels: { 'com.docker.compose.project': 'NextcloudStack' }
+    },
+    {
+      id: 'stack_proxy_npm',
+      name: 'nginx-proxy-manager',
+      image: 'jc21/nginx-proxy-manager:latest',
+      iconFallback: '🌐',
+      status: 'running',
+      upToDate: true,
+      ports: [{ host: '80', container: '80', proto: 'tcp' }, { host: '443', container: '443', proto: 'tcp' }, { host: '81', container: '81', proto: 'tcp' }],
+      paths: [],
+      labels: { 'com.docker.compose.project': 'ProxyStack' }
+    },
+    {
+      id: 'stack_monitoring_prom',
+      name: 'prometheus',
+      image: 'prom/prometheus:latest',
+      iconFallback: '📈',
+      status: 'running',
+      upToDate: true,
+      ports: [{ host: '9090', container: '9090', proto: 'tcp' }],
+      paths: [],
+      labels: { 'com.docker.compose.project': 'MonitoringStack' }
+    },
+    {
+      id: 'stack_monitoring_grafana',
+      name: 'grafana',
+      image: 'grafana/grafana:latest',
+      iconFallback: '📊',
+      status: 'stopped',
+      upToDate: true,
+      ports: [{ host: '3000', container: '3000', proto: 'tcp' }],
+      paths: [],
+      labels: { 'com.docker.compose.project': 'MonitoringStack' }
+    }
   ];
 
   Alpine.store('core', {
     containers: MOCK_CONTAINERS,
     customFolders: ['Media', 'Game Servers', 'System'],
+    customStacks: [
+      { name: 'MediaStack', composeContent: 'version: "3"\nservices:\n  plex:\n    image: plexinc/pms-docker\n  sonarr:\n    image: lscr.io/linuxserver/sonarr' },
+      { name: 'NextcloudStack', composeContent: 'version: "3"\nservices:\n  app:\n    image: nextcloud\n  db:\n    image: mariadb' },
+      { name: 'ProxyStack', composeContent: 'version: "3"\nservices:\n  app:\n    image: jc21/nginx-proxy-manager' },
+      { name: 'MonitoringStack', composeContent: 'version: "3"\nservices:\n  prometheus:\n    image: prom/prometheus\n  grafana:\n    image: grafana/grafana' }
+    ],
     folderIcons: {},
 
     addFolder(name) {
       if (name && !this.customFolders.includes(name)) {
         this.customFolders = [...this.customFolders, name];
       }
+    },
+
+    addStack(name, composeContent) {
+      if (name && !this.customStacks.find(s => s.name === name)) {
+        this.customStacks = [...this.customStacks, { name, composeContent }];
+      }
+    },
+
+    removeStack(name) {
+      this.customStacks = this.customStacks.filter(s => s.name !== name);
+      this.containers.forEach(c => {
+        if (c.labels && c.labels['com.docker.compose.project'] === name) {
+          delete c.labels['com.docker.compose.project'];
+        }
+      });
+      this.containers = [...this.containers];
     },
 
     removeFolder(name) {
