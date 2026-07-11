@@ -103,7 +103,9 @@ export function registerAlpineComponents(Alpine) {
       return cmd.replace(/\\/g, '<span style="color:var(--text-muted)">\\</span>');
     },
     copyCmd() {
-      const rawCmd = this.getPreviewCmd().replace(/<[^>]*>?/gm, '');
+      const rawCmd = this.getPreviewCmd()
+        .replace(/<span[^>]*>/g, '')
+        .replace(/<\/span>/g, '');
       navigator.clipboard.writeText(rawCmd);
       if (typeof showToast === 'function') showToast('Kopiert!', 'success');
     },

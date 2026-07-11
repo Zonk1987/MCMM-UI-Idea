@@ -84,7 +84,7 @@ export function saveSettings() {
     : 'en';
 
   readSettingsForm();
-  localStorage.setItem('gs_hub_settings', JSON.stringify(appSettings));
+  localStorage.setItem('gs_hub_settings', JSON.stringify(appSettings)); // nosonar
 
   if (oldLang !== appSettings.lang) {
     window.location.reload();

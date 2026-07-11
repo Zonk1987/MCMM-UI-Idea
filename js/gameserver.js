@@ -352,7 +352,7 @@ window.clearConsole = () => {
   }
 };
 
-import { toggleModal, formatBytes, formatNum, showToast, debounce, throttle } from './utils.js';
+import { toggleModal, formatBytes, showToast, debounce } from './utils.js';
 
 let consoleTerminal = null;
 let consoleFitAddon = null;
