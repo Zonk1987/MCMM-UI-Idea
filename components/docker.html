@@ -55,37 +55,6 @@
         <span class="material-icons-round">create_new_folder</span>
         Neuer Ordner
       </button>
-
-      <div
-        class="circular-menu-wrapper"
-        :class="{ 'active': circularMenuMainOpen }"
-        style="filter: url('#goo')"
-        @click.away="circularMenuMainOpen = false"
-      >
-        <button
-          type="button"
-          class="menu-trigger"
-          @click.stop="circularMenuMainOpen = !circularMenuMainOpen"
-          aria-label="Aktionen Menü"
-        >
-          <span class="material-icons-round hamburger-icon">more_vert</span>
-        </button>
-        <div class="pie pie1" @click.stop="actionAll('start', 'main')" title="Alle starten">
-          <div class="pie-color pie-color1">
-            <span class="material-icons-round menu-icon menu-icon-1">play_arrow</span>
-          </div>
-        </div>
-        <div class="pie pie2" @click.stop="actionAll('stop', 'main')" title="Alle stoppen">
-          <div class="pie-color pie-color2">
-            <span class="material-icons-round menu-icon menu-icon-2">stop</span>
-          </div>
-        </div>
-        <div class="pie pie3" @click.stop="actionAll('update', 'main')" title="Auf Updates prüfen">
-          <div class="pie-color pie-color3">
-            <span class="material-icons-round menu-icon menu-icon-3">update</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -1331,41 +1300,6 @@
           <span class="material-icons-round">layers</span>
           Compose Stack
         </button>
-
-        <div
-          class="circular-menu-wrapper"
-          :class="{ 'active': circularMenuStackOpen }"
-          style="filter: url('#goo')"
-          @click.away="circularMenuStackOpen = false"
-        >
-          <button
-            type="button"
-            class="menu-trigger"
-            @click.stop="circularMenuStackOpen = !circularMenuStackOpen"
-            aria-label="Aktionen Menü"
-          >
-            <span class="material-icons-round hamburger-icon">more_vert</span>
-          </button>
-          <div class="pie pie1" @click.stop="actionAll('start', 'stack')" title="Alle starten">
-            <div class="pie-color pie-color1">
-              <span class="material-icons-round menu-icon menu-icon-1">play_arrow</span>
-            </div>
-          </div>
-          <div class="pie pie2" @click.stop="actionAll('stop', 'stack')" title="Alle stoppen">
-            <div class="pie-color pie-color2">
-              <span class="material-icons-round menu-icon menu-icon-2">stop</span>
-            </div>
-          </div>
-          <div
-            class="pie pie3"
-            @click.stop="actionAll('update', 'stack')"
-            title="Auf Updates prüfen"
-          >
-            <div class="pie-color pie-color3">
-              <span class="material-icons-round menu-icon menu-icon-3">update</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
