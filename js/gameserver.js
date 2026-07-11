@@ -676,72 +676,92 @@ window.fmDragLeave = function (e) {
   }
 };
 
+/**
+ *
+ * @param isFolder
+ * @param fileName
+ */
+function createFmTreeButton(isFolder, fileName) {
+  const newBtn = document.createElement('button');
+  newBtn.className = 'settings-nav-btn';
+  newBtn.dataset.type = isFolder ? 'folder' : 'file';
+  newBtn.style.paddingLeft = '24px';
+  newBtn.onclick = function () {
+    window.fmSelectFile(this);
+  };
+
+  const iconSpan = document.createElement('span');
+  iconSpan.className = 'material-icons-round';
+  iconSpan.style.color = isFolder ? 'var(--yellow)' : 'var(--text-muted)';
+  iconSpan.textContent = isFolder ? 'folder' : 'description';
+
+  newBtn.appendChild(iconSpan);
+  newBtn.appendChild(document.createTextNode(' ' + fileName));
+  return newBtn;
+}
+
+/**
+ *
+ * @param file
+ * @param fileName
+ * @param newBtn
+ */
+function loadFileToFmEditor(file, fileName, newBtn) {
+  file.text().then((text) => {
+    const editor = document.getElementById('fmEditorTextarea');
+    const headerTitle = document.getElementById('fmCurrentFile');
+    if (editor) {
+      editor.value = text;
+      editor.disabled = false;
+    }
+    if (headerTitle) headerTitle.textContent = fileName;
+
+    document
+      .querySelectorAll('#fmFileTree .settings-nav-btn')
+      .forEach((b) => b.classList.remove('active'));
+    newBtn.classList.add('active');
+  });
+}
+
+/**
+ *
+ */
+function showFmUploadSuccessToast() {
+  if (typeof showToast !== 'function') return;
+  const t = document.querySelector('[x-data]')
+    ? document.querySelector('[x-data]').__x.$data.$store.i18n.t
+    : (k) => k;
+  showToast(t('general.fm_upload_success') || 'Erfolgreich hochgeladen', 'success');
+}
+
 window.fmDrop = function (e) {
-  // NOSONAR
   e.preventDefault();
   dragCounter = 0;
   const overlay = document.getElementById('fmDragOverlay');
   if (overlay) overlay.classList.remove('drag-active');
 
+  if (!e.dataTransfer?.items) return;
+
   const fileTree = document.getElementById('fmFileTree');
   let firstFileLoaded = false;
 
-  if (e.dataTransfer?.items) {
-    // Traverse items to mock folder and file uploads
-    for (const item of e.dataTransfer.items) {
-      if (item.kind === 'file') {
-        const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
-        if (entry) {
-          const isFolder = entry.isDirectory;
-          const fileName = entry.name;
+  for (const item of e.dataTransfer.items) {
+    if (item.kind !== 'file') continue;
 
-          // Append to file tree mock
-          const newBtn = document.createElement('button');
-          newBtn.className = 'settings-nav-btn';
-          newBtn.dataset.type = isFolder ? 'folder' : 'file';
-          newBtn.style.paddingLeft = '24px';
-          newBtn.onclick = function () {
-            window.fmSelectFile(this);
-          };
+    const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
+    if (!entry) continue;
 
-          const iconSpan = document.createElement('span');
-          iconSpan.className = 'material-icons-round';
-          iconSpan.style.color = isFolder ? 'var(--yellow)' : 'var(--text-muted)';
-          iconSpan.textContent = isFolder ? 'folder' : 'description';
+    const isFolder = entry.isDirectory;
+    const newBtn = createFmTreeButton(isFolder, entry.name);
+    if (fileTree) fileTree.appendChild(newBtn);
 
-          newBtn.appendChild(iconSpan);
-          newBtn.appendChild(document.createTextNode(' ' + fileName));
-          fileTree.appendChild(newBtn);
-
-          // If it's a file, read its content into the editor
-          if (!isFolder && !firstFileLoaded) {
-            const file = item.getAsFile();
-            file.text().then((text) => {
-              const editor = document.getElementById('fmEditorTextarea');
-              const headerTitle = document.getElementById('fmCurrentFile');
-              if (editor) {
-                editor.value = text;
-                editor.disabled = false;
-              }
-              if (headerTitle) headerTitle.textContent = fileName;
-
-              document
-                .querySelectorAll('#fmFileTree .settings-nav-btn')
-                .forEach((b) => b.classList.remove('active'));
-              newBtn.classList.add('active');
-            });
-            firstFileLoaded = true;
-          }
-        }
-      }
-    }
-    if (typeof showToast === 'function') {
-      const t = document.querySelector('[x-data]')
-        ? document.querySelector('[x-data]').__x.$data.$store.i18n.t
-        : (k) => k;
-      showToast(t('general.fm_upload_success') || 'Erfolgreich hochgeladen', 'success');
+    if (!isFolder && !firstFileLoaded) {
+      loadFileToFmEditor(item.getAsFile(), entry.name, newBtn);
+      firstFileLoaded = true;
     }
   }
+
+  showFmUploadSuccessToast();
 };
 
 window.fmDownload = function () {
