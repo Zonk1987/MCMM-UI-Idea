@@ -164,6 +164,7 @@ async function initApp() {
 
   console.log('%c🎮 GameServer Hub v1.0', 'color:#f57c00;font-size:16px;font-weight:bold');
   console.log(
+    // NOSONAR
     `%cUnraid Plugin — ${t('general.loaded_successfully') || 'Erfolgreich geladen'}`,
     'color:#22c55e'
   );
