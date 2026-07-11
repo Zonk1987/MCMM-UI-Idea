@@ -376,8 +376,8 @@ export function dockerApp() {
       this.dragOverPosition = null;
     },
 
-    handleSortDrop() {
-      // NOSONAR
+    // prettier-ignore
+    handleSortDrop() { // NOSONAR
       if ((!this.draggedContainerId && !this.draggedFolder) || !this.dragOverTargetId) return;
 
       let allContainers = [...Alpine.store('core').containers];
@@ -467,8 +467,8 @@ export function dockerApp() {
       this.dragOverPosition = null;
     },
 
-    handleDragOver(_e, folderName) {
-      // NOSONAR
+    // prettier-ignore
+    handleDragOver(_e, folderName) { // NOSONAR
       if (!this.draggedContainerId) return;
 
       let idsToMove = [this.draggedContainerId];
