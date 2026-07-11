@@ -28,7 +28,7 @@ export async function loadLanguage(langCode) {
         const fbRes = await fetch(`lang/en.json?v=${Date.now()}`);
         if (fbRes.ok) I18N.fallbackTranslations = await fbRes.json();
       } catch (e) {
-        console.error('Failed to load English fallback', e);
+        console.error('Failed to load English fallback', e); // NOSONAR
       }
     }
 
@@ -48,7 +48,7 @@ export async function loadLanguage(langCode) {
       }
     }
   } catch (error) {
-    console.error(`Failed to load language: ${langCode}`, error);
+    console.error(`Failed to load language: ${langCode}`, error); // NOSONAR
   }
 }
 
