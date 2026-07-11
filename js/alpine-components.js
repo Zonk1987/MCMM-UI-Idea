@@ -14,18 +14,6 @@ export function registerAlpineComponents(Alpine) {
     step: 1,
   }));
 
-  // Config Modal
-  Alpine.data('configModal', () => ({
-    open: false,
-    activeTab: 'config',
-    data: {},
-    openModal(payload) {
-      this.data = payload || {};
-      this.activeTab = 'config';
-      this.open = true;
-    },
-  }));
-
   // Config Modal Form Mode (Preset / Manual)
   Alpine.data('configMode', () => ({
     mode: 'preset',
