@@ -375,6 +375,7 @@
 
                         <template x-if="editingFolderName === c.name">
                           <div
+                            @click.away="cancelEditFolder()"
                             style="
                               display: flex;
                               align-items: center;
@@ -419,7 +420,6 @@
                               x-model="editFolderNameInput"
                               @keydown.enter.prevent="saveEditFolder()"
                               @keydown.escape.prevent="cancelEditFolder()"
-                              @click.away="cancelEditFolder()"
                               class="form-input"
                               style="
                                 margin-left: 12px;
@@ -1288,6 +1288,7 @@
                 <td colspan="7" class="folder-cell">
                   <div class="folder-title" style="display: flex; align-items: center; width: 100%">
                     <div
+                      @click.away="cancelNewFolder()"
                       style="
                         display: flex;
                         align-items: center;
@@ -1310,11 +1311,11 @@
                       >
                       <input
                         type="text"
+                        id="new-folder-input"
                         aria-label="Ordnername"
                         x-model="newFolderName"
                         @keydown.enter.prevent="saveNewFolder()"
                         @keydown.escape.prevent="cancelNewFolder()"
-                        @click.away="cancelNewFolder()"
                         class="form-input"
                         placeholder="Neuer Ordner..."
                         style="
