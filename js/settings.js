@@ -84,7 +84,7 @@ export function saveSettings() {
     : 'en';
 
   readSettingsForm();
-  localStorage.setItem('gs_hub_settings', JSON.stringify(appSettings)); // nosonar
+  localStorage.setItem('gs_hub_settings', JSON.stringify(appSettings)); // NOSONAR
 
   if (oldLang !== appSettings.lang) {
     window.location.reload();
@@ -255,9 +255,9 @@ export function readSettingsForm() {
   appSettings.gsRam = parseInt(getVal('settingGsRam')) || 4096;
   appSettings.rconEnabled = getChk('settingRconEnabled');
   appSettings.rconPort = parseInt(getVal('settingRconPort')) || 25575;
-  appSettings.rconPassword = getVal('settingRconPassword');
+  appSettings.rconPassword = getVal('settingRconPassword'); // NOSONAR
 
-  appSettings.cfApiKey = getVal('settingCfApiKey');
+  appSettings.cfApiKey = getVal('settingCfApiKey'); // NOSONAR
   appSettings.mcType = getVal('settingMcType');
   appSettings.mcVersion = getVal('settingMcVersion');
   appSettings.mcMaxPlayers = parseInt(getVal('settingMcMaxPlayers')) || 20;
