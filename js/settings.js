@@ -84,7 +84,11 @@ export function saveSettings() {
     : 'en';
 
   readSettingsForm();
-  window['local' + 'Storage']['set' + 'Item']('gs_hub_settings', JSON.stringify(appSettings));
+  const toSave = {};
+  for (const k in appSettings) {
+    toSave[k] = appSettings[k];
+  }
+  window['local' + 'Storage']['set' + 'Item']('gs_hub_settings', JSON.stringify(toSave));
 
   if (oldLang !== appSettings.lang) {
     window.location.reload();
