@@ -951,12 +951,11 @@
     <!-- ── Backup Modal (Mockup) ── -->
 
     <!-- ── Welcome Modal (Onboarding) ── -->
-    <div
+    <dialog
       class="modal-backdrop"
       id="welcomeModal"
       x-data="welcomeModal()"
       hidden
-      role="dialog"
       aria-modal="true"
       aria-labelledby="welcomeModalTitle"
     >
@@ -1108,17 +1107,16 @@
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
 
     <!-- Docker Config Modal (Alpine) -->
-    <div
+    <dialog
       class="modal-backdrop"
       id="configModalAlpine"
       x-data
       x-show="$store.modals.config.open"
       style="display: none"
       x-transition
-      role="dialog"
       aria-modal="true"
       aria-labelledby="configModalTitle"
     >
@@ -1200,10 +1198,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
 
     <!-- Game Server Install Modal (Alpine) -->
-    <div
+    <dialog
       class="modal-backdrop"
       id="installModalAlpine"
       x-data="installModal()"
@@ -1211,7 +1209,6 @@
       x-show="open"
       style="display: none"
       x-transition
-      role="dialog"
       aria-modal="true"
       aria-labelledby="installModalTitle"
     >
@@ -1927,7 +1924,7 @@
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
 
     <!-- ─── SCRIPTS ──────────────────────────────────────────────────────────── -->
     <script src="js/vendor/alpine.min.js" defer></script>
@@ -1941,7 +1938,7 @@
     <script type="module" src="js/settings.js"></script>
     <script type="module" src="js/main.js"></script>
     <!-- Folder Modal (FolderView3 Style - Redesigned) -->
-    <div
+    <dialog
       class="modal-backdrop"
       id="folderModalAlpine"
       x-data="folderModal()"
@@ -1949,7 +1946,6 @@
       x-show="open"
       style="display: none"
       x-transition
-      role="dialog"
       aria-modal="true"
       aria-labelledby="folderModalTitle"
     >
@@ -2082,7 +2078,7 @@
             >
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Name
                     <span class="fv3-tooltip"
                       >The name of the folder. Supports Unicode (CJK, Cyrillic, etc). Not allowed:
@@ -2103,7 +2099,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Icon
                     <span class="fv3-tooltip"
                       >A link to an image (<a href="#">Supported formats</a>)<br />
@@ -2147,7 +2143,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Folder WebUI
                     <span class="fv3-tooltip">Default folder WebUI URL.</span>
                   </div>
@@ -2165,7 +2161,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Orange folder text on update
                     <span class="fv3-tooltip"
                       >On the Docker page, highlights the folder name in orange when any container
@@ -2186,7 +2182,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Regex
                     <span class="fv3-tooltip"
                       >Automatically include containers whose names match a text pattern.<br />
@@ -2218,7 +2214,7 @@
             >
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Preview
                     <span class="fv3-tooltip"
                       >Choose how containers/VMs are displayed in the folder preview row.</span
@@ -2240,7 +2236,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Orange container text on update
                     <span class="fv3-tooltip"
                       >On the Docker page, highlights container names in the folder preview in
@@ -2261,7 +2257,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Text width
                     <span class="fv3-tooltip"
                       >Limits the maximum width of container names in the preview, truncating long
@@ -2282,7 +2278,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Show preview only on hover
                     <span class="fv3-tooltip"
                       >Hides the preview until you hover over the folder row.</span
@@ -2302,7 +2298,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Preview icon greyscale
                     <span class="fv3-tooltip"
                       >Displays container icons in greyscale instead of color.</span
@@ -2322,7 +2318,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Add preview open WebUI
                     <span class="fv3-tooltip"
                       >Adds a globe icon next to containers that have a WebUI configured.</span
@@ -2342,7 +2338,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Add preview open logs
                     <span class="fv3-tooltip"
                       >Adds a log icon next to each container for quick access to logs.</span
@@ -2362,7 +2358,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Add preview open console
                     <span class="fv3-tooltip"
                       >Adds a console icon next to each container for quick terminal access.</span
@@ -2382,7 +2378,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Preview vertical bars
                     <span class="fv3-tooltip"
                       >Shows vertical divider lines between containers in the preview row.</span
@@ -2402,7 +2398,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Show preview border
                     <span class="fv3-tooltip">Draws a border around the preview area.</span>
                   </div>
@@ -2420,7 +2416,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Preview overflow
                     <span class="fv3-tooltip"
                       >Controls what happens when there are too many containers to fit in the
@@ -2448,7 +2444,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Lock colors
                     <span class="fv3-tooltip"
                       >When enabled, this folder's border, vertical bar, and separator colors cannot
@@ -2471,7 +2467,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Preview Context
                     <span class="fv3-tooltip"
                       >Controls the detail popup when clicking a container.
@@ -2499,7 +2495,7 @@
             >
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Hide update column
                     <span class="fv3-tooltip"
                       >Hides the Version/update column for this folder's row, freeing up horizontal
@@ -2520,7 +2516,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Override default actions
                     <span class="fv3-tooltip"
                       >Replaces the folder's default right-click menu with only the custom actions
@@ -2541,7 +2537,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Hide default action button
                     <span class="fv3-tooltip"
                       >Removes the default action buttons (start, stop, restart) from the folder's
@@ -2562,7 +2558,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Expanded on Docker/VM tab
                     <span class="fv3-tooltip"
                       >The folder will be expanded (showing child containers) by default when the
@@ -2583,7 +2579,7 @@
 
               <div class="setting-row">
                 <div class="setting-info">
-                  <div class="setting-label has-tooltip" tabindex="0">
+                  <div class="setting-label has-tooltip">
                     Expanded on Dashboard tab
                     <span class="fv3-tooltip"
                       >The folder will be expanded by default when the Dashboard page loads.</span
@@ -2751,6 +2747,6 @@
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   </body>
 </html>
