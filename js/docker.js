@@ -111,7 +111,8 @@ export function dockerApp() {
 
     get viewItems() {
       // Access updateTick to create a dependency
-      const _tick = this.updateTick;
+
+      this.updateTick;
 
       if (!this.useFolders) {
         return this.filteredContainers.map((c) => ({ type: 'container', ...c }));
@@ -170,7 +171,8 @@ export function dockerApp() {
 
     get stackItems() {
       // Access updateTick to create a dependency
-      const _tick = this.updateTick;
+
+      this.updateTick;
 
       const items = [];
       const stackMap = {};
@@ -337,7 +339,7 @@ export function dockerApp() {
       e.dataTransfer.setData('text/plain', id);
     },
 
-    endDrag(_e) {
+    endDrag() {
       this.draggedContainerId = null;
       this.draggedFolder = null;
       this.dragOverFolder = null;

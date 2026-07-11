@@ -135,11 +135,11 @@ document.addEventListener('alpine:init', () => {
         args.push(`-e USE_LARGE_PAGES=${d.largePages}`, `-e ENABLE_ROLLING_LOGS=${d.rollingLogs}`);
 
         const providerEnv = d.source === 'curseforge' ? 'CF_SLUG' : 'MODRINTH_MODPACK';
-        args.push(`-e ${providerEnv}="${d.id}"`);
-        args.push('itzg/minecraft-server:latest');
+        args.push(`-e ${providerEnv}="${d.id}"`, 'itzg/minecraft-server:latest');
 
         let cmd = args.join(' \\\n  ');
-        return cmd.replaceAll('\\\\', '<span style="color:var(--text-muted)">\\\\</span>');
+
+        return cmd.replaceAll('\\', '<span style="color:var(--text-muted)">\\</span>');
       },
       copyCmd() {
         const rawCmd = this.getPreviewCmd()
