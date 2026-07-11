@@ -38,7 +38,7 @@
         >
       </div>
 
-      <nav class="tab-nav" id="tabNav" role="tablist">
+      <nav class="tab-nav" id="tabNav" role="tablist" aria-label="Main Navigation">
         <button
           type="button"
           class="tab-btn active"
@@ -200,7 +200,7 @@
         </button>
       </div>
 
-      <nav class="settings-nav" id="settingsNav">
+      <nav class="settings-nav" id="settingsNav" aria-label="Settings Navigation">
         <button type="button" class="settings-nav-btn active" data-stab="general">
           <span class="material-icons-round">tune</span>
           <span x-text="$store.i18n.t('settings.general')">Allgemein</span>
@@ -258,7 +258,7 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingDebug" />
+                  <input aria-label="Einstellung umschalten" type="checkbox" id="settingDebug" />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -270,7 +270,7 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="developerMode" />
+                  <input aria-label="Einstellung umschalten" type="checkbox" id="developerMode" />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -511,6 +511,7 @@
                   <input
                     type="number"
                     class="setting-input"
+                    aria-label="Eingabe"
                     id="settingRefreshInterval"
                     value="5"
                     min="1"
@@ -530,7 +531,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingAnimations" checked />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="settingAnimations"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -549,6 +555,7 @@
                 <input
                   type="text"
                   class="setting-input"
+                  aria-label="Eingabe"
                   id="settingDockerSocket"
                   value="/var/run/docker.sock"
                   style="width: 210px; font-family: monospace; font-size: 12px"
@@ -562,6 +569,7 @@
                 <input
                   type="text"
                   class="setting-input"
+                  aria-label="Eingabe"
                   id="settingUnraidApi"
                   value="http://localhost/api"
                   style="width: 210px; font-family: monospace; font-size: 12px"
@@ -575,7 +583,7 @@
                   <div class="setting-label">Standard Restart-Policy</div>
                   <div class="setting-desc">Für neue Container</div>
                 </div>
-                <select class="setting-select" id="settingRestartPolicy">
+                <select class="setting-select" aria-label="Auswahl" id="settingRestartPolicy">
                   <option value="unless-stopped" selected>unless-stopped</option>
                   <option value="always">always</option>
                   <option value="on-failure">on-failure</option>
@@ -588,7 +596,12 @@
                   <div class="setting-desc">Auf neue Image-Versionen prüfen</div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingUpdateCheck" checked />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="settingUpdateCheck"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -598,7 +611,12 @@
                   <div class="setting-desc">Sicherheitsabfrage vor dem Stoppen</div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingStopConfirm" checked />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="settingStopConfirm"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -608,7 +626,12 @@
                   <div class="setting-desc">Gruppierung der Container in Ordner aktivieren</div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingFolderViewEnabled" checked />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="settingFolderViewEnabled"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -627,6 +650,7 @@
                 <input
                   type="text"
                   class="setting-input"
+                  aria-label="Eingabe"
                   id="settingGsDataPath"
                   value="/mnt/user/gameservers"
                   autocomplete="off"
@@ -642,6 +666,7 @@
                   <input
                     type="number"
                     class="setting-input"
+                    aria-label="Eingabe"
                     id="settingGsRam"
                     value="4096"
                     min="512"
@@ -660,7 +685,12 @@
                   <div class="setting-desc">Fernsteuerung über RCON</div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingRconEnabled" checked />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="settingRconEnabled"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -672,6 +702,7 @@
                 <input
                   type="number"
                   class="setting-input"
+                  aria-label="Eingabe"
                   id="settingRconPort"
                   value="25575"
                   style="width: 90px"
@@ -685,6 +716,7 @@
                 <input
                   type="password"
                   class="setting-input"
+                  aria-label="Eingabe"
                   id="settingRconPassword"
                   placeholder="••••••••"
                   autocomplete="new-password"
@@ -706,6 +738,7 @@
                 <input
                   type="password"
                   class="setting-input"
+                  aria-label="Eingabe"
                   id="settingCfApiKey"
                   placeholder="Schlüssel eingeben..."
                   autocomplete="new-password"
@@ -730,7 +763,7 @@
                   <div class="setting-label">Server-Typ</div>
                   <div class="setting-desc">Vorauswahl im Server-Wizard</div>
                 </div>
-                <select class="setting-select" id="settingMcType">
+                <select class="setting-select" aria-label="Auswahl" id="settingMcType">
                   <option value="PAPER" selected>Paper</option>
                   <option value="FABRIC">Fabric</option>
                   <option value="FORGE">Forge</option>
@@ -744,7 +777,7 @@
                   <div class="setting-label">MC-Version</div>
                   <div class="setting-desc">Vorauswahl im Server-Wizard</div>
                 </div>
-                <select class="setting-select" id="settingMcVersion">
+                <select class="setting-select" aria-label="Auswahl" id="settingMcVersion">
                   <option value="LATEST" selected>Latest</option>
                   <option value="1.21.4">1.21.4</option>
                   <option value="1.21.1">1.21.1</option>
@@ -759,6 +792,7 @@
                 <input
                   type="number"
                   class="setting-input"
+                  aria-label="Eingabe"
                   id="settingMcMaxPlayers"
                   value="20"
                   min="1"
@@ -772,7 +806,12 @@
                   <div class="setting-desc">Fügt EULA=TRUE automatisch hinzu</div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingMcEula" checked />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="settingMcEula"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -789,7 +828,12 @@
                   <div class="setting-desc">Toast-Benachrichtigungen global an/aus</div>
                 </div>
                 <label class="setting-toggle">
-                  <input type="checkbox" id="settingToastsEnabled" checked />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="settingToastsEnabled"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -802,6 +846,7 @@
                   <input
                     type="number"
                     class="setting-input"
+                    aria-label="Eingabe"
                     id="settingToastDuration"
                     value="3500"
                     min="1000"
@@ -820,8 +865,13 @@
                 <div class="setting-info">
                   <div class="setting-label">Container gestartet / gestoppt</div>
                 </div>
-                <label class="setting-toggle"
-                  ><input type="checkbox" id="notifContainer" checked />
+                <label class="setting-toggle">
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="notifContainer"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -829,8 +879,13 @@
                 <div class="setting-info">
                   <div class="setting-label">Spieler tritt bei / verlässt</div>
                 </div>
-                <label class="setting-toggle"
-                  ><input type="checkbox" id="notifPlayer" checked />
+                <label class="setting-toggle">
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="notifPlayer"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -838,8 +893,13 @@
                 <div class="setting-info">
                   <div class="setting-label">Update verfügbar</div>
                 </div>
-                <label class="setting-toggle"
-                  ><input type="checkbox" id="notifUpdate" checked />
+                <label class="setting-toggle">
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="notifUpdate"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -847,8 +907,13 @@
                 <div class="setting-info">
                   <div class="setting-label">Server-Fehler / Crash</div>
                 </div>
-                <label class="setting-toggle"
-                  ><input type="checkbox" id="notifCrash" checked />
+                <label class="setting-toggle">
+                  <input
+                    aria-label="Einstellung umschalten"
+                    type="checkbox"
+                    id="notifCrash"
+                    checked
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -1266,6 +1331,7 @@
                     id="instSafeName"
                     name="instSafeName"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 240px"
                     x-model="data.safeName"
                   />
@@ -1281,6 +1347,7 @@
                     id="instServerName"
                     name="instServerName"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 240px"
                     x-model="data.serverName"
                   />
@@ -1296,6 +1363,7 @@
                     id="instPort"
                     name="instPort"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 240px"
                     x-model="data.port"
                   />
@@ -1311,6 +1379,7 @@
                     id="instIconUrl"
                     name="instIconUrl"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 240px"
                     placeholder="URL zum Icon..."
                   />
@@ -1327,6 +1396,7 @@
                       id="instRam"
                       name="instRam"
                       class="setting-input"
+                      aria-label="Eingabe"
                       style="width: 100%; padding-right: 32px"
                       x-model="data.ram"
                     />
@@ -1354,6 +1424,7 @@
                     id="instDataPath"
                     name="instDataPath"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 240px; font-family: 'JetBrains Mono', monospace; font-size: 11px"
                     x-model="data.path"
                   />
@@ -1411,6 +1482,7 @@
                     id="instMaxPlayers"
                     name="instMaxPlayers"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 160px"
                     x-model="data.maxPlayers"
                   />
@@ -1439,7 +1511,13 @@
                     <div class="setting-desc">Spieler gegen Spieler</div>
                   </div>
                   <label class="action-toggle">
-                    <input id="data_pvp_4" name="data_pvp_4" type="checkbox" x-model="data.pvp" />
+                    <input
+                      aria-label="Einstellung umschalten"
+                      id="data_pvp_4"
+                      name="data_pvp_4"
+                      type="checkbox"
+                      x-model="data.pvp"
+                    />
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
@@ -1450,6 +1528,7 @@
                   </div>
                   <label class="action-toggle">
                     <input
+                      aria-label="Einstellung umschalten"
                       id="data_onlineMode_5"
                       name="data_onlineMode_5"
                       type="checkbox"
@@ -1465,6 +1544,7 @@
                   </div>
                   <label class="action-toggle">
                     <input
+                      aria-label="Einstellung umschalten"
                       id="data_enableWhitelist_6"
                       name="data_enableWhitelist_6"
                       type="checkbox"
@@ -1487,6 +1567,7 @@
                     id="instWhitelist"
                     name="instWhitelist"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 240px"
                     placeholder="z.B. Spieler1,Spieler2"
                     x-model="data.whitelist"
@@ -1507,6 +1588,7 @@
                       id="instInitRam"
                       name="instInitRam"
                       class="setting-input"
+                      aria-label="Eingabe"
                       style="width: 100%; padding-right: 32px"
                       x-model="data.initRam"
                     />
@@ -1530,6 +1612,7 @@
                   </div>
                   <label class="action-toggle">
                     <input
+                      aria-label="Einstellung umschalten"
                       id="data_aikar_7"
                       name="data_aikar_7"
                       type="checkbox"
@@ -1546,6 +1629,7 @@
                   </div>
                   <label class="action-toggle">
                     <input
+                      aria-label="Einstellung umschalten"
                       id="data_meowice_8"
                       name="data_meowice_8"
                       type="checkbox"
@@ -1562,6 +1646,7 @@
                   </div>
                   <label class="action-toggle">
                     <input
+                      aria-label="Einstellung umschalten"
                       id="data_cmdBlocks_9"
                       name="data_cmdBlocks_9"
                       type="checkbox"
@@ -1577,6 +1662,7 @@
                   </div>
                   <label class="action-toggle">
                     <input
+                      aria-label="Einstellung umschalten"
                       id="data_flight_10"
                       name="data_flight_10"
                       type="checkbox"
@@ -1592,6 +1678,7 @@
                   </div>
                   <label class="action-toggle">
                     <input
+                      aria-label="Einstellung umschalten"
                       id="data_rollingLogs_11"
                       name="data_rollingLogs_11"
                       type="checkbox"
@@ -1645,6 +1732,7 @@
                         id="cronJobCustom"
                         name="cronJobCustom"
                         class="setting-input"
+                        aria-label="Eingabe"
                         placeholder="Cron-Syntax (z.B. 0 4 * * *)"
                         x-show="mode === 'custom'"
                         style="width: 100%; margin-top: 8px; display: none"
@@ -1691,7 +1779,9 @@
                       class="icon-btn"
                       style="color: var(--red); opacity: 0.7"
                       onmouseover="this.style.opacity = 1"
+                      onfocus="this.style.opacity = 1"
                       onmouseout="this.style.opacity = 0.7"
+                      onblur="this.style.opacity = 0.7"
                     >
                       <span class="material-icons-round" style="font-size: 20px">delete</span>
                     </button>
@@ -1726,7 +1816,9 @@
                       class="icon-btn"
                       style="color: var(--red); opacity: 0.7"
                       onmouseover="this.style.opacity = 1"
+                      onfocus="this.style.opacity = 1"
                       onmouseout="this.style.opacity = 0.7"
+                      onblur="this.style.opacity = 0.7"
                     >
                       <span class="material-icons-round" style="font-size: 20px">delete</span>
                     </button>
@@ -2003,6 +2095,7 @@
                   name="folderName_12"
                   type="text"
                   class="setting-input"
+                  aria-label="Eingabe"
                   style="width: 320px"
                   x-model="folderName"
                 />
@@ -2045,6 +2138,7 @@
                     name="field_input_13"
                     type="text"
                     class="setting-input"
+                    aria-label="Eingabe"
                     style="width: 272px"
                     placeholder="e.g. fas fa-server"
                   />
@@ -2059,7 +2153,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_14" name="field_input_14" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_14"
+                    name="field_input_14"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2075,7 +2174,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_15" name="field_input_15" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_15"
+                    name="field_input_15"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2100,6 +2204,7 @@
                   name="field_input_16"
                   type="text"
                   class="setting-input"
+                  aria-label="Eingabe"
                   style="width: 320px"
                   placeholder="e.g. plex.* or ^my-stack-"
                 />
@@ -2144,7 +2249,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_18" name="field_input_18" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_18"
+                    name="field_input_18"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2165,6 +2275,7 @@
                   name="field_input_19"
                   type="text"
                   class="setting-input"
+                  aria-label="Eingabe"
                   style="width: 240px"
                 />
               </div>
@@ -2179,7 +2290,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_20" name="field_input_20" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_20"
+                    name="field_input_20"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2194,7 +2310,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_21" name="field_input_21" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_21"
+                    name="field_input_21"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2209,7 +2330,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_22" name="field_input_22" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_22"
+                    name="field_input_22"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2224,7 +2350,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_23" name="field_input_23" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_23"
+                    name="field_input_23"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2239,7 +2370,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_24" name="field_input_24" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_24"
+                    name="field_input_24"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2254,7 +2390,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_25" name="field_input_25" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_25"
+                    name="field_input_25"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2267,7 +2408,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_26" name="field_input_26" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_26"
+                    name="field_input_26"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2313,7 +2459,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_28" name="field_input_28" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_28"
+                    name="field_input_28"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2357,7 +2508,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_30" name="field_input_30" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_30"
+                    name="field_input_30"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2373,7 +2529,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_31" name="field_input_31" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_31"
+                    name="field_input_31"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2389,7 +2550,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_32" name="field_input_32" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_32"
+                    name="field_input_32"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2405,7 +2571,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_33" name="field_input_33" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_33"
+                    name="field_input_33"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2420,7 +2591,12 @@
                   </div>
                 </div>
                 <label class="setting-toggle">
-                  <input id="field_input_34" name="field_input_34" type="checkbox" />
+                  <input
+                    aria-label="Einstellung umschalten"
+                    id="field_input_34"
+                    name="field_input_34"
+                    type="checkbox"
+                  />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </label>
               </div>
@@ -2525,6 +2701,7 @@
                           <div style="display: flex; justify-content: center">
                             <label class="setting-toggle">
                               <input
+                                aria-label="Einstellung umschalten"
                                 :id="'includedContainers_' + c.id"
                                 :name="'includedContainers_' + c.id"
                                 type="checkbox"
@@ -2538,6 +2715,7 @@
                           <div style="display: flex; justify-content: center">
                             <label class="setting-toggle">
                               <input
+                                aria-label="Einstellung umschalten"
                                 :id="'field_input_36_' + c.id"
                                 :name="'field_input_36_' + c.id"
                                 type="checkbox"
