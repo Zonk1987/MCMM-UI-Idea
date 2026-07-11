@@ -105,7 +105,7 @@
   --text-primary: #000;
   --text-secondary: #1e293b;
   --text-muted: #334155;
-  --text-accent: color-mix(in srgb, var(--accent) 65%, black);
+  --text-accent: color-mix(in srgb, var(--accent) 55%, black);
 
   /* Borders */
   --border: rgb(0 0 0 / 8%);
