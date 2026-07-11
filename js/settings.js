@@ -5,7 +5,7 @@
    and compact mode).
 ═══════════════════════════════════════════════════════════ */
 
-/** @type {Object} Default application settings */
+/** @type {object} Default application settings */
 export const DEFAULT_SETTINGS = {
   theme: 'dark',
   accentColor: '#f57c00',
@@ -39,7 +39,7 @@ export const DEFAULT_SETTINGS = {
   folderViewEnabled: true,
 };
 
-/** @type {Object} Current application settings */
+/** @type {object} Current application settings */
 export let appSettings = { ...DEFAULT_SETTINGS };
 
 /**
@@ -154,6 +154,9 @@ export function applyVisualSettings() {
 }
 
 // Fill UI form inputs with appSettings values
+/**
+ *
+ */
 export function fillSettingsForm() {
   const setVal = (id, val) => {
     const el = document.getElementById(id);
@@ -228,6 +231,9 @@ export function fillSettingsForm() {
 }
 
 // Read values from UI form inputs into appSettings
+/**
+ *
+ */
 export function readSettingsForm() {
   const getVal = (id) => document.getElementById(id)?.value ?? '';
   const getChk = (id) => document.getElementById(id)?.checked ?? false;
@@ -274,6 +280,10 @@ export function readSettingsForm() {
 }
 
 // Toggle settings panel state
+/**
+ *
+ * @param show
+ */
 export function toggleSettingsPanel(show) {
   const panel = document.getElementById('settingsPanel');
   const backdrop = document.getElementById('settingsBackdrop');
@@ -297,6 +307,9 @@ export function toggleSettingsPanel(show) {
 }
 
 // Bind settings UI event handlers
+/**
+ *
+ */
 export function bindSettingsEvents() {
   // Open Settings Panel (via Main UI settingsBtn)
   document.getElementById('settingsBtn')?.addEventListener('click', () => {

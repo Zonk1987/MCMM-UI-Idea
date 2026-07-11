@@ -1,0 +1,9 @@
+rules:
+  color-contrast: warn
+
+exclude:
+  - node_modules/**
+  - reports/**
+  - css/vendor/**
+  - js/vendor/**
+  - dist/**

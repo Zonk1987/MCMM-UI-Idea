@@ -113,6 +113,9 @@ export const GAME_TEMPLATES = [
   },
 ];
 
+/**
+ *
+ */
 export function gameserverApp() {
   return {
     get instances() {
@@ -250,12 +253,21 @@ ${envStr} \\
 }
 
 // Dummy backward compatibility
+/**
+ *
+ */
 export function initGameServer() {}
+/**
+ *
+ */
 export function renderGameServers() {}
 
 /**
  * Generates an inline SVG sparkline string based on a current value.
  * Simulates a historical graph for premium feel.
+ * @param id
+ * @param val
+ * @param color
  */
 export function generateSparkline(id, val, color) {
   // Clamp value
@@ -394,6 +406,9 @@ class MockLogStreamer {
   }
 }
 
+/**
+ *
+ */
 function initTerminal() {
   if (consoleTerminal) return;
 
@@ -422,7 +437,7 @@ function initTerminal() {
 
 /**
  * Open the console modal for a specific game server
- * @param {Object} srv - The server object
+ * @param {object} srv - The server object
  */
 export async function openConsole(srv) {
   try {

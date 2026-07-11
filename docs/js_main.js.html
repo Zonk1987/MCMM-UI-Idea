@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>js/main.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#DEFAULT_SETTINGS">DEFAULT_SETTINGS</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addFolder">addFolder</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addStack">addStack</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#appSettings">appSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#appendConsoleLine">appendConsoleLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#applyVisualSettings">applyVisualSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#bindSettingsEvents">bindSettingsEvents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#composeApp">composeApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debounce">debounce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debugApp">debugApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#doAction">doAction</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#dockerApp">dockerApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#escapeHtml">escapeHtml</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fetchComponent">fetchComponent</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fillSettingsForm">fillSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#finishWizard">finishWizard</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#foldersApp">foldersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatAnsiLine">formatAnsiLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatBytes">formatBytes</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatDate">formatDate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatNum">formatNum</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#gameserverApp">gameserverApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#generateSparkline">generateSparkline</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getGameservers">getGameservers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getLocale">getLocale</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initApp">initApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initCoreStore">initCoreStore</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initDocker">initDocker</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initGameServer">initGameServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initI18n">initI18n</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initSettings">initSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initTerminal">initTerminal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#inspectNetwork">inspectNetwork</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadLanguage">loadLanguage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSettings">loadSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadXterm">loadXterm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#networksApp">networksApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#openConsole">openConsole</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#pingClass">pingClass</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playerAvatarError">playerAvatarError</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playersApp">playersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#readSettingsForm">readSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#registerAlpineComponents">registerAlpineComponents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeFolder">removeFolder</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeStack">removeStack</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderGameServers">renderGameServers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resetSettings">resetSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resolvePath">resolvePath</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#saveSettings">saveSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setLabel">setLabel</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#showToast">showToast</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#skeletonGrid">skeletonGrid</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#switchTab">switchTab</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#t">t</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#throttle">throttle</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#timestamp">timestamp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleContainer">toggleContainer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleModal">toggleModal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleSettingsPanel">toggleSettingsPanel</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleStack">toggleStack</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">js/main.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file main.js
+ * @description Main application entry point for MCMM.
+ * Bootstraps all modules, wires top-level navigation, and sets up 
+ * global Alpine.js initialization. It serves as the orchestrator for 
+ * loading individual views on demand.
+ */
+
+import { loadLanguage, t, initI18n } from './i18n.js';
+import {
+  toggleModal,
+  showToast,
+  formatNum,
+  formatDate,
+  formatBytes,
+  playerAvatarError,
+  debounce,
+  switchTab,
+  pingClass,
+  skeletonGrid,
+} from './utils.js';
+import { initSettings, applyVisualSettings, appSettings, debugApp } from './settings.js';
+import { initCoreStore } from './core-store.js';
+import { dockerApp } from './docker.js';
+import { foldersApp } from './folders.js';
+import { networksApp } from './networks.js';
+import { composeApp } from './compose.js';
+import { registerAlpineComponents } from './alpine-components.js';
+import autoAnimate from './vendor/auto-animate.js';
+
+document.addEventListener('alpine:init', () => {
+  if (window.Alpine) {
+    initCoreStore(window.Alpine);
+    registerAlpineComponents(window.Alpine);
+  }
+});
+
+// Modal Keyboard Support (Esc = close, Enter = confirm)
+document.addEventListener('keydown', (e) => {
+  const openModals = Array.from(document.querySelectorAll('.modal-backdrop')).filter(el => {
+    return !el.hasAttribute('hidden') &amp;&amp; window.getComputedStyle(el).display !== 'none';
+  });
+  
+  if (openModals.length === 0) return;
+  const topModal = openModals[openModals.length - 1];
+
+  if (e.key === 'Escape') {
+    const closeBtn = topModal.querySelector('.modal-header .icon-btn, [aria-label="Schließen"], #closeModModal');
+    if (closeBtn) closeBtn.click();
+  } else if (e.key === 'Enter') {
+    const tag = e.target.tagName.toLowerCase();
+    if (tag === 'textarea' || tag === 'button') return;
+    if (e.target.hasAttribute('@keydown.enter')) return;
+    
+    // Specific modals to ignore for global Enter
+    if (topModal.id === 'fileManagerModal' || topModal.id === 'consoleModal') return;
+    
+    const confirmBtn = topModal.querySelector('.modal-footer .btn-primary, .modal-footer .btn-danger, .modal-footer .btn-success');
+    if (confirmBtn &amp;&amp; !confirmBtn.disabled) {
+      e.preventDefault();
+      confirmBtn.click();
+    }
+  }
+});
+
+// Expose globals required by Alpine and inline event handlers
+window.t = t;
+window.toggleModal = toggleModal;
+window.showToast = showToast;
+window.formatNum = formatNum;
+window.formatDate = formatDate;
+window.formatBytes = formatBytes;
+window.playerAvatarError = playerAvatarError;
+window.pingClass = pingClass;
+window.autoAnimate = autoAnimate;
+window.skeletonGrid = skeletonGrid;
+window.appSettings = appSettings;
+window.switchTab = switchTab;
+
+window.dockerApp = dockerApp;
+window.openConfigModal = (id, name, port, ram) => {
+  if (window.Alpine) {
+    Alpine.store('modals').config.data = { id, name, port, ram };
+    Alpine.store('modals').config.open = true;
+  }
+};
+
+window.foldersApp = foldersApp;
+window.networksApp = networksApp;
+window.composeApp = composeApp;
+window.loadLanguage = loadLanguage;
+window.applyVisualSettings = applyVisualSettings;
+window.debugApp = debugApp;
+
+window.finishOnboarding = function () {
+  localStorage.setItem('gs_hub_onboarding_done', 'true');
+  const modal = document.getElementById('welcomeModal');
+  if (modal) {
+    modal.style.opacity = '0';
+    setTimeout(() => {
+      modal.hidden = true;
+      modal.style.opacity = '1';
+    }, 300);
+  }
+};
+
+/**
+ * Initialize the application and load components
+ */
+async function initApp() {
+  // Load settings first since other modules might depend on them
+  initSettings();
+
+  // ── Wait for language to load before rendering anything ──
+  await initI18n();
+
+  // ── Load Modular HTML Components ──
+  // Now loaded dynamically when switching tabs
+  const activeTabBtn = document.querySelector('.tab-btn.active');
+  if (activeTabBtn) {
+    switchTab(activeTabBtn.dataset.tab || 'docker');
+  }
+
+  // Modals are handled by Alpine.js natively, do not move them manually.
+
+  // ── Initialize all modules ────────────────────────────
+  // Store initialization moved to top-level alpine:init listener
+
+
+  // ── Tab navigation ────────────────────────────────────
+  document.getElementById('tabNav')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    switchTab(btn.dataset.tab);
+  });
+
+  // ── Refresh button ────────────────────────────────────
+  document.getElementById('refreshBtn')?.addEventListener('click', () => {
+    const active = document.querySelector('.tab-btn.active')?.dataset.tab;
+    if (active === 'docker') {
+      /* Alpine handles it */
+    }
+    if (active === 'gameserver') {
+      /* Alpine handles it */
+    }
+    if (active === 'game-additions') {
+      window.GameAdditions?.refresh();
+    }
+    if (active === 'players') {
+      /* Alpine handles it */
+    }
+    showToast(t('general.data_refreshed') || 'Daten aktualisiert', 'success');
+
+    // Spin the refresh icon briefly
+    const icon = document.querySelector('#refreshBtn .material-icons-round');
+    if (icon) {
+      icon.style.transition = 'transform 0.6s ease';
+      icon.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        icon.style.transform = '';
+        icon.style.transition = '';
+      }, 700);
+    }
+  });
+
+  console.log('%c🎮 GameServer Hub v1.0', 'color:#f57c00;font-size:16px;font-weight:bold');
+  console.log(
+    `%cUnraid Plugin — ${t('general.loaded_successfully') || 'Erfolgreich geladen'}`,
+    'color:#22c55e'
+  );
+
+  // ── Show Onboarding Modal ─────────────────────────────
+  if (!localStorage.getItem('gs_hub_onboarding_done')) {
+    const welcome = document.getElementById('welcomeModal');
+    if (welcome) {
+      setTimeout(() => (welcome.hidden = false), 500); // slight delay
+    }
+  }
+  // Dynamically load Alpine.js AFTER all modules are initialized
+  const script = document.createElement('script');
+  script.src = 'js/vendor/alpine.min.js';
+  script.defer = true;
+  document.head.appendChild(script);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+// Import game addition modules AFTER GameAdditions has been attached to window
+// (Wait, static imports are hoisted. To ensure they run AFTER GameAdditions is global,
+// we should just let them import GameAdditions directly, which we already did!)
+import '../games/minecraft/js/minecraft.js';
+import '../games/palworld/js/palworld.js';
+import '../games/valheim/js/valheim.js';
+import '../games/cs2/js/cs2.js';
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Jul 11 2026 19:40:54 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

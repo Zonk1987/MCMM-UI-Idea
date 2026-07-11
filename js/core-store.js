@@ -3,6 +3,10 @@
    Single Source of Truth for all containers and services.
 ═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ * @param Alpine
+ */
 export function initCoreStore(Alpine) {
   // Raw Mock Data
   const MOCK_CONTAINERS = [

@@ -45,7 +45,9 @@
             🔌 <span x-text="$store.i18n.t('general.filter_plugins')">Plugins</span>
           </button>
           <button type="button" class="filter-chip" data-cat="datapacks">📋 Datenpakete</button>
-          <button type="button" class="filter-chip" data-cat="resourcepacks">🎨 Resource Packs</button>
+          <button type="button" class="filter-chip" data-cat="resourcepacks">
+            🎨 Resource Packs
+          </button>
           <button type="button" class="filter-chip" data-cat="shaders">✨ Shader</button>
         </div>
       </div>
@@ -53,7 +55,8 @@
       <div class="sidebar-section">
         <div class="sidebar-label">Loader</div>
         <div class="filter-group" id="loaderFilter">
-          <button type="button"
+          <button
+            type="button"
             class="filter-chip active"
             data-loader="all"
             x-text="$store.i18n.t('general.filter_all')"
@@ -70,8 +73,8 @@
       </div>
 
       <div class="sidebar-section">
-        <label for="versionFilter"
-
+        <label
+          for="versionFilter"
           class="sidebar-label"
           x-text="$store.i18n.t('general.filter_version')"
           >MC Version</label
@@ -112,7 +115,7 @@
           name="mcSearch"
           aria-label="Minecraft Inhalte suchen"
           :placeholder="$store.i18n.t('general.search_mods')"
-        >
+        />
         <div class="mc-search-meta" id="mcSearchMeta">Tippe um zu suchen...</div>
       </div>
 
@@ -131,7 +134,14 @@
     <div class="modal modal-large glass-card">
       <div class="modal-header">
         <div class="mod-modal-title">
-          <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" id="modModalIcon" class="mod-modal-icon" >
+          <img
+            loading="lazy"
+            decoding="async"
+            src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+            alt=""
+            id="modModalIcon"
+            class="mod-modal-icon"
+          />
           <div>
             <h2 id="modModalName" aria-live="polite">Mod Name</h2>
             <p id="modModalAuthor"></p>
@@ -182,7 +192,9 @@
         <!-- Left: Tabbed form -->
         <div class="dc-form-col">
           <div class="dc-tab-nav" id="dcTabNav">
-            <button type="button" class="dc-tab-btn active" data-dctab="docker">🐳 Docker / Java</button>
+            <button type="button" class="dc-tab-btn active" data-dctab="docker">
+              🐳 Docker / Java
+            </button>
             <button type="button" class="dc-tab-btn" data-dctab="server">🖥️ Server</button>
             <button type="button" class="dc-tab-btn" data-dctab="gameplay">🎮 Gameplay</button>
             <button type="button" class="dc-tab-btn" data-dctab="advanced">⚙️ Erweitert</button>
@@ -203,7 +215,7 @@
                 id="dcName"
                 placeholder="mc-server-01"
                 style="width: 170px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -218,7 +230,7 @@
                 min="1024"
                 max="65535"
                 style="width: 90px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -231,7 +243,7 @@
                 id="dcDataPath"
                 value="/mnt/user/gameservers"
                 style="width: 200px; font-family: monospace; font-size: 11px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -274,7 +286,7 @@
                 id="dcVersion"
                 value="LATEST"
                 style="width: 100px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -290,7 +302,7 @@
                   min="512"
                   step="512"
                   style="width: 90px"
-                >
+                />
                 <span class="setting-unit">MB</span>
               </div>
             </div>
@@ -300,11 +312,11 @@
                 <div class="setting-desc">Log-Rotation aktivieren</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcRollingLogs" checked >
+                ><input type="checkbox" id="dcRollingLogs" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -312,11 +324,11 @@
                 <div class="setting-desc">Zeitstempel in Logs</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcLogTimestamp" checked >
+                ><input type="checkbox" id="dcLogTimestamp" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
 
             <div class="dc-section-title" style="margin-top: 14px">JVM Optimizations</div>
@@ -328,11 +340,11 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAikarFlags" checked >
+                ><input type="checkbox" id="dcAikarFlags" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -342,11 +354,11 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcMeowices" >
+                ><input type="checkbox" id="dcMeowices" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -354,11 +366,11 @@
                 <div class="setting-desc">Braucht Host-OS HugePages - reduziert TLB Misses</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcLargePages" >
+                ><input type="checkbox" id="dcLargePages" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -368,11 +380,11 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcSimd" >
+                ><input type="checkbox" id="dcSimd" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
           </div>
 
@@ -391,7 +403,7 @@
                 id="dcServerName"
                 placeholder="Mein Minecraft-Server"
                 style="width: 200px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -406,7 +418,7 @@
                 min="1"
                 max="1000"
                 style="width: 80px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -426,11 +438,11 @@
                 <div class="setting-desc">Mojang-Auth (false = Cracked)</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcOnlineMode" checked >
+                ><input type="checkbox" id="dcOnlineMode" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -445,7 +457,7 @@
                 min="2"
                 max="32"
                 style="width: 70px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -460,7 +472,7 @@
                 min="2"
                 max="32"
                 style="width: 70px"
-              >
+              />
             </div>
 
             <div class="dc-section-title" style="margin-top: 14px">Whitelist &amp; RCON</div>
@@ -470,11 +482,11 @@
                 <div class="setting-label">ENABLE_WHITELIST</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcWhitelist" >
+                ><input type="checkbox" id="dcWhitelist" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row" id="dcWhitelistNamesRow" style="display: none">
               <div class="setting-info">
@@ -487,7 +499,7 @@
                 id="dcWhitelistNames"
                 placeholder="Spieler1,Spieler2"
                 style="width: 200px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -500,18 +512,18 @@
                 id="dcOps"
                 placeholder="AdminName"
                 style="width: 200px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-label">ENABLE_RCON</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcRcon" checked >
+                ><input type="checkbox" id="dcRcon" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -523,11 +535,17 @@
                 id="dcRconPort"
                 value="25575"
                 style="width: 90px"
-              >
+              />
             </div>
             <form class="setting-row" onsubmit="return false;">
               <!-- Hidden username field for accessibility/password manager compliance -->
-              <input id="hiddenUsername_gameAdditions" name="hiddenUsername_gameAdditions" type="text" autocomplete="username" style="display:none;" >
+              <input
+                id="hiddenUsername_gameAdditions"
+                name="hiddenUsername_gameAdditions"
+                type="text"
+                autocomplete="username"
+                style="display: none"
+              />
               <div class="setting-info">
                 <div class="setting-label">RCON_PASSWORD</div>
               </div>
@@ -538,10 +556,10 @@
                 placeholder="sicheres Passwort"
                 autocomplete="new-password"
                 style="width: 170px"
-              >
-              <button type="submit" style="display:none;" aria-hidden="true" tabindex="-1"></button>
-  <button type="submit" style="display:none;" aria-hidden="true" tabindex="-1"></button>
-</form>
+              />
+              <button type="submit" style="display: none" aria-hidden="true" tabindex="-1"></button>
+              <button type="submit" style="display: none" aria-hidden="true" tabindex="-1"></button>
+            </form>
 
             <div class="dc-section-title" style="margin-top: 14px">Icon &amp; Textur</div>
             <div class="setting-row">
@@ -555,7 +573,7 @@
                 id="dcIcon"
                 placeholder="https://..."
                 style="width: 200px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -568,18 +586,18 @@
                 id="dcResourcePack"
                 placeholder="https://..."
                 style="width: 200px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-label">RESOURCE_PACK_ENFORCE</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcResourcePackEnforce" >
+                ><input type="checkbox" id="dcResourcePackEnforce" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
           </div>
 
@@ -604,11 +622,11 @@
                 <div class="setting-desc">Spieler immer auf Mode setzen</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcForceGamemode" >
+                ><input type="checkbox" id="dcForceGamemode" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -616,11 +634,11 @@
                 <div class="setting-desc">Spieler-vs-Spieler Kämpfe</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcPvp" checked >
+                ><input type="checkbox" id="dcPvp" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -628,11 +646,11 @@
                 <div class="setting-desc">Hardcore-Modus (1 Leben)</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcHardcore" >
+                ><input type="checkbox" id="dcHardcore" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -640,11 +658,11 @@
                 <div class="setting-desc">Fliegen ohne Plugin erlauben</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAllowFlight" >
+                ><input type="checkbox" id="dcAllowFlight" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
 
             <div class="dc-section-title" style="margin-top: 14px">Welt</div>
@@ -672,7 +690,7 @@
                 id="dcSeed"
                 placeholder="leer = zufällig"
                 style="width: 160px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -686,29 +704,29 @@
                 value="16"
                 min="0"
                 style="width: 70px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-label">GENERATE_STRUCTURES</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcGenStructures" checked >
+                ><input type="checkbox" id="dcGenStructures" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-label">ALLOW_NETHER</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAllowNether" checked >
+                ><input type="checkbox" id="dcAllowNether" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
           </div>
 
@@ -721,11 +739,11 @@
                 <div class="setting-label">ENABLE_COMMAND_BLOCK</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcCommandBlock" >
+                ><input type="checkbox" id="dcCommandBlock" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -733,11 +751,11 @@
                 <div class="setting-desc">Mojang Telemetrie</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcSnooper" >
+                ><input type="checkbox" id="dcSnooper" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -751,7 +769,7 @@
                 value="0"
                 min="0"
                 style="width: 70px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -764,7 +782,7 @@
                 id="dcMaxTick"
                 value="60000"
                 style="width: 90px"
-              >
+              />
             </div>
 
             <div class="dc-section-title" style="margin-top: 14px">Auto-Pause / Auto-Stop</div>
@@ -775,11 +793,11 @@
                 <div class="setting-desc">Server pausieren wenn leer</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAutopause" >
+                ><input type="checkbox" id="dcAutopause" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -792,7 +810,7 @@
                 id="dcAutopauseTimeout"
                 value="3600"
                 style="width: 90px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -800,11 +818,11 @@
                 <div class="setting-desc">Server stoppen wenn leer</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAutostop" >
+                ><input type="checkbox" id="dcAutostop" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
 
             <div class="dc-section-title" style="margin-top: 14px">Netzwerk</div>
@@ -820,7 +838,7 @@
                 id="dcNetworkCompression"
                 value="256"
                 style="width: 80px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -832,7 +850,7 @@
                 id="dcMaxBuildHeight"
                 value="320"
                 style="width: 80px"
-              >
+              />
             </div>
             <div class="setting-row">
               <div class="setting-info">
@@ -840,11 +858,11 @@
                 <div class="setting-desc">Env-Vars immer überschreiben</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcOverrideProps" checked >
+                ><input type="checkbox" id="dcOverrideProps" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
-                    </label>
+              </label>
             </div>
           </div>
         </div>
@@ -885,7 +903,9 @@
         <button type="button" class="btn btn-ghost" id="dcCopyBtn">
           <span class="material-icons-round">content_copy</span> Befehl kopieren
         </button>
-        <button type="button" class="btn btn-ghost" id="closeDockerCreateModalBtn">Abbrechen</button>
+        <button type="button" class="btn btn-ghost" id="closeDockerCreateModalBtn">
+          Abbrechen
+        </button>
         <button type="button" class="btn btn-primary" id="dcCreateBtn">
           <span class="material-icons-round">rocket_launch</span> Container starten
         </button>

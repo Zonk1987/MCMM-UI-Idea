@@ -2,6 +2,9 @@
 
 let xtermPromise = null;
 
+/**
+ *
+ */
 export function loadXterm() {
   if (window.Terminal && window.FitAddon) {
     return Promise.resolve();

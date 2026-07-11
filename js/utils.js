@@ -14,10 +14,18 @@ export function playerAvatarError(img) {
   img.replaceWith(placeholder);
 }
 
+/**
+ *
+ * @param msg
+ * @param type
+ */
 export function showToast(msg, type = 'info') {
   window.dispatchEvent(new CustomEvent('toast', { detail: { msg, type } }));
 }
 
+/**
+ *
+ */
 function getLocale() {
   if (window.Alpine && window.Alpine.store('i18n')) {
     return window.Alpine.store('i18n').locale || 'en';
@@ -25,6 +33,11 @@ function getLocale() {
   return typeof appSettings !== 'undefined' ? appSettings.lang : 'en';
 }
 
+/**
+ *
+ * @param n
+ * @param compact
+ */
 export function formatNum(n, compact = true) {
   const locale = getLocale();
   if (compact && n >= 1000) {
@@ -35,11 +48,20 @@ export function formatNum(n, compact = true) {
   return new Intl.NumberFormat(locale).format(n);
 }
 
+/**
+ *
+ * @param dateInput
+ * @param options
+ */
 export function formatDate(dateInput, options = { dateStyle: 'medium' }) {
   const locale = getLocale();
   return new Intl.DateTimeFormat(locale, options).format(new Date(dateInput));
 }
 
+/**
+ *
+ * @param bytes
+ */
 export function formatBytes(bytes) {
   const locale = getLocale();
   if (bytes >= 1073741824)
@@ -53,6 +75,11 @@ export function formatBytes(bytes) {
   return new Intl.NumberFormat(locale).format(bytes) + ' B';
 }
 
+/**
+ *
+ * @param fn
+ * @param delay
+ */
 export function debounce(fn, delay = 350) {
   let timer;
   return (...args) => {
@@ -61,6 +88,11 @@ export function debounce(fn, delay = 350) {
   };
 }
 
+/**
+ *
+ * @param fn
+ * @param limit
+ */
 export function throttle(fn, limit = 350) {
   let inThrottle;
   return (...args) => {
@@ -87,6 +119,11 @@ export const Logger = {
   },
 };
 
+/**
+ *
+ * @param modalId
+ * @param open
+ */
 export function toggleModal(modalId, open) {
   const el = document.getElementById(modalId);
   if (!el) return;
@@ -94,6 +131,11 @@ export function toggleModal(modalId, open) {
   else el.setAttribute('hidden', '');
 }
 
+/**
+ *
+ * @param id
+ * @param url
+ */
 export async function fetchComponent(id, url) {
   try {
     const el = document.getElementById(id);
@@ -114,6 +156,10 @@ export async function fetchComponent(id, url) {
 
 const loadedModules = new Set();
 
+/**
+ *
+ * @param tabId
+ */
 export async function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === tabId);
@@ -162,12 +208,20 @@ export async function switchTab(tabId) {
   window.dispatchEvent(new CustomEvent('tab-changed', { detail: tabId }));
 }
 
+/**
+ *
+ * @param ms
+ */
 export function pingClass(ms) {
   if (ms < 60) return 'ping-good';
   if (ms < 150) return 'ping-ok';
   return 'ping-bad';
 }
 
+/**
+ *
+ * @param count
+ */
 export function skeletonGrid(count = 6) {
   return Array.from({ length: count }, () => `<div class="skeleton skeleton-card"></div>`).join('');
 }

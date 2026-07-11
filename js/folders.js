@@ -3,6 +3,9 @@
    Integrates with folder.view3 Unraid plugin labels.
 ═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ */
 export function foldersApp() {
   return {
     get folders() {

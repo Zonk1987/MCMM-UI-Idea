@@ -3,6 +3,9 @@
    Integrates with docker.networks plugin.
 ═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ */
 export function networksApp() {
   return {
     get networks() {

@@ -21,6 +21,8 @@ export const GameAdditions = {
 
   /**
    * Register a new game module
+   * @param id
+   * @param config
    */
   registerGame(id, config) {
     this.games[id] = config;
@@ -248,6 +250,8 @@ export const GameAdditions = {
 
   /**
    * Shared generic function to fetch from CurseForge (used by Palworld, CS2, Valheim)
+   * @param gameId
+   * @param state
    */
   async fetchCurseForgeGeneric(gameId, state) {
     if (typeof appSettings !== 'undefined' && !appSettings.cfApiKey) {

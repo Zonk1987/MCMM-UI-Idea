@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>js/utils.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#DEFAULT_SETTINGS">DEFAULT_SETTINGS</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addFolder">addFolder</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addStack">addStack</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#appSettings">appSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#appendConsoleLine">appendConsoleLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#applyVisualSettings">applyVisualSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#bindSettingsEvents">bindSettingsEvents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#composeApp">composeApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debounce">debounce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debugApp">debugApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#doAction">doAction</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#dockerApp">dockerApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#escapeHtml">escapeHtml</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fetchComponent">fetchComponent</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fillSettingsForm">fillSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#finishWizard">finishWizard</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#foldersApp">foldersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatAnsiLine">formatAnsiLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatBytes">formatBytes</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatDate">formatDate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatNum">formatNum</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#gameserverApp">gameserverApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#generateSparkline">generateSparkline</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getGameservers">getGameservers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getLocale">getLocale</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initApp">initApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initCoreStore">initCoreStore</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initDocker">initDocker</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initGameServer">initGameServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initI18n">initI18n</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initSettings">initSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initTerminal">initTerminal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#inspectNetwork">inspectNetwork</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadLanguage">loadLanguage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSettings">loadSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadXterm">loadXterm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#networksApp">networksApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#openConsole">openConsole</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#pingClass">pingClass</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playerAvatarError">playerAvatarError</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playersApp">playersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#readSettingsForm">readSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#registerAlpineComponents">registerAlpineComponents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeFolder">removeFolder</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeStack">removeStack</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderGameServers">renderGameServers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resetSettings">resetSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resolvePath">resolvePath</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#saveSettings">saveSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setLabel">setLabel</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#showToast">showToast</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#skeletonGrid">skeletonGrid</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#switchTab">switchTab</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#t">t</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#throttle">throttle</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#timestamp">timestamp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleContainer">toggleContainer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleModal">toggleModal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleSettingsPanel">toggleSettingsPanel</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleStack">toggleStack</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">js/utils.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* ═══════════════════════════════════════════════════════════
+   utils.js — Shared helpers for all modules
+═══════════════════════════════════════════════════════════ */
+
+/**
+ * Fallback for broken Minecraft avatar images.
+ * Called via onerror attribute — avoids HTML injection in template literals.
+ * @param {HTMLImageElement} img - The image element that failed to load
+ */
+export function playerAvatarError(img) {
+  const placeholder = document.createElement('div');
+  placeholder.className = 'player-avatar-placeholder';
+  placeholder.textContent = '👤';
+  img.replaceWith(placeholder);
+}
+
+/**
+ * Shows a toast notification
+ * @param {string} msg The message to show
+ * @param {string} type The toast type (info, success, warning, error)
+ * @returns {void}
+ */
+export function showToast(msg, type = 'info') {
+  window.dispatchEvent(new CustomEvent('toast', { detail: { msg, type } }));
+}
+
+/**
+ * Gets the current locale language
+ * @returns {string} The locale code
+ */
+function getLocale() {
+  if (window.Alpine &amp;&amp; window.Alpine.store('i18n')) {
+    return window.Alpine.store('i18n').locale || 'en';
+  }
+  return typeof appSettings !== 'undefined' ? appSettings.lang : 'en';
+}
+
+/**
+ * Formats a number with locale
+ * @param {number} n The number to format
+ * @param {boolean} compact Whether to use compact notation
+ * @returns {string} The formatted number
+ */
+export function formatNum(n, compact = true) {
+  const locale = getLocale();
+  if (compact &amp;&amp; n >= 1000) {
+    return new Intl.NumberFormat(locale, { notation: 'compact', compactDisplay: 'short' }).format(
+      n
+    );
+  }
+  return new Intl.NumberFormat(locale).format(n);
+}
+
+/**
+ * Formats a date with locale
+ * @param {string|number|Date} dateInput The date to format
+ * @param {Intl.DateTimeFormatOptions} options The formatting options
+ * @returns {string} The formatted date
+ */
+export function formatDate(dateInput, /** @type {Intl.DateTimeFormatOptions} */ options = { dateStyle: 'medium' }) {
+  const locale = getLocale();
+  return new Intl.DateTimeFormat(locale, options).format(new Date(dateInput));
+}
+
+/**
+ * Formats bytes to human readable format
+ * @param {number} bytes The bytes to format
+ * @returns {string} The formatted string
+ */
+export function formatBytes(bytes) {
+  const locale = getLocale();
+  if (bytes >= 1073741824)
+    return (
+      new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(bytes / 1073741824) + ' GB'
+    );
+  if (bytes >= 1048576)
+    return (
+      new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(bytes / 1048576) + ' MB'
+    );
+  return new Intl.NumberFormat(locale).format(bytes) + ' B';
+}
+
+/**
+ * Debounces a function
+ * @param {Function} fn The function to debounce
+ * @param {number} delay The delay in ms
+ * @returns {Function} The debounced function
+ */
+export function debounce(fn, delay = 350) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+/**
+ * Throttles a function
+ * @param {Function} fn The function to throttle
+ * @param {number} limit The limit in ms
+ * @returns {Function} The throttled function
+ */
+export function throttle(fn, limit = 350) {
+  let inThrottle;
+  return (...args) => {
+    if (!inThrottle) {
+      fn(...args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
+
+export const Logger = {
+  get isDebug() {
+    return typeof appSettings !== 'undefined' ? appSettings.debugMode : false;
+  },
+  log(...args) {
+    if (this.isDebug) console.log('[MCMM]', ...args);
+  },
+  warn(...args) {
+    if (this.isDebug) console.warn('[MCMM]', ...args);
+  },
+  error(...args) {
+    if (this.isDebug) console.error('[MCMM]', ...args);
+  },
+};
+
+/**
+ * Toggles a modal
+ * @param {string} modalId The modal ID
+ * @param {boolean} open Whether to open or close
+ * @returns {void}
+ */
+export function toggleModal(modalId, open) {
+  const el = document.getElementById(modalId);
+  if (!el) return;
+  if (open) el.removeAttribute('hidden');
+  else el.setAttribute('hidden', '');
+}
+
+/**
+ * Fetches a component HTML
+ * @param {string} id The element ID
+ * @param {string} url The URL to fetch from
+ * @returns {Promise&lt;void>}
+ */
+export async function fetchComponent(id, url) {
+  try {
+    const el = document.getElementById(id);
+    // If it's already loaded (no '&lt;!-- Component loaded dynamically -->' comment inside)
+    if (el &amp;&amp; el.innerHTML.trim() !== '&lt;!-- Component loaded dynamically -->') return;
+
+    const response = await fetch(url + '?v=' + new Date().getTime());
+    if (response.ok) {
+      const html = await response.text();
+      if (el) {
+        el.outerHTML = html;
+      }
+    }
+  } catch (e) {
+    console.error(`Error loading ${url}:`, e);
+  }
+}
+
+const loadedModules = new Set();
+
+/**
+ * Switches the main application tab
+ * @param {string} tabId The ID of the tab
+ * @returns {Promise&lt;void>}
+ */
+export async function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach((/** @type {HTMLElement} */ b) => {
+    b.classList.toggle('active', b.dataset.tab === tabId);
+    b.setAttribute('aria-selected', String(b.dataset.tab === tabId));
+  });
+
+  if (!loadedModules.has(tabId)) {
+    try {
+      switch (tabId) {
+        case 'docker': {
+          await fetchComponent('panel-docker', 'components/docker.html');
+          break;
+        }
+        case 'gameserver': {
+          const gs = await import('./gameserver.js');
+          window.gameserverApp = gs.gameserverApp;
+          window.openConsole = gs.openConsole;
+          await fetchComponent('panel-gameserver', 'components/gameservers.html');
+          break;
+        }
+        case 'players': {
+          const pl = await import('./players.js');
+          window.playersApp = pl.playersApp;
+          await fetchComponent('panel-players', 'components/players.html');
+          break;
+        }
+        case 'game-additions': {
+          const ga = await import('./gameAdditions.js');
+          window.GameAdditions = ga.GameAdditions;
+          if (ga.GameAdditions &amp;&amp; ga.GameAdditions.init) {
+            ga.GameAdditions.init();
+          }
+          await fetchComponent('panel-game-additions', 'components/gameAdditions.html');
+          break;
+        }
+      }
+      loadedModules.add(tabId);
+    } catch (error) {
+      console.error(`Fehler beim Laden des Moduls für ${tabId}:`, error);
+    }
+  }
+
+  document.querySelectorAll('.tab-panel').forEach((p) => {
+    p.classList.toggle('active', p.id === `panel-${tabId}`);
+  });
+  window.dispatchEvent(new CustomEvent('tab-changed', { detail: tabId }));
+}
+
+/**
+ * Returns a CSS class for a given ping value
+ * @param {number} ms The ping in milliseconds
+ * @returns {string} The CSS class name
+ */
+export function pingClass(ms) {
+  if (ms &lt; 60) return 'ping-good';
+  if (ms &lt; 150) return 'ping-ok';
+  return 'ping-bad';
+}
+
+/**
+ * Generates a skeleton grid
+ * @param {number} count Number of skeletons
+ * @returns {string} The HTML string
+ */
+export function skeletonGrid(count = 6) {
+  return Array.from({ length: count }, () => `&lt;div class="skeleton skeleton-card">&lt;/div>`).join('');
+}
+
+// Expose to window for Alpine and inline HTML handlers
+window.showToast = showToast;
+window.toggleModal = toggleModal;
+window.switchTab = switchTab;
+window.playerAvatarError = playerAvatarError;
+window.formatNum = formatNum;
+window.formatBytes = formatBytes;
+window.pingClass = pingClass;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Jul 11 2026 19:40:54 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

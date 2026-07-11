@@ -52,6 +52,11 @@ export async function loadLanguage(langCode) {
   }
 }
 
+/**
+ *
+ * @param obj
+ * @param path
+ */
 function resolvePath(obj, path) {
   return path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
 }
@@ -86,6 +91,9 @@ export function t(key, variables = {}) {
 window.t = t;
 
 // Ensure i18n logic is initialized on load
+/**
+ *
+ */
 export async function initI18n() {
   const savedSettings = localStorage.getItem('gs_hub_settings');
   let lang = 'en';

@@ -1,0 +1,25 @@
+{
+  "version": "0.2",
+  "language": "en,de",
+  "useGitignore": true,
+  "ignorePaths": [
+    "node_modules/**",
+    "reports/**",
+    "css/vendor/**",
+    "js/vendor/**",
+    "package-lock.json",
+    "languages/**"
+  ],
+  "words": [
+    "Alpine",
+    "autostart",
+    "CurseForge",
+    "GameServer",
+    "gameserver",
+    "Modrinth",
+    "Palworld",
+    "Unraid",
+    "Valheim",
+    "WebKit"
+  ]
+}

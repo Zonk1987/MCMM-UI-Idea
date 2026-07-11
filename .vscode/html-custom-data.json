@@ -1,0 +1,32 @@
+{
+  "version": 1.1,
+  "globalAttributes": [
+    { "name": "x-data", "description": "Declare a new Alpine component and its data" },
+    { "name": "x-bind", "description": "Dynamically set HTML attributes on an element" },
+    { "name": "x-on", "description": "Listen for browser events on an element" },
+    { "name": "x-text", "description": "Set the text content of an element" },
+    { "name": "x-html", "description": "Set the inner HTML of an element" },
+    { "name": "x-model", "description": "Synchronize a piece of data with an input element" },
+    { "name": "x-show", "description": "Toggle the visibility of an element" },
+    { "name": "x-transition", "description": "Transition an element in and out using CSS classes" },
+    { "name": "x-for", "description": "Repeat a block of HTML based on a data set" },
+    { "name": "x-if", "description": "Conditionally add/remove a block of HTML from the page entirely" },
+    { "name": "x-init", "description": "Run code when an element is initialized by Alpine" },
+    { "name": "x-effect", "description": "Execute a script each time one of its dependencies change" },
+    { "name": "x-ref", "description": "Reference elements directly by their specified keys using the $refs magic property" },
+    { "name": "x-cloak", "description": "Hide a block of HTML until after Alpine is finished initializing its contents" },
+    { "name": "x-ignore", "description": "Prevent a block of HTML from being initialized by Alpine" },
+    { "name": "x-teleport", "description": "Transport part of your HTML to another part of the DOM entirely" },
+    { "name": "x-id", "description": "Declare a new Alpine scope for generating IDs" },
+    { "name": "@click", "description": "Shorthand for x-on:click" },
+    { "name": "@submit", "description": "Shorthand for x-on:submit" },
+    { "name": "@change", "description": "Shorthand for x-on:change" },
+    { "name": "@input", "description": "Shorthand for x-on:input" },
+    { "name": "@keydown", "description": "Shorthand for x-on:keydown" },
+    { "name": "@keyup", "description": "Shorthand for x-on:keyup" },
+    { "name": ":class", "description": "Shorthand for x-bind:class" },
+    { "name": ":style", "description": "Shorthand for x-bind:style" },
+    { "name": ":id", "description": "Shorthand for x-bind:id" },
+    { "name": ":disabled", "description": "Shorthand for x-bind:disabled" }
+  ]
+}

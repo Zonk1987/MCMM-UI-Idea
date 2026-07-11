@@ -2,13 +2,25 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
 
   "files.associations": {
+    "*.html": "html",
     "*.page": "html"
+  },
+
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/reports": true
+  },
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/reports": true,
+    "**/css/vendor": true,
+    "**/js/vendor": true
   },
 
   "json.validate.enable": true,
 
   "eslint.enable": true,
-
   "eslint.validate": ["javascript", "javascriptreact", "json", "jsonc"],
 
   "css.validate": false,
@@ -16,11 +28,15 @@
   "less.validate": false,
 
   "stylelint.enable": true,
-
   "stylelint.validate": ["css", "scss", "less", "postcss", "html", "php"],
+
+  "problems.decorations.enabled": true,
 
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.fixAll.stylelint": "explicit"
-  }
+  },
+
+  "css.customData": [".vscode/css-custom-data.json"],
+  "html.customData": [".vscode/html-custom-data.json"]
 }

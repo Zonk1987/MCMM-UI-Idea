@@ -101,6 +101,9 @@ window.finishOnboarding = function () {
   }
 };
 
+/**
+ *
+ */
 async function initApp() {
   // Load settings first since other modules might depend on them
   initSettings();

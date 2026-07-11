@@ -4,6 +4,10 @@
    inline inside the HTML (e.g., modals).
 ═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ * @param Alpine
+ */
 export function registerAlpineComponents(Alpine) {
   // Welcome/Onboarding Modal
   Alpine.data('welcomeModal', () => ({

@@ -3,6 +3,9 @@
    Integrates with compose_plugin (Compose Manager Plus).
 ═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ */
 export function composeApp() {
   return {
     get stacks() {

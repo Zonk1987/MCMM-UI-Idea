@@ -4,6 +4,9 @@
    Currently uses realistic mock data.
 ═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ */
 export function dockerApp() {
   return {
     get containers() {
@@ -724,4 +727,7 @@ export function dockerApp() {
 }
 
 // Dummy for backwards compatibility with main.js until fully refactored
+/**
+ *
+ */
 export function initDocker() {}

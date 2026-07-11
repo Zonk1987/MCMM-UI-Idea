@@ -4,6 +4,9 @@
    Uses realistic mock data to demonstrate all functionality.
 ═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ */
 export function playersApp() {
   return {
     selectorOpen: false,
@@ -343,7 +346,14 @@ export function playersApp() {
   };
 }
 
+/**
+ *
+ */
 export function initPlayers() {} // Dummy for compatibility
+/**
+ *
+ * @param img
+ */
 export function playerAvatarError(img) {
   img.onerror = null;
   img.src =

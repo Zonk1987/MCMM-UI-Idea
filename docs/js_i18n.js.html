@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>js/i18n.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#DEFAULT_SETTINGS">DEFAULT_SETTINGS</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addFolder">addFolder</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addStack">addStack</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#appSettings">appSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#appendConsoleLine">appendConsoleLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#applyVisualSettings">applyVisualSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#bindSettingsEvents">bindSettingsEvents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#composeApp">composeApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debounce">debounce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debugApp">debugApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#doAction">doAction</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#dockerApp">dockerApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#escapeHtml">escapeHtml</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fetchComponent">fetchComponent</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fillSettingsForm">fillSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#finishWizard">finishWizard</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#foldersApp">foldersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatAnsiLine">formatAnsiLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatBytes">formatBytes</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatDate">formatDate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatNum">formatNum</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#gameserverApp">gameserverApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#generateSparkline">generateSparkline</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getGameservers">getGameservers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getLocale">getLocale</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initApp">initApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initCoreStore">initCoreStore</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initDocker">initDocker</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initGameServer">initGameServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initI18n">initI18n</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initSettings">initSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initTerminal">initTerminal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#inspectNetwork">inspectNetwork</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadLanguage">loadLanguage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSettings">loadSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadXterm">loadXterm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#networksApp">networksApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#openConsole">openConsole</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#pingClass">pingClass</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playerAvatarError">playerAvatarError</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playersApp">playersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#readSettingsForm">readSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#registerAlpineComponents">registerAlpineComponents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeFolder">removeFolder</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeStack">removeStack</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderGameServers">renderGameServers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resetSettings">resetSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resolvePath">resolvePath</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#saveSettings">saveSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setLabel">setLabel</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#showToast">showToast</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#skeletonGrid">skeletonGrid</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#switchTab">switchTab</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#t">t</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#throttle">throttle</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#timestamp">timestamp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleContainer">toggleContainer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleModal">toggleModal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleSettingsPanel">toggleSettingsPanel</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleStack">toggleStack</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">js/i18n.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// @ts-nocheck
+/**
+ * @file i18n.js
+ * @description Handles internationalization (i18n) by loading .json language files
+ * and applying translations to the Alpine global store.
+ */
+
+export const I18N = {
+  currentLang: 'en',
+  translations: {},
+  fallbackTranslations: {},
+  supportedLangs: ['en', 'de', 'es', 'fr', 'it'],
+};
+
+/**
+ * Loads a language file and applies translations to the document.
+ * @param {string} langCode - The language code to load (e.g., 'en', 'de', 'es').
+ * @returns {Promise&lt;void>}
+ */
+export async function loadLanguage(langCode) {
+  if (!I18N.supportedLangs.includes(langCode)) {
+    langCode = 'en'; // fallback
+  }
+
+  try {
+    // Load English fallback if not loaded
+    if (Object.keys(I18N.fallbackTranslations).length === 0) {
+      try {
+        const fbRes = await fetch(`lang/en.json?v=${new Date().getTime()}`);
+        if (fbRes.ok) I18N.fallbackTranslations = await fbRes.json();
+      } catch (e) {
+        console.error('Failed to load English fallback', e);
+      }
+    }
+
+    const response = await fetch(`lang/${langCode}.json?v=${new Date().getTime()}`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    I18N.translations = await response.json();
+    I18N.currentLang = langCode;
+
+    // Trigger reactivity in Alpine if available
+    if (window.Alpine) {
+      const store = Alpine.store('i18n');
+      if (store) {
+        store.locale = langCode;
+        store.fallbackMessages = I18N.fallbackTranslations;
+        store.messages = I18N.translations; // Alpine reactivity trigger
+      }
+    }
+  } catch (error) {
+    console.error(`Failed to load language: ${langCode}`, error);
+  }
+}
+
+/**
+ * Resolves a nested object property by a dot-separated path
+ * @param {object} obj The object to search
+ * @param {string} path The dot-separated path string
+ * @returns {unknown} The resolved value or undefined
+ */
+function resolvePath(obj, path) {
+  return path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
+}
+
+/**
+ * Returns the translated string for a given key, with fallback to English.
+ * @param {string} key - The translation key (dot-notation supported).
+ * @param {object} variables - Optional variables for interpolation.
+ * @returns {string} The translated string or the key itself if not found.
+ */
+export function t(key, variables = {}) {
+  let val = resolvePath(I18N.translations, key);
+
+  // Fallback to English if key is missing in the current language
+  if (val === undefined &amp;&amp; I18N.currentLang !== 'en') {
+    val = resolvePath(I18N.fallbackTranslations, key);
+  }
+
+  if (val !== undefined) {
+    if (typeof val === 'string' &amp;&amp; Object.keys(variables).length > 0) {
+      return val.replace(/\{(\w+)\}/g, (match, p1) => {
+        return variables[p1] !== undefined ? variables[p1] : match;
+      });
+    }
+    return val;
+  }
+
+  return key;
+}
+
+// Expose to window for JS dynamic bindings and Alpine Store
+window.t = t;
+
+// Ensure i18n logic is initialized on load
+/**
+ *
+ */
+export async function initI18n() {
+  const savedSettings = localStorage.getItem('gs_hub_settings');
+  let lang = 'en';
+  if (savedSettings) {
+    try {
+      const parsed = JSON.parse(savedSettings);
+      if (parsed.lang) lang = parsed.lang;
+    } catch (e) {
+      console.warn('Failed to parse settings for i18n', e);
+    }
+  }
+  await loadLanguage(lang);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Jul 11 2026 19:40:54 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
