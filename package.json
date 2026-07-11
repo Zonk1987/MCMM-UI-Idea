@@ -9,33 +9,59 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "lint": "npm run lint:js && npm run lint:json && npm run lint:css",
+    "lint": "npm run lint:js && npm run lint:json && npm run lint:css && npm run lint:html && npm run lint:types",
+    "lint:all": "npm run lint && npm run lint:spelling && npm run lint:markdown",
+    "lint:fix": "npm run lint:js:fix && npm run lint:json:fix && npm run lint:css:fix && npm run format",
     "lint:js": "eslint \"**/*.js\"",
+    "lint:js:fix": "eslint \"**/*.js\" --fix",
     "lint:json": "eslint \"**/*.{json,jsonc}\"",
+    "lint:json:fix": "eslint \"**/*.{json,jsonc}\" --fix",
     "lint:css": "stylelint \"**/*.{css,html,php,page}\"",
-    "lint:fix": "npm run lint:js -- --fix && npm run lint:json -- --fix && npm run lint:css -- --fix",
+    "lint:css:fix": "stylelint \"**/*.{css,html,php,page}\" --fix",
+    "lint:html": "html-validate \"index.html\" \"components/**/*.html\" \"games/**/*.html\"",
+    "lint:types": "tsc --project jsconfig.json",
+    "lint:spelling": "cspell \"**/*.{html,js,json,jsonc,css,md,page}\"",
+    "lint:markdown": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#reports\"",
+    "lint:web": "hint http://localhost:5500",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "audit:lighthouse": "lighthouse http://localhost:5500 --output=html --output-path=./reports/lighthouse.html --view",
-    "audit:lighthouse:desktop": "lighthouse http://localhost:5500 --preset=desktop --output=html --output-path=./reports/lighthouse-desktop.html --view",
+    "quality": "npm run lint:all && npm run format:check",
+    "quality:runtime": "npm run lint:web && npm run audit:lighthouse:desktop",
+    "audit:lighthouse": "lighthouse http://localhost:5500 --output=html --output=json --output-path=./reports/lighthouse",
+    "audit:lighthouse:desktop": "lighthouse http://localhost:5500 --preset=desktop --output=html --output=json --output-path=./reports/lighthouse-desktop",
     "outdated": "npm outdated",
     "update:check": "ncu",
-    "update": "ncu -u && npm install"
+    "update": "ncu -u && npm install",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "cspell": "^9.0.0",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-compat": "^6.0.0",
+    "eslint-plugin-jsdoc": "^63.0.13",
     "eslint-plugin-jsonc": "^3.3.0",
     "globals": "^17.7.0",
+    "hint": "^7.1.13",
+    "html-validate": "^10.0.0",
+    "husky": "^9.1.7",
     "jsonc-eslint-parser": "^3.1.0",
     "lighthouse": "^13.4.0",
+    "lint-staged": "^17.0.8",
+    "markdownlint-cli2": "^0.20.0",
     "npm-check-updates": "^22.2.9",
     "postcss-html": "^1.8.1",
     "prettier": "^3.9.5",
     "stylelint": "^17.14.0",
-    "stylelint-config-standard": "^40.0.0"
+    "stylelint-config-standard": "^40.0.0",
+    "typescript": "^6.0.0"
   },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Edge versions"
+  ],
   "dependencies": {
     "@formkit/auto-animate": "^0.9.0"
   }

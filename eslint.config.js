@@ -2,6 +2,8 @@ import js from '@eslint/js';
 import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 import jsonc from 'eslint-plugin-jsonc';
+import compat from 'eslint-plugin-compat';
+import jsdoc from 'eslint-plugin-jsdoc';
 
 export default [
   {
@@ -11,13 +13,18 @@ export default [
       'css/vendor/**',
       'dist/**',
       'build/**',
+      'reports/**',
       'package-lock.json',
     ],
   },
 
   js.configs.recommended,
 
-  prettier,
+  // Browser compatibility checks
+  compat.configs['flat/recommended'],
+
+  // JSDoc linting
+  jsdoc.configs['flat/recommended-error'],
 
   {
     files: ['**/*.js'],
@@ -40,8 +47,14 @@ export default [
             '^(showToast|formatNum|formatDate|formatBytes|t|debounce|throttle|loadLanguage|applyVisualSettings|playerAvatarError)$',
         },
       ],
+
+      // Optional: initially only warn about browser incompatibilities
+      'compat/compat': 'warn',
     },
   },
 
   ...jsonc.configs['flat/recommended-with-jsonc'],
+
+  // Prettier must remain near the end so it disables conflicting formatting rules.
+  prettier,
 ];

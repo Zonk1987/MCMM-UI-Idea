@@ -1,0 +1,23 @@
+{
+  "*.js": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "*.{json,jsonc}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "*.{css,php}": [
+    "stylelint --fix",
+    "prettier --write"
+  ],
+  "*.html": [
+    "html-validate",
+    "stylelint --fix",
+    "prettier --write"
+  ],
+  "*.md": [
+    "markdownlint-cli2",
+    "prettier --write"
+  ]
+}
