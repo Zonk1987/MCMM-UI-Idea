@@ -899,12 +899,12 @@
                 <td>
                   <div style="position: relative; display: inline-block">
                     <template x-if="c.icon">
-                      <div
+                      <button
+                        type="button"
                         class="container-icon-wrap cursor-pointer hover-glow"
-                        role="button"
-                        tabindex="0"
                         :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
                         @click.prevent="openContextMenu($event, c)"
+                        style="background: none; padding: 0; margin: 0; border: none"
                       >
                         <img
                           loading="lazy"
@@ -913,21 +913,24 @@
                           alt="Icon"
                           :src="c.icon"
                           :alt="c.name"
-                          onerror="
-                            this.parentElement.className =
+                          @error="
+                            $el.parentElement.className =
                               'container-icon-fallback cursor-pointer hover-glow';
-                            this.parentElement.innerHTML = 'x';
+                            $el.parentElement.innerHTML = 'x';
                           "
                         />
-                      </div>
+                      </button>
                     </template>
                     <template x-if="!c.icon">
-                      <div
+                      <button
+                        type="button"
                         class="container-icon-fallback cursor-pointer hover-glow"
                         :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
                         @click.prevent="openContextMenu($event, c)"
                         x-text="c.iconFallback"
-                      ></div>
+                        style="background: none; padding: 0; margin: 0; border: none"
+                        aria-label="Icon"
+                      ></button>
                     </template>
                     <template x-if="c.upToDate === false">
                       <div
@@ -2110,12 +2113,12 @@
                 <td>
                   <div style="position: relative; display: inline-block">
                     <template x-if="c.icon">
-                      <div
+                      <button
+                        type="button"
                         class="container-icon-wrap cursor-pointer hover-glow"
-                        role="button"
-                        tabindex="0"
                         :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
                         @click.prevent="openContextMenu($event, c)"
+                        style="background: none; padding: 0; margin: 0; border: none"
                       >
                         <img
                           loading="lazy"
@@ -2124,21 +2127,24 @@
                           alt="Icon"
                           :src="c.icon"
                           :alt="c.name"
-                          onerror="
-                            this.parentElement.className =
+                          @error="
+                            $el.parentElement.className =
                               'container-icon-fallback cursor-pointer hover-glow';
-                            this.parentElement.innerHTML = 'x';
+                            $el.parentElement.innerHTML = 'x';
                           "
                         />
-                      </div>
+                      </button>
                     </template>
                     <template x-if="!c.icon">
-                      <div
+                      <button
+                        type="button"
                         class="container-icon-fallback cursor-pointer hover-glow"
                         :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
                         @click.prevent="openContextMenu($event, c)"
                         x-text="c.iconFallback"
-                      ></div>
+                        style="background: none; padding: 0; margin: 0; border: none"
+                        aria-label="Icon"
+                      ></button>
                     </template>
                     <template x-if="c.upToDate === false">
                       <div
