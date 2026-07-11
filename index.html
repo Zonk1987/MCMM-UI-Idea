@@ -38,7 +38,7 @@
         >
       </div>
 
-      <nav class="tab-nav" id="tabNav" role="tablist" aria-label="Main Navigation">
+      <nav class="tab-nav" id="tabNav" aria-label="Main Navigation">
         <button
           type="button"
           class="tab-btn active"
@@ -242,6 +242,7 @@
           type="text"
           autocomplete="username"
           style="display: none"
+          aria-label="Hidden Username"
         />
         <div class="settings-body" id="settingsBody">
           <!-- Debug -->
@@ -435,6 +436,7 @@
                     class="swatch swatch-custom"
                     value="#f57c00"
                     title="Eigene Farbe"
+                    aria-label="Custom Accent Color"
                   />
                 </div>
               </div>
@@ -1011,7 +1013,7 @@
                 width: 80px;
                 height: 80px;
                 background: rgb(59 130 246 / 15%);
-                color: #3b82f6;
+                color: #60a5fa;
                 border-radius: 20px;
                 display: flex;
                 align-items: center;
@@ -1038,7 +1040,7 @@
                 width: 80px;
                 height: 80px;
                 background: rgb(34 197 94 / 15%);
-                color: #22c55e;
+                color: #4ade80;
                 border-radius: 20px;
                 display: flex;
                 align-items: center;
@@ -1719,6 +1721,7 @@
                         class="setting-input"
                         x-model="mode"
                         style="width: 100%; height: 40px; padding-top: 0; padding-bottom: 0"
+                        aria-label="Cron Modus"
                       >
                         <option value="preset">Täglich (04:00 Uhr)</option>
                         <option value="preset2">Täglich (Mitternacht)</option>
@@ -2225,6 +2228,7 @@
                   id="field_select_17"
                   name="field_select_17"
                   class="setting-input"
+                  aria-label="Preview"
                   style="width: 240px"
                 >
                   <option>Icon and label</option>
@@ -2435,6 +2439,7 @@
                   name="field_select_27"
                   class="setting-input"
                   style="width: 240px"
+                  aria-label="Layout"
                 >
                   <option>Default</option>
                   <option>Expand row</option>
@@ -2480,6 +2485,7 @@
                   id="field_select_29"
                   name="field_select_29"
                   class="setting-input"
+                  aria-label="Popup Mode"
                   style="width: 240px"
                 >
                   <option>Default</option>
