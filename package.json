@@ -44,7 +44,7 @@
     "eslint-plugin-jsonc": "^3.3.0",
     "globals": "^17.7.0",
     "hint": "^7.1.13",
-    "html-validate": "^10.0.0",
+    "html-validate": "^11.5.5",
     "husky": "^9.1.7",
     "jsonc-eslint-parser": "^3.1.0",
     "lighthouse": "^13.4.0",
