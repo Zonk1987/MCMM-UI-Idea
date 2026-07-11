@@ -111,8 +111,7 @@ export function dockerApp() {
 
     get viewItems() {
       // Access updateTick to create a dependency
-
-      this.updateTick;
+      const t = this.updateTick;
 
       if (!this.useFolders) {
         return this.filteredContainers.map((c) => ({ type: 'container', ...c }));
@@ -171,8 +170,7 @@ export function dockerApp() {
 
     get stackItems() {
       // Access updateTick to create a dependency
-
-      this.updateTick;
+      const t = this.updateTick;
 
       const items = [];
       const stackMap = {};

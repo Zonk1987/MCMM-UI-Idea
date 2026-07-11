@@ -28,13 +28,7 @@
           <span class="custom-select-label" x-text="serverLabel"></span>
           <span class="material-icons-round custom-select-arrow">expand_more</span>
         </button>
-        <ul
-          class="custom-select-dropdown"
-          x-show="selectorOpen"
-          x-transition.opacity
-          role="listbox"
-          aria-label="Server Auswahl"
-        >
+        <ul class="custom-select-dropdown" x-show="selectorOpen" x-transition.opacity>
           <li
             class="custom-select-option"
             @click="state.server = ''; selectorOpen = false"
@@ -161,7 +155,7 @@
                           class="player-avatar"
                           :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
                           onerror="playerAvatarError(this)"
-                          alt="Image"
+                          alt="Avatar"
                         />
                       </td>
                       <td>
@@ -307,7 +301,7 @@
                 class="player-avatar"
                 :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
                 onerror="playerAvatarError(this)"
-                alt="Image"
+                alt="Avatar"
               />
               <div class="list-entry-name" x-text="p.name"></div>
               <div class="list-entry-meta" x-text="p.uuid"></div>
@@ -406,7 +400,7 @@
                       image-rendering: pixelated;
                     "
                     onerror="this.style.display = 'none'"
-                    alt="Image"
+                    alt="Avatar"
                   />
                   <span
                     class="chat-msg-player"

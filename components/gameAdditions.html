@@ -79,7 +79,7 @@
           x-text="$store.i18n.t('general.filter_version')"
           >MC Version</label
         >
-        <select class="filter-select" id="versionFilter">
+        <select class="filter-select" id="versionFilter" aria-label="versionFilter">
           <option value="" x-text="$store.i18n.t('general.filter_any')">Alle Versionen</option>
           <option value="1.21.4">1.21.4</option>
           <option value="1.21.1">1.21.1</option>
@@ -94,7 +94,7 @@
 
       <div class="sidebar-section">
         <label for="sortFilter" class="sidebar-label">Sortierung</label>
-        <select class="filter-select" id="sortFilter">
+        <select class="filter-select" id="sortFilter" aria-label="sortFilter">
           <option value="downloads">Meiste Downloads</option>
           <option value="updated">Neueste Updates</option>
           <option value="created">Neu eingestellt</option>
@@ -213,6 +213,7 @@
                 type="text"
                 class="setting-input"
                 id="dcName"
+                aria-label="dcName"
                 placeholder="mc-server-01"
                 style="width: 170px"
               />
@@ -226,6 +227,7 @@
                 type="number"
                 class="setting-input"
                 id="dcPort"
+                aria-label="dcPort"
                 value="25565"
                 min="1024"
                 max="65535"
@@ -241,6 +243,7 @@
                 type="text"
                 class="setting-input"
                 id="dcDataPath"
+                aria-label="dcDataPath"
                 value="/mnt/user/gameservers"
                 style="width: 200px; font-family: monospace; font-size: 11px"
               />
@@ -249,7 +252,7 @@
               <div class="setting-info">
                 <div class="setting-label">Restart-Policy</div>
               </div>
-              <select class="setting-select" id="dcRestart">
+              <select class="setting-select" id="dcRestart" aria-label="dcRestart">
                 <option value="unless-stopped" selected>unless-stopped</option>
                 <option value="always">always</option>
                 <option value="on-failure">on-failure</option>
@@ -264,7 +267,7 @@
                 <div class="setting-label">Server-Typ (TYPE)</div>
                 <div class="setting-desc">auto aus Modpack bei CF/Modrinth</div>
               </div>
-              <select class="setting-select" id="dcType">
+              <select class="setting-select" id="dcType" aria-label="dcType">
                 <option value="AUTO">Auto (aus Modpack)</option>
                 <option value="VANILLA">Vanilla</option>
                 <option value="PAPER">Paper</option>
@@ -284,6 +287,7 @@
                 type="text"
                 class="setting-input"
                 id="dcVersion"
+                aria-label="dcVersion"
                 value="LATEST"
                 style="width: 100px"
               />
@@ -298,6 +302,7 @@
                   type="number"
                   class="setting-input"
                   id="dcRam"
+                  aria-label="dcRam"
                   value="4096"
                   min="512"
                   step="512"
@@ -312,7 +317,7 @@
                 <div class="setting-desc">Log-Rotation aktivieren</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcRollingLogs" checked />
+                ><input type="checkbox" id="dcRollingLogs" aria-label="dcRollingLogs" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -324,7 +329,7 @@
                 <div class="setting-desc">Zeitstempel in Logs</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcLogTimestamp" checked />
+                ><input type="checkbox" id="dcLogTimestamp" aria-label="dcLogTimestamp" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -340,7 +345,7 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAikarFlags" checked />
+                ><input type="checkbox" id="dcAikarFlags" aria-label="dcAikarFlags" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -354,7 +359,7 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcMeowices" />
+                ><input type="checkbox" id="dcMeowices" aria-label="dcMeowices" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -366,7 +371,7 @@
                 <div class="setting-desc">Braucht Host-OS HugePages - reduziert TLB Misses</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcLargePages" />
+                ><input type="checkbox" id="dcLargePages" aria-label="dcLargePages" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -380,7 +385,7 @@
                 </div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcSimd" />
+                ><input type="checkbox" id="dcSimd" aria-label="dcSimd" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -401,6 +406,7 @@
                 type="text"
                 class="setting-input"
                 id="dcServerName"
+                aria-label="dcServerName"
                 placeholder="Mein Minecraft-Server"
                 style="width: 200px"
               />
@@ -414,6 +420,7 @@
                 type="number"
                 class="setting-input"
                 id="dcMaxPlayers"
+                aria-label="dcMaxPlayers"
                 value="20"
                 min="1"
                 max="1000"
@@ -425,7 +432,7 @@
                 <div class="setting-label">DIFFICULTY</div>
                 <div class="setting-desc">peaceful / easy / normal / hard</div>
               </div>
-              <select class="setting-select" id="dcDifficulty">
+              <select class="setting-select" id="dcDifficulty" aria-label="dcDifficulty">
                 <option value="easy">easy</option>
                 <option value="normal" selected>normal</option>
                 <option value="hard">hard</option>
@@ -438,7 +445,7 @@
                 <div class="setting-desc">Mojang-Auth (false = Cracked)</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcOnlineMode" checked />
+                ><input type="checkbox" id="dcOnlineMode" aria-label="dcOnlineMode" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -453,6 +460,7 @@
                 type="number"
                 class="setting-input"
                 id="dcViewDistance"
+                aria-label="dcViewDistance"
                 value="12"
                 min="2"
                 max="32"
@@ -468,6 +476,7 @@
                 type="number"
                 class="setting-input"
                 id="dcSimDistance"
+                aria-label="dcSimDistance"
                 value="10"
                 min="2"
                 max="32"
@@ -482,7 +491,7 @@
                 <div class="setting-label">ENABLE_WHITELIST</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcWhitelist" />
+                ><input type="checkbox" id="dcWhitelist" aria-label="dcWhitelist" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -497,6 +506,7 @@
                 type="text"
                 class="setting-input"
                 id="dcWhitelistNames"
+                aria-label="dcWhitelistNames"
                 placeholder="Spieler1,Spieler2"
                 style="width: 200px"
               />
@@ -510,6 +520,7 @@
                 type="text"
                 class="setting-input"
                 id="dcOps"
+                aria-label="dcOps"
                 placeholder="AdminName"
                 style="width: 200px"
               />
@@ -519,7 +530,7 @@
                 <div class="setting-label">ENABLE_RCON</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcRcon" checked />
+                ><input type="checkbox" id="dcRcon" aria-label="dcRcon" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -533,6 +544,7 @@
                 type="number"
                 class="setting-input"
                 id="dcRconPort"
+                aria-label="dcRconPort"
                 value="25575"
                 style="width: 90px"
               />
@@ -541,6 +553,7 @@
               <!-- Hidden username field for accessibility/password manager compliance -->
               <input
                 id="hiddenUsername_gameAdditions"
+                aria-label="hiddenUsername_gameAdditions"
                 name="hiddenUsername_gameAdditions"
                 type="text"
                 autocomplete="username"
@@ -553,6 +566,7 @@
                 type="password"
                 class="setting-input"
                 id="dcRconPw"
+                aria-label="dcRconPw"
                 placeholder="sicheres Passwort"
                 autocomplete="new-password"
                 style="width: 170px"
@@ -571,6 +585,7 @@
                 type="text"
                 class="setting-input"
                 id="dcIcon"
+                aria-label="dcIcon"
                 placeholder="https://..."
                 style="width: 200px"
               />
@@ -584,6 +599,7 @@
                 type="text"
                 class="setting-input"
                 id="dcResourcePack"
+                aria-label="dcResourcePack"
                 placeholder="https://..."
                 style="width: 200px"
               />
@@ -593,7 +609,11 @@
                 <div class="setting-label">RESOURCE_PACK_ENFORCE</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcResourcePackEnforce" />
+                ><input
+                  type="checkbox"
+                  id="dcResourcePackEnforce"
+                  aria-label="dcResourcePackEnforce"
+                />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -609,7 +629,7 @@
               <div class="setting-info">
                 <div class="setting-label">MODE (Gamemode)</div>
               </div>
-              <select class="setting-select" id="dcGamemode">
+              <select class="setting-select" id="dcGamemode" aria-label="dcGamemode">
                 <option value="survival" selected>survival</option>
                 <option value="creative">creative</option>
                 <option value="adventure">adventure</option>
@@ -622,7 +642,7 @@
                 <div class="setting-desc">Spieler immer auf Mode setzen</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcForceGamemode" />
+                ><input type="checkbox" id="dcForceGamemode" aria-label="dcForceGamemode" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -634,7 +654,7 @@
                 <div class="setting-desc">Spieler-vs-Spieler Kämpfe</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcPvp" checked />
+                ><input type="checkbox" id="dcPvp" aria-label="dcPvp" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -646,7 +666,7 @@
                 <div class="setting-desc">Hardcore-Modus (1 Leben)</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcHardcore" />
+                ><input type="checkbox" id="dcHardcore" aria-label="dcHardcore" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -658,7 +678,7 @@
                 <div class="setting-desc">Fliegen ohne Plugin erlauben</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAllowFlight" />
+                ><input type="checkbox" id="dcAllowFlight" aria-label="dcAllowFlight" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -672,7 +692,7 @@
                 <div class="setting-label">LEVEL_TYPE</div>
                 <div class="setting-desc">Weltgenerierung</div>
               </div>
-              <select class="setting-select" id="dcLevelType">
+              <select class="setting-select" id="dcLevelType" aria-label="dcLevelType">
                 <option value="minecraft:normal" selected>Normal</option>
                 <option value="minecraft:flat">Flat (Superflat)</option>
                 <option value="minecraft:large_biomes">Large Biomes</option>
@@ -688,6 +708,7 @@
                 type="text"
                 class="setting-input"
                 id="dcSeed"
+                aria-label="dcSeed"
                 placeholder="leer = zufällig"
                 style="width: 160px"
               />
@@ -701,6 +722,7 @@
                 type="number"
                 class="setting-input"
                 id="dcSpawnProtection"
+                aria-label="dcSpawnProtection"
                 value="16"
                 min="0"
                 style="width: 70px"
@@ -711,7 +733,7 @@
                 <div class="setting-label">GENERATE_STRUCTURES</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcGenStructures" checked />
+                ><input type="checkbox" id="dcGenStructures" aria-label="dcGenStructures" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -722,7 +744,7 @@
                 <div class="setting-label">ALLOW_NETHER</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAllowNether" checked />
+                ><input type="checkbox" id="dcAllowNether" aria-label="dcAllowNether" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -739,7 +761,7 @@
                 <div class="setting-label">ENABLE_COMMAND_BLOCK</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcCommandBlock" />
+                ><input type="checkbox" id="dcCommandBlock" aria-label="dcCommandBlock" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -751,7 +773,7 @@
                 <div class="setting-desc">Mojang Telemetrie</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcSnooper" />
+                ><input type="checkbox" id="dcSnooper" aria-label="dcSnooper" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -766,6 +788,7 @@
                 type="number"
                 class="setting-input"
                 id="dcIdleTimeout"
+                aria-label="dcIdleTimeout"
                 value="0"
                 min="0"
                 style="width: 70px"
@@ -780,6 +803,7 @@
                 type="number"
                 class="setting-input"
                 id="dcMaxTick"
+                aria-label="dcMaxTick"
                 value="60000"
                 style="width: 90px"
               />
@@ -793,7 +817,7 @@
                 <div class="setting-desc">Server pausieren wenn leer</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAutopause" />
+                ><input type="checkbox" id="dcAutopause" aria-label="dcAutopause" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -808,6 +832,7 @@
                 type="number"
                 class="setting-input"
                 id="dcAutopauseTimeout"
+                aria-label="dcAutopauseTimeout"
                 value="3600"
                 style="width: 90px"
               />
@@ -818,7 +843,7 @@
                 <div class="setting-desc">Server stoppen wenn leer</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcAutostop" />
+                ><input type="checkbox" id="dcAutostop" aria-label="dcAutostop" />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>
@@ -836,6 +861,7 @@
                 type="number"
                 class="setting-input"
                 id="dcNetworkCompression"
+                aria-label="dcNetworkCompression"
                 value="256"
                 style="width: 80px"
               />
@@ -848,6 +874,7 @@
                 type="number"
                 class="setting-input"
                 id="dcMaxBuildHeight"
+                aria-label="dcMaxBuildHeight"
                 value="320"
                 style="width: 80px"
               />
@@ -858,7 +885,7 @@
                 <div class="setting-desc">Env-Vars immer überschreiben</div>
               </div>
               <label class="setting-toggle"
-                ><input type="checkbox" id="dcOverrideProps" checked />
+                ><input type="checkbox" id="dcOverrideProps" aria-label="dcOverrideProps" checked />
                 <span class="toggle-track">
                   <span class="toggle-thumb"></span>
                 </span>

@@ -139,7 +139,7 @@ GameAdditions.registerGame('minecraft', {
   // CurseForge (Minecraft specific logic)
   // -------------------------------------------------------------
   async fetchMinecraftCurseForge(state) {
-    if (typeof appSettings !== 'undefined' && !appSettings.cfApiKey) {
+    if (window.appSettings !== undefined && !window.appSettings.cfApiKey) {
       GameAdditions.renderCurseForgeApiKeyWarning();
       return;
     }

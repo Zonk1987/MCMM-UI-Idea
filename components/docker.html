@@ -2501,10 +2501,9 @@
 
   <!-- Bulk Action Bar -->
   <template x-teleport="body">
-    <div
+    <section
       class="bulk-action-bar"
       :class="selected.length > 0 ? 'active' : ''"
-      role="region"
       aria-label="Bulk Actions"
     >
       <div
@@ -2536,7 +2535,7 @@
           <span class="material-icons-round">delete</span> Löschen
         </button>
       </div>
-    </div>
+    </section>
   </template>
 
   <!-- Docker Context Menu -->

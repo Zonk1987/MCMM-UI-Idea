@@ -111,10 +111,13 @@ export function registerAlpineComponents(Alpine) {
         args.push('-e USE_AIKAR_FLAGS=true');
       }
 
-      args.push(`-e USE_LARGE_PAGES=${d.largePages}`, `-e ENABLE_ROLLING_LOGS=${d.rollingLogs}`);
-
       const providerEnv = d.source === 'curseforge' ? 'CF_SLUG' : 'MODRINTH_MODPACK';
-      args.push(`-e ${providerEnv}="${d.id}"`, 'itzg/minecraft-server:latest');
+      args.push(
+        `-e USE_LARGE_PAGES=${d.largePages}`,
+        `-e ENABLE_ROLLING_LOGS=${d.rollingLogs}`,
+        `-e ${providerEnv}="${d.id}"`,
+        'itzg/minecraft-server:latest'
+      );
 
       let cmd = args.join(' \\\n  ');
 
