@@ -42,7 +42,7 @@ export const GameAdditions = {
 
     // Trigger initial select logic for the default game
     const mod = this.games[this.state.game];
-    if (mod && mod.onSelect) {
+    if (mod?.onSelect) {
       mod.onSelect(this.state);
     }
 
@@ -68,7 +68,7 @@ export const GameAdditions = {
     const gameModule = this.games[this.state.game];
 
     try {
-      if (gameModule && gameModule.fetchContent) {
+      if (gameModule?.fetchContent) {
         await gameModule.fetchContent(this.state);
       } else {
         throw new Error('Kein fetchContent im Modul definiert.');
@@ -159,7 +159,7 @@ export const GameAdditions = {
 
         // Let module adapt UI
         const mod = this.games[gameId];
-        if (mod && mod.onSelect) {
+        if (mod?.onSelect) {
           mod.onSelect(this.state);
         }
 
@@ -337,7 +337,7 @@ ${JSON.stringify(body, null, 2)}
         <p style="color:var(--text-muted);font-size:14px;max-width:400px;margin:10px auto;">
           Um auf reale CurseForge-Daten zuzugreifen, musst du deinen persönlichen API-Key in den Plugin-Einstellungen hinterlegen.
         </p>
-        <button class="settings-btn primary" onclick="document.querySelector('.tab-btn[data-tab=\\'settings\\']').click();" style="margin-top:20px;">
+        <button class="settings-btn primary" onclick="document.querySelector('.tab-btn[data-tab=&quot;settings&quot;]').click();" style="margin-top:20px;">
           <span class="material-icons-round">settings</span> Zu den Einstellungen
         </button>
       </div>`;
@@ -350,7 +350,7 @@ ${JSON.stringify(body, null, 2)}
     if (!grid) return;
     grid.innerHTML = data
       .map((mod) => {
-        const thumb = mod.logo && mod.logo.thumbnailUrl ? mod.logo.thumbnailUrl : '';
+        const thumb = mod.logo?.thumbnailUrl || '';
         return `
       <div class="mc-card" data-id="${mod.id}" data-name="${mod.name}" role="button" tabindex="0">
         <div class="mc-card-top">
@@ -397,7 +397,7 @@ ${JSON.stringify(body, null, 2)}
   },
 
   skeletonGrid(count) {
-    return Array(count)
+    return new Array(count)
       .fill('')
       .map(
         () => `

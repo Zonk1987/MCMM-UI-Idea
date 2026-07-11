@@ -203,6 +203,12 @@ export function playersApp() {
       if (!player || !this.activeData) return;
 
       this.activeData.online = this.activeData.online.filter((p) => p.name !== player);
+      let durationStr = this.state.banDuration;
+      if (this.state.banDuration === 'permanent') {
+        durationStr =
+          typeof t === 'function' ? t('general.duration_permanent') || 'Permanent' : 'Permanent';
+      }
+
       this.activeData.bans.push({
         name: player,
         uuid: '—',
@@ -212,12 +218,7 @@ export function playersApp() {
             ? t('no_reason') || 'Kein Grund angegeben'
             : 'Kein Grund angegeben'),
         date: new Date().toLocaleDateString('de-DE'),
-        duration:
-          this.state.banDuration === 'permanent'
-            ? typeof t === 'function'
-              ? t('general.duration_permanent') || 'Permanent'
-              : 'Permanent'
-            : this.state.banDuration,
+        duration: durationStr,
       });
 
       if (typeof window.toggleModal === 'function') window.toggleModal('banModal', false);
@@ -349,7 +350,7 @@ export function playersApp() {
 /**
  *
  */
-export function initPlayers() {} // Dummy for compatibility
+export function initPlayers() {} // NOSONAR // Dummy for compatibility
 /**
  *
  * @param img

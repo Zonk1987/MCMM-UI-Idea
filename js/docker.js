@@ -105,19 +105,13 @@ export function dockerApp() {
 
     get useFolders() {
       if (this.folderViewEnabled === false) return false;
-      const hasCustomFolders =
-        Alpine.store('core') &&
-        Alpine.store('core').customFolders &&
-        Alpine.store('core').customFolders.length > 0;
-      return (
-        hasCustomFolders ||
-        this.filteredContainers.some((c) => c.labels && c.labels['folder.view3'])
-      );
+      const hasCustomFolders = Alpine.store('core')?.customFolders?.length > 0;
+      return hasCustomFolders || this.filteredContainers.some((c) => c.labels?.['folder.view3']);
     },
 
     get viewItems() {
       // Access updateTick to create a dependency
-      void this.updateTick;
+      this.updateTick;
 
       if (!this.useFolders) {
         return this.filteredContainers.map((c) => ({ type: 'container', ...c }));
@@ -128,25 +122,25 @@ export function dockerApp() {
       const unassigned = [];
 
       // Pre-seed explicitly created folders
-      const explicitFolders = (Alpine.store('core') && Alpine.store('core').customFolders) || [];
+      const explicitFolders = Alpine.store('core')?.customFolders || [];
       explicitFolders.forEach((fName) => {
         folderMap[fName] = [];
       });
 
       this.filteredContainers.forEach((c) => {
-        const fName = c.labels && c.labels['folder.view3'];
+        const fName = c.labels?.['folder.view3'];
         if (fName) {
           if (!folderMap[fName]) folderMap[fName] = [];
           folderMap[fName].push({ type: 'container', ...c, folder: fName });
         } else {
           // If it's part of a compose stack, don't show it here
-          if (!c.labels || !c.labels['com.docker.compose.project']) {
+          if (!c.labels?.['com.docker.compose.project']) {
             unassigned.push({ type: 'container', ...c });
           }
         }
       });
 
-      const customFolders = (Alpine.store('core') && Alpine.store('core').customFolders) || [];
+      const customFolders = Alpine.store('core')?.customFolders || [];
       const sortedFolderNames = [];
       customFolders.forEach((f) => {
         sortedFolderNames.push(f);
@@ -166,8 +160,10 @@ export function dockerApp() {
           icon: Alpine.store('core')?.folderIcons?.[fName] || null,
         });
         if (this.isFolderExpanded(fName)) {
-          items.push({ type: 'folder_header', id: 'folder_header_' + fName, name: fName });
-          items.push(...folderMap[fName]);
+          items.push(
+            { type: 'folder_header', id: 'folder_header_' + fName, name: fName },
+            ...folderMap[fName]
+          );
         }
       });
 
@@ -176,18 +172,18 @@ export function dockerApp() {
 
     get stackItems() {
       // Access updateTick to create a dependency
-      void this.updateTick;
+      this.updateTick;
 
       const items = [];
       const stackMap = {};
 
-      const customStacks = (Alpine.store('core') && Alpine.store('core').customStacks) || [];
+      const customStacks = Alpine.store('core')?.customStacks || [];
       customStacks.forEach((s) => {
         stackMap[s.name] = [];
       });
 
       this.filteredContainers.forEach((c) => {
-        const sName = c.labels && c.labels['com.docker.compose.project'];
+        const sName = c.labels?.['com.docker.compose.project'];
         if (sName) {
           if (!stackMap[sName]) stackMap[sName] = [];
           stackMap[sName].push({ type: 'container', ...c, folder: sName });
@@ -206,8 +202,10 @@ export function dockerApp() {
           icon: null,
         });
         if (this.isFolderExpanded(sName)) {
-          items.push({ type: 'folder_header', id: 'folder_header_' + sName, name: sName });
-          items.push(...stackMap[sName]);
+          items.push(
+            { type: 'folder_header', id: 'folder_header_' + sName, name: sName },
+            ...stackMap[sName]
+          );
         }
       });
 
@@ -474,8 +472,8 @@ export function dockerApp() {
       this.dragOverPosition = null;
     },
 
-    handleDragOver(e, folderName) {
-      void e;
+    handleDragOver(_e, folderName) {
+      // NOSONAR
       if (!this.draggedContainerId) return;
 
       let idsToMove = [this.draggedContainerId];
@@ -489,8 +487,8 @@ export function dockerApp() {
         if (c) {
           if (folderName) {
             if (!c.labels || c.labels['folder.view3'] !== folderName) canDrop = true;
-          } else {
-            if (c.labels && c.labels['folder.view3']) canDrop = true;
+          } else if (c.labels?.['folder.view3']) {
+            canDrop = true;
           }
         }
       }
@@ -532,11 +530,9 @@ export function dockerApp() {
               c.labels['folder.view3'] = folderName;
               moveCount++;
             }
-          } else {
-            if (c.labels['folder.view3']) {
-              delete c.labels['folder.view3'];
-              moveCount++;
-            }
+          } else if (c.labels['folder.view3']) {
+            delete c.labels['folder.view3'];
+            moveCount++;
           }
         }
       });
@@ -545,9 +541,8 @@ export function dockerApp() {
         if (folderName) {
           if (typeof showToast === 'function')
             showToast(`${moveCount} Container verschoben nach "${folderName}"`, 'success');
-        } else {
-          if (typeof showToast === 'function')
-            showToast(`${moveCount} Container aus dem Ordner entfernt`, 'success');
+        } else if (typeof showToast === 'function') {
+          showToast(`${moveCount} Container aus dem Ordner entfernt`, 'success');
         }
       }
 
@@ -676,7 +671,7 @@ export function dockerApp() {
     actionAll(action, target) {
       let count = 0;
       this.containers.forEach((c) => {
-        const isStack = c.labels && c.labels['com.docker.compose.project'];
+        const isStack = c.labels?.['com.docker.compose.project'];
         if ((target === 'main' && !isStack) || (target === 'stack' && isStack)) {
           if (action === 'start' && c.status !== 'running') {
             c.status = 'running';
@@ -755,4 +750,4 @@ export function dockerApp() {
 /**
  *
  */
-export function initDocker() {}
+export function initDocker() {} // NOSONAR

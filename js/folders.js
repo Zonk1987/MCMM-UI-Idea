@@ -14,8 +14,7 @@ export function foldersApp() {
 
       // Group containers by folder.view3 label
       containers.forEach((c) => {
-        const folderName =
-          c.labels && c.labels['folder.view3'] ? c.labels['folder.view3'] : 'Unassigned';
+        const folderName = c.labels?.['folder.view3'] ? c.labels['folder.view3'] : 'Unassigned';
         if (!folderMap[folderName]) {
           folderMap[folderName] = {
             name: folderName,

@@ -158,9 +158,9 @@ export function initCoreStore(Alpine) {
       ports: [{ host: '3000', container: '3000', proto: 'tcp' }],
       paths: [{ host: '/mnt/user/appdata/grafana', container: '/var/lib/grafana' }],
       network: 'bridge',
-      ip: '172.17.0.3',
+      ip: '172.17.0.3', // NOSONAR
       mac: '02:42:ac:11:00:03',
-      lanIp: '192.168.1.100',
+      lanIp: '192.168.1.100', // NOSONAR
       labels: {
         'folder.view3': 'Monitoring',
       },
@@ -180,9 +180,9 @@ export function initCoreStore(Alpine) {
       ],
       paths: [{ host: '/mnt/user/appdata/npm', container: '/data' }],
       network: 'custom-br0',
-      ip: '192.168.1.200',
+      ip: '192.168.1.200', // NOSONAR
       mac: '02:42:c0:a8:01:c8',
-      lanIp: '192.168.1.200',
+      lanIp: '192.168.1.200', // NOSONAR
       labels: {
         'folder.view3': 'Network',
       },
@@ -198,9 +198,9 @@ export function initCoreStore(Alpine) {
       ports: [{ host: '9443', container: '9443', proto: 'tcp' }],
       paths: [{ host: '/var/run/docker.sock', container: '/var/run/docker.sock' }],
       network: 'bridge',
-      ip: '172.17.0.4',
+      ip: '172.17.0.4', // NOSONAR
       mac: '02:42:ac:11:00:04',
-      lanIp: '192.168.1.100',
+      lanIp: '192.168.1.100', // NOSONAR
       labels: {
         'folder.view3': 'System',
       },
@@ -338,7 +338,7 @@ export function initCoreStore(Alpine) {
     },
 
     addStack(name, composeContent) {
-      if (name && !this.customStacks.find((s) => s.name === name)) {
+      if (name && !this.customStacks.some((s) => s.name === name)) {
         this.customStacks = [...this.customStacks, { name, composeContent }];
       }
     },
@@ -396,7 +396,7 @@ export function initCoreStore(Alpine) {
     // Getters for specific views
     getGameservers() {
       return this.containers
-        .filter((c) => c.labels && c.labels['mcmm.managed'] === 'true')
+        .filter((c) => c.labels?.['mcmm.managed'] === 'true')
         .map((c) => ({
           containerId: c.id,
           game: c.labels['mcmm.game'],
@@ -457,16 +457,16 @@ export function initCoreStore(Alpine) {
     init() {
       // Initialize mock CPU/RAM for all containers
       this.containers.forEach((c) => {
-        c.cpu = c.status === 'running' ? Math.random() * 5 : 0;
-        c.ram = c.status === 'running' ? Math.floor(Math.random() * 400 + 100) : 0;
+        c.cpu = c.status === 'running' ? Math.random() * 5 : 0; // NOSONAR
+        c.ram = c.status === 'running' ? Math.floor(Math.random() * 400 + 100) : 0; // NOSONAR
       });
 
       // Live simulation for CPU/RAM for all containers
       setInterval(() => {
         this.containers.forEach((c) => {
           if (c.status === 'running') {
-            c.cpu = Math.max(0.1, Math.min(95, c.cpu + (Math.random() - 0.5) * 2));
-            c.ram = Math.max(50, Math.min(8192, c.ram + (Math.random() - 0.5) * 50));
+            c.cpu = Math.max(0.1, Math.min(95, c.cpu + (Math.random() - 0.5) * 2)); // NOSONAR
+            c.ram = Math.max(50, Math.min(8192, c.ram + (Math.random() - 0.5) * 50)); // NOSONAR
           } else {
             c.cpu = 0;
             c.ram = 0;
@@ -475,7 +475,7 @@ export function initCoreStore(Alpine) {
       }, 2000);
 
       // Sync counts to global store
-      if (typeof Alpine !== 'undefined') {
+      if (window.Alpine !== undefined) {
         Alpine.effect(() => {
           if (Alpine.store('global')) {
             Alpine.store('global').dockerCount = this.containers.length;
@@ -487,7 +487,7 @@ export function initCoreStore(Alpine) {
 
             let totalPlayers = 0;
             gameservers.forEach((s) => {
-              if (s.status === 'online' && s.players && s.players.current) {
+              if (s.status === 'online' && s.players?.current) {
                 totalPlayers += s.players.current;
               }
             });
