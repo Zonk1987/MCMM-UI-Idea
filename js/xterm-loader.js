@@ -27,12 +27,12 @@ export function loadXterm() {
 
     const terminalScript = document.createElement('script');
 
-    terminalScript.src = 'js/vendor/xterm.js';
+    terminalScript.src = 'js/vendor/xterm.min.js';
 
     terminalScript.onload = () => {
       const fitAddonScript = document.createElement('script');
 
-      fitAddonScript.src = 'js/vendor/xterm-addon-fit.js';
+      fitAddonScript.src = 'js/vendor/xterm-addon-fit.min.js';
       fitAddonScript.onload = resolve;
       fitAddonScript.onerror = reject;
 

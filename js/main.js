@@ -22,7 +22,7 @@ import { foldersApp } from './folders.js';
 import { networksApp } from './networks.js';
 import { composeApp } from './compose.js';
 import { registerAlpineComponents } from './alpine-components.js';
-import autoAnimate from './vendor/auto-animate.js';
+import autoAnimate from './vendor/auto-animate.min.js';
 
 document.addEventListener('alpine:init', () => {
   if (window.Alpine) {
