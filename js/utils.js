@@ -27,8 +27,9 @@ export function showToast(msg, type = 'info') {
  *
  */
 function getLocale() {
-  if (window.Alpine && window.Alpine.store('i18n')) {
-    return window.Alpine.store('i18n').locale || 'en';
+  const locale = window.Alpine?.store('i18n')?.locale;
+  if (locale) {
+    return locale;
   }
   return typeof appSettings !== 'undefined' ? appSettings.lang : 'en';
 }
@@ -53,7 +54,13 @@ export function formatNum(n, compact = true) {
  * @param dateInput
  * @param options
  */
-export function formatDate(dateInput, options = { dateStyle: 'medium' }) {
+const defaultDateOptions = { dateStyle: 'medium' };
+/**
+ *
+ * @param dateInput
+ * @param options
+ */
+export function formatDate(dateInput, options = defaultDateOptions) {
   const locale = getLocale();
   return new Intl.DateTimeFormat(locale, options).format(new Date(dateInput));
 }
@@ -142,7 +149,7 @@ export async function fetchComponent(id, url) {
     // If it's already loaded (no '<!-- Component loaded dynamically -->' comment inside)
     if (el && el.innerHTML.trim() !== '<!-- Component loaded dynamically -->') return;
 
-    const response = await fetch(url + '?v=' + new Date().getTime());
+    const response = await fetch(url + '?v=' + Date.now());
     if (response.ok) {
       const html = await response.text();
       if (el) {
@@ -189,9 +196,7 @@ export async function switchTab(tabId) {
         case 'game-additions': {
           const ga = await import('./gameAdditions.js');
           window.GameAdditions = ga.GameAdditions;
-          if (ga.GameAdditions && ga.GameAdditions.init) {
-            ga.GameAdditions.init();
-          }
+          ga.GameAdditions?.init?.();
           await fetchComponent('panel-game-additions', 'components/gameAdditions.html');
           break;
         }
