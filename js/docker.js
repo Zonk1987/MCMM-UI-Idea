@@ -111,7 +111,7 @@ export function dockerApp() {
 
     get viewItems() {
       // Access updateTick to create a dependency
-      this.updateTick;
+      const _tick = this.updateTick;
 
       if (!this.useFolders) {
         return this.filteredContainers.map((c) => ({ type: 'container', ...c }));
@@ -132,11 +132,9 @@ export function dockerApp() {
         if (fName) {
           if (!folderMap[fName]) folderMap[fName] = [];
           folderMap[fName].push({ type: 'container', ...c, folder: fName });
-        } else {
+        } else if (!c.labels?.['com.docker.compose.project']) {
           // If it's part of a compose stack, don't show it here
-          if (!c.labels?.['com.docker.compose.project']) {
-            unassigned.push({ type: 'container', ...c });
-          }
+          unassigned.push({ type: 'container', ...c });
         }
       });
 
@@ -172,7 +170,7 @@ export function dockerApp() {
 
     get stackItems() {
       // Access updateTick to create a dependency
-      this.updateTick;
+      const _tick = this.updateTick;
 
       const items = [];
       const stackMap = {};
@@ -339,8 +337,7 @@ export function dockerApp() {
       e.dataTransfer.setData('text/plain', id);
     },
 
-    endDrag(e) {
-      void e;
+    endDrag(_e) {
       this.draggedContainerId = null;
       this.draggedFolder = null;
       this.dragOverFolder = null;
@@ -380,6 +377,7 @@ export function dockerApp() {
     },
 
     handleSortDrop() {
+      // NOSONAR
       if ((!this.draggedContainerId && !this.draggedFolder) || !this.dragOverTargetId) return;
 
       let allContainers = [...Alpine.store('core').containers];
@@ -432,10 +430,7 @@ export function dockerApp() {
         if (targetIndex === -1) return;
 
         const targetContainer = allContainers[targetIndex];
-        const targetFolder =
-          targetContainer && targetContainer.labels
-            ? targetContainer.labels['folder.view3']
-            : undefined;
+        const targetFolder = targetContainer?.labels?.['folder.view3'];
 
         const itemsToMove = [];
         idsToMove.forEach((id) => {
@@ -718,7 +713,7 @@ export function dockerApp() {
       }
 
       const store = Alpine.store('core');
-      if (store && store.addStack) {
+      if (store?.addStack) {
         store.addStack(this.composeStackName.trim(), this.composeContent);
         if (typeof showToast === 'function')
           showToast(`Stack ${this.composeStackName} wird deployed...`, 'info');

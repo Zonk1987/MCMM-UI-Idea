@@ -108,16 +108,18 @@ document.addEventListener('alpine:init', () => {
         ];
 
         if (d.icon) args.push(`-e ICON="${d.icon}"`);
-        args.push(`-e MEMORY=${d.ram}M`);
-        args.push(`-e INIT_MEMORY=${d.initRam}M`);
-        args.push(`-e MAX_PLAYERS=${d.maxPlayers}`);
-        args.push(`-e DIFFICULTY=${d.difficulty}`);
-        args.push(`-e MOTD="${d.motd}"`);
-        args.push(`-e PVP=${d.pvp}`);
-        args.push(`-e HARDCORE=${d.hardcore}`);
-        args.push(`-e ALLOW_FLIGHT=${d.flight}`);
-        args.push(`-e ONLINE_MODE=${d.onlineMode}`);
-        args.push(`-e ENABLE_COMMAND_BLOCK=${d.cmdBlocks}`);
+        args.push(
+          `-e MEMORY=${d.ram}M`,
+          `-e INIT_MEMORY=${d.initRam}M`,
+          `-e MAX_PLAYERS=${d.maxPlayers}`,
+          `-e DIFFICULTY=${d.difficulty}`,
+          `-e MOTD="${d.motd}"`,
+          `-e PVP=${d.pvp}`,
+          `-e HARDCORE=${d.hardcore}`,
+          `-e ALLOW_FLIGHT=${d.flight}`,
+          `-e ONLINE_MODE=${d.onlineMode}`,
+          `-e ENABLE_COMMAND_BLOCK=${d.cmdBlocks}`
+        );
 
         if (d.enableWhitelist) {
           args.push('-e ENABLE_WHITELIST=true');
@@ -125,26 +127,24 @@ document.addEventListener('alpine:init', () => {
         }
 
         if (d.meowice) {
-          args.push('-e USE_MEOWICE_FLAGS=true');
-          args.push('-e USE_MEOWICE_GRAALVM_FLAGS=true');
+          args.push('-e USE_MEOWICE_FLAGS=true', '-e USE_MEOWICE_GRAALVM_FLAGS=true');
         } else if (d.aikar) {
           args.push('-e USE_AIKAR_FLAGS=true');
         }
 
-        args.push(`-e USE_LARGE_PAGES=${d.largePages}`);
-        args.push(`-e ENABLE_ROLLING_LOGS=${d.rollingLogs}`);
+        args.push(`-e USE_LARGE_PAGES=${d.largePages}`, `-e ENABLE_ROLLING_LOGS=${d.rollingLogs}`);
 
         const providerEnv = d.source === 'curseforge' ? 'CF_SLUG' : 'MODRINTH_MODPACK';
         args.push(`-e ${providerEnv}="${d.id}"`);
         args.push('itzg/minecraft-server:latest');
 
         let cmd = args.join(' \\\n  ');
-        return cmd.replaceAll('\\', '<span style="color:var(--text-muted)">\\</span>');
+        return cmd.replaceAll('\\\\', '<span style="color:var(--text-muted)">\\\\</span>');
       },
       copyCmd() {
         const rawCmd = this.getPreviewCmd()
           .replaceAll(/<span[^>]*>/g, '')
-          .replaceAll(/<\/span>/g, '');
+          .replaceAll('</span>', '');
         navigator.clipboard.writeText(rawCmd);
         if (typeof showToast === 'function') showToast('Kopiert!', 'success');
       },
