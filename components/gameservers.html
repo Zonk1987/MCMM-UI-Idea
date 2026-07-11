@@ -22,7 +22,7 @@
 
   <div class="gs-grid">
     <template x-for="srv in instances" :key="srv.containerId">
-      <div class="gs-card" role="button" tabindex="0">
+      <div class="gs-card">
         <div class="gs-card-banner">
           <div
             class="gs-card-banner-bg"
@@ -514,13 +514,14 @@
   </div>
 
   <!-- File Manager Modal -->
-  <div
+  <dialog
     class="modal-backdrop"
     id="fileManagerModal"
     hidden
-    ondrop="typeof window.fmDrop === 'function' ? window.fmDrop(event) : null"
-    ondragover="typeof window.fmDragOver === 'function' ? window.fmDragOver(event) : null"
-    ondragleave="typeof window.fmDragLeave === 'function' ? window.fmDragLeave(event) : null"
+    aria-labelledby="fmTitle"
+    @drop="typeof window.fmDrop === 'function' ? window.fmDrop($event) : null"
+    @dragover="typeof window.fmDragOver === 'function' ? window.fmDragOver($event) : null"
+    @dragleave="typeof window.fmDragLeave === 'function' ? window.fmDragLeave($event) : null"
   >
     <div
       class="modal modal-large glass-card"
@@ -668,6 +669,7 @@
           </div>
           <textarea
             id="fmEditorTextarea"
+            aria-label="Editor"
             style="
               flex: 1;
               background: transparent;
@@ -679,67 +681,7 @@
               padding: 16px;
               resize: none;
             "
-            spellcheck="false"
-          >
-#Minecraft server properties
-#Mon Oct 02 12:00:00 2023
-enable-jmx-monitoring=false
-rcon.port=25575
-level-seed=
-gamemode=survival
-enable-command-block=false
-enable-query=false
-generator-settings={}
-enforce-secure-profile=true
-level-name=world
-motd=Mein Unraid Minecraft Server
-query.port=25565
-pvp=true
-generate-structures=true
-max-chained-neighbor-updates=1000000
-difficulty=easy
-network-compression-threshold=256
-max-tick-time=60000
-require-resource-pack=false
-use-native-transport=true
-max-players=20
-online-mode=true
-enable-status=true
-allow-flight=false
-initial-disabled-packs=
-broadcast-rcon-to-ops=true
-view-distance=10
-server-ip=
-resource-pack-prompt=
-allow-nether=true
-server-port=25565
-enable-rcon=true
-sync-chunk-writes=true
-op-permission-level=4
-prevent-proxy-connections=false
-hide-online-players=false
-resource-pack=
-entity-broadcast-range-percentage=100
-simulation-distance=10
-rcon.password=secret
-player-idle-timeout=0
-force-gamemode=false
-rate-limit=0
-hardcore=false
-white-list=false
-broadcast-console-to-ops=true
-spawn-npcs=true
-spawn-animals=true
-function-permission-level=2
-initial-enabled-packs=vanilla
-level-type=minecraft\:normal
-text-filtering-config=
-spawn-monsters=true
-enforce-whitelist=false
-spawn-protection=16
-resource-pack-sha1=
-max-world-size=29999984
-          </textarea>
+          ></textarea>
         </div>
       </div>
       <!-- Drag &amp; Drop Overlay -->
@@ -753,7 +695,7 @@ max-world-size=29999984
         </h3>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Backup Modal -->
   <div class="modal-backdrop" id="backupModal" hidden>

@@ -154,7 +154,7 @@
                           src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                           class="player-avatar"
                           :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
-                          onerror="playerAvatarError(this)"
+                          @error="playerAvatarError($el)"
                           alt="Avatar"
                         />
                       </td>
@@ -300,7 +300,7 @@
                 src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                 class="player-avatar"
                 :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
-                onerror="playerAvatarError(this)"
+                @error="playerAvatarError($el)"
                 alt="Avatar"
               />
               <div class="list-entry-name" x-text="p.name"></div>
@@ -399,7 +399,7 @@
                       border-radius: 3px;
                       image-rendering: pixelated;
                     "
-                    onerror="this.style.display = 'none'"
+                    @error="$el.style.display = 'none'"
                     alt="Avatar"
                   />
                   <span
