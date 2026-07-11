@@ -38,7 +38,7 @@ document.addEventListener('keydown', (e) => {
   });
 
   if (openModals.length === 0) return;
-  const topModal = openModals[openModals.length - 1];
+  const topModal = openModals.at(-1);
 
   if (e.key === 'Escape') {
     const closeBtn = topModal.querySelector(
@@ -104,90 +104,82 @@ window.finishOnboarding = function () {
   }
 };
 
-/**
- *
- */
-async function initApp() {
-  // Load settings first since other modules might depend on them
-  initSettings();
-
-  // ── Wait for language to load before rendering anything ──
-  await initI18n();
-
-  // ── Load Modular HTML Components ──
-  // Now loaded dynamically when switching tabs
-  const activeTabBtn = document.querySelector('.tab-btn.active');
-  if (activeTabBtn) {
-    switchTab(activeTabBtn.dataset.tab || 'docker');
-  }
-
-  // Modals are handled by Alpine.js natively, do not move them manually.
-
-  // ── Initialize all modules ────────────────────────────
-  // Store initialization moved to top-level alpine:init listener
-
-  // ── Tab navigation ────────────────────────────────────
-  document.getElementById('tabNav')?.addEventListener('click', (e) => {
-    const btn = e.target.closest('.tab-btn');
-    if (!btn) return;
-    switchTab(btn.dataset.tab);
-  });
-
-  // ── Refresh button ────────────────────────────────────
-  document.getElementById('refreshBtn')?.addEventListener('click', () => {
-    const active = document.querySelector('.tab-btn.active')?.dataset.tab;
-    if (active === 'docker') {
-      /* Alpine handles it */
-    }
-    if (active === 'gameserver') {
-      /* Alpine handles it */
-    }
-    if (active === 'game-additions') {
-      window.GameAdditions?.refresh();
-    }
-    if (active === 'players') {
-      /* Alpine handles it */
-    }
-    showToast(t('general.data_refreshed') || 'Daten aktualisiert', 'success');
-
-    // Spin the refresh icon briefly
-    const icon = document.querySelector('#refreshBtn .material-icons-round');
-    if (icon) {
-      icon.style.transition = 'transform 0.6s ease';
-      icon.style.transform = 'rotate(360deg)';
-      setTimeout(() => {
-        icon.style.transform = '';
-        icon.style.transition = '';
-      }, 700);
-    }
-  });
-
-  console.log('%c🎮 GameServer Hub v1.0', 'color:#f57c00;font-size:16px;font-weight:bold');
-  console.log(
-    // NOSONAR
-    `%cUnraid Plugin — ${t('general.loaded_successfully') || 'Erfolgreich geladen'}`,
-    'color:#22c55e'
-  );
-
-  // ── Show Onboarding Modal ─────────────────────────────
-  if (!localStorage.getItem('gs_hub_onboarding_done')) {
-    const welcome = document.getElementById('welcomeModal');
-    if (welcome) {
-      setTimeout(() => (welcome.hidden = false), 500); // slight delay
-    }
-  }
-  // Dynamically load Alpine.js AFTER all modules are initialized
-  const script = document.createElement('script');
-  script.src = 'js/vendor/alpine.min.js';
-  script.defer = true;
-  document.head.appendChild(script);
-}
-
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
-} else {
-  initApp();
+  await new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve));
 }
+// Load settings first since other modules might depend on them
+initSettings();
+
+// ── Wait for language to load before rendering anything ──
+await initI18n();
+
+// ── Load Modular HTML Components ──
+// Now loaded dynamically when switching tabs
+const activeTabBtn = document.querySelector('.tab-btn.active');
+if (activeTabBtn) {
+  switchTab(activeTabBtn.dataset.tab || 'docker');
+}
+
+// Modals are handled by Alpine.js natively, do not move them manually.
+
+// ── Initialize all modules ────────────────────────────
+// Store initialization moved to top-level alpine:init listener
+
+// ── Tab navigation ────────────────────────────────────
+document.getElementById('tabNav')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  switchTab(btn.dataset.tab);
+});
+
+// ── Refresh button ────────────────────────────────────
+document.getElementById('refreshBtn')?.addEventListener('click', () => {
+  const active = document.querySelector('.tab-btn.active')?.dataset.tab;
+  if (active === 'docker') {
+    /* Alpine handles it */
+  }
+  if (active === 'gameserver') {
+    /* Alpine handles it */
+  }
+  if (active === 'game-additions') {
+    window.GameAdditions?.refresh();
+  }
+  if (active === 'players') {
+    /* Alpine handles it */
+  }
+  showToast(t('general.data_refreshed') || 'Daten aktualisiert', 'success');
+
+  // Spin the refresh icon briefly
+  const icon = document.querySelector('#refreshBtn .material-icons-round');
+  if (icon) {
+    icon.style.transition = 'transform 0.6s ease';
+    icon.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+      icon.style.transform = '';
+      icon.style.transition = '';
+    }, 700);
+  }
+});
+
+console.log('%c🎮 GameServer Hub v1.0', 'color:#f57c00;font-size:16px;font-weight:bold');
+console.log(
+  // NOSONAR
+  `%cUnraid Plugin — ${t('general.loaded_successfully') || 'Erfolgreich geladen'}`,
+  'color:#22c55e'
+);
+
+// ── Show Onboarding Modal ─────────────────────────────
+if (!localStorage.getItem('gs_hub_onboarding_done')) {
+  const welcome = document.getElementById('welcomeModal');
+  if (welcome) {
+    setTimeout(() => (welcome.hidden = false), 500); // slight delay
+  }
+}
+// Dynamically load Alpine.js AFTER all modules are initialized
+const script = document.createElement('script');
+script.src = 'js/vendor/alpine.min.js';
+script.defer = true;
+document.head.appendChild(script);
 
 // Import game addition modules AFTER GameAdditions has been attached to window
 // (Wait, static imports are hoisted. To ensure they run AFTER GameAdditions is global,
