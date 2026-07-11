@@ -1,3 +1,5 @@
+import { GameAdditions } from './gameAdditions.js';
+
 /* ═══════════════════════════════════════════════════════════
    settings.js — Settings Panel Controller
    Manages saving/loading config to localStorage, toggling the
@@ -95,8 +97,8 @@ export function saveSettings() {
     return;
   }
 
-  if (window.GameAdditions) {
-    window.GameAdditions.buildGameSelector();
+  if (GameAdditions) {
+    GameAdditions.buildGameSelector();
   }
 
   applyVisualSettings();
@@ -207,12 +209,12 @@ export function fillSettingsForm() {
 
   // Populate modules
   const modContainer = document.getElementById('settingsModuleList');
-  if (modContainer && window.GameAdditions) {
+  if (modContainer && GameAdditions) {
     modContainer.innerHTML = '';
-    const allGames = Object.keys(window.GameAdditions.games);
+    const allGames = Object.keys(GameAdditions.games);
     allGames.forEach((gameId) => {
       if (gameId === 'minecraft') return; // skip default
-      const cfg = window.GameAdditions.games[gameId];
+      const cfg = GameAdditions.games[gameId];
       const isChecked = !(appSettings.disabledModules || []).includes(gameId);
 
       modContainer.insertAdjacentHTML(
