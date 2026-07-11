@@ -42,5 +42,9 @@
   "sarif-viewer.connectToGithubCodeScanning": "on",
   "sonarlint.analyzerProperties": {
     "sonar.exclusions": "**/vendor/**, js/vendor/**, css/vendor/**"
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "zonk1987",
+    "projectKey": "Zonk1987_MCMM-UI-Idea"
   }
 }

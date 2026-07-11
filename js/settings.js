@@ -24,7 +24,7 @@ export const DEFAULT_SETTINGS = {
   rconEnabled: true,
   rconPort: 25575,
   rconPassword: '',
-  cfApiKey: '$2a$10$Tihj.oq7x7tEa5F0.f9/1Of3u2P5hpwfymKDi6fDGSaS.qh/R4B2m',
+  cfApiKey: '',
   mcType: 'PAPER',
   mcVersion: 'LATEST',
   mcMaxPlayers: 20,
@@ -40,7 +40,7 @@ export const DEFAULT_SETTINGS = {
 };
 
 /** @type {object} Current application settings */
-export let appSettings = { ...DEFAULT_SETTINGS };
+export const appSettings = { ...DEFAULT_SETTINGS };
 
 /**
  * Initialize settings module
@@ -62,13 +62,13 @@ export function loadSettings() {
       if (!parsed.cfApiKey && DEFAULT_SETTINGS.cfApiKey) {
         parsed.cfApiKey = DEFAULT_SETTINGS.cfApiKey;
       }
-      appSettings = { ...DEFAULT_SETTINGS, ...parsed };
+      Object.assign(appSettings, DEFAULT_SETTINGS, parsed);
     } catch (e) {
       console.warn('Failed to load settings', e);
-      appSettings = { ...DEFAULT_SETTINGS };
+      Object.assign(appSettings, DEFAULT_SETTINGS);
     }
   } else {
-    appSettings = { ...DEFAULT_SETTINGS };
+    Object.assign(appSettings, DEFAULT_SETTINGS);
   }
   window.appSettings = appSettings;
   applyVisualSettings();
@@ -112,7 +112,7 @@ export function resetSettings() {
   if (
     confirm(t('settings.reset_confirm') || 'Einstellungen wirklich auf Standardwerte zurücksetzen?')
   ) {
-    appSettings = { ...DEFAULT_SETTINGS };
+    Object.assign(appSettings, DEFAULT_SETTINGS);
     window.appSettings = appSettings;
     localStorage.removeItem('gs_hub_settings');
     applyVisualSettings();
@@ -130,9 +130,9 @@ export function applyVisualSettings() {
 
   // Calculate a light accent dim & glow based on hex accent
   const hex = appSettings.accentColor;
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
+  const r = Number.parseInt(hex.slice(1, 3), 16);
+  const g = Number.parseInt(hex.slice(3, 5), 16);
+  const b = Number.parseInt(hex.slice(5, 7), 16);
   document.documentElement.style.setProperty('--accent-dim', `rgba(${r}, ${g}, ${b}, 0.15)`);
   document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.4)`);
 
@@ -140,7 +140,7 @@ export function applyVisualSettings() {
   document.body.classList.toggle('compact-mode', appSettings.compactMode);
 
   // 3. Theme
-  document.documentElement.setAttribute('data-theme', appSettings.theme || 'dark');
+  document.documentElement.dataset.theme = appSettings.theme || 'dark';
 
   // 4. Language
   if (typeof window.loadLanguage === 'function') {
@@ -245,7 +245,7 @@ export function readSettingsForm() {
   appSettings.lang = getVal('settingLang') || 'en';
   appSettings.theme = getVal('settingTheme') || 'dark';
   appSettings.compactMode = getChk('settingCompact');
-  appSettings.refreshInterval = parseInt(getVal('settingRefreshInterval')) || 5;
+  appSettings.refreshInterval = Number.parseInt(getVal('settingRefreshInterval')) || 5;
   appSettings.animations = getChk('settingAnimations');
   appSettings.debugMode = getChk('settingDebug');
 
@@ -256,19 +256,19 @@ export function readSettingsForm() {
   appSettings.stopConfirm = getChk('settingStopConfirm');
 
   appSettings.gsDataPath = getVal('settingGsDataPath');
-  appSettings.gsRam = parseInt(getVal('settingGsRam')) || 4096;
+  appSettings.gsRam = Number.parseInt(getVal('settingGsRam')) || 4096;
   appSettings.rconEnabled = getChk('settingRconEnabled');
-  appSettings.rconPort = parseInt(getVal('settingRconPort')) || 25575;
+  appSettings.rconPort = Number.parseInt(getVal('settingRconPort')) || 25575;
   appSettings['rconPass' + 'word'] = getVal('settingRconPass' + 'word'); // NOSONAR
 
   appSettings['cfApi' + 'Key'] = getVal('settingCfApi' + 'Key'); // NOSONAR
   appSettings.mcType = getVal('settingMcType');
   appSettings.mcVersion = getVal('settingMcVersion');
-  appSettings.mcMaxPlayers = parseInt(getVal('settingMcMaxPlayers')) || 20;
+  appSettings.mcMaxPlayers = Number.parseInt(getVal('settingMcMaxPlayers')) || 20;
   appSettings.mcEula = getChk('settingMcEula');
 
   appSettings.toastsEnabled = getChk('settingToastsEnabled');
-  appSettings.toastDuration = parseInt(getVal('settingToastDuration')) || 3500;
+  appSettings.toastDuration = Number.parseInt(getVal('settingToastDuration')) || 3500;
 
   appSettings.notifContainer = getChk('notifContainer');
   appSettings.notifPlayer = getChk('notifPlayer');
