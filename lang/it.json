@@ -101,7 +101,9 @@
     "backup_desc": "Backup automatici e manuali di /data.",
     "backup_today": "Oggi",
     "backup_yesterday": "Ieri",
-    "term_input_placeholder": "Inserisci comando (es. list, say Ciao, stop)..."
+    "term_input_placeholder": "Inserisci comando (es. list, say Ciao, stop)...",
+    "plugin_desc": "Gestisci centralmente le tue istanze Unraid GameServer",
+    "welcome": "Bentornato, {name}!"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -115,7 +117,8 @@
     "running": "In esecuzione",
     "stopped": "Fermato",
     "updates": "Aggiornamenti",
-    "total": "Totale"
+    "total": "Totale",
+    "healthy": "Sano"
   },
   "btn": {
     "new_container": "Nuovo Contenitore",
@@ -190,7 +193,8 @@
     "refresh": "Intervallo di aggiornamento",
     "refresh_desc": "Aggiornamento automatico ogni N secondi",
     "animations": "Animazioni",
-    "animations_desc": "Abilita le animazioni di transizione"
+    "animations_desc": "Abilita le animazioni di transizione",
+    "theme_desc": "Aspetto chiaro o scuro"
   },
   "step": {
     "choose_game": "Scegli Gioco",

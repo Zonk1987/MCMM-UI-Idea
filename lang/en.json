@@ -102,11 +102,8 @@
     "backup_today": "Today",
     "backup_yesterday": "Yesterday",
     "term_input_placeholder": "Enter command (e.g. list, say Hello, stop)...",
-    "general.tooltip_backups": "Manage Backups",
-    "general.fm_title": "File Manager",
-    "general.fm_drag_drop": "Drop files/folders here to upload",
-    "general.fm_upload_success": "Successfully uploaded",
-    "system.cpu": "Processor"
+    "plugin_desc": "Manage your Unraid GameServer instances centrally",
+    "welcome": "Welcome back, {name}!"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -146,10 +143,7 @@
     "create_backup": "Create Backup",
     "restore": "Restore",
     "download": "Download",
-    "delete": "Delete",
-    "btn.save": "Save",
-    "btn.download": "Download",
-    "btn.install": "Install"
+    "delete": "Delete"
   },
   "col": {
     "name": "Name",
