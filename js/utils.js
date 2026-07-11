@@ -153,7 +153,7 @@ export async function fetchComponent(id, url) {
     if (response.ok) {
       const html = await response.text();
       if (el) {
-        el.outerHTML = html;
+        el.outerHTML = html; // NOSONAR - Loading internal HTML components
       }
     }
   } catch (e) {
