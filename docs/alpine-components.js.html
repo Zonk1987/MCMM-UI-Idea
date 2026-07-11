@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Home - Documentation</title>
+    <title>alpine-components.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,188 +29,192 @@
 
 <div id="main">
     
+    <h1 class="page-title">alpine-components.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* ═══════════════════════════════════════════════════════════
+   alpine-components.js
+   Stores Alpine.js component definitions that were previously 
+   inline inside the HTML (e.g., modals).
+═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ * @param Alpine
+ */
+export function registerAlpineComponents(Alpine) {
+  // Welcome/Onboarding Modal
+  Alpine.data('welcomeModal', () => ({
+    step: 1,
+  }));
 
+  // Config Modal
+  Alpine.data('configModal', () => ({
+    open: false,
+    activeTab: 'config',
+    data: {},
+    openModal(payload) {
+      this.data = payload || {};
+      this.activeTab = 'config';
+      this.open = true;
+    },
+  }));
 
+  // Config Modal Form Mode (Preset / Manual)
+  Alpine.data('configMode', () => ({
+    mode: 'preset',
+  }));
 
+  // Install/Edit Modal
+  Alpine.data('installModal', () => ({
+    open: false,
+    activeTab: 'config',
+    data: {
+      name: '',
+      serverName: '',
+      author: 'Unknown',
+      isEdit: false,
+      port: 25565,
+      ram: 4096,
+      initRam: 1024,
+      path: '/mnt/user/gameservers/',
+      type: 'AUTO',
+      restart: 'unless-stopped',
+      maxPlayers: 20,
+      difficulty: 'normal',
+      motd: 'Mein Unraid Server',
+      pvp: true,
+      onlineMode: true,
+      cmdBlocks: true,
+      hardcore: false,
+      flight: false,
+      enableWhitelist: false,
+      whitelist: '',
+      aikar: true,
+      meowice: false,
+      graalvm: false,
+      largePages: false,
+      rollingLogs: true,
+      source: 'curseforge',
+    },
+    openModal(payload) {
+      this.data = { ...this.data, ...payload };
+      this.open = true;
+    },
+    getPreviewCmd() {
+      const d = this.data;
+      if (!d || !d.name) return '';
+      let envType =
+        d.type === 'AUTO' ? (d.source === 'curseforge' ? 'CURSEFORGE' : 'MODRINTH') : d.type;
+      let jvmEnvs = '';
+      if (d.meowice) {
+        jvmEnvs = '-e USE_MEOWICE_FLAGS=true \\\n  -e USE_MEOWICE_GRAALVM_FLAGS=true \\';
+      } else if (d.aikar) {
+        jvmEnvs = '-e USE_AIKAR_FLAGS=true \\';
+      }
+      let cmd = `docker run -d \\
+  --name ${d.name} \\
+  --restart ${d.restart} \\
+  -p ${d.port}:25565 \\
+  -v ${d.path}:/data \\
+  -e EULA=TRUE \\
+  -e TYPE=${envType} \\
+  -e SERVER_NAME="${d.serverName}" \\
+  ${d.icon ? `-e ICON="${d.icon}" \\\n  ` : ''}-e MEMORY=${d.ram}M \\
+  -e INIT_MEMORY=${d.initRam}M \\
+  -e MAX_PLAYERS=${d.maxPlayers} \\
+  -e DIFFICULTY=${d.difficulty} \\
+  -e MOTD="${d.motd}" \\
+  -e PVP=${d.pvp} \\
+  -e HARDCORE=${d.hardcore} \\
+  -e ALLOW_FLIGHT=${d.flight} \\
+  -e ONLINE_MODE=${d.onlineMode} \\
+  -e ENABLE_COMMAND_BLOCK=${d.cmdBlocks} \\
+  ${d.enableWhitelist ? `-e ENABLE_WHITELIST=true \\\n  ${d.whitelist ? `-e WHITELIST="${d.whitelist}" \\\n  ` : ''}` : ''}${jvmEnvs ? jvmEnvs + '\n  ' : ''}-e USE_LARGE_PAGES=${d.largePages} \\
+  -e ENABLE_ROLLING_LOGS=${d.rollingLogs} \\
+  -e ${d.source === 'curseforge' ? 'CF_SLUG' : 'MODRINTH_MODPACK'}="${d.id}" \\
+  itzg/minecraft-server:latest`;
+      return cmd.replace(/\\/g, '&lt;span style="color:var(--text-muted)">\\&lt;/span>');
+    },
+    copyCmd() {
+      const rawCmd = this.getPreviewCmd().replace(/&lt;[^>]*>?/gm, '');
+      navigator.clipboard.writeText(rawCmd);
+      if (typeof showToast === 'function') showToast('Kopiert!', 'success');
+    },
+  }));
 
+  // Folder Modal (FolderView3 Clone)
+  Alpine.data('folderModal', () => ({
+    open: false,
+    activeTab: 'basic',
+    folderName: '',
+    // Map of containerId -> boolean (included in folder)
+    includedContainers: {},
+    originalFolderName: null,
 
+    openModal(e) {
+      if (e &amp;&amp; e.detail &amp;&amp; e.detail.folderName) {
+        this.folderName = e.detail.folderName;
+        this.originalFolderName = e.detail.folderName;
+        this.includedContainers = {};
+        if (Alpine.store('core')) {
+          Alpine.store('core').containers.forEach((c) => {
+            if (c.labels &amp;&amp; c.labels['folder.view3'] === this.folderName) {
+              this.includedContainers[c.id] = true;
+            }
+          });
+        }
+      } else {
+        this.folderName = '';
+        this.originalFolderName = null;
+        this.includedContainers = {};
+      }
+      this.activeTab = 'basic';
+      this.open = true;
+    },
 
+    saveFolder() {
+      if (!this.folderName || this.folderName.trim() === '') {
+        if (typeof showToast === 'function') showToast('Ordnername darf nicht leer sein', 'error');
+        return;
+      }
+      const fName = this.folderName.trim();
 
+      // Save folder to store
+      if (Alpine.store('core')) {
+        if (this.originalFolderName &amp;&amp; this.originalFolderName !== fName) {
+          Alpine.store('core').renameFolder(this.originalFolderName, fName);
+        } else {
+          Alpine.store('core').addFolder(fName);
+        }
 
-    
+        // Apply labels to checked containers, remove from unchecked
+        Alpine.store('core').containers.forEach((c) => {
+          if (this.includedContainers[c.id]) {
+            Alpine.store('core').setLabel(c.id, 'folder.view3', fName);
+          } else if (c.labels &amp;&amp; c.labels['folder.view3'] === fName) {
+            Alpine.store('core').setLabel(c.id, 'folder.view3', '');
+          }
+        });
 
+        if (typeof showToast === 'function')
+          showToast('Ordner "' + fName + '" gespeichert', 'success');
+      }
 
-    <section class="readme">
-        <article><h1>MCMM UI Idea (GameServer Hub)</h1>
-<p>A modern, responsive, and dynamic UI plugin for Unraid, serving as a centralized dashboard for managing Docker-based game servers.</p>
-<h2>Tech Stack</h2>
-<p>This project is built using a lightweight but powerful frontend stack:</p>
-<ul>
-<li><strong>Vanilla HTML5 &amp; CSS3</strong>: No heavy CSS frameworks. Custom CSS variables (CSS Custom Properties) and a tailored BEM-like methodology ensure maximum flexibility, rich aesthetics, and dark-mode support.</li>
-<li><strong>Vanilla JavaScript (ES Modules)</strong>: Organized into discrete, maintainable modules without the overhead of Webpack or Babel.</li>
-<li><strong>Alpine.js</strong>: Provides reactive state management and declarative DOM bindings right in the HTML (<code>x-data</code>, <code>x-show</code>, <code>x-on</code>, etc.).</li>
-<li><strong>xterm.js</strong>: Used for the robust in-browser terminal console.</li>
-</ul>
-<h2>Project Structure</h2>
-<pre class="prettyprint source lang-text"><code>├── components/       # HTML fragments/components
-├── css/              # Stylesheets, organized by feature/component
-├── js/               # ES Modules controlling state and API interaction
-│   ├── core-store.js # Central Alpine.js store (Single Source of Truth)
-│   ├── main.js       # Entry point and global Alpine.js initialization
-│   └── ...           # Panel controllers (docker.js, gameserver.js, etc.)
-├── games/            # Game-specific modules (Minecraft, CS2, Palworld, etc.)
-└── index.html        # Main Application View
+      this.open = false;
+    },
+  }));
+}
 </code></pre>
-<h2>Development Setup</h2>
-<h3>Requirements</h3>
-<ul>
-<li>Node.js (v22+)</li>
-<li>npm (v10+)</li>
-</ul>
-<h3>Getting Started</h3>
-<ol>
-<li>
-<p><strong>Install dependencies:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm install
-</code></pre>
-</li>
-<li>
-<p><strong>Start the local development server:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm run dev
-</code></pre>
-<p>This will spin up a local live-reloading server (usually at <code>http://127.0.0.1:5500</code>).</p>
-</li>
-</ol>
-<h2>Documentation for Backend Integration</h2>
-<p>The frontend UI is fully prepared for a backend API integration. Throughout the JavaScript codebase, you will find <code>TODO: Backend Hook</code> comments. These are the specific locations where mock data or static stubs must be replaced with real <code>fetch()</code> calls to the Unraid or Docker API.</p>
-<p><strong>To view the API documentation:</strong>
-We use JSDoc to generate an interactive documentation website for the JavaScript layer.</p>
-<ol>
-<li>
-<p>Generate the documentation:</p>
-<pre class="prettyprint source lang-bash"><code>npm run docs
-</code></pre>
-</li>
-<li>
-<p>Serve the documentation locally:</p>
-<pre class="prettyprint source lang-bash"><code>npm run docs:serve
-</code></pre>
-</li>
-</ol>
-<h2>Code Quality &amp; Linting</h2>
-<p>This project uses EditorConfig, ESLint, Stylelint, and HTML Validate to maintain a pristine codebase. Git Hooks (Husky) are set up to run these linters automatically on <code>git commit</code>.</p>
-<p>To run linters manually:</p>
-<pre class="prettyprint source lang-bash"><code>npm run lint         # Runs all linters
-npm run lint:fix     # Attempts to auto-fix linting issues
-</code></pre>
-<p>Please see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for more details on our coding standards.</p>
-<h2>License</h2>
-<p>This project is licensed under the <strong>GNU General Public License v3.0 (GPLv3)</strong>.
-See the <a href="LICENSE.md">LICENSE.md</a> file for details. This means any modifications or derived works must also be open-source under the GPLv3 license.</p></article>
+        </article>
     </section>
-
-
-
-
-
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        js/i18n.js
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Handles internationalization (i18n) by loading .json language files
-and applying translations to the Alpine global store.</p></div>
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="i18n.js.html">i18n.js</a>, <a href="i18n.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
 
 
 

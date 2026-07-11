@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>gameAdditions.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#DEFAULT_SETTINGS">DEFAULT_SETTINGS</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#appSettings">appSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#appendConsoleLine">appendConsoleLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#applyVisualSettings">applyVisualSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#bindSettingsEvents">bindSettingsEvents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#composeApp">composeApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debounce">debounce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#debugApp">debugApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#dockerApp">dockerApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#escapeHtml">escapeHtml</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fetchComponent">fetchComponent</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fillSettingsForm">fillSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#foldersApp">foldersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatAnsiLine">formatAnsiLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatBytes">formatBytes</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatDate">formatDate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#formatNum">formatNum</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#gameserverApp">gameserverApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#generateSparkline">generateSparkline</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getLocale">getLocale</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initApp">initApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initCoreStore">initCoreStore</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initDocker">initDocker</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initGameServer">initGameServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initI18n">initI18n</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initPlayers">initPlayers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initSettings">initSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initTerminal">initTerminal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadLanguage">loadLanguage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSettings">loadSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadXterm">loadXterm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#networksApp">networksApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#openConsole">openConsole</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#pingClass">pingClass</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playerAvatarError">playerAvatarError</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#playersApp">playersApp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#readSettingsForm">readSettingsForm</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#registerAlpineComponents">registerAlpineComponents</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderGameServers">renderGameServers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resetSettings">resetSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resolvePath">resolvePath</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#saveSettings">saveSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#showToast">showToast</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#skeletonGrid">skeletonGrid</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#switchTab">switchTab</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#t">t</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#throttle">throttle</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#timestamp">timestamp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleModal">toggleModal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleSettingsPanel">toggleSettingsPanel</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">gameAdditions.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* ═══════════════════════════════════════════════════════════
+   gameAdditions.js — Core Engine for Game Additions
+   Manages UI state, search, sources, pagination, and module registration.
+═══════════════════════════════════════════════════════════ */
+
+export const GameAdditions = {
+  games: {},
+  state: {
+    game: 'minecraft', // default
+    source: 'modrinth',
+    category: 'modpacks',
+    loader: 'all',
+    version: '',
+    sort: 'downloads',
+    query: '',
+    page: 0,
+    perPage: 24,
+    total: 0,
+    loading: false,
+  },
+
+  /**
+   * Register a new game module
+   * @param id
+   * @param config
+   */
+  registerGame(id, config) {
+    this.games[id] = config;
+  },
+
+  /**
+   * Initialize the Game Additions hub
+   */
+  init() {
+    this.buildGameSelector();
+    this.bindEvents();
+
+    // Set default game if not found
+    if (!this.games[this.state.game]) {
+      this.state.game = Object.keys(this.games)[0];
+    }
+
+    // Trigger initial select logic for the default game
+    const mod = this.games[this.state.game];
+    if (mod &amp;&amp; mod.onSelect) {
+      mod.onSelect(this.state);
+    }
+
+    this.refresh();
+  },
+
+  /**
+   * Trigger a content fetch via the active game module
+   */
+  async refresh() {
+    if (this.state.loading) return;
+    this.state.loading = true;
+
+    const grid = document.getElementById('mcGrid');
+    if (grid) {
+      grid.innerHTML = `&lt;div class="loading-grid" style="grid-column:1/-1">${this.skeletonGrid(8)}&lt;/div>`;
+    }
+
+    const meta = document.getElementById('mcSearchMeta');
+    if (meta)
+      meta.textContent = typeof t === 'function' ? t('general.loading') || 'Lädt...' : 'Lädt...';
+
+    const gameModule = this.games[this.state.game];
+
+    try {
+      if (gameModule &amp;&amp; gameModule.fetchContent) {
+        await gameModule.fetchContent(this.state);
+      } else {
+        throw new Error('Kein fetchContent im Modul definiert.');
+      }
+    } catch (err) {
+      console.error(err);
+      if (grid) {
+        grid.innerHTML = `&lt;div class="error-state" style="grid-column:1/-1;text-align:center;padding:40px;">
+          &lt;span class="material-icons-round" style="font-size:48px;color:#ef4444">error_outline&lt;/span>
+          &lt;p style="margin-top:10px;color:#ef4444;">${err.message}&lt;/p>
+        &lt;/div>`;
+      }
+      if (meta) meta.textContent = '0 Ergebnisse';
+    } finally {
+      this.state.loading = false;
+    }
+  },
+
+  /**
+   * Builds the game selector UI dynamically from registered games
+   */
+  buildGameSelector() {
+    const container = document.getElementById('hubGameSelector');
+    if (!container) return;
+    container.innerHTML = '';
+
+    let disabled = [];
+    try {
+      const stored = localStorage.getItem('gs_hub_settings');
+      if (stored) disabled = JSON.parse(stored).disabledModules || [];
+    } catch {
+      // ignore
+    }
+
+    for (const [id, game] of Object.entries(this.games)) {
+      if (id !== 'minecraft' &amp;&amp; disabled.includes(id)) continue;
+
+      const el = document.createElement('div');
+      el.className = `wizard-game-card ${this.state.game === id ? 'selected' : ''}`;
+      el.dataset.hubgame = id;
+      el.style.minWidth = '120px';
+      el.innerHTML = `
+        &lt;span class="wizard-game-icon">${game.icon}&lt;/span>
+        &lt;div class="wizard-game-name">${game.name}&lt;/div>
+      `;
+      container.appendChild(el);
+    }
+
+    if (disabled.includes(this.state.game) &amp;&amp; this.state.game !== 'minecraft') {
+      this.state.game = 'minecraft';
+      this.refresh();
+    }
+  },
+
+  /**
+   * Bind all DOM events for the UI
+   */
+  bindEvents() {
+    // 1. Source toggle
+    const sourceToggle = document.getElementById('sourceToggle');
+    if (sourceToggle) {
+      sourceToggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('.source-btn');
+        if (!btn) return;
+        sourceToggle.querySelectorAll('.source-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.state.source = btn.dataset.source;
+        this.state.page = 0;
+        this.refresh();
+      });
+    }
+
+    // 2. Game Selector
+    const gameSelector = document.getElementById('hubGameSelector');
+    if (gameSelector) {
+      gameSelector.addEventListener('click', (e) => {
+        const card = e.target.closest('.wizard-game-card');
+        if (!card) return;
+
+        gameSelector
+          .querySelectorAll('.wizard-game-card')
+          .forEach((c) => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        const gameId = card.dataset.hubgame;
+        this.state.game = gameId;
+        this.state.page = 0;
+
+        // Let module adapt UI
+        const mod = this.games[gameId];
+        if (mod &amp;&amp; mod.onSelect) {
+          mod.onSelect(this.state);
+        }
+
+        this.refresh();
+      });
+    }
+
+    // 3. Category &amp; Loader Filters
+    ['categoryFilter', 'loaderFilter'].forEach((id) => {
+      const group = document.getElementById(id);
+      if (group) {
+        group.addEventListener('click', (e) => {
+          const btn = e.target.closest('.filter-chip');
+          if (!btn) return;
+          group.querySelectorAll('.filter-chip').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          if (id === 'categoryFilter') this.state.category = btn.dataset.cat;
+          if (id === 'loaderFilter') this.state.loader = btn.dataset.loader;
+          this.state.page = 0;
+          this.refresh();
+        });
+      }
+    });
+
+    // 4. Select dropdowns
+    ['versionFilter', 'sortFilter'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('change', (e) => {
+          if (id === 'versionFilter') this.state.version = e.target.value;
+          if (id === 'sortFilter') this.state.sort = e.target.value;
+          this.state.page = 0;
+          this.refresh();
+        });
+      }
+    });
+
+    // 5. Search Bar
+    const searchInput = document.getElementById('mcSearch');
+    if (searchInput) {
+      let debounce;
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounce);
+        this.state.query = e.target.value.trim();
+        debounce = setTimeout(() => {
+          this.state.page = 0;
+          this.refresh();
+        }, 500);
+      });
+    }
+
+    // 6. Pagination &amp; Card Clicks
+    const grid = document.getElementById('mcGrid');
+    if (grid) {
+      const handleAction = (e) => {
+        if (e.target.closest('.mc-pagination .btn:not(:disabled)')) {
+          const btn = e.target.closest('.mc-pagination .btn');
+          const isNext = btn.classList.contains('next');
+          this.state.page += isNext ? 1 : -1;
+          this.refresh();
+          return;
+        }
+
+        const card = e.target.closest('.mc-card[data-id]');
+        if (card) {
+          window.dispatchEvent(
+            new CustomEvent('open-install-modal', {
+              detail: {
+                id: card.dataset.id,
+                name: card.dataset.name,
+                author: card.dataset.author || 'Unknown',
+                isEdit: false,
+              },
+            })
+          );
+        }
+      };
+
+      grid.addEventListener('click', handleAction);
+      grid.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleAction(e);
+        }
+      });
+    }
+  },
+
+  /**
+   * Shared generic function to fetch from CurseForge (used by Palworld, CS2, Valheim)
+   * @param gameId
+   * @param state
+   */
+  async fetchCurseForgeGeneric(gameId, state) {
+    if (typeof appSettings !== 'undefined' &amp;&amp; !appSettings.cfApiKey) {
+      this.renderCurseForgeApiKeyWarning();
+      return;
+    }
+
+    const offset = state.page * state.perPage;
+    const params = new URLSearchParams({
+      gameId: gameId,
+      index: offset.toString(),
+      pageSize: state.perPage.toString(),
+    });
+
+    if (state.query) {
+      params.append('searchFilter', state.query);
+    }
+
+    const headers = {
+      Accept: 'application/json',
+      'x-api-key': appSettings.cfApiKey,
+    };
+
+    let res;
+    try {
+      res = await fetch(`https://api.curseforge.com/v1/mods/search?${params}`, { headers });
+    } catch (err) {
+      throw new Error('CurseForge Network Error', {
+        cause: err,
+      });
+    }
+
+    let body;
+    try {
+      body = await res.json();
+    } catch {
+      throw new Error(`CurseForge Parse Error: ${res.status} ${res.statusText}`);
+    }
+
+    if (!res.ok) {
+      throw new Error(`CurseForge API Error ${res.status}: ${JSON.stringify(body)}`);
+    }
+
+    const data = body.data || [];
+    if (data.length === 0) {
+      this.renderEmptyState(params.toString(), body);
+      return;
+    }
+
+    state.total = body.pagination?.totalCount || data.length;
+    const meta = document.getElementById('mcSearchMeta');
+    if (meta) meta.textContent = `${state.total.toLocaleString()} Ergebnisse (CurseForge)`;
+
+    this.renderCurseForgeCards(data);
+    this.renderPagination(state);
+  },
+
+  renderEmptyState(paramsStr, body) {
+    const grid = document.getElementById('mcGrid');
+    const meta = document.getElementById('mcSearchMeta');
+    if (grid) {
+      grid.innerHTML = `&lt;div class="empty-state" style="grid-column:1/-1;text-align:left;">
+        &lt;span class="material-icons-round" style="font-size:36px;color:#f39c12">bug_report&lt;/span>
+        &lt;p style="margin-top:10px;font-weight:bold;">Keine Ergebnisse gefunden&lt;/p>
+        &lt;code style="display:block;margin-top:10px;color:#fff;font-size:11px;background:rgba(255,255,255,0.1);padding:10px;border-radius:4px;white-space:pre-wrap;word-break:break-all;">
+Request URL: https://api.curseforge.com/v1/mods/search?${paramsStr}
+
+Response Body:
+${JSON.stringify(body, null, 2)}
+        &lt;/code>
+      &lt;/div>`;
+    }
+    if (meta) meta.textContent = `0 Ergebnisse`;
+  },
+
+  renderCurseForgeApiKeyWarning() {
+    const grid = document.getElementById('mcGrid');
+    const meta = document.getElementById('mcSearchMeta');
+    if (grid) {
+      grid.innerHTML = `&lt;div class="empty-state" style="grid-column:1/-1;text-align:center;">
+        &lt;span class="material-icons-round" style="font-size:48px;color:#f59e0b">vpn_key&lt;/span>
+        &lt;p style="margin-top:10px;font-size:16px;">CurseForge API Key fehlt&lt;/p>
+        &lt;p style="color:var(--text-muted);font-size:14px;max-width:400px;margin:10px auto;">
+          Um auf reale CurseForge-Daten zuzugreifen, musst du deinen persönlichen API-Key in den Plugin-Einstellungen hinterlegen.
+        &lt;/p>
+        &lt;button class="settings-btn primary" onclick="document.querySelector('.tab-btn[data-tab=\\'settings\\']').click();" style="margin-top:20px;">
+          &lt;span class="material-icons-round">settings&lt;/span> Zu den Einstellungen
+        &lt;/button>
+      &lt;/div>`;
+    }
+    if (meta) meta.textContent = `API Key benötigt`;
+  },
+
+  renderCurseForgeCards(data) {
+    const grid = document.getElementById('mcGrid');
+    if (!grid) return;
+    grid.innerHTML = data
+      .map((mod) => {
+        const thumb = mod.logo &amp;&amp; mod.logo.thumbnailUrl ? mod.logo.thumbnailUrl : '';
+        return `
+      &lt;div class="mc-card" data-id="${mod.id}" data-name="${mod.name}" role="button" tabindex="0">
+        &lt;div class="mc-card-top">
+          ${thumb ? `&lt;img src="${thumb}" alt="${mod.name}" class="mc-card-icon" />` : `&lt;div class="mc-card-icon-placeholder">&lt;span class="material-icons-round">extension&lt;/span>&lt;/div>`}
+          &lt;div class="mc-card-header-info">
+            &lt;div class="mc-card-name" title="${mod.name}">${mod.name}&lt;/div>
+            &lt;div class="mc-card-author">by ${mod.authors &amp;&amp; mod.authors.length > 0 ? mod.authors.map((a) => a.name).join(', ') : 'Unknown'}&lt;/div>
+          &lt;/div>
+        &lt;/div>
+        
+        &lt;div class="mc-card-desc">${mod.summary || ''}&lt;/div>
+        
+        &lt;div class="mc-card-meta">
+          &lt;div class="mc-meta-item" title="Downloads">
+            &lt;span class="material-icons-round">download&lt;/span> ${mod.downloadCount ? mod.downloadCount.toLocaleString() : 0}
+          &lt;/div>
+          &lt;div class="mc-meta-item" title="Zuletzt aktualisiert">
+            &lt;span class="material-icons-round">update&lt;/span> ${new Date(mod.dateModified).toLocaleDateString()}
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+      `;
+      })
+      .join('');
+  },
+
+  renderPagination(state) {
+    const grid = document.getElementById('mcGrid');
+    if (!grid || state.total &lt;= state.perPage) return;
+
+    const maxPage = Math.ceil(state.total / state.perPage) - 1;
+    const paginationHtml = `
+      &lt;div class="mc-pagination" style="grid-column: 1 / -1; width: 100%; display:flex; justify-content:center; align-items:center; gap:16px; margin-top:32px; padding-bottom:24px;">
+        &lt;button class="btn btn-ghost prev" style="display:flex; align-items:center; gap:4px;" ${state.page === 0 ? 'disabled' : ''}>
+          &lt;span class="material-icons-round" style="font-size:18px;">chevron_left&lt;/span> Zurück
+        &lt;/button>
+        &lt;span class="page-info" style="font-size:14px; font-weight:500; color:var(--text-muted);">Seite ${state.page + 1} von ${maxPage + 1}&lt;/span>
+        &lt;button class="btn btn-ghost next" style="display:flex; align-items:center; gap:4px;" ${state.page >= maxPage ? 'disabled' : ''}>
+          Weiter &lt;span class="material-icons-round" style="font-size:18px;">chevron_right&lt;/span>
+        &lt;/button>
+      &lt;/div>
+    `;
+    grid.insertAdjacentHTML('beforeend', paginationHtml);
+  },
+
+  skeletonGrid(count) {
+    return Array(count)
+      .fill('')
+      .map(
+        () => `
+      &lt;div class="mc-card skeleton" style="border:1px solid rgba(255,255,255,0.05); background:var(--bg-card);">
+        &lt;div class="mc-card-header">
+          &lt;div class="skeleton-icon" style="width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.1)">&lt;/div>
+          &lt;div style="flex:1">
+            &lt;div style="width:70%;height:16px;background:rgba(255,255,255,0.1);margin-bottom:8px;border-radius:4px;">&lt;/div>
+            &lt;div style="width:40%;height:12px;background:rgba(255,255,255,0.05);border-radius:4px;">&lt;/div>
+          &lt;/div>
+        &lt;/div>
+        &lt;div style="width:100%;height:12px;background:rgba(255,255,255,0.05);margin-bottom:8px;border-radius:4px;margin-top:12px;">&lt;/div>
+        &lt;div style="width:80%;height:12px;background:rgba(255,255,255,0.05);border-radius:4px;">&lt;/div>
+      &lt;/div>
+    `
+      )
+      .join('');
+  },
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Jul 11 2026 20:19:30 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

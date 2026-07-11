@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Home - Documentation</title>
+    <title>networks.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,188 +29,49 @@
 
 <div id="main">
     
+    <h1 class="page-title">networks.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* ═══════════════════════════════════════════════════════════
+   networks.js — Docker Networks Management
+   Integrates with docker.networks plugin.
+═══════════════════════════════════════════════════════════ */
 
+/**
+ *
+ */
+export function networksApp() {
+  return {
+    get networks() {
+      // Mock network data
+      return [
+        { id: 'bridge', name: 'bridge', driver: 'bridge', scope: 'local', containers: 3 },
+        { id: 'host', name: 'host', driver: 'host', scope: 'local', containers: 5 },
+        {
+          id: 'custom_net',
+          name: 'minecraft-net',
+          driver: 'bridge',
+          scope: 'local',
+          containers: 2,
+        },
+      ];
+    },
 
-
-
-
-
-
-
-
-    
-
-
-    <section class="readme">
-        <article><h1>MCMM UI Idea (GameServer Hub)</h1>
-<p>A modern, responsive, and dynamic UI plugin for Unraid, serving as a centralized dashboard for managing Docker-based game servers.</p>
-<h2>Tech Stack</h2>
-<p>This project is built using a lightweight but powerful frontend stack:</p>
-<ul>
-<li><strong>Vanilla HTML5 &amp; CSS3</strong>: No heavy CSS frameworks. Custom CSS variables (CSS Custom Properties) and a tailored BEM-like methodology ensure maximum flexibility, rich aesthetics, and dark-mode support.</li>
-<li><strong>Vanilla JavaScript (ES Modules)</strong>: Organized into discrete, maintainable modules without the overhead of Webpack or Babel.</li>
-<li><strong>Alpine.js</strong>: Provides reactive state management and declarative DOM bindings right in the HTML (<code>x-data</code>, <code>x-show</code>, <code>x-on</code>, etc.).</li>
-<li><strong>xterm.js</strong>: Used for the robust in-browser terminal console.</li>
-</ul>
-<h2>Project Structure</h2>
-<pre class="prettyprint source lang-text"><code>├── components/       # HTML fragments/components
-├── css/              # Stylesheets, organized by feature/component
-├── js/               # ES Modules controlling state and API interaction
-│   ├── core-store.js # Central Alpine.js store (Single Source of Truth)
-│   ├── main.js       # Entry point and global Alpine.js initialization
-│   └── ...           # Panel controllers (docker.js, gameserver.js, etc.)
-├── games/            # Game-specific modules (Minecraft, CS2, Palworld, etc.)
-└── index.html        # Main Application View
+    createNetwork() {
+      if (typeof showToast === 'function') showToast('Create network logic stub', 'info');
+    },
+  };
+}
 </code></pre>
-<h2>Development Setup</h2>
-<h3>Requirements</h3>
-<ul>
-<li>Node.js (v22+)</li>
-<li>npm (v10+)</li>
-</ul>
-<h3>Getting Started</h3>
-<ol>
-<li>
-<p><strong>Install dependencies:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm install
-</code></pre>
-</li>
-<li>
-<p><strong>Start the local development server:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm run dev
-</code></pre>
-<p>This will spin up a local live-reloading server (usually at <code>http://127.0.0.1:5500</code>).</p>
-</li>
-</ol>
-<h2>Documentation for Backend Integration</h2>
-<p>The frontend UI is fully prepared for a backend API integration. Throughout the JavaScript codebase, you will find <code>TODO: Backend Hook</code> comments. These are the specific locations where mock data or static stubs must be replaced with real <code>fetch()</code> calls to the Unraid or Docker API.</p>
-<p><strong>To view the API documentation:</strong>
-We use JSDoc to generate an interactive documentation website for the JavaScript layer.</p>
-<ol>
-<li>
-<p>Generate the documentation:</p>
-<pre class="prettyprint source lang-bash"><code>npm run docs
-</code></pre>
-</li>
-<li>
-<p>Serve the documentation locally:</p>
-<pre class="prettyprint source lang-bash"><code>npm run docs:serve
-</code></pre>
-</li>
-</ol>
-<h2>Code Quality &amp; Linting</h2>
-<p>This project uses EditorConfig, ESLint, Stylelint, and HTML Validate to maintain a pristine codebase. Git Hooks (Husky) are set up to run these linters automatically on <code>git commit</code>.</p>
-<p>To run linters manually:</p>
-<pre class="prettyprint source lang-bash"><code>npm run lint         # Runs all linters
-npm run lint:fix     # Attempts to auto-fix linting issues
-</code></pre>
-<p>Please see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for more details on our coding standards.</p>
-<h2>License</h2>
-<p>This project is licensed under the <strong>GNU General Public License v3.0 (GPLv3)</strong>.
-See the <a href="LICENSE.md">LICENSE.md</a> file for details. This means any modifications or derived works must also be open-source under the GPLv3 license.</p></article>
+        </article>
     </section>
-
-
-
-
-
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        js/i18n.js
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Handles internationalization (i18n) by loading .json language files
-and applying translations to the Alpine global store.</p></div>
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="i18n.js.html">i18n.js</a>, <a href="i18n.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
 
 
 

@@ -11,6 +11,7 @@ export default [
       'node_modules/**',
       'js/vendor/**',
       'css/vendor/**',
+      'docs/**',
       'dist/**',
       'build/**',
       'reports/**',
@@ -50,6 +51,12 @@ export default [
 
       // Optional: initially only warn about browser incompatibilities
       'compat/compat': 'warn',
+
+      // Disable strict JSDoc requirements
+      'jsdoc/require-param-description': 'off',
+      'jsdoc/require-param-type': 'off',
+      'jsdoc/require-returns': 'off',
+      'jsdoc/require-returns-description': 'off',
     },
   },
 

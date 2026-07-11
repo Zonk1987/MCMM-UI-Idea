@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Home - Documentation</title>
+    <title>utils.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,188 +29,255 @@
 
 <div id="main">
     
+    <h1 class="page-title">utils.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* ═══════════════════════════════════════════════════════════
+   utils.js — Shared helpers for all modules
+═══════════════════════════════════════════════════════════ */
 
+/**
+ * Fallback for broken Minecraft avatar images.
+ * Called via onerror attribute — avoids HTML injection in template literals.
+ * @param {HTMLImageElement} img - The image element that failed to load
+ */
+export function playerAvatarError(img) {
+  const placeholder = document.createElement('div');
+  placeholder.className = 'player-avatar-placeholder';
+  placeholder.textContent = '👤';
+  img.replaceWith(placeholder);
+}
 
+/**
+ *
+ * @param msg
+ * @param type
+ */
+export function showToast(msg, type = 'info') {
+  window.dispatchEvent(new CustomEvent('toast', { detail: { msg, type } }));
+}
 
+/**
+ *
+ */
+function getLocale() {
+  if (window.Alpine &amp;&amp; window.Alpine.store('i18n')) {
+    return window.Alpine.store('i18n').locale || 'en';
+  }
+  return typeof appSettings !== 'undefined' ? appSettings.lang : 'en';
+}
 
+/**
+ *
+ * @param n
+ * @param compact
+ */
+export function formatNum(n, compact = true) {
+  const locale = getLocale();
+  if (compact &amp;&amp; n >= 1000) {
+    return new Intl.NumberFormat(locale, { notation: 'compact', compactDisplay: 'short' }).format(
+      n
+    );
+  }
+  return new Intl.NumberFormat(locale).format(n);
+}
 
+/**
+ *
+ * @param dateInput
+ * @param options
+ */
+export function formatDate(dateInput, options = { dateStyle: 'medium' }) {
+  const locale = getLocale();
+  return new Intl.DateTimeFormat(locale, options).format(new Date(dateInput));
+}
 
+/**
+ *
+ * @param bytes
+ */
+export function formatBytes(bytes) {
+  const locale = getLocale();
+  if (bytes >= 1073741824)
+    return (
+      new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(bytes / 1073741824) + ' GB'
+    );
+  if (bytes >= 1048576)
+    return (
+      new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(bytes / 1048576) + ' MB'
+    );
+  return new Intl.NumberFormat(locale).format(bytes) + ' B';
+}
 
+/**
+ *
+ * @param fn
+ * @param delay
+ */
+export function debounce(fn, delay = 350) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
 
+/**
+ *
+ * @param fn
+ * @param limit
+ */
+export function throttle(fn, limit = 350) {
+  let inThrottle;
+  return (...args) => {
+    if (!inThrottle) {
+      fn(...args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
 
-    
+export const Logger = {
+  get isDebug() {
+    return typeof appSettings !== 'undefined' ? appSettings.debugMode : false;
+  },
+  log(...args) {
+    if (this.isDebug) console.log('[MCMM]', ...args);
+  },
+  warn(...args) {
+    if (this.isDebug) console.warn('[MCMM]', ...args);
+  },
+  error(...args) {
+    if (this.isDebug) console.error('[MCMM]', ...args);
+  },
+};
 
+/**
+ *
+ * @param modalId
+ * @param open
+ */
+export function toggleModal(modalId, open) {
+  const el = document.getElementById(modalId);
+  if (!el) return;
+  if (open) el.removeAttribute('hidden');
+  else el.setAttribute('hidden', '');
+}
 
-    <section class="readme">
-        <article><h1>MCMM UI Idea (GameServer Hub)</h1>
-<p>A modern, responsive, and dynamic UI plugin for Unraid, serving as a centralized dashboard for managing Docker-based game servers.</p>
-<h2>Tech Stack</h2>
-<p>This project is built using a lightweight but powerful frontend stack:</p>
-<ul>
-<li><strong>Vanilla HTML5 &amp; CSS3</strong>: No heavy CSS frameworks. Custom CSS variables (CSS Custom Properties) and a tailored BEM-like methodology ensure maximum flexibility, rich aesthetics, and dark-mode support.</li>
-<li><strong>Vanilla JavaScript (ES Modules)</strong>: Organized into discrete, maintainable modules without the overhead of Webpack or Babel.</li>
-<li><strong>Alpine.js</strong>: Provides reactive state management and declarative DOM bindings right in the HTML (<code>x-data</code>, <code>x-show</code>, <code>x-on</code>, etc.).</li>
-<li><strong>xterm.js</strong>: Used for the robust in-browser terminal console.</li>
-</ul>
-<h2>Project Structure</h2>
-<pre class="prettyprint source lang-text"><code>├── components/       # HTML fragments/components
-├── css/              # Stylesheets, organized by feature/component
-├── js/               # ES Modules controlling state and API interaction
-│   ├── core-store.js # Central Alpine.js store (Single Source of Truth)
-│   ├── main.js       # Entry point and global Alpine.js initialization
-│   └── ...           # Panel controllers (docker.js, gameserver.js, etc.)
-├── games/            # Game-specific modules (Minecraft, CS2, Palworld, etc.)
-└── index.html        # Main Application View
+/**
+ *
+ * @param id
+ * @param url
+ */
+export async function fetchComponent(id, url) {
+  try {
+    const el = document.getElementById(id);
+    // If it's already loaded (no '&lt;!-- Component loaded dynamically -->' comment inside)
+    if (el &amp;&amp; el.innerHTML.trim() !== '&lt;!-- Component loaded dynamically -->') return;
+
+    const response = await fetch(url + '?v=' + new Date().getTime());
+    if (response.ok) {
+      const html = await response.text();
+      if (el) {
+        el.outerHTML = html;
+      }
+    }
+  } catch (e) {
+    console.error(`Error loading ${url}:`, e);
+  }
+}
+
+const loadedModules = new Set();
+
+/**
+ *
+ * @param tabId
+ */
+export async function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach((b) => {
+    b.classList.toggle('active', b.dataset.tab === tabId);
+    b.setAttribute('aria-selected', b.dataset.tab === tabId);
+  });
+
+  if (!loadedModules.has(tabId)) {
+    try {
+      switch (tabId) {
+        case 'docker': {
+          await fetchComponent('panel-docker', 'components/docker.html');
+          break;
+        }
+        case 'gameserver': {
+          const gs = await import('./gameserver.js');
+          window.gameserverApp = gs.gameserverApp;
+          window.openConsole = gs.openConsole;
+          await fetchComponent('panel-gameserver', 'components/gameservers.html');
+          break;
+        }
+        case 'players': {
+          const pl = await import('./players.js');
+          window.playersApp = pl.playersApp;
+          await fetchComponent('panel-players', 'components/players.html');
+          break;
+        }
+        case 'game-additions': {
+          const ga = await import('./gameAdditions.js');
+          window.GameAdditions = ga.GameAdditions;
+          if (ga.GameAdditions &amp;&amp; ga.GameAdditions.init) {
+            ga.GameAdditions.init();
+          }
+          await fetchComponent('panel-game-additions', 'components/gameAdditions.html');
+          break;
+        }
+      }
+      loadedModules.add(tabId);
+    } catch (error) {
+      console.error(`Fehler beim Laden des Moduls für ${tabId}:`, error);
+    }
+  }
+
+  document.querySelectorAll('.tab-panel').forEach((p) => {
+    p.classList.toggle('active', p.id === `panel-${tabId}`);
+  });
+  window.dispatchEvent(new CustomEvent('tab-changed', { detail: tabId }));
+}
+
+/**
+ *
+ * @param ms
+ */
+export function pingClass(ms) {
+  if (ms &lt; 60) return 'ping-good';
+  if (ms &lt; 150) return 'ping-ok';
+  return 'ping-bad';
+}
+
+/**
+ *
+ * @param count
+ */
+export function skeletonGrid(count = 6) {
+  return Array.from({ length: count }, () => `&lt;div class="skeleton skeleton-card">&lt;/div>`).join('');
+}
+
+// Expose to window for Alpine and inline HTML handlers
+window.showToast = showToast;
+window.toggleModal = toggleModal;
+window.switchTab = switchTab;
+window.playerAvatarError = playerAvatarError;
+window.formatNum = formatNum;
+window.formatBytes = formatBytes;
+window.pingClass = pingClass;
 </code></pre>
-<h2>Development Setup</h2>
-<h3>Requirements</h3>
-<ul>
-<li>Node.js (v22+)</li>
-<li>npm (v10+)</li>
-</ul>
-<h3>Getting Started</h3>
-<ol>
-<li>
-<p><strong>Install dependencies:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm install
-</code></pre>
-</li>
-<li>
-<p><strong>Start the local development server:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm run dev
-</code></pre>
-<p>This will spin up a local live-reloading server (usually at <code>http://127.0.0.1:5500</code>).</p>
-</li>
-</ol>
-<h2>Documentation for Backend Integration</h2>
-<p>The frontend UI is fully prepared for a backend API integration. Throughout the JavaScript codebase, you will find <code>TODO: Backend Hook</code> comments. These are the specific locations where mock data or static stubs must be replaced with real <code>fetch()</code> calls to the Unraid or Docker API.</p>
-<p><strong>To view the API documentation:</strong>
-We use JSDoc to generate an interactive documentation website for the JavaScript layer.</p>
-<ol>
-<li>
-<p>Generate the documentation:</p>
-<pre class="prettyprint source lang-bash"><code>npm run docs
-</code></pre>
-</li>
-<li>
-<p>Serve the documentation locally:</p>
-<pre class="prettyprint source lang-bash"><code>npm run docs:serve
-</code></pre>
-</li>
-</ol>
-<h2>Code Quality &amp; Linting</h2>
-<p>This project uses EditorConfig, ESLint, Stylelint, and HTML Validate to maintain a pristine codebase. Git Hooks (Husky) are set up to run these linters automatically on <code>git commit</code>.</p>
-<p>To run linters manually:</p>
-<pre class="prettyprint source lang-bash"><code>npm run lint         # Runs all linters
-npm run lint:fix     # Attempts to auto-fix linting issues
-</code></pre>
-<p>Please see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for more details on our coding standards.</p>
-<h2>License</h2>
-<p>This project is licensed under the <strong>GNU General Public License v3.0 (GPLv3)</strong>.
-See the <a href="LICENSE.md">LICENSE.md</a> file for details. This means any modifications or derived works must also be open-source under the GPLv3 license.</p></article>
+        </article>
     </section>
-
-
-
-
-
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        js/i18n.js
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Handles internationalization (i18n) by loading .json language files
-and applying translations to the Alpine global store.</p></div>
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="i18n.js.html">i18n.js</a>, <a href="i18n.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
 
 
 

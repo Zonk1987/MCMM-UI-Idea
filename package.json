@@ -47,15 +47,18 @@
     "hint": "^7.1.13",
     "html-validate": "^10.0.0",
     "husky": "^9.1.7",
+    "jsdoc": "^4.0.5",
     "jsonc-eslint-parser": "^3.1.0",
     "lighthouse": "^13.4.0",
     "lint-staged": "^17.0.8",
     "markdownlint-cli2": "^0.20.0",
+    "minami": "^1.2.3",
     "npm-check-updates": "^22.2.9",
     "postcss-html": "^1.8.1",
     "prettier": "^3.9.5",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
+    "taffydb": "^2.7.3",
     "typescript": "^6.0.0"
   },
   "browserslist": [

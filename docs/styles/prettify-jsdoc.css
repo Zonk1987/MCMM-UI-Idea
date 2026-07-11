@@ -2,21 +2,21 @@
 
 /* plain text */
 .pln {
-  color: #000;
+  color: #000000;
   font-weight: normal;
   font-style: normal;
 }
 
 /* string content */
 .str {
-  color: hsl(104deg 100% 24%);
+  color: hsl(104, 100%, 24%);
   font-weight: normal;
   font-style: normal;
 }
 
 /* a keyword */
 .kwd {
-  color: #000;
+  color: #000000;
   font-weight: bold;
   font-style: normal;
 }
@@ -29,7 +29,7 @@
 
 /* a type name */
 .typ {
-  color: #000;
+  color: #000000;
   font-weight: normal;
   font-style: normal;
 }
@@ -43,21 +43,21 @@
 
 /* punctuation */
 .pun {
-  color: #000;
+  color: #000000;
   font-weight: bold;
   font-style: normal;
 }
 
 /* lisp open bracket */
 .opn {
-  color: #000;
+  color: #000000;
   font-weight: bold;
   font-style: normal;
 }
 
 /* lisp close bracket */
 .clo {
-  color: #000;
+  color: #000000;
   font-weight: bold;
   font-style: normal;
 }
@@ -85,21 +85,21 @@
 
 /* a declaration */
 .dec {
-  color: #000;
+  color: #000000;
   font-weight: bold;
   font-style: normal;
 }
 
 /* a variable name */
 .var {
-  color: #000;
+  color: #000000;
   font-weight: normal;
   font-style: normal;
 }
 
 /* a function name */
 .fun {
-  color: #000;
+  color: #000000;
   font-weight: bold;
   font-style: normal;
 }
