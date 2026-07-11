@@ -32,7 +32,7 @@ export function dockerApp() {
     newFolderName: '',
     editingFolderName: null,
     editFolderNameInput: '',
-    
+
     // Delete Folder Modal State
     showDeleteFolderModal: false,
     folderToDelete: null,
@@ -55,7 +55,7 @@ export function dockerApp() {
       open: false,
       x: 0,
       y: 0,
-      container: null
+      container: null,
     },
 
     openContextMenu(e, container) {
@@ -64,14 +64,16 @@ export function dockerApp() {
       this.contextMenu.x = e.clientX;
       this.contextMenu.y = e.clientY;
       this.contextMenu.container = container;
-      
+
       // Keep menu within viewport bounds
       this.$nextTick(() => {
         const menu = document.getElementById('docker-ctx-menu');
         if (menu) {
           const rect = menu.getBoundingClientRect();
-          if (rect.right > window.innerWidth) this.contextMenu.x = window.innerWidth - rect.width - 10;
-          if (rect.bottom > window.innerHeight) this.contextMenu.y = window.innerHeight - rect.height - 10;
+          if (rect.right > window.innerWidth)
+            this.contextMenu.x = window.innerWidth - rect.width - 10;
+          if (rect.bottom > window.innerHeight)
+            this.contextMenu.y = window.innerHeight - rect.height - 10;
         }
       });
     },
@@ -103,29 +105,35 @@ export function dockerApp() {
 
     get useFolders() {
       if (this.folderViewEnabled === false) return false;
-      const hasCustomFolders = Alpine.store('core') && Alpine.store('core').customFolders && Alpine.store('core').customFolders.length > 0;
-      return hasCustomFolders || this.filteredContainers.some(c => c.labels && c.labels['folder.view3']);
+      const hasCustomFolders =
+        Alpine.store('core') &&
+        Alpine.store('core').customFolders &&
+        Alpine.store('core').customFolders.length > 0;
+      return (
+        hasCustomFolders ||
+        this.filteredContainers.some((c) => c.labels && c.labels['folder.view3'])
+      );
     },
 
     get viewItems() {
       // Access updateTick to create a dependency
       this.updateTick;
-      
+
       if (!this.useFolders) {
-        return this.filteredContainers.map(c => ({ type: 'container', ...c }));
+        return this.filteredContainers.map((c) => ({ type: 'container', ...c }));
       }
 
       const items = [];
       const folderMap = {};
       const unassigned = [];
-      
+
       // Pre-seed explicitly created folders
       const explicitFolders = (Alpine.store('core') && Alpine.store('core').customFolders) || [];
-      explicitFolders.forEach(fName => {
+      explicitFolders.forEach((fName) => {
         folderMap[fName] = [];
       });
-      
-      this.filteredContainers.forEach(c => {
+
+      this.filteredContainers.forEach((c) => {
         const fName = c.labels && c.labels['folder.view3'];
         if (fName) {
           if (!folderMap[fName]) folderMap[fName] = [];
@@ -140,26 +148,26 @@ export function dockerApp() {
 
       const customFolders = (Alpine.store('core') && Alpine.store('core').customFolders) || [];
       const sortedFolderNames = [];
-      customFolders.forEach(f => {
+      customFolders.forEach((f) => {
         sortedFolderNames.push(f);
         if (!folderMap[f]) folderMap[f] = [];
       });
-      Object.keys(folderMap).forEach(f => {
+      Object.keys(folderMap).forEach((f) => {
         if (!sortedFolderNames.includes(f)) sortedFolderNames.push(f);
       });
-      sortedFolderNames.forEach(fName => {
-        items.push({ 
-          type: 'folder', 
-          id: 'folder_' + fName, 
-          name: fName, 
-          count: folderMap[fName].length, 
+      sortedFolderNames.forEach((fName) => {
+        items.push({
+          type: 'folder',
+          id: 'folder_' + fName,
+          name: fName,
+          count: folderMap[fName].length,
           containers: folderMap[fName],
           isStack: false,
-          icon: Alpine.store('core')?.folderIcons?.[fName] || null
+          icon: Alpine.store('core')?.folderIcons?.[fName] || null,
         });
         if (this.isFolderExpanded(fName)) {
-            items.push({ type: 'folder_header', id: 'folder_header_' + fName, name: fName });
-            items.push(...folderMap[fName]);
+          items.push({ type: 'folder_header', id: 'folder_header_' + fName, name: fName });
+          items.push(...folderMap[fName]);
         }
       });
 
@@ -169,16 +177,16 @@ export function dockerApp() {
     get stackItems() {
       // Access updateTick to create a dependency
       this.updateTick;
-      
+
       const items = [];
       const stackMap = {};
 
       const customStacks = (Alpine.store('core') && Alpine.store('core').customStacks) || [];
-      customStacks.forEach(s => {
+      customStacks.forEach((s) => {
         stackMap[s.name] = [];
       });
 
-      this.filteredContainers.forEach(c => {
+      this.filteredContainers.forEach((c) => {
         const sName = c.labels && c.labels['com.docker.compose.project'];
         if (sName) {
           if (!stackMap[sName]) stackMap[sName] = [];
@@ -187,19 +195,19 @@ export function dockerApp() {
       });
 
       const sortedStackNames = Object.keys(stackMap);
-      sortedStackNames.forEach(sName => {
-        items.push({ 
-          type: 'folder', 
-          id: 'stack_' + sName, 
-          name: sName, 
-          count: stackMap[sName].length, 
+      sortedStackNames.forEach((sName) => {
+        items.push({
+          type: 'folder',
+          id: 'stack_' + sName,
+          name: sName,
+          count: stackMap[sName].length,
           containers: stackMap[sName],
           isStack: true,
-          icon: null
+          icon: null,
         });
         if (this.isFolderExpanded(sName)) {
-            items.push({ type: 'folder_header', id: 'folder_header_' + sName, name: sName });
-            items.push(...stackMap[sName]);
+          items.push({ type: 'folder_header', id: 'folder_header_' + sName, name: sName });
+          items.push(...stackMap[sName]);
         }
       });
 
@@ -211,7 +219,7 @@ export function dockerApp() {
     toggleFolder(fName) {
       this.expandedFolders = {
         ...this.expandedFolders,
-        [fName]: !this.isFolderExpanded(fName)
+        [fName]: !this.isFolderExpanded(fName),
       };
     },
 
@@ -348,10 +356,10 @@ export function dockerApp() {
       if (type === 'container' && this.draggedContainerId === targetId) return;
       if (type === 'folder' && this.draggedFolder === targetId) return;
       if (this.draggedFolder && type === 'container') return; // Don't allow dropping folder on container
-      
+
       const targetElement = e.currentTarget;
       const rect = targetElement.getBoundingClientRect();
-      
+
       if (isHorizontal) {
         const midX = rect.left + rect.width / 2;
         this.dragOverPosition = e.clientX < midX ? 'before' : 'after';
@@ -361,7 +369,7 @@ export function dockerApp() {
       }
       this.dragOverTargetId = targetId;
       this.dragOverTargetType = type;
-      
+
       // Clear folder drop states
       this.dragOverFolder = null;
       this.dragOverRoot = false;
@@ -375,58 +383,65 @@ export function dockerApp() {
 
     handleSortDrop() {
       if ((!this.draggedContainerId && !this.draggedFolder) || !this.dragOverTargetId) return;
-      
+
       let allContainers = [...Alpine.store('core').containers];
-      
+
       if (this.draggedFolder && this.dragOverTargetType === 'folder') {
         const itemsToMove = [];
         for (let i = allContainers.length - 1; i >= 0; i--) {
-          if (allContainers[i].labels && allContainers[i].labels['folder.view3'] === this.draggedFolder) {
+          if (
+            allContainers[i].labels &&
+            allContainers[i].labels['folder.view3'] === this.draggedFolder
+          ) {
             itemsToMove.unshift(allContainers[i]);
             allContainers.splice(i, 1);
           }
         }
-        
+
         let insertIndex = allContainers.length;
         if (this.dragOverPosition === 'before') {
-          const firstIdx = allContainers.findIndex(c => c.labels && c.labels['folder.view3'] === this.dragOverTargetId);
+          const firstIdx = allContainers.findIndex(
+            (c) => c.labels && c.labels['folder.view3'] === this.dragOverTargetId
+          );
           if (firstIdx !== -1) insertIndex = firstIdx;
         } else {
           let lastIdx = -1;
           allContainers.forEach((c, idx) => {
-             if (c.labels && c.labels['folder.view3'] === this.dragOverTargetId) lastIdx = idx;
+            if (c.labels && c.labels['folder.view3'] === this.dragOverTargetId) lastIdx = idx;
           });
           if (lastIdx !== -1) insertIndex = lastIdx + 1;
         }
-        
+
         allContainers.splice(insertIndex, 0, ...itemsToMove);
         Alpine.store('core').containers = allContainers;
-        
+
         let cFolders = [...(Alpine.store('core').customFolders || [])];
         if (!cFolders.includes(this.draggedFolder)) cFolders.push(this.draggedFolder);
-        cFolders = cFolders.filter(f => f !== this.draggedFolder);
-        
+        cFolders = cFolders.filter((f) => f !== this.draggedFolder);
+
         let folderInsertIdx = cFolders.length;
         let tIdx = cFolders.indexOf(this.dragOverTargetId);
         if (tIdx !== -1) folderInsertIdx = this.dragOverPosition === 'before' ? tIdx : tIdx + 1;
         cFolders.splice(folderInsertIdx, 0, this.draggedFolder);
         Alpine.store('core').customFolders = cFolders;
-        
       } else if (this.draggedContainerId && this.dragOverTargetType === 'container') {
         let idsToMove = [this.draggedContainerId];
         if (this.selected.includes(this.draggedContainerId)) {
           idsToMove = this.selected;
         }
-        
-        const targetIndex = allContainers.findIndex(c => c.id === this.dragOverTargetId);
+
+        const targetIndex = allContainers.findIndex((c) => c.id === this.dragOverTargetId);
         if (targetIndex === -1) return;
-        
+
         const targetContainer = allContainers[targetIndex];
-        const targetFolder = targetContainer && targetContainer.labels ? targetContainer.labels['folder.view3'] : undefined;
-        
+        const targetFolder =
+          targetContainer && targetContainer.labels
+            ? targetContainer.labels['folder.view3']
+            : undefined;
+
         const itemsToMove = [];
-        idsToMove.forEach(id => {
-          const idx = allContainers.findIndex(c => c.id === id);
+        idsToMove.forEach((id) => {
+          const idx = allContainers.findIndex((c) => c.id === id);
           if (idx !== -1) {
             const c = allContainers[idx];
             if (!c.labels) c.labels = {};
@@ -439,19 +454,20 @@ export function dockerApp() {
             allContainers.splice(idx, 1);
           }
         });
-        
-        let newTargetIndex = allContainers.findIndex(c => c.id === this.dragOverTargetId);
+
+        let newTargetIndex = allContainers.findIndex((c) => c.id === this.dragOverTargetId);
         if (newTargetIndex === -1) newTargetIndex = allContainers.length;
-        
-        const insertIndex = this.dragOverPosition === 'before' ? newTargetIndex : newTargetIndex + 1;
+
+        const insertIndex =
+          this.dragOverPosition === 'before' ? newTargetIndex : newTargetIndex + 1;
         allContainers.splice(insertIndex, 0, ...itemsToMove);
-        
+
         Alpine.store('core').containers = allContainers;
       }
 
       this.sortCol = 'custom';
       this.updateTick++;
-      
+
       this.draggedContainerId = null;
       this.draggedFolder = null;
       this.dragOverTargetId = null;
@@ -461,7 +477,7 @@ export function dockerApp() {
     handleDragOver(e, folderName) {
       void e;
       if (!this.draggedContainerId) return;
-      
+
       let idsToMove = [this.draggedContainerId];
       if (this.selected.includes(this.draggedContainerId)) {
         idsToMove = this.selected;
@@ -469,7 +485,7 @@ export function dockerApp() {
 
       let canDrop = false;
       for (const id of idsToMove) {
-        const c = this.containers.find(x => x.id === id);
+        const c = this.containers.find((x) => x.id === id);
         if (c) {
           if (folderName) {
             if (!c.labels || c.labels['folder.view3'] !== folderName) canDrop = true;
@@ -500,15 +516,15 @@ export function dockerApp() {
 
     handleDrop(folderName) {
       if (!this.draggedContainerId) return;
-      
+
       let idsToMove = [this.draggedContainerId];
       if (this.selected.includes(this.draggedContainerId)) {
         idsToMove = this.selected;
       }
-      
+
       let moveCount = 0;
-      idsToMove.forEach(id => {
-        const c = Alpine.store('core').containers.find(x => x.id === id);
+      idsToMove.forEach((id) => {
+        const c = Alpine.store('core').containers.find((x) => x.id === id);
         if (c) {
           if (!c.labels) c.labels = {};
           if (folderName) {
@@ -524,19 +540,21 @@ export function dockerApp() {
           }
         }
       });
-      
+
       if (moveCount > 0) {
         if (folderName) {
-          if (typeof showToast === 'function') showToast(`${moveCount} Container verschoben nach "${folderName}"`, 'success');
+          if (typeof showToast === 'function')
+            showToast(`${moveCount} Container verschoben nach "${folderName}"`, 'success');
         } else {
-          if (typeof showToast === 'function') showToast(`${moveCount} Container aus dem Ordner entfernt`, 'success');
+          if (typeof showToast === 'function')
+            showToast(`${moveCount} Container aus dem Ordner entfernt`, 'success');
         }
       }
-      
+
       // Trigger Alpine reactivity
       Alpine.store('core').containers = [...Alpine.store('core').containers];
       this.updateTick++;
-      
+
       this.draggedContainerId = null;
       this.draggedFolder = null;
       this.dragOverFolder = null;
@@ -547,9 +565,9 @@ export function dockerApp() {
 
     init() {
       window.addEventListener('settings-saved', () => {
-        this.folderViewEnabled = typeof appSettings !== 'undefined' ? appSettings.folderViewEnabled : true;
+        this.folderViewEnabled =
+          typeof appSettings !== 'undefined' ? appSettings.folderViewEnabled : true;
       });
-
 
       // Watch for selection changes to update selectAll
       this.$watch('selected', (value) => {
@@ -574,7 +592,7 @@ export function dockerApp() {
 
     get hasRootContainers() {
       // Returns true if there is at least one container row that is not in a folder
-      return this.viewItems.some(c => c.type === 'container' && !c.folder);
+      return this.viewItems.some((c) => c.type === 'container' && !c.folder);
     },
 
     toggleSort(col) {
@@ -595,22 +613,28 @@ export function dockerApp() {
     },
 
     toggleSelectAllInFolder(fName) {
-      const folderContainers = this.filteredContainers.filter(c => c.labels && c.labels['folder.view3'] === fName);
+      const folderContainers = this.filteredContainers.filter(
+        (c) => c.labels && c.labels['folder.view3'] === fName
+      );
       if (folderContainers.length === 0) return;
-      const allSelected = folderContainers.every(c => this.selected.includes(c.id));
-      
+      const allSelected = folderContainers.every((c) => this.selected.includes(c.id));
+
       if (allSelected) {
-        this.selected = this.selected.filter(id => !folderContainers.some(c => c.id === id));
+        this.selected = this.selected.filter((id) => !folderContainers.some((c) => c.id === id));
       } else {
-        const idsToAdd = folderContainers.map(c => c.id).filter(id => !this.selected.includes(id));
+        const idsToAdd = folderContainers
+          .map((c) => c.id)
+          .filter((id) => !this.selected.includes(id));
         this.selected = [...this.selected, ...idsToAdd];
       }
     },
 
     isAllSelectedInFolder(fName) {
-      const folderContainers = this.filteredContainers.filter(c => c.labels && c.labels['folder.view3'] === fName);
+      const folderContainers = this.filteredContainers.filter(
+        (c) => c.labels && c.labels['folder.view3'] === fName
+      );
       if (folderContainers.length === 0) return false;
-      return folderContainers.every(c => this.selected.includes(c.id));
+      return folderContainers.every((c) => this.selected.includes(c.id));
     },
 
     bulkAction(action) {
@@ -670,12 +694,11 @@ export function dockerApp() {
         const statusWord = action === 'start' ? 'gestartet' : 'gestoppt';
         showToast(`${count} Container ${statusWord}`, 'success');
       }
-      
+
       // Close menus
       if (target === 'main') this.circularMenuMainOpen = false;
       if (target === 'stack') this.circularMenuStackOpen = false;
     },
-
 
     updateContainer(id) {
       Alpine.store('core').updateContainer(id);
@@ -698,12 +721,13 @@ export function dockerApp() {
         if (typeof showToast === 'function') showToast('Bitte Namen und Inhalt angeben', 'error');
         return;
       }
-      
+
       const store = Alpine.store('core');
       if (store && store.addStack) {
         store.addStack(this.composeStackName.trim(), this.composeContent);
-        if (typeof showToast === 'function') showToast(`Stack ${this.composeStackName} wird deployed...`, 'info');
-        
+        if (typeof showToast === 'function')
+          showToast(`Stack ${this.composeStackName} wird deployed...`, 'info');
+
         // Simuliere Deployment durch Hinzufügen eines Mock-Containers nach kurzer Zeit
         setTimeout(() => {
           store.containers.push({
@@ -713,16 +737,17 @@ export function dockerApp() {
             status: 'running',
             upToDate: true,
             labels: {
-              'com.docker.compose.project': this.composeStackName.trim()
-            }
+              'com.docker.compose.project': this.composeStackName.trim(),
+            },
           });
           // Update the list view
           this.updateTick++;
-          if (typeof showToast === 'function') showToast(`Stack ${this.composeStackName} erfolgreich gestartet!`, 'success');
+          if (typeof showToast === 'function')
+            showToast(`Stack ${this.composeStackName} erfolgreich gestartet!`, 'success');
         }, 1500);
       }
       this.closeComposeModal();
-    }
+    },
   };
 }
 

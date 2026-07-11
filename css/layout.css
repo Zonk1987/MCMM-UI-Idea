@@ -438,7 +438,9 @@ details[open] .accordion-summary .material-icons-round {
   justify-content: center;
   z-index: 10;
   color: var(--text-primary);
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
 }
 
 .circular-menu-wrapper .menu-trigger:hover {
@@ -454,4 +456,3 @@ details[open] .accordion-summary .material-icons-round {
 .circular-menu-wrapper.active .hamburger-icon {
   transform: rotate(180deg);
 }
-

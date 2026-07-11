@@ -135,7 +135,6 @@ export function gameserverApp() {
     init() {
       this.syncStatus();
 
-
       // Live simulation for CPU/RAM and sparkline animations
       setInterval(() => {
         this.instances.forEach((srv) => {
@@ -174,7 +173,7 @@ export function gameserverApp() {
       if (typeof showToast === 'function') {
         const s = this.instances.find((i) => i.containerId === id);
         if (s) {
-           showToast(`${s.serverName} ${s.status === 'online' ? 'gestartet' : 'gestoppt'}`, 'info');
+          showToast(`${s.serverName} ${s.status === 'online' ? 'gestartet' : 'gestoppt'}`, 'info');
         }
       }
     },
@@ -462,7 +461,7 @@ export async function openConsole(srv) {
     initTerminal();
     output.innerHTML = '';
     consoleTerminal.open(output);
-    
+
     // Fix IDE warning for xterm-helper-textarea missing an id/name
     const helperTextarea = output.querySelector('.xterm-helper-textarea');
     if (helperTextarea) {

@@ -34,25 +34,29 @@ document.addEventListener('alpine:init', () => {
 
 // Modal Keyboard Support (Esc = close, Enter = confirm)
 document.addEventListener('keydown', (e) => {
-  const openModals = Array.from(document.querySelectorAll('.modal-backdrop')).filter(el => {
+  const openModals = Array.from(document.querySelectorAll('.modal-backdrop')).filter((el) => {
     return !el.hasAttribute('hidden') && window.getComputedStyle(el).display !== 'none';
   });
-  
+
   if (openModals.length === 0) return;
   const topModal = openModals[openModals.length - 1];
 
   if (e.key === 'Escape') {
-    const closeBtn = topModal.querySelector('.modal-header .icon-btn, [aria-label="Schließen"], #closeModModal');
+    const closeBtn = topModal.querySelector(
+      '.modal-header .icon-btn, [aria-label="Schließen"], #closeModModal'
+    );
     if (closeBtn) closeBtn.click();
   } else if (e.key === 'Enter') {
     const tag = e.target.tagName.toLowerCase();
     if (tag === 'textarea' || tag === 'button') return;
     if (e.target.hasAttribute('@keydown.enter')) return;
-    
+
     // Specific modals to ignore for global Enter
     if (topModal.id === 'fileManagerModal' || topModal.id === 'consoleModal') return;
-    
-    const confirmBtn = topModal.querySelector('.modal-footer .btn-primary, .modal-footer .btn-danger, .modal-footer .btn-success');
+
+    const confirmBtn = topModal.querySelector(
+      '.modal-footer .btn-primary, .modal-footer .btn-danger, .modal-footer .btn-success'
+    );
     if (confirmBtn && !confirmBtn.disabled) {
       e.preventDefault();
       confirmBtn.click();
@@ -122,7 +126,6 @@ async function initApp() {
 
   // ── Initialize all modules ────────────────────────────
   // Store initialization moved to top-level alpine:init listener
-
 
   // ── Tab navigation ────────────────────────────────────
   document.getElementById('tabNav')?.addEventListener('click', (e) => {

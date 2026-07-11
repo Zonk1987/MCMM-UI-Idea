@@ -13,12 +13,18 @@ export function networksApp() {
       return [
         { id: 'bridge', name: 'bridge', driver: 'bridge', scope: 'local', containers: 3 },
         { id: 'host', name: 'host', driver: 'host', scope: 'local', containers: 5 },
-        { id: 'custom_net', name: 'minecraft-net', driver: 'bridge', scope: 'local', containers: 2 }
+        {
+          id: 'custom_net',
+          name: 'minecraft-net',
+          driver: 'bridge',
+          scope: 'local',
+          containers: 2,
+        },
       ];
     },
-    
+
     createNetwork() {
       if (typeof showToast === 'function') showToast('Create network logic stub', 'info');
-    }
+    },
   };
 }

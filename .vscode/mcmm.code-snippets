@@ -10,24 +10,18 @@
       "  <div class=\"setting-control\">",
       "    <input type=\"${4|text,checkbox,number,password|}\" id=\"${1:inputId}\" x-model=\"${5:modelData}\" class=\"${6:input-class}\">",
       "  </div>",
-      "</div>"
+      "</div>",
     ],
-    "description": "Create a standard MCMM settings row"
+    "description": "Create a standard MCMM settings row",
   },
   "Alpine Component": {
     "prefix": "x-comp",
-    "body": [
-      "<div x-data=\"${1:componentName}()\" x-init=\"init()\">",
-      "  $0",
-      "</div>"
-    ],
-    "description": "Create a new Alpine component container"
+    "body": ["<div x-data=\"${1:componentName}()\" x-init=\"init()\">", "  $0", "</div>"],
+    "description": "Create a new Alpine component container",
   },
   "Material Icon": {
     "prefix": "m-icon",
-    "body": [
-      "<span class=\"material-icons-round\">${1:icon_name}</span>"
-    ],
-    "description": "Insert a material icon"
-  }
+    "body": ["<span class=\"material-icons-round\">${1:icon_name}</span>"],
+    "description": "Insert a material icon",
+  },
 }

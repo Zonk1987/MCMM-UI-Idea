@@ -25,7 +25,7 @@ export function initCoreStore(Alpine) {
       ],
       labels: {
         'folder.view3': 'Media',
-      }
+      },
     },
     {
       id: 'minecraft01',
@@ -41,7 +41,7 @@ export function initCoreStore(Alpine) {
         'folder.view3': 'Game Servers',
         'mcmm.managed': 'true',
         'mcmm.type': 'minecraft',
-        'mcmm.game': 'minecraft'
+        'mcmm.game': 'minecraft',
       },
       // Gameserver specific runtime mock data
       gsData: {
@@ -49,8 +49,8 @@ export function initCoreStore(Alpine) {
         players: { current: 3, max: 20 },
         ram: { used: 3200, max: 4096 },
         cpu: 24,
-        uptime: '3d 14h 22m'
-      }
+        uptime: '3d 14h 22m',
+      },
     },
     {
       id: 'minecraft02',
@@ -66,15 +66,15 @@ export function initCoreStore(Alpine) {
         'folder.view3': 'Game Servers',
         'mcmm.managed': 'true',
         'mcmm.type': 'minecraft',
-        'mcmm.game': 'minecraft'
+        'mcmm.game': 'minecraft',
       },
       gsData: {
         version: '1.20.4 Fabric',
         players: { current: 1, max: 20 },
         ram: { used: 2100, max: 4096 },
         cpu: 8,
-        uptime: '12h 5m'
-      }
+        uptime: '12h 5m',
+      },
     },
     {
       id: 'valheim01',
@@ -93,15 +93,15 @@ export function initCoreStore(Alpine) {
         'folder.view3': 'Game Servers',
         'mcmm.managed': 'true',
         'mcmm.type': 'valheim',
-        'mcmm.game': 'valheim'
+        'mcmm.game': 'valheim',
       },
       gsData: {
         version: '0.218.19',
         players: { current: 2, max: 10 },
         ram: { used: 1800, max: 4096 },
         cpu: 15,
-        uptime: '5d 2h'
-      }
+        uptime: '5d 2h',
+      },
     },
     {
       id: 'palworld01',
@@ -117,15 +117,15 @@ export function initCoreStore(Alpine) {
         'folder.view3': 'Game Servers',
         'mcmm.managed': 'true',
         'mcmm.type': 'palworld',
-        'mcmm.game': 'palworld'
+        'mcmm.game': 'palworld',
       },
       gsData: {
         version: 'v0.1.5.0',
         players: { current: 0, max: 32 },
         ram: { used: 0, max: 16384 },
         cpu: 0,
-        uptime: 'Offline'
-      }
+        uptime: 'Offline',
+      },
     },
     {
       id: 'pihole01',
@@ -145,7 +145,7 @@ export function initCoreStore(Alpine) {
       ],
       labels: {
         'folder.view3': 'Network',
-      }
+      },
     },
     {
       id: 'grafana01',
@@ -163,7 +163,7 @@ export function initCoreStore(Alpine) {
       lanIp: '192.168.1.100',
       labels: {
         'folder.view3': 'Monitoring',
-      }
+      },
     },
     {
       id: 'nginx01',
@@ -185,7 +185,7 @@ export function initCoreStore(Alpine) {
       lanIp: '192.168.1.200',
       labels: {
         'folder.view3': 'Network',
-      }
+      },
     },
     {
       id: 'portainer01',
@@ -203,7 +203,7 @@ export function initCoreStore(Alpine) {
       lanIp: '192.168.1.100',
       labels: {
         'folder.view3': 'System',
-      }
+      },
     },
     {
       id: 'immich01',
@@ -220,7 +220,7 @@ export function initCoreStore(Alpine) {
       ],
       labels: {
         'folder.view3': 'Media',
-      }
+      },
     },
     {
       id: 'stack_media_plex',
@@ -231,7 +231,7 @@ export function initCoreStore(Alpine) {
       upToDate: true,
       ports: [{ host: '32400', container: '32400', proto: 'tcp' }],
       paths: [],
-      labels: { 'com.docker.compose.project': 'MediaStack' }
+      labels: { 'com.docker.compose.project': 'MediaStack' },
     },
     {
       id: 'stack_media_sonarr',
@@ -242,7 +242,7 @@ export function initCoreStore(Alpine) {
       upToDate: true,
       ports: [{ host: '8989', container: '8989', proto: 'tcp' }],
       paths: [],
-      labels: { 'com.docker.compose.project': 'MediaStack' }
+      labels: { 'com.docker.compose.project': 'MediaStack' },
     },
     {
       id: 'stack_nextcloud_app',
@@ -253,7 +253,7 @@ export function initCoreStore(Alpine) {
       upToDate: false,
       ports: [{ host: '8080', container: '80', proto: 'tcp' }],
       paths: [],
-      labels: { 'com.docker.compose.project': 'NextcloudStack' }
+      labels: { 'com.docker.compose.project': 'NextcloudStack' },
     },
     {
       id: 'stack_nextcloud_db',
@@ -264,7 +264,7 @@ export function initCoreStore(Alpine) {
       upToDate: true,
       ports: [],
       paths: [],
-      labels: { 'com.docker.compose.project': 'NextcloudStack' }
+      labels: { 'com.docker.compose.project': 'NextcloudStack' },
     },
     {
       id: 'stack_proxy_npm',
@@ -273,9 +273,13 @@ export function initCoreStore(Alpine) {
       iconFallback: '🌐',
       status: 'running',
       upToDate: true,
-      ports: [{ host: '80', container: '80', proto: 'tcp' }, { host: '443', container: '443', proto: 'tcp' }, { host: '81', container: '81', proto: 'tcp' }],
+      ports: [
+        { host: '80', container: '80', proto: 'tcp' },
+        { host: '443', container: '443', proto: 'tcp' },
+        { host: '81', container: '81', proto: 'tcp' },
+      ],
       paths: [],
-      labels: { 'com.docker.compose.project': 'ProxyStack' }
+      labels: { 'com.docker.compose.project': 'ProxyStack' },
     },
     {
       id: 'stack_monitoring_prom',
@@ -286,7 +290,7 @@ export function initCoreStore(Alpine) {
       upToDate: true,
       ports: [{ host: '9090', container: '9090', proto: 'tcp' }],
       paths: [],
-      labels: { 'com.docker.compose.project': 'MonitoringStack' }
+      labels: { 'com.docker.compose.project': 'MonitoringStack' },
     },
     {
       id: 'stack_monitoring_grafana',
@@ -297,18 +301,33 @@ export function initCoreStore(Alpine) {
       upToDate: true,
       ports: [{ host: '3000', container: '3000', proto: 'tcp' }],
       paths: [],
-      labels: { 'com.docker.compose.project': 'MonitoringStack' }
-    }
+      labels: { 'com.docker.compose.project': 'MonitoringStack' },
+    },
   ];
 
   Alpine.store('core', {
     containers: MOCK_CONTAINERS,
     customFolders: ['Media', 'Game Servers', 'System'],
     customStacks: [
-      { name: 'MediaStack', composeContent: 'version: "3"\nservices:\n  plex:\n    image: plexinc/pms-docker\n  sonarr:\n    image: lscr.io/linuxserver/sonarr' },
-      { name: 'NextcloudStack', composeContent: 'version: "3"\nservices:\n  app:\n    image: nextcloud\n  db:\n    image: mariadb' },
-      { name: 'ProxyStack', composeContent: 'version: "3"\nservices:\n  app:\n    image: jc21/nginx-proxy-manager' },
-      { name: 'MonitoringStack', composeContent: 'version: "3"\nservices:\n  prometheus:\n    image: prom/prometheus\n  grafana:\n    image: grafana/grafana' }
+      {
+        name: 'MediaStack',
+        composeContent:
+          'version: "3"\nservices:\n  plex:\n    image: plexinc/pms-docker\n  sonarr:\n    image: lscr.io/linuxserver/sonarr',
+      },
+      {
+        name: 'NextcloudStack',
+        composeContent:
+          'version: "3"\nservices:\n  app:\n    image: nextcloud\n  db:\n    image: mariadb',
+      },
+      {
+        name: 'ProxyStack',
+        composeContent: 'version: "3"\nservices:\n  app:\n    image: jc21/nginx-proxy-manager',
+      },
+      {
+        name: 'MonitoringStack',
+        composeContent:
+          'version: "3"\nservices:\n  prometheus:\n    image: prom/prometheus\n  grafana:\n    image: grafana/grafana',
+      },
     ],
     folderIcons: {},
 
@@ -319,14 +338,14 @@ export function initCoreStore(Alpine) {
     },
 
     addStack(name, composeContent) {
-      if (name && !this.customStacks.find(s => s.name === name)) {
+      if (name && !this.customStacks.find((s) => s.name === name)) {
         this.customStacks = [...this.customStacks, { name, composeContent }];
       }
     },
 
     removeStack(name) {
-      this.customStacks = this.customStacks.filter(s => s.name !== name);
-      this.containers.forEach(c => {
+      this.customStacks = this.customStacks.filter((s) => s.name !== name);
+      this.containers.forEach((c) => {
         if (c.labels && c.labels['com.docker.compose.project'] === name) {
           delete c.labels['com.docker.compose.project'];
         }
@@ -335,12 +354,12 @@ export function initCoreStore(Alpine) {
     },
 
     removeFolder(name) {
-      this.customFolders = this.customFolders.filter(f => f !== name);
+      this.customFolders = this.customFolders.filter((f) => f !== name);
       if (this.folderIcons[name]) {
         delete this.folderIcons[name];
         this.folderIcons = { ...this.folderIcons };
       }
-      this.containers.forEach(c => {
+      this.containers.forEach((c) => {
         if (c.labels && c.labels['folder.view3'] === name) {
           delete c.labels['folder.view3'];
         }
@@ -350,7 +369,7 @@ export function initCoreStore(Alpine) {
 
     renameFolder(oldName, newName) {
       if (this.customFolders.includes(oldName)) {
-        this.customFolders = this.customFolders.map(f => f === oldName ? newName : f);
+        this.customFolders = this.customFolders.map((f) => (f === oldName ? newName : f));
       } else {
         this.customFolders.push(newName);
       }
@@ -359,7 +378,7 @@ export function initCoreStore(Alpine) {
         delete this.folderIcons[oldName];
         this.folderIcons = { ...this.folderIcons };
       }
-      this.containers.forEach(c => {
+      this.containers.forEach((c) => {
         if (c.labels && c.labels['folder.view3'] === oldName) {
           c.labels['folder.view3'] = newName;
         }
@@ -370,15 +389,15 @@ export function initCoreStore(Alpine) {
     setFolderIcon(folderName, iconUrl) {
       this.folderIcons = {
         ...this.folderIcons,
-        [folderName]: iconUrl
+        [folderName]: iconUrl,
       };
     },
 
     // Getters for specific views
     getGameservers() {
       return this.containers
-        .filter(c => c.labels && c.labels['mcmm.managed'] === 'true')
-        .map(c => ({
+        .filter((c) => c.labels && c.labels['mcmm.managed'] === 'true')
+        .map((c) => ({
           containerId: c.id,
           game: c.labels['mcmm.game'],
           serverName: c.name,
@@ -388,7 +407,7 @@ export function initCoreStore(Alpine) {
           ram: c.gsData?.ram || { used: 0, max: 0 },
           cpu: c.gsData?.cpu || 0,
           uptime: c.gsData?.uptime || 'Offline',
-          port: c.ports[0]?.host || 0
+          port: c.ports[0]?.host || 0,
         }));
     },
 
@@ -399,16 +418,16 @@ export function initCoreStore(Alpine) {
         if (container.status === 'running') {
           container.status = 'stopped';
           if (container.gsData) {
-             container.gsData.uptime = 'Offline';
-             container.gsData.players.current = 0;
-             container.gsData.ram.used = 0;
-             container.gsData.cpu = 0;
+            container.gsData.uptime = 'Offline';
+            container.gsData.players.current = 0;
+            container.gsData.ram.used = 0;
+            container.gsData.cpu = 0;
           }
         } else {
           container.status = 'running';
           if (container.gsData) {
-             container.gsData.uptime = '0m';
-             container.gsData.ram.used = Math.floor(container.gsData.ram.max * 0.4);
+            container.gsData.uptime = '0m';
+            container.gsData.ram.used = Math.floor(container.gsData.ram.max * 0.4);
           }
         }
       }
@@ -437,14 +456,14 @@ export function initCoreStore(Alpine) {
 
     init() {
       // Initialize mock CPU/RAM for all containers
-      this.containers.forEach(c => {
+      this.containers.forEach((c) => {
         c.cpu = c.status === 'running' ? Math.random() * 5 : 0;
         c.ram = c.status === 'running' ? Math.floor(Math.random() * 400 + 100) : 0;
       });
 
       // Live simulation for CPU/RAM for all containers
       setInterval(() => {
-        this.containers.forEach(c => {
+        this.containers.forEach((c) => {
           if (c.status === 'running') {
             c.cpu = Math.max(0.1, Math.min(95, c.cpu + (Math.random() - 0.5) * 2));
             c.ram = Math.max(50, Math.min(8192, c.ram + (Math.random() - 0.5) * 50));
@@ -460,12 +479,14 @@ export function initCoreStore(Alpine) {
         Alpine.effect(() => {
           if (Alpine.store('global')) {
             Alpine.store('global').dockerCount = this.containers.length;
-            
+
             const gameservers = this.getGameservers();
-            Alpine.store('global').onlineGameservers = gameservers.filter(s => s.status === 'online').length;
-            
+            Alpine.store('global').onlineGameservers = gameservers.filter(
+              (s) => s.status === 'online'
+            ).length;
+
             let totalPlayers = 0;
-            gameservers.forEach(s => {
+            gameservers.forEach((s) => {
               if (s.status === 'online' && s.players && s.players.current) {
                 totalPlayers += s.players.current;
               }
@@ -474,6 +495,6 @@ export function initCoreStore(Alpine) {
           }
         });
       }
-    }
+    },
   });
 }

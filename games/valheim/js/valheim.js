@@ -4,7 +4,6 @@
 
 import { GameAdditions } from '../../../js/gameAdditions.js';
 
-
 GameAdditions.registerGame('valheim', {
   name: 'Valheim',
   icon: '🪓',

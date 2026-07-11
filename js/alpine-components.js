@@ -117,14 +117,14 @@ export function registerAlpineComponents(Alpine) {
     // Map of containerId -> boolean (included in folder)
     includedContainers: {},
     originalFolderName: null,
-    
+
     openModal(e) {
       if (e && e.detail && e.detail.folderName) {
         this.folderName = e.detail.folderName;
         this.originalFolderName = e.detail.folderName;
         this.includedContainers = {};
         if (Alpine.store('core')) {
-          Alpine.store('core').containers.forEach(c => {
+          Alpine.store('core').containers.forEach((c) => {
             if (c.labels && c.labels['folder.view3'] === this.folderName) {
               this.includedContainers[c.id] = true;
             }
@@ -141,11 +141,11 @@ export function registerAlpineComponents(Alpine) {
 
     saveFolder() {
       if (!this.folderName || this.folderName.trim() === '') {
-        if(typeof showToast === 'function') showToast('Ordnername darf nicht leer sein', 'error');
+        if (typeof showToast === 'function') showToast('Ordnername darf nicht leer sein', 'error');
         return;
       }
       const fName = this.folderName.trim();
-      
+
       // Save folder to store
       if (Alpine.store('core')) {
         if (this.originalFolderName && this.originalFolderName !== fName) {
@@ -153,20 +153,21 @@ export function registerAlpineComponents(Alpine) {
         } else {
           Alpine.store('core').addFolder(fName);
         }
-        
+
         // Apply labels to checked containers, remove from unchecked
-        Alpine.store('core').containers.forEach(c => {
+        Alpine.store('core').containers.forEach((c) => {
           if (this.includedContainers[c.id]) {
             Alpine.store('core').setLabel(c.id, 'folder.view3', fName);
           } else if (c.labels && c.labels['folder.view3'] === fName) {
             Alpine.store('core').setLabel(c.id, 'folder.view3', '');
           }
         });
-        
-        if (typeof showToast === 'function') showToast('Ordner "' + fName + '" gespeichert', 'success');
+
+        if (typeof showToast === 'function')
+          showToast('Ordner "' + fName + '" gespeichert', 'success');
       }
-      
+
       this.open = false;
-    }
+    },
   }));
 }

@@ -23,6 +23,7 @@
     "lint:spelling": "cspell \"**/*.{html,js,json,jsonc,css,md,page}\"",
     "lint:markdown": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#reports\"",
     "lint:web": "hint http://localhost:5500",
+    "docs": "jsdoc -c jsdoc.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "quality": "npm run lint:all && npm run format:check",

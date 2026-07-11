@@ -10,13 +10,31 @@
     { "name": "x-show", "description": "Toggle the visibility of an element" },
     { "name": "x-transition", "description": "Transition an element in and out using CSS classes" },
     { "name": "x-for", "description": "Repeat a block of HTML based on a data set" },
-    { "name": "x-if", "description": "Conditionally add/remove a block of HTML from the page entirely" },
+    {
+      "name": "x-if",
+      "description": "Conditionally add/remove a block of HTML from the page entirely"
+    },
     { "name": "x-init", "description": "Run code when an element is initialized by Alpine" },
-    { "name": "x-effect", "description": "Execute a script each time one of its dependencies change" },
-    { "name": "x-ref", "description": "Reference elements directly by their specified keys using the $refs magic property" },
-    { "name": "x-cloak", "description": "Hide a block of HTML until after Alpine is finished initializing its contents" },
-    { "name": "x-ignore", "description": "Prevent a block of HTML from being initialized by Alpine" },
-    { "name": "x-teleport", "description": "Transport part of your HTML to another part of the DOM entirely" },
+    {
+      "name": "x-effect",
+      "description": "Execute a script each time one of its dependencies change"
+    },
+    {
+      "name": "x-ref",
+      "description": "Reference elements directly by their specified keys using the $refs magic property"
+    },
+    {
+      "name": "x-cloak",
+      "description": "Hide a block of HTML until after Alpine is finished initializing its contents"
+    },
+    {
+      "name": "x-ignore",
+      "description": "Prevent a block of HTML from being initialized by Alpine"
+    },
+    {
+      "name": "x-teleport",
+      "description": "Transport part of your HTML to another part of the DOM entirely"
+    },
     { "name": "x-id", "description": "Declare a new Alpine scope for generating IDs" },
     { "name": "@click", "description": "Shorthand for x-on:click" },
     { "name": "@submit", "description": "Shorthand for x-on:submit" },

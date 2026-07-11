@@ -585,7 +585,9 @@
   padding: 8px 16px;
   cursor: pointer;
   gap: 12px;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .docker-context-menu .ctx-item:hover {

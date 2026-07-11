@@ -4,7 +4,6 @@
 
 import { GameAdditions } from '../../../js/gameAdditions.js';
 
-
 GameAdditions.registerGame('cs2', {
   name: 'CS2',
   icon: '🔫',

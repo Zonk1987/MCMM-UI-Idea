@@ -18,7 +18,8 @@
         :class="{ 'open': selectorOpen }"
         @click.away="selectorOpen = false"
       >
-        <button type="button"
+        <button
+          type="button"
           class="custom-select-trigger"
           @click="selectorOpen = !selectorOpen"
           :aria-expanded="selectorOpen"
@@ -67,7 +68,8 @@
   <div class="player-layout">
     <!-- Sub-Tabs -->
     <div class="player-subtabs">
-      <button type="button"
+      <button
+        type="button"
         class="subtab-btn"
         :class="{ 'active': state.subtab === 'online' }"
         @click="state.subtab = 'online'"
@@ -76,7 +78,8 @@
         <span x-text="$store.i18n.t('tab.online')">Online</span>
         <span class="tab-badge online" x-text="onlineCount"></span>
       </button>
-      <button type="button"
+      <button
+        type="button"
         class="subtab-btn"
         :class="{ 'active': state.subtab === 'whitelist' }"
         @click="state.subtab = 'whitelist'"
@@ -84,7 +87,8 @@
         <span class="material-icons-round">playlist_add_check</span>
         <span x-text="$store.i18n.t('tab.whitelist')">Whitelist</span>
       </button>
-      <button type="button"
+      <button
+        type="button"
         class="subtab-btn"
         :class="{ 'active': state.subtab === 'bans' }"
         @click="state.subtab = 'bans'"
@@ -92,7 +96,8 @@
         <span class="material-icons-round">gavel</span>
         <span x-text="$store.i18n.t('tab.bans')">Bans</span>
       </button>
-      <button type="button"
+      <button
+        type="button"
         class="subtab-btn"
         :class="{ 'active': state.subtab === 'chatlog' }"
         @click="state.subtab = 'chatlog'"
@@ -149,9 +154,15 @@
                   <template x-for="p in activeData.online" :key="p.name">
                     <tr>
                       <td>
-                        <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
+                        <img
+                          loading="lazy"
+                          decoding="async"
+                          src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                          class="player-avatar"
+                          :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
                           onerror="playerAvatarError(this)"
-                         alt="Image">
+                          alt="Image"
+                        />
                       </td>
                       <td>
                         <div class="player-name" x-text="p.name"></div>
@@ -169,7 +180,10 @@
                         x-text="p.playtime"
                       ></td>
                       <td>
-                        <button type="button" aria-label="Toggle Gamemode" class="gamemode-badge"
+                        <button
+                          type="button"
+                          aria-label="Toggle Gamemode"
+                          class="gamemode-badge"
                           :class="'gm-' + (p.gamemode || 'survival')"
                           @click="toggleGamemode(p.name)"
                           title="Gamemode wechseln"
@@ -193,7 +207,8 @@
                       </td>
                       <td>
                         <div class="player-actions">
-                          <button type="button"
+                          <button
+                            type="button"
                             class="btn btn-ghost"
                             style="padding: 4px 10px; font-size: 11px"
                             @click="msgPlayer(p.name)"
@@ -201,7 +216,8 @@
                           >
                             <span class="material-icons-round" style="font-size: 14px">chat</span>
                           </button>
-                          <button type="button"
+                          <button
+                            type="button"
                             class="btn btn-ghost"
                             style="padding: 4px 10px; font-size: 11px"
                             @click="tpPlayer(p.name)"
@@ -212,7 +228,8 @@
                             >
                           </button>
                           <template x-if="!p.isOp">
-                            <button type="button"
+                            <button
+                              type="button"
                               class="btn btn-ghost"
                               style="padding: 4px 10px; font-size: 11px"
                               @click="opPlayer(p.name)"
@@ -223,7 +240,8 @@
                               >
                             </button>
                           </template>
-                          <button type="button"
+                          <button
+                            type="button"
                             class="btn btn-ghost"
                             style="padding: 4px 10px; font-size: 11px; color: var(--yellow)"
                             @click="kickPlayer(p.name)"
@@ -231,7 +249,8 @@
                           >
                             <span class="material-icons-round" style="font-size: 14px">logout</span>
                           </button>
-                          <button type="button"
+                          <button
+                            type="button"
                             class="btn btn-danger"
                             style="padding: 4px 10px; font-size: 11px"
                             @click="openBanModal(p.name)"
@@ -269,7 +288,8 @@
               style="font-size: 13px; color: var(--text-secondary)"
               x-text="activeData.whitelist.length + ' ' + (t('whitelist_players') || 'Spieler auf der Whitelist')"
             ></span>
-            <button type="button"
+            <button
+              type="button"
               class="btn btn-primary"
               style="padding: 6px 14px; font-size: 12px"
               @click="addWhitelist()"
@@ -280,12 +300,19 @@
           </div>
           <template x-for="p in activeData.whitelist" :key="p.name">
             <div class="list-entry">
-              <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" class="player-avatar" :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
+              <img
+                loading="lazy"
+                decoding="async"
+                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                class="player-avatar"
+                :src="'https://mc-heads.net/avatar/' + p.name + '/32'"
                 onerror="playerAvatarError(this)"
-               alt="Image">
+                alt="Image"
+              />
               <div class="list-entry-name" x-text="p.name"></div>
               <div class="list-entry-meta" x-text="p.uuid"></div>
-              <button type="button"
+              <button
+                type="button"
                 class="btn btn-danger"
                 style="padding: 5px 12px; font-size: 11px"
                 @click="removeWhitelist(p.name)"
@@ -326,7 +353,8 @@
                   x-text="(t('general.ban_reason_prefix') || 'Grund: ') + b.reason + ' · ' + b.date + ' · ' + b.duration"
                 ></div>
               </div>
-              <button type="button"
+              <button
+                type="button"
                 class="btn btn-ghost"
                 style="padding: 5px 12px; font-size: 11px"
                 @click="unbanPlayer(b.name)"
@@ -366,7 +394,10 @@
               <div class="chat-msg">
                 <span class="chat-msg-time" x-text="c.time"></span>
                 <div style="display: flex; align-items: center; gap: 6px; margin-top: 1px">
-                  <img loading="lazy" decoding="async" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                     :src="'https://mc-heads.net/avatar/' + c.player + '/16'"
                     style="
                       width: 16px;
@@ -375,7 +406,8 @@
                       image-rendering: pixelated;
                     "
                     onerror="this.style.display = 'none'"
-                   alt="Image">
+                    alt="Image"
+                  />
                   <span
                     class="chat-msg-player"
                     :class="{'chat-op': isPlayerOp(c.player)}"
@@ -393,7 +425,8 @@
             </template>
           </div>
           <div class="chat-input-area" style="display: flex; gap: 8px">
-            <label for="chatInput"
+            <label
+              for="chatInput"
               style="position: absolute; width: 1px; height: 1px; overflow: hidden"
               >Chat</label
             >
@@ -406,7 +439,7 @@
               class="form-input"
               style="flex: 1; background: var(--bg-input)"
               :placeholder="$store.i18n.t('general.chat_placeholder')"
-            >
+            />
             <button type="button" class="btn btn-primary" @click="sendChat()">
               <span class="material-icons-round">send</span>
             </button>
@@ -433,7 +466,7 @@
       <div class="modal-body">
         <div class="form-group">
           <label for="banPlayer" x-text="$store.i18n.t('col.player')">Spieler</label>
-          <input type="text" id="banPlayer" readonly class="form-input" :value="state.banTarget" >
+          <input type="text" id="banPlayer" readonly class="form-input" :value="state.banTarget" />
         </div>
         <div class="form-group">
           <label for="banReason" x-text="$store.i18n.t('general.ban_reason_label')">Grund</label>
@@ -443,7 +476,7 @@
             x-model="state.banReason"
             :placeholder="$store.i18n.t('general.ban_reason_placeholder')"
             class="form-input"
-          >
+          />
         </div>
         <div class="form-group">
           <label for="banDuration" x-text="$store.i18n.t('general.ban_duration_label')"
@@ -460,7 +493,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button"
+        <button
+          type="button"
           class="btn btn-ghost"
           @click="state.banTarget = null"
           x-text="$store.i18n.t('btn.cancel')"

@@ -372,7 +372,9 @@
   font-weight: normal;
   text-transform: none;
   pointer-events: none;
-  transition: opacity 0.2s, visibility 0.2s;
+  transition:
+    opacity 0.2s,
+    visibility 0.2s;
 }
 
 .setting-label.has-tooltip:hover .fv3-tooltip,
