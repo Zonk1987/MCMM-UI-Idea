@@ -196,8 +196,8 @@ export async function switchTab(tabId) {
         case 'game-additions': {
           const ga = await import('./gameAdditions.js');
           window.GameAdditions = ga.GameAdditions;
-          ga.GameAdditions?.init?.();
           await fetchComponent('panel-game-additions', 'components/gameAdditions.html');
+          ga.GameAdditions?.init?.();
           break;
         }
       }
