@@ -39,5 +39,8 @@
 
   "css.customData": [".vscode/css-custom-data.json"],
   "html.customData": [".vscode/html-custom-data.json"],
-  "sarif-viewer.connectToGithubCodeScanning": "on"
+  "sarif-viewer.connectToGithubCodeScanning": "on",
+  "sonarlint.analyzerProperties": {
+    "sonar.exclusions": "**/vendor/**, js/vendor/**, css/vendor/**"
+  }
 }
