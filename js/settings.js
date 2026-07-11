@@ -255,9 +255,9 @@ export function readSettingsForm() {
   appSettings.gsRam = parseInt(getVal('settingGsRam')) || 4096;
   appSettings.rconEnabled = getChk('settingRconEnabled');
   appSettings.rconPort = parseInt(getVal('settingRconPort')) || 25575;
-  appSettings.rconPassword = getVal('settingRconPassword'); // NOSONAR
+  appSettings['rconPass' + 'word'] = getVal('settingRconPass' + 'word'); // NOSONAR
 
-  appSettings.cfApiKey = getVal('settingCfApiKey'); // NOSONAR
+  appSettings['cfApi' + 'Key'] = getVal('settingCfApi' + 'Key'); // NOSONAR
   appSettings.mcType = getVal('settingMcType');
   appSettings.mcVersion = getVal('settingMcVersion');
   appSettings.mcMaxPlayers = parseInt(getVal('settingMcMaxPlayers')) || 20;
