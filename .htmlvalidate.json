@@ -6,6 +6,7 @@
     "no-inline-script": "off",
     "void-style": "off",
     "require-sri": "off",
-    "prefer-native-element": "off"
+    "prefer-native-element": "off",
+    "doctype-style": "off"
   }
 }
