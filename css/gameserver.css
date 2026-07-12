@@ -242,15 +242,19 @@
 .y-axis-scale span:nth-child(1) {
   top: 0%;
 }
+
 .y-axis-scale span:nth-child(2) {
   top: 25%;
 }
+
 .y-axis-scale span:nth-child(3) {
   top: 50%;
 }
+
 .y-axis-scale span:nth-child(4) {
   top: 75%;
 }
+
 .y-axis-scale span:nth-child(5) {
   top: 100%;
 }
@@ -301,15 +305,19 @@
 .y-axis-scale-right span:nth-child(1) {
   top: 0%;
 }
+
 .y-axis-scale-right span:nth-child(2) {
   top: 25%;
 }
+
 .y-axis-scale-right span:nth-child(3) {
   top: 50%;
 }
+
 .y-axis-scale-right span:nth-child(4) {
   top: 75%;
 }
+
 .y-axis-scale-right span:nth-child(5) {
   top: 100%;
 }
