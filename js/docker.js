@@ -26,6 +26,7 @@ export function dockerApp() {
     dragOverPosition: null, // 'before' or 'after'
     updateTick: 0,
     advancedView: false,
+    menuOpen: { docker: false, compose: false },
     selected: [],
     selectAll: false,
     isCreatingFolder: false,

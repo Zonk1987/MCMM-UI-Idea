@@ -149,11 +149,18 @@ export async function fetchComponent(id, url) {
     // If it's already loaded (no '<!-- Component loaded dynamically -->' comment inside)
     if (el && el.innerHTML.trim() !== '<!-- Component loaded dynamically -->') return;
 
-    const response = await fetch(url + '?v=' + Date.now());
+    const cacheBuster = `?v=${Date.now()}`;
+    const response = await fetch(url + cacheBuster);
     if (response.ok) {
       const html = await response.text();
       if (el) {
-        el.outerHTML = html; // NOSONAR - Loading internal HTML components
+        // Prevent execution of arbitrary client-side code by parsing safely
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newEl = doc.body.firstElementChild;
+        if (newEl) {
+          el.replaceWith(newEl);
+        }
       }
     }
   } catch (e) {

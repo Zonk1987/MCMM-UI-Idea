@@ -12,13 +12,13 @@
         Verwalte deine Docker Container, Updates und Systemauslastung
       </p>
     </div>
-    <div class="panel-actions" style="display: flex; align-items: center; gap: 16px">
+    <div class="panel-actions flex items-center gap-4">
       <label
-        style="display: flex; align-items: center; gap: 10px; cursor: pointer; white-space: nowrap"
+        class="flex items-center gap-2 cursor-pointer whitespace-nowrap"
         :title="$store.i18n.t('general.advanced_view')"
       >
         <span
-          style="font-size: 12px; color: var(--text-secondary); font-weight: 600"
+          class="text-sm text-secondary font-semibold"
           x-text="$store.i18n.t('general.advanced_view')"
           >Advanced View</span
         >
@@ -30,9 +30,7 @@
         </span>
       </label>
       <div class="search-box">
-        <label
-          for="dockerSearchInput"
-          style="display: flex; align-items: center; cursor: text; margin: 0"
+        <label for="dockerSearchInput" class="flex items-center cursor-text m-0"
           ><span class="material-icons-round">search</span></label
         >
         <input
@@ -44,17 +42,6 @@
           aria-label="Container suchen"
         />
       </div>
-
-      <button
-        type="button"
-        class="btn btn-secondary"
-        style="height: 38px"
-        x-show="folderViewEnabled"
-        @click.stop="createFolderPrompt()"
-      >
-        <span class="material-icons-round">create_new_folder</span>
-        Neuer Ordner
-      </button>
     </div>
   </div>
 
@@ -102,156 +89,236 @@
     <div>
       <template x-if="tableType === 'compose'">
         <div
-          class="panel-header"
-          style="
-            margin-top: 40px;
-            margin-bottom: 16px;
-            border-top: 1px solid var(--border);
-            padding-top: 32px;
-          "
+          class="panel-header mb-4 border-t"
+          style="margin-top: 25px; padding-top: 22px; border-color: var(--border)"
         >
-          <div
-            class="panel-title-group"
-            style="display: flex; justify-content: space-between; width: 100%; align-items: center"
-          >
-            <h2 style="font-size: 20px">Docker Compose Stacks</h2>
-            <div style="display: flex; align-items: center">
-              <button
-                type="button"
-                class="btn btn-primary"
-                style="height: 38px"
-                @click.stop="openComposeModal()"
-              >
-                <span class="material-icons-round">layers</span>
-                Compose Stack
-              </button>
-            </div>
+          <div class="panel-title-group flex justify-between w-full items-center">
+            <h2 class="text-xl">Docker Compose Stacks</h2>
           </div>
         </div>
       </template>
 
-      <div class="docker-table-wrapper">
-        <table class="docker-table" :id="tableType === 'docker' ? 'dockerTable' : 'stackTable'">
-          <thead x-show="hasRootContainers">
-            <tr>
-              <th class="col-bulk" style="width: 40px; text-align: center">
+      <div class="table-drawer-container" :class="{ 'is-open': menuOpen[tableType] }">
+        <div class="table-drawer-menu">
+          <div class="drawer-toggle-tab" @click="menuOpen[tableType] = !menuOpen[tableType]">
+            <span
+              class="material-icons-round"
+              x-text="menuOpen[tableType] ? 'arrow_left' : 'arrow_right'"
+            ></span>
+          </div>
+          <div class="drawer-content">
+            <div
+              class="drawer-title"
+              x-text="$store.i18n.t('general.actions') || 'Bulk Actions'"
+            ></div>
+            <div class="drawer-action-list">
+              <!-- Docker specifically -->
+              <button
+                type="button"
+                class="drawer-action-btn"
+                x-show="tableType === 'docker' && folderViewEnabled"
+                @click.stop="createFolderPrompt()"
+              >
+                <span class="material-icons-round text-accent">create_new_folder</span>
+                <span x-text="$store.i18n.t('action.add_folder') || 'Add Folder'">Add Folder</span>
+              </button>
+              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+                <span class="material-icons-round text-accent">add_box</span>
+                <span x-text="$store.i18n.t('action.add_container') || 'Add Container'"
+                  >Add Container</span
+                >
+              </button>
+
+              <!-- Compose specifically -->
+              <button
+                type="button"
+                class="drawer-action-btn"
+                x-show="tableType === 'compose'"
+                @click.stop="openComposeModal()"
+              >
+                <span class="material-icons-round text-accent">layers</span>
+                <span x-text="$store.i18n.t('action.add_stack') || 'Add New Stack'"
+                  >Add New Stack</span
+                >
+              </button>
+
+              <div class="my-1 h-[1px] bg-[var(--border)] w-full"></div>
+
+              <!-- Both -->
+              <button type="button" class="drawer-action-btn">
+                <span class="material-icons-round text-green-500">play_arrow</span>
+                <span x-text="$store.i18n.t('action.start_all') || 'Start All'">Start All</span>
+              </button>
+              <button type="button" class="drawer-action-btn">
+                <span class="material-icons-round text-red-500">stop</span>
+                <span x-text="$store.i18n.t('action.stop_all') || 'Stop All'">Stop All</span>
+              </button>
+
+              <!-- Docker specifically -->
+              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+                <span class="material-icons-round text-yellow-500">pause</span>
+                <span x-text="$store.i18n.t('action.pause_all') || 'Pause All'">Pause All</span>
+              </button>
+              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+                <span class="material-icons-round text-green-500">play_circle</span>
+                <span x-text="$store.i18n.t('action.resume_all') || 'Resume All'">Resume All</span>
+              </button>
+
+              <div
+                class="my-1 h-[1px] bg-[var(--border)] w-full"
+                x-show="tableType === 'docker'"
+              ></div>
+
+              <!-- Both -->
+              <button type="button" class="drawer-action-btn">
+                <span class="material-icons-round text-blue-500">sync</span>
+                <span x-text="$store.i18n.t('action.check_updates') || 'Check for Updates'"
+                  >Check for Updates</span
+                >
+              </button>
+              <button type="button" class="drawer-action-btn">
+                <span class="material-icons-round text-blue-500">system_update_alt</span>
+                <span x-text="$store.i18n.t('action.update_all') || 'Update All'">Update All</span>
+              </button>
+
+              <div class="my-1 h-[1px] bg-[var(--border)] w-full"></div>
+
+              <!-- Docker specifically -->
+              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+                <span class="material-icons-round text-purple-500">dns</span>
+                <span x-text="$store.i18n.t('action.container_size') || 'Container Size'"
+                  >Container Size</span
+                >
+              </button>
+
+              <!-- Compose specifically -->
+              <label class="drawer-action-btn cursor-pointer" x-show="tableType === 'compose'">
                 <input
                   type="checkbox"
-                  style="cursor: pointer"
-                  x-model="selectAll"
-                  @change="toggleSelectAll()"
-                  aria-label="Alle auswählen"
+                  class="form-checkbox h-4 w-4 rounded"
+                  style="accent-color: var(--primary); margin-left: 2px; margin-right: 2px"
                 />
-              </th>
-              <th class="col-icon"><span class="sr-only">Icon</span></th>
-              <th class="col-name sortable" @click="toggleSort('name')">
-                <span x-text="$store.i18n.t('col.name')">Name</span>
-                <span class="material-icons-round sort-icon">unfold_more</span>
-              </th>
-              <th class="col-network">Network</th>
-              <th class="col-ip">Container IP / MAC</th>
-              <th class="col-lan">LAN IP:Port</th>
-              <th class="col-paths" x-text="$store.i18n.t('col.paths')">Pfade</th>
-              <th
-                class="col-adv"
-                style="width: 1%; text-align: right; padding-right: 16px; white-space: nowrap"
-                x-text="$store.i18n.t('col.autostart')"
-              >
-                Autostart
-              </th>
-              <th
-                class="col-adv"
-                x-show="advancedView"
-                style="width: 1%; text-align: center; white-space: nowrap"
-                x-text="$store.i18n.t('col.cpu_ram')"
-              >
-                CPU / RAM
-              </th>
-              <th
-                class="col-adv"
-                x-show="advancedView"
-                style="width: 1%; text-align: center; white-space: nowrap"
-                x-text="$store.i18n.t('col.uptime')"
-              >
-                Uptime
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-if="isLoading">
-              <template x-for="i in 5">
+                <span x-text="$store.i18n.t('action.autostart_only') || 'Autostart only'"
+                  >Autostart only</span
+                >
+              </label>
+              <button type="button" class="drawer-action-btn" x-show="tableType === 'compose'">
+                <span class="material-icons-round text-gray-400">settings</span>
+                <span x-text="$store.i18n.t('action.settings') || 'Settings'">Settings</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="docker-table-wrapper flex-1 overflow-x-auto min-w-0">
+          <table class="docker-table" :id="tableType === 'docker' ? 'dockerTable' : 'stackTable'">
+            <thead x-show="hasRootContainers">
+              <tr>
+                <th class="col-bulk text-center" style="width: 40px; min-width: 40px">
+                  <input
+                    type="checkbox"
+                    class="cursor-pointer"
+                    x-model="selectAll"
+                    @change="toggleSelectAll()"
+                    aria-label="Alle auswählen"
+                  />
+                </th>
+                <th class="col-icon"><span class="sr-only">Icon</span></th>
+                <th class="col-name sortable" @click="toggleSort('name')">
+                  <span x-text="$store.i18n.t('col.name')">Name</span>
+                  <span class="material-icons-round sort-icon">unfold_more</span>
+                </th>
+                <th class="col-network">Network</th>
+                <th class="col-ip">Container IP / MAC</th>
+                <th class="col-lan">LAN IP:Port</th>
+                <th class="col-paths" x-text="$store.i18n.t('col.paths')">Pfade</th>
+                <th
+                  class="col-adv w-[1%] text-right pr-4 whitespace-nowrap"
+                  x-text="$store.i18n.t('col.autostart')"
+                >
+                  Autostart
+                </th>
+                <th
+                  class="col-adv w-[1%] text-center whitespace-nowrap"
+                  x-text="$store.i18n.t('col.cpu_ram')"
+                >
+                  CPU / RAM
+                </th>
+                <th
+                  class="col-adv w-[1%] text-center whitespace-nowrap"
+                  x-text="$store.i18n.t('col.uptime')"
+                >
+                  Uptime
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-if="isLoading">
+                <template x-for="i in 5">
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="skeleton skeleton-avatar"></div>
+                    </td>
+                    <td>
+                      <div class="skeleton skeleton-title"></div>
+                      <div class="skeleton skeleton-text w-[40%]"></div>
+                    </td>
+                    <td><div class="skeleton skeleton-text w-[80%]"></div></td>
+                    <td>
+                      <div class="skeleton skeleton-text w-[150px] mb-[6px]"></div>
+                      <div class="skeleton skeleton-text w-[100px]"></div>
+                    </td>
+                    <td><div class="skeleton skeleton-text w-[60px]"></div></td>
+                    <td>
+                      <div class="skeleton skeleton-text w-[100px] mb-[6px]"></div>
+                      <div class="skeleton skeleton-text w-[120px]"></div>
+                    </td>
+                    <td>
+                      <div class="flex flex-col gap-[6px]">
+                        <div class="skeleton skeleton-text w-[140px]"></div>
+                        <div class="skeleton skeleton-text w-[140px]"></div>
+                      </div>
+                    </td>
+                    <td class="col-adv" x-show="advancedView"></td>
+                  </tr>
+                </template>
+              </template>
+
+              <template x-if="!isLoading && filteredContainers.length === 0">
                 <tr>
-                  <td></td>
-                  <td>
-                    <div class="skeleton skeleton-avatar"></div>
-                  </td>
-                  <td>
-                    <div class="skeleton skeleton-title"></div>
-                    <div class="skeleton skeleton-text" style="width: 40%"></div>
-                  </td>
-                  <td><div class="skeleton skeleton-text" style="width: 80%"></div></td>
-                  <td>
-                    <div
-                      class="skeleton skeleton-text"
-                      style="width: 150px; margin-bottom: 6px"
-                    ></div>
-                    <div class="skeleton skeleton-text" style="width: 100px"></div>
-                  </td>
-                  <td><div class="skeleton skeleton-text" style="width: 60px"></div></td>
-                  <td>
-                    <div
-                      class="skeleton skeleton-text"
-                      style="width: 100px; margin-bottom: 6px"
-                    ></div>
-                    <div class="skeleton skeleton-text" style="width: 120px"></div>
-                  </td>
-                  <td>
-                    <div style="display: flex; flex-direction: column; gap: 6px">
-                      <div class="skeleton skeleton-text" style="width: 140px"></div>
-                      <div class="skeleton skeleton-text" style="width: 140px"></div>
+                  <td colspan="9">
+                    <div class="empty-state">
+                      <span class="material-icons-round">inbox</span>
+                      <p x-text="$store.i18n.t('general.no_containers_found')">
+                        Keine Container gefunden
+                      </p>
                     </div>
                   </td>
-                  <td class="col-adv" x-show="advancedView"></td>
                 </tr>
               </template>
-            </template>
 
-            <template x-if="!isLoading && filteredContainers.length === 0">
-              <tr>
-                <td colspan="9">
-                  <div class="empty-state">
-                    <span class="material-icons-round">inbox</span>
-                    <p x-text="$store.i18n.t('general.no_containers_found')">
-                      Keine Container gefunden
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            </template>
-
-            <template x-if="!isLoading">
-              <template x-for="c in (tableType === 'docker' ? viewItems : stackItems)" :key="c.id">
-                <tr
-                  style="border-bottom: 1px solid var(--border)"
-                  :class="{
-                'folder-row': c.type === 'folder',
-                'sub-header-row': c.type === 'folder_header',
-                'drag-over': (c.type === 'folder' || c.type === 'folder_header') && dragOverFolder === c.name
-              }"
-                  x-show="c.type === 'folder' || (!c.folder || isFolderExpanded(c.folder))"
-                  :style="{
+              <template x-if="!isLoading">
+                <template
+                  x-for="c in (tableType === 'docker' ? viewItems : stackItems)"
+                  :key="c.id"
+                >
+                  <tr
+                    class="border-b border-[var(--border)]"
+                    :class="{ 'folder-row': c.type === 'folder', 'sub-header-row': c.type === 'folder_header', 'drag-over': (c.type === 'folder' || c.type === 'folder_header') && dragOverFolder === c.name }"
+                    x-show="c.type === 'folder' || (!c.folder || isFolderExpanded(c.folder))"
+                    :style="{
                 'background': c.type === 'container' && selected.includes(c.id) ? 'var(--bg-card-hover)' : (c.type === 'folder_header' ? 'var(--bg-surface)' : ''),
                 'cursor': c.type === 'container' || c.type === 'folder' ? 'grab' : 'default',
                 'border-top': (c.type === 'container' || c.type === 'folder' || c.type === 'folder_header') && dragOverTargetId === (c.type === 'container' ? c.id : c.name) && dragOverPosition === 'before' ? '2px solid var(--accent)' : '',
                 'border-bottom': (c.type === 'container' || c.type === 'folder' || c.type === 'folder_header') && dragOverTargetId === (c.type === 'container' ? c.id : c.name) && dragOverPosition === 'after' ? '2px solid var(--accent)' : (c.type === 'container' ? '1px solid var(--border)' : '')
               }"
-                  :draggable="c.type === 'container' || c.type === 'folder' ? 'true' : 'false'"
-                  @dragstart="
+                    :draggable="c.type === 'container' || c.type === 'folder' ? 'true' : 'false'"
+                    @dragstart="
                 if (c.type === 'container') startDrag($event, c.id, 'container');
                 else if (c.type === 'folder') startDrag($event, c.name, 'folder');
               "
-                  @dragend="if (c.type === 'container' || c.type === 'folder') endDrag($event)"
-                  @dragover.prevent="
+                    @dragend="if (c.type === 'container' || c.type === 'folder') endDrag($event)"
+                    @dragover.prevent="
                 if (draggedFolder) {
                   if (c.type === 'folder' || c.type === 'folder_header') handleSortDragOver($event, c.name, false, 'folder');
                 } else {
@@ -259,7 +326,7 @@
                   else if (c.type === 'container') handleSortDragOver($event, c.id, false, 'container');
                 }
               "
-                  @dragleave="
+                    @dragleave="
                 if (draggedFolder) {
                   if (c.type === 'folder' || c.type === 'folder_header') handleSortDragLeave();
                 } else {
@@ -267,7 +334,7 @@
                   else if (c.type === 'container') handleSortDragLeave();
                 }
               "
-                  @drop="
+                    @drop="
                 if (draggedFolder) {
                   if (c.type === 'folder' || c.type === 'folder_header') handleSortDrop();
                 } else {
@@ -275,1108 +342,788 @@
                   else if (c.type === 'container') handleSortDrop();
                 }
               "
-                >
-                  <!-- Folder Name row (spanning the first 7 columns) -->
-                  <template x-if="c.type === 'folder'">
-                    <td colspan="7" class="folder-cell">
-                      <div
-                        class="folder-title"
-                        style="display: flex; align-items: center; width: 100%"
-                      >
-                        <!-- Folder Info -->
-                        <template x-if="editingFolderName !== c.name">
-                          <div
-                            style="
-                              display: flex;
-                              align-items: center;
-                              width: 220px;
-                              flex-shrink: 0;
-                              margin-right: 16px;
-                              overflow: hidden;
-                              white-space: nowrap;
-                            "
-                          >
-                            <span
-                              class="folder-icon cursor-pointer hover-glow"
+                  >
+                    <!-- Folder Name row (spanning the first 7 columns) -->
+                    <template x-if="c.type === 'folder'">
+                      <td colspan="7" class="folder-cell">
+                        <div class="folder-title flex items-center w-full">
+                          <!-- Folder Info -->
+                          <template x-if="editingFolderName !== c.name">
+                            <div
+                              class="flex items-center shrink-0 overflow-hidden"
                               style="
-                                flex-shrink: 0;
-                                display: inline-flex;
-                                width: 24px;
-                                height: 24px;
-                                align-items: center;
-                                justify-content: center;
-                                overflow: hidden;
+                                width: 220px;
+                                min-width: 220px;
+                                margin-right: 16px;
+                                white-space: nowrap;
                               "
-                              @click.stop="openContextMenu($event, c)"
                             >
-                              <template x-if="c.icon">
-                                <img
-                                  loading="lazy"
-                                  decoding="async"
-                                  src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                                  :src="c.icon"
-                                  style="
-                                    width: 100%;
-                                    height: 100%;
-                                    object-fit: contain;
-                                    border-radius: 4px;
-                                  "
-                                  alt="Icon"
-                                />
-                              </template>
-                              <template x-if="!c.icon">
-                                <template x-if="c.isStack">
-                                  <span
-                                    class="material-icons-round"
-                                    style="font-size: 20px; color: var(--text-accent)"
-                                    >layers</span
-                                  >
+                              <span
+                                class="folder-icon cursor-pointer hover-glow shrink-0 w-[24px] h-[24px] items-center justify-center overflow-hidden inline-flex"
+                                @click.stop="openContextMenu($event, c)"
+                              >
+                                <template x-if="c.icon">
+                                  <img
+                                    loading="lazy"
+                                    decoding="async"
+                                    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                                    :src="c.icon"
+                                    class="w-full h-full"
+                                    style="object-fit: contain; border-radius: 4px"
+                                    alt="Icon"
+                                  />
                                 </template>
-                              </template>
-                              <template x-if="!c.icon && !c.isStack">
-                                <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
-                              </template>
-                            </span>
-                            <div
-                              style="
-                                display: flex;
-                                flex-direction: column;
-                                line-height: 1.2;
-                                margin: 0 6px;
-                                overflow: hidden;
-                              "
-                            >
-                              <span
-                                style="
-                                  font-weight: 500;
-                                  font-size: 14px;
-                                  overflow: hidden;
-                                  text-overflow: ellipsis;
-                                "
-                                x-text="c.name"
-                              ></span>
-                              <span
-                                style="
-                                  font-size: 10px;
-                                  display: flex;
-                                  align-items: center;
-                                  gap: 3px;
-                                  color: var(--green);
-                                "
-                              >
-                                <span>▶</span>
-                                <span
-                                  x-text="`${c.containers ? c.containers.filter(cnt => cnt.status === 'running').length : 0}/${c.count} started`"
-                                ></span>
+                                <template x-if="!c.icon">
+                                  <template x-if="c.isStack">
+                                    <span class="material-icons-round text-xl text-accent"
+                                      >layers</span
+                                    >
+                                  </template>
+                                </template>
+                                <template x-if="!c.icon && !c.isStack">
+                                  <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
+                                </template>
                               </span>
-                            </div>
-                          </div>
-                        </template>
-
-                        <template x-if="editingFolderName === c.name">
-                          <div
-                            @click.away="cancelEditFolder()"
-                            style="
-                              display: flex;
-                              align-items: center;
-                              width: 280px;
-                              flex-shrink: 0;
-                              margin-right: 16px;
-                            "
-                          >
-                            <span
-                              class="folder-icon"
-                              style="
-                                flex-shrink: 0;
-                                display: inline-flex;
-                                align-items: center;
-                                justify-content: center;
-                                width: 24px;
-                                height: 24px;
-                              "
-                            >
-                              <template x-if="c.icon">
-                                <img
-                                  loading="lazy"
-                                  decoding="async"
-                                  src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                                  :src="c.icon"
-                                  style="
-                                    width: 100%;
-                                    height: 100%;
-                                    object-fit: contain;
-                                    border-radius: 4px;
-                                  "
-                                  alt="Icon"
-                                />
-                              </template>
-                              <template x-if="!c.icon">
-                                <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
-                              </template>
-                            </span>
-                            <input
-                              type="text"
-                              :id="'edit-folder-input-' + c.name"
-                              x-model="editFolderNameInput"
-                              @keydown.enter.prevent="saveEditFolder()"
-                              @keydown.escape.prevent="cancelEditFolder()"
-                              class="form-input"
-                              style="
-                                margin-left: 12px;
-                                height: 32px;
-                                font-size: 14px;
-                                width: 100%;
-                                border-radius: var(--radius-md);
-                                padding: 0 12px;
-                                border: 1px solid var(--border);
-                                background: var(--bg-base);
-                                color: var(--text-primary);
-                                outline: none;
-                              "
-                            />
-                            <button
-                              type="button"
-                              class="btn btn-primary"
-                              @click.stop="saveEditFolder()"
-                              style="
-                                height: 32px;
-                                padding: 0 16px;
-                                font-size: 13px;
-                                font-weight: 500;
-                                margin-left: 8px;
-                              "
-                            >
-                              OK
-                            </button>
-                          </div>
-                        </template>
-
-                        <!-- Expand/Collapse Arrow -->
-                        <button
-                          type="button"
-                          class="btn btn-icon btn-ghost"
-                          @click.stop="toggleFolder(c.name)"
-                          style="
-                            margin-right: 16px;
-                            flex-shrink: 0;
-                            border: 1px solid var(--border);
-                          "
-                          title="Ordner auf/zu klappen"
-                          aria-label="Ordner auf/zu klappen"
-                        >
-                          <span
-                            class="material-icons-round"
-                            x-text="isFolderExpanded(c.name) ? 'expand_less' : 'expand_more'"
-                          ></span>
-                        </button>
-
-                        <!-- Preview Containers -->
-                        <div
-                          class="folder-preview"
-                          x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0"
-                          style="
-                            flex: 1;
-                            overflow: hidden;
-                            white-space: nowrap;
-                            height: 38px;
-                            line-height: 38px;
-                          "
-                        >
-                          <template x-for="preview in c.containers" :key="preview.id">
-                            <div
-                              :draggable="true"
-                              @dragstart.stop="startDrag($event, preview.id)"
-                              @dragend.stop="endDrag($event)"
-                              @dragover.prevent.stop="handleSortDragOver($event, preview.id, true)"
-                              @dragleave.stop="handleSortDragLeave()"
-                              @drop.stop="handleSortDrop()"
-                              :style="{
-                               'border-left': dragOverTargetId === preview.id && dragOverPosition === 'before' ? '2px solid var(--accent)' : '2px solid transparent',
-                               'border-right': dragOverTargetId === preview.id && dragOverPosition === 'after' ? '2px solid var(--accent)' : '2px solid transparent',
-                               'margin-left': dragOverTargetId === preview.id && dragOverPosition === 'before' ? '-2px' : '0',
-                               'margin-right': dragOverTargetId === preview.id && dragOverPosition === 'after' ? '14px' : '16px'
-                             }"
-                              class="cursor-pointer"
-                              style="
-                                display: inline-flex;
-                                align-items: center;
-                                gap: 6px;
-                                font-size: 12px;
-                                color: var(--text-muted);
-                                max-width: 140px;
-                                vertical-align: middle;
-                                height: 100%;
-                              "
-                            >
-                              <template x-if="preview.icon">
-                                <img
-                                  loading="lazy"
-                                  decoding="async"
-                                  src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                                  :src="preview.icon"
-                                  alt="Icon"
-                                  class="cursor-pointer hover-glow"
-                                  @click.stop="openContextMenu($event, preview)"
-                                  style="
-                                    width: 16px;
-                                    height: 16px;
-                                    border-radius: 4px;
-                                    flex-shrink: 0;
-                                  "
-                                />
-                              </template>
-                              <template x-if="!preview.icon">
-                                <span
-                                  class="cursor-pointer hover-glow"
-                                  @click.stop="openContextMenu($event, preview)"
-                                  style="font-size: 16px; line-height: 1; flex-shrink: 0"
-                                  x-text="preview.iconFallback || '📦'"
-                                ></span>
-                              </template>
                               <div
-                                style="
-                                  display: flex;
-                                  flex-direction: column;
-                                  line-height: 1.1;
-                                  overflow: hidden;
-                                  white-space: nowrap;
-                                  justify-content: center;
-                                "
+                                class="flex flex-col overflow-hidden"
+                                style="line-height: 1.2; margin: 0 6px"
                               >
                                 <span
-                                  x-text="preview.name"
-                                  :style="`color: ${preview.upToDate === false ? 'var(--text-accent)' : 'var(--text-primary)'}; font-weight: 500; overflow: hidden; text-overflow: ellipsis; display: block;`"
+                                  class="font-medium text-sm overflow-hidden"
+                                  style="text-overflow: ellipsis"
+                                  x-text="c.name"
                                 ></span>
                                 <span
-                                  style="
-                                    font-size: 10px;
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 3px;
-                                  "
-                                  :style="`color: ${preview.status === 'running' ? 'var(--green)' : 'var(--red)'}`"
+                                  class="flex items-center gap-[3px]"
+                                  style="font-size: 10px; color: var(--green)"
                                 >
-                                  <span x-text="preview.status === 'running' ? '▶' : '■'"></span>
+                                  <span>▶</span>
                                   <span
-                                    x-text="preview.status === 'running' ? 'Started' : 'Stopped'"
+                                    x-text="`${c.containers ? c.containers.filter(cnt => cnt.status === 'running').length : 0}/${c.count} started`"
                                   ></span>
                                 </span>
                               </div>
                             </div>
                           </template>
-                        </div>
-                      </div>
-                    </td>
-                  </template>
 
-                  <!-- Empty Autostart cell for Folder -->
-                  <template x-if="c.type === 'folder'">
-                    <td
-                      class="col-adv"
-                      style="
-                        padding: 0 16px;
-                        vertical-align: middle;
-                        width: 1%;
-                        white-space: nowrap;
-                        text-align: right;
-                      "
-                    >
-                      <span
-                        style="
-                          visibility: hidden;
-                          font-size: 11px;
-                          text-transform: uppercase;
-                          letter-spacing: 0.5px;
-                        "
-                        x-text="$store.i18n.t('col.autostart')"
-                        >Autostart</span
-                      >
-                    </td>
-                  </template>
-
-                  <!-- CPU/RAM cell for Folder -->
-                  <template x-if="c.type === 'folder'">
-                    <td
-                      class="col-adv"
-                      x-show="advancedView"
-                      style="
-                        padding: 0 16px 0 0;
-                        vertical-align: middle;
-                        width: 1%;
-                        white-space: nowrap;
-                      "
-                    >
-                      <div
-                        x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0"
-                        style="
-                          display: flex;
-                          flex-direction: column;
-                          gap: 4px;
-                          align-items: flex-end;
-                          border-left: 1px solid var(--border);
-                          padding-left: 16px;
-                        "
-                      >
-                        <div
-                          style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: flex-start;
-                            gap: 8px;
-                            line-height: 1;
-                          "
-                        >
-                          <span
-                            style="
-                              color: var(--text-muted);
-                              text-transform: uppercase;
-                              font-size: 10px;
-                              width: 25px;
-                              display: inline-block;
-                            "
-                            >CPU</span
-                          >
-                          <div
-                            style="
-                              width: 60px;
-                              height: 6px;
-                              background: var(--bg-surface);
-                              border-radius: 3px;
-                              overflow: hidden;
-                              flex-shrink: 0;
-                              border: 1px solid var(--border);
-                            "
-                          >
+                          <template x-if="editingFolderName === c.name">
                             <div
-                              :style="`width:${c.containers.some(cnt => cnt.status === 'running') ? Math.min(100, c.containers.reduce((sum, cnt) => sum + (cnt.cpu || 0), 0)) : 0}%; background:var(--cyan); height:100%; transition: width 0.3s ease;`"
-                            ></div>
-                          </div>
-                          <span
-                            style="
-                              color: var(--text-primary);
-                              font-weight: 500;
-                              font-size: 12px;
-                              text-align: left;
-                              width: 50px;
-                              display: inline-block;
-                            "
-                            x-text="c.containers.some(cnt => cnt.status === 'running') ? `${c.containers.reduce((sum, cnt) => sum + (cnt.cpu || 0), 0).toFixed(1)}%` : '0.0%'"
-                          ></span>
-                        </div>
+                              @click.away="cancelEditFolder()"
+                              class="flex items-center shrink-0"
+                              style="width: 280px; min-width: 280px; margin-right: 16px"
+                            >
+                              <span
+                                class="folder-icon shrink-0 items-center justify-center w-[24px] h-[24px] inline-flex"
+                              >
+                                <template x-if="c.icon">
+                                  <img
+                                    loading="lazy"
+                                    decoding="async"
+                                    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                                    :src="c.icon"
+                                    class="w-full h-full"
+                                    style="object-fit: contain; border-radius: 4px"
+                                    alt="Icon"
+                                  />
+                                </template>
+                                <template x-if="!c.icon">
+                                  <span x-text="isFolderExpanded(c.name) ? '📂' : '📁'"></span>
+                                </template>
+                              </span>
+                              <input
+                                type="text"
+                                :id="'edit-folder-input-' + c.name"
+                                x-model="editFolderNameInput"
+                                @keydown.enter.prevent="saveEditFolder()"
+                                @keydown.escape.prevent="cancelEditFolder()"
+                                class="form-input h-[32px] text-sm w-full border border-[var(--border)] bg-base text-primary outline-none"
+                                style="
+                                  margin-left: 12px;
+                                  border-radius: var(--radius-md);
+                                  padding: 0 12px;
+                                "
+                              />
+                              <button
+                                type="button"
+                                @click.stop="saveEditFolder()"
+                                class="btn btn-primary h-[32px] px-4 py-0 text-[13px] font-medium"
+                                style="margin-left: 8px"
+                              >
+                                OK
+                              </button>
+                            </div>
+                          </template>
 
-                        <div
-                          style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: flex-start;
-                            gap: 8px;
-                            line-height: 1;
-                          "
-                        >
-                          <span
-                            style="
-                              color: var(--text-muted);
-                              text-transform: uppercase;
-                              font-size: 10px;
-                              width: 25px;
-                              display: inline-block;
-                            "
-                            >RAM</span
-                          >
-                          <div
-                            style="
-                              width: 60px;
-                              height: 6px;
-                              background: var(--bg-surface);
-                              border-radius: 3px;
-                              overflow: hidden;
-                              flex-shrink: 0;
-                              border: 1px solid var(--border);
-                            "
-                          >
-                            <div
-                              :style="`width:${c.containers.some(cnt => cnt.status === 'running') ? Math.min(100, (c.containers.reduce((sum, cnt) => sum + (cnt.ram || 0), 0) / (c.containers.length * 4096)) * 100) : 0}%; background:var(--purple); height:100%; transition: width 0.3s ease;`"
-                            ></div>
-                          </div>
-                          <span
-                            style="
-                              color: var(--text-primary);
-                              font-weight: 500;
-                              font-size: 12px;
-                              text-align: left;
-                              width: 50px;
-                              display: inline-block;
-                            "
-                            x-text="c.containers.some(cnt => cnt.status === 'running') ? `${Math.floor(c.containers.reduce((sum, cnt) => sum + (cnt.ram || 0), 0))} MB` : '0 MB'"
-                          ></span>
-                        </div>
-                      </div>
-                    </td>
-                  </template>
-
-                  <!-- Uptime cell for Folder -->
-                  <template x-if="c.type === 'folder'">
-                    <td
-                      class="col-adv"
-                      x-show="advancedView"
-                      style="
-                        padding: 0 16px 0 0;
-                        vertical-align: middle;
-                        width: 1%;
-                        white-space: nowrap;
-                      "
-                    >
-                      <div
-                        x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0"
-                        style="
-                          display: flex;
-                          justify-content: flex-end;
-                          align-items: center;
-                          gap: 8px;
-                          white-space: nowrap;
-                          border-left: 1px solid var(--border);
-                          padding-left: 16px;
-                        "
-                      >
-                        <span
-                          style="
-                            color: var(--text-muted);
-                            text-transform: uppercase;
-                            font-size: 10px;
-                          "
-                          >Uptime</span
-                        >
-                        <span
-                          style="
-                            color: var(--text-primary);
-                            font-weight: 500;
-                            font-size: 12px;
-                            display: inline-block;
-                            width: 45px;
-                            text-align: right;
-                          "
-                          x-text="c.containers.some(cnt => cnt.status === 'running') ? '5 days' : '—'"
-                        ></span>
-                      </div>
-                    </td>
-                  </template>
-
-                  <!-- Sub-header for Expanded Folders -->
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-bulk"
-                      style="
-                        width: 40px;
-                        text-align: center;
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                      "
-                    >
-                      <input
-                        type="checkbox"
-                        style="cursor: pointer"
-                        :checked="isAllSelectedInFolder(c.name)"
-                        @change="toggleSelectAllInFolder(c.name)"
-                        aria-label="Alle im Ordner auswählen"
-                      />
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-icon"
-                      style="width: 48px; border-bottom: 1px solid var(--border)"
-                    ></td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-name"
-                      style="
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                      "
-                      x-text="$store.i18n.t('col.name')"
-                    >
-                      Name
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-network"
-                      style="
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                      "
-                    >
-                      Network
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-ip"
-                      style="
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                      "
-                    >
-                      Container IP / MAC
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-lan"
-                      style="
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                      "
-                    >
-                      LAN IP:Port
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-paths"
-                      style="
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                      "
-                      x-text="$store.i18n.t('col.paths')"
-                    >
-                      Pfade
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-adv"
-                      style="
-                        width: 1%;
-                        text-align: right;
-                        padding-right: 16px;
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                        white-space: nowrap;
-                      "
-                      x-text="$store.i18n.t('col.autostart')"
-                    >
-                      Autostart
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-adv"
-                      x-show="advancedView"
-                      style="
-                        width: 1%;
-                        text-align: center;
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                        white-space: nowrap;
-                      "
-                      x-text="$store.i18n.t('col.cpu_ram')"
-                    >
-                      CPU / RAM
-                    </td>
-                  </template>
-                  <template x-if="c.type === 'folder_header'">
-                    <td
-                      class="col-adv"
-                      x-show="advancedView"
-                      style="
-                        width: 1%;
-                        text-align: center;
-                        border-bottom: 1px solid var(--border);
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        color: var(--text-muted);
-                        letter-spacing: 0.5px;
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                        white-space: nowrap;
-                      "
-                      x-text="$store.i18n.t('col.uptime')"
-                    >
-                      Uptime
-                    </td>
-                  </template>
-
-                  <!-- Container Cells -->
-                  <template x-if="c.type === 'container'">
-                    <td
-                      style="text-align: center"
-                      :style="`box-shadow: inset 4px 0 0 0 ${c.status === 'running' ? 'var(--green)' : 'var(--red)'};`"
-                    >
-                      <input
-                        type="checkbox"
-                        style="cursor: pointer"
-                        :value="c.id"
-                        x-model="selected"
-                        aria-label="Container auswählen"
-                      />
-                    </td>
-                  </template>
-
-                  <template x-if="c.type === 'container'">
-                    <td>
-                      <div style="position: relative; display: inline-block">
-                        <template x-if="c.icon">
+                          <!-- Expand/Collapse Arrow -->
                           <button
                             type="button"
-                            class="container-icon-wrap cursor-pointer hover-glow"
-                            :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
-                            @click.prevent="openContextMenu($event, c)"
-                            style="background: none; padding: 0; margin: 0; border: none"
+                            @click.stop="toggleFolder(c.name)"
+                            class="btn btn-icon btn-ghost shrink-0 border border-[var(--border)]"
+                            style="margin-right: 16px"
+                            title="Ordner auf/zu klappen"
+                            aria-label="Ordner auf/zu klappen"
                           >
-                            <img
-                              loading="lazy"
-                              decoding="async"
-                              src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                              alt="Icon"
-                              :src="c.icon"
-                              :alt="c.name"
-                              @error="
+                            <span
+                              class="material-icons-round"
+                              x-text="isFolderExpanded(c.name) ? 'expand_less' : 'expand_more'"
+                            ></span>
+                          </button>
+
+                          <!-- Preview Containers -->
+                          <div
+                            class="folder-preview"
+                            x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0"
+                            style="
+                              flex: 1;
+                              overflow: hidden;
+                              white-space: nowrap;
+                              height: 38px;
+                              line-height: 38px;
+                            "
+                          >
+                            <template x-for="preview in c.containers" :key="preview.id">
+                              <div
+                                :draggable="true"
+                                @dragstart.stop="startDrag($event, preview.id)"
+                                @dragend.stop="endDrag($event)"
+                                @dragover.prevent.stop="handleSortDragOver($event, preview.id, true)"
+                                @dragleave.stop="handleSortDragLeave()"
+                                @drop.stop="handleSortDrop()"
+                                :style="{
+                               'border-left': dragOverTargetId === preview.id && dragOverPosition === 'before' ? '2px solid var(--accent)' : '2px solid transparent',
+                               'border-right': dragOverTargetId === preview.id && dragOverPosition === 'after' ? '2px solid var(--accent)' : '2px solid transparent',
+                               'margin-left': dragOverTargetId === preview.id && dragOverPosition === 'before' ? '-2px' : '0',
+                               'margin-right': dragOverTargetId === preview.id && dragOverPosition === 'after' ? '14px' : '16px'
+                             }"
+                                class="cursor-pointer"
+                                style="
+                                  display: inline-flex;
+                                  align-items: center;
+                                  gap: 6px;
+                                  font-size: 12px;
+                                  color: var(--text-muted);
+                                  max-width: 140px;
+                                  vertical-align: middle;
+                                  height: 100%;
+                                "
+                              >
+                                <template x-if="preview.icon">
+                                  <img
+                                    loading="lazy"
+                                    decoding="async"
+                                    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                                    :src="preview.icon"
+                                    alt="Icon"
+                                    @click.stop="openContextMenu($event, preview)"
+                                    class="cursor-pointer hover-glow w-[16px] h-[16px] shrink-0"
+                                    style="border-radius: 4px"
+                                  />
+                                </template>
+                                <template x-if="!preview.icon">
+                                  <span
+                                    class="cursor-pointer hover-glow text-lg leading-none flex-shrink-0"
+                                    x-text="preview.iconFallback || '📦'"
+                                  ></span>
+                                </template>
+                                <div
+                                  class="flex flex-col overflow-hidden justify-center"
+                                  style="line-height: 1.1; white-space: nowrap"
+                                >
+                                  <span
+                                    x-text="preview.name"
+                                    class="font-medium overflow-hidden block"
+                                    :style="`color: ${preview.upToDate === false ? 'var(--text-accent)' : 'var(--text-primary)'}; text-overflow: ellipsis;`"
+                                  ></span>
+                                  <span
+                                    class="flex items-center gap-[3px]"
+                                    style="font-size: 10px"
+                                    :style="`color: ${preview.status === 'running' ? 'var(--green)' : 'var(--red)'}`"
+                                  >
+                                    <span x-text="preview.status === 'running' ? '▶' : '■'"></span>
+                                    <span
+                                      x-text="preview.status === 'running' ? 'Started' : 'Stopped'"
+                                    ></span>
+                                  </span>
+                                </div>
+                              </div>
+                            </template>
+                          </div>
+                        </div>
+                      </td>
+                    </template>
+
+                    <!-- Empty Autostart cell for Folder -->
+                    <template x-if="c.type === 'folder'">
+                      <td
+                        class="col-adv px-4 py-0 text-right"
+                        style="vertical-align: middle; width: 1%; white-space: nowrap"
+                      >
+                        <span
+                          class="text-[11px]"
+                          style="
+                            visibility: hidden;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                          "
+                          x-text="$store.i18n.t('col.autostart')"
+                          >Autostart</span
+                        >
+                      </td>
+                    </template>
+
+                    <!-- CPU/RAM cell for Folder -->
+                    <template x-if="c.type === 'folder'">
+                      <td
+                        class="col-adv"
+                        x-show="advancedView"
+                        style="
+                          padding: 0 16px 0 0;
+                          vertical-align: middle;
+                          width: 1%;
+                          white-space: nowrap;
+                        "
+                      >
+                        <div
+                          x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0"
+                          style="
+                            display: flex;
+                            flex-direction: column;
+                            gap: 4px;
+                            align-items: flex-end;
+                            border-left: 1px solid var(--border);
+                            padding-left: 16px;
+                          "
+                        >
+                          <div
+                            class="flex items-center gap-[8px]"
+                            style="justify-content: flex-start; line-height: 1"
+                          >
+                            <span
+                              class="text-muted w-[25px] inline-block"
+                              style="text-transform: uppercase; font-size: 10px"
+                              >CPU</span
+                            >
+                            <div
+                              class="w-[60px] h-[6px] bg-surface overflow-hidden shrink-0 border border-[var(--border)]"
+                              style="border-radius: 3px"
+                            >
+                              <div
+                                :style="`width:${c.containers.some(cnt => cnt.status === 'running') ? Math.min(100, c.containers.reduce((sum, cnt) => sum + (cnt.cpu || 0), 0)) : 0}%; background:var(--cyan); height:100%; transition: width 0.3s ease;`"
+                              ></div>
+                            </div>
+                            <span
+                              class="text-primary font-medium text-xs text-left w-[50px] inline-block"
+                              x-text="c.containers.some(cnt => cnt.status === 'running') ? `${c.containers.reduce((sum, cnt) => sum + (cnt.cpu || 0), 0).toFixed(1)}%` : '0.0%'"
+                            ></span>
+                          </div>
+
+                          <div
+                            class="flex items-center gap-[8px]"
+                            style="justify-content: flex-start; line-height: 1"
+                          >
+                            <span
+                              class="text-muted w-[25px] inline-block"
+                              style="text-transform: uppercase; font-size: 10px"
+                              >RAM</span
+                            >
+                            <div
+                              class="w-[60px] h-[6px] bg-surface overflow-hidden shrink-0 border border-[var(--border)]"
+                              style="border-radius: 3px"
+                            >
+                              <div
+                                :style="`width:${c.containers.some(cnt => cnt.status === 'running') ? Math.min(100, (c.containers.reduce((sum, cnt) => sum + (cnt.ram || 0), 0) / (c.containers.length * 4096)) * 100) : 0}%; background:var(--purple); height:100%; transition: width 0.3s ease;`"
+                              ></div>
+                            </div>
+                            <span
+                              class="text-primary font-medium text-xs text-left w-[50px] inline-block"
+                              x-text="c.containers.some(cnt => cnt.status === 'running') ? `${Math.floor(c.containers.reduce((sum, cnt) => sum + (cnt.ram || 0), 0))} MB` : '0 MB'"
+                            ></span>
+                          </div>
+                        </div>
+                      </td>
+                    </template>
+
+                    <!-- Uptime cell for Folder -->
+                    <template x-if="c.type === 'folder'">
+                      <td
+                        class="col-adv"
+                        x-show="advancedView"
+                        style="
+                          padding: 0 16px 0 0;
+                          vertical-align: middle;
+                          width: 1%;
+                          white-space: nowrap;
+                        "
+                      >
+                        <div
+                          x-show="!isFolderExpanded(c.name) && c.containers && c.containers.length > 0"
+                          style="
+                            display: flex;
+                            justify-content: flex-end;
+                            align-items: center;
+                            gap: 8px;
+                            white-space: nowrap;
+                            border-left: 1px solid var(--border);
+                            padding-left: 16px;
+                          "
+                        >
+                          <span
+                            class="text-muted"
+                            style="text-transform: uppercase; font-size: 10px"
+                            >Uptime</span
+                          >
+                          <span
+                            class="text-primary font-medium text-xs inline-block w-[45px] text-right"
+                            x-text="c.containers.some(cnt => cnt.status === 'running') ? '5 days' : '—'"
+                          ></span>
+                        </div>
+                      </td>
+                    </template>
+
+                    <!-- Sub-header for Expanded Folders -->
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        class="col-bulk text-center border-b border-[var(--border)] text-[11px] text-muted"
+                        style="width: 40px; min-width: 40px"
+                      >
+                        <input
+                          type="checkbox"
+                          class="cursor-pointer"
+                          :checked="isAllSelectedInFolder(c.name)"
+                          @change="toggleSelectAllInFolder(c.name)"
+                          aria-label="Alle im Ordner auswählen"
+                        />
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td class="col-icon w-[48px] border-b border-[var(--border)]"></td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        class="col-name border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                        "
+                        x-text="$store.i18n.t('col.name')"
+                      >
+                        Name
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        class="col-network border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                        "
+                      >
+                        Network
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        class="col-ip border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                        "
+                      >
+                        Container IP / MAC
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        class="col-lan border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                        "
+                      >
+                        LAN IP:Port
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        class="col-paths border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                        "
+                        x-text="$store.i18n.t('col.paths')"
+                      >
+                        Pfade
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        class="col-adv text-right border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          width: 1%;
+                          padding-right: 16px;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                          white-space: nowrap;
+                        "
+                        x-text="$store.i18n.t('col.autostart')"
+                      >
+                        Autostart
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        x-show="advancedView"
+                        class="col-adv text-center border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          width: 1%;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                          white-space: nowrap;
+                        "
+                        x-text="$store.i18n.t('col.cpu_ram')"
+                      >
+                        CPU / RAM
+                      </td>
+                    </template>
+                    <template x-if="c.type === 'folder_header'">
+                      <td
+                        x-show="advancedView"
+                        class="col-adv text-center border-b border-[var(--border)] text-[11px] text-muted"
+                        style="
+                          width: 1%;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                          padding-top: 12px;
+                          padding-bottom: 12px;
+                          white-space: nowrap;
+                        "
+                        x-text="$store.i18n.t('col.uptime')"
+                      >
+                        Uptime
+                      </td>
+                    </template>
+
+                    <!-- Container Cells -->
+                    <template x-if="c.type === 'container'">
+                      <td
+                        class="col-bulk text-center"
+                        :style="`width: 40px; min-width: 40px; box-shadow: inset 4px 0 0 0 ${c.status === 'running' ? 'var(--green)' : 'var(--red)'};`"
+                      >
+                        <input
+                          type="checkbox"
+                          class="cursor-pointer"
+                          :value="c.id"
+                          x-model="selected"
+                          aria-label="Container auswählen"
+                        />
+                      </td>
+                    </template>
+
+                    <template x-if="c.type === 'container'">
+                      <td class="col-icon">
+                        <div class="relative inline-block">
+                          <template x-if="c.icon">
+                            <button
+                              type="button"
+                              class="container-icon-wrap cursor-pointer hover-glow"
+                              :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
+                              @click.prevent="openContextMenu($event, c)"
+                              style="background: none; padding: 0; margin: 0; border: none"
+                            >
+                              <img
+                                loading="lazy"
+                                decoding="async"
+                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                                alt="Icon"
+                                :src="c.icon"
+                                :alt="c.name"
+                                @error="
                             $el.parentElement.className =
                               'container-icon-fallback cursor-pointer hover-glow';
                             $el.parentElement.innerHTML = 'x';
                           "
-                            />
-                          </button>
-                        </template>
-                        <template x-if="!c.icon">
-                          <button
-                            type="button"
-                            class="container-icon-fallback cursor-pointer hover-glow"
-                            :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
-                            @click.prevent="openContextMenu($event, c)"
-                            x-text="c.iconFallback"
-                            style="background: none; padding: 0; margin: 0; border: none"
-                            aria-label="Icon"
-                          ></button>
-                        </template>
-                        <template x-if="c.upToDate === false">
-                          <div
-                            style="
-                              position: absolute;
-                              top: -8px;
-                              right: -8px;
-                              background: var(--accent);
-                              border-radius: 50%;
-                              width: 24px;
-                              height: 24px;
-                              display: flex;
-                              align-items: center;
-                              justify-content: center;
-                              z-index: 10;
-                              border: 2px solid var(--bg-surface);
-                              box-sizing: content-box;
-                            "
-                          >
-                            <span
-                              class="material-icons-round"
-                              style="font-size: 18px; color: black; font-weight: bold"
-                              >update</span
+                              />
+                            </button>
+                          </template>
+                          <template x-if="!c.icon">
+                            <button
+                              type="button"
+                              class="container-icon-fallback cursor-pointer hover-glow"
+                              :style="c.upToDate === false ? 'border: 2px solid var(--accent);' : ''"
+                              @click.prevent="openContextMenu($event, c)"
+                              x-text="c.iconFallback"
+                              style="background: none; padding: 0; margin: 0; border: none"
+                              aria-label="Icon"
+                            ></button>
+                          </template>
+                          <template x-if="c.upToDate === false">
+                            <div
+                              class="absolute bg-accent w-[24px] h-[24px] flex items-center justify-center"
+                              style="
+                                top: -8px;
+                                right: -8px;
+                                border-radius: 50%;
+                                z-index: 10;
+                                border: 2px solid var(--bg-surface);
+                                box-sizing: content-box;
+                              "
                             >
-                          </div>
-                        </template>
-                      </div>
-                    </td>
-                  </template>
+                              <span
+                                class="material-icons-round text-[18px]"
+                                style="color: black; font-weight: bold"
+                                >update</span
+                              >
+                            </div>
+                          </template>
+                        </div>
+                      </td>
+                    </template>
 
-                  <template x-if="c.type === 'container'">
-                    <td>
-                      <div
-                        class="container-name"
-                        :style="c.upToDate === false ? 'color: var(--text-accent)' : ''"
-                        x-text="c.name"
-                      ></div>
-                      <div class="container-image" x-text="c.image"></div>
-                    </td>
-                  </template>
+                    <template x-if="c.type === 'container'">
+                      <td class="col-name">
+                        <div
+                          class="container-name"
+                          :style="c.upToDate === false ? 'color: var(--text-accent)' : ''"
+                          x-text="c.name"
+                        ></div>
+                        <div class="container-image" x-text="c.image"></div>
+                      </td>
+                    </template>
 
-                  <template x-if="c.type === 'container'">
-                    <td>
-                      <div
-                        style="font-size: 12px; color: var(--text-primary)"
-                        x-text="c.network || 'bridge'"
-                      ></div>
-                    </td>
-                  </template>
+                    <template x-if="c.type === 'container'">
+                      <td class="col-network">
+                        <div class="text-xs text-primary" x-text="c.network || 'bridge'"></div>
+                      </td>
+                    </template>
 
-                  <template x-if="c.type === 'container'">
-                    <td>
-                      <div
-                        style="font-size: 12px; color: var(--text-primary); font-family: monospace"
-                        x-text="c.ip || '-'"
-                      ></div>
-                      <div
-                        style="font-size: 11px; color: var(--text-muted); font-family: monospace"
-                        x-text="c.mac || '-'"
-                      ></div>
-                    </td>
-                  </template>
+                    <template x-if="c.type === 'container'">
+                      <td class="col-ip">
+                        <div class="text-xs text-primary font-mono" x-text="c.ip || '-'"></div>
+                        <div class="text-[11px] text-muted font-mono" x-text="c.mac || '-'"></div>
+                      </td>
+                    </template>
 
-                  <template x-if="c.type === 'container'">
-                    <td>
-                      <div class="port-list">
-                        <template x-for="p in c.ports">
-                          <div class="port-item">
-                            <span
-                              class="port-host"
-                              x-text="(c.lanIp ? c.lanIp + ':' : '') + p.host"
-                            ></span>
-                            <span class="port-arrow">↔</span>
-                            <span x-text="p.container"></span>
-                            <span style="color: var(--text-muted)" x-text="` (${p.proto})`"></span>
-                          </div>
-                        </template>
-                      </div>
-                    </td>
-                  </template>
+                    <template x-if="c.type === 'container'">
+                      <td class="col-lan">
+                        <div class="port-list">
+                          <template x-for="p in c.ports">
+                            <div class="port-item">
+                              <span
+                                class="port-host"
+                                x-text="(c.lanIp ? c.lanIp + ':' : '') + p.host"
+                              ></span>
+                              <span class="port-arrow">↔</span>
+                              <span x-text="p.container"></span>
+                              <span class="text-muted" x-text="` (${p.proto})`"></span>
+                            </div>
+                          </template>
+                        </div>
+                      </td>
+                    </template>
 
-                  <template x-if="c.type === 'container'">
-                    <td>
-                      <div class="path-list">
-                        <template x-for="p in c.paths.slice(0, 3)">
-                          <div class="path-item" :title="`${p.host} → ${p.container}`">
-                            <span x-text="p.host"></span> <span class="path-arrow">→</span>
-                            <span x-text="p.container"></span>
-                          </div>
-                        </template>
-                        <template x-if="c.paths.length > 3">
-                          <div
-                            class="path-item"
-                            style="color: var(--text-accent)"
-                            x-text="`+${c.paths.length - 3} weitere`"
-                          ></div>
-                        </template>
-                      </div>
-                    </td>
-                  </template>
+                    <template x-if="c.type === 'container'">
+                      <td class="col-paths">
+                        <div class="path-list">
+                          <template x-for="p in c.paths.slice(0, 3)">
+                            <div class="path-item" :title="`${p.host} → ${p.container}`">
+                              <span x-text="p.host"></span> <span class="path-arrow">→</span>
+                              <span x-text="p.container"></span>
+                            </div>
+                          </template>
+                          <template x-if="c.paths.length > 3">
+                            <div
+                              class="path-item text-accent"
+                              x-text="`+${c.paths.length - 3} weitere`"
+                            ></div>
+                          </template>
+                        </div>
+                      </td>
+                    </template>
 
-                  <template x-if="c.type === 'container'">
-                    <td
-                      class="col-adv"
-                      style="
-                        padding: 0 16px;
-                        vertical-align: middle;
-                        width: 1%;
-                        white-space: nowrap;
-                      "
-                    >
-                      <div style="display: flex; justify-content: flex-end">
-                        <label class="action-toggle" style="margin: 0" title="Autostart">
-                          <input
-                            type="checkbox"
-                            aria-label="Autostart"
-                            :checked="c.id==='nginx01' || c.id==='portainer01'"
-                          />
-                          <span class="toggle-track">
-                            <span class="toggle-thumb"></span>
-                          </span>
-                        </label>
-                      </div>
-                    </td>
-                  </template>
-
-                  <template x-if="c.type === 'container'">
-                    <td
-                      class="col-adv"
-                      x-show="advancedView"
-                      style="
-                        padding: 0 16px 0 0;
-                        vertical-align: middle;
-                        width: 1%;
-                        white-space: nowrap;
-                      "
-                    >
-                      <div
-                        style="
-                          display: flex;
-                          flex-direction: column;
-                          gap: 4px;
-                          align-items: flex-end;
-                          border-left: 1px solid var(--border);
-                          padding-left: 16px;
-                        "
+                    <template x-if="c.type === 'container'">
+                      <td
+                        class="col-adv px-4 py-0"
+                        style="vertical-align: middle; width: 1%; white-space: nowrap"
                       >
-                        <div
-                          style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: flex-start;
-                            gap: 8px;
-                            line-height: 1;
-                          "
-                        >
-                          <span
-                            style="
-                              color: var(--text-muted);
-                              text-transform: uppercase;
-                              font-size: 10px;
-                              width: 25px;
-                              display: inline-block;
-                            "
-                            >CPU</span
-                          >
-                          <div
-                            style="
-                              width: 60px;
-                              height: 6px;
-                              background: var(--bg-surface);
-                              border-radius: 3px;
-                              overflow: hidden;
-                              flex-shrink: 0;
-                              border: 1px solid var(--border);
-                            "
-                          >
-                            <div
-                              :style="`width:${c.status === 'running' ? Math.min(100, c.cpu) : 0}%; background:var(--cyan); height:100%; transition: width 0.3s ease;`"
-                            ></div>
-                          </div>
-                          <span
-                            style="
-                              color: var(--text-primary);
-                              font-weight: 500;
-                              font-size: 12px;
-                              text-align: left;
-                              width: 50px;
-                              display: inline-block;
-                            "
-                            x-text="c.status === 'running' ? `${c.cpu.toFixed(1)}%` : '0.0%'"
-                          ></span>
+                        <div class="flex justify-end">
+                          <label class="action-toggle m-0" title="Autostart">
+                            <input
+                              type="checkbox"
+                              aria-label="Autostart"
+                              :checked="c.id==='nginx01' || c.id==='portainer01'"
+                            />
+                            <span class="toggle-track">
+                              <span class="toggle-thumb"></span>
+                            </span>
+                          </label>
                         </div>
+                      </td>
+                    </template>
 
-                        <div
-                          style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: flex-start;
-                            gap: 8px;
-                            line-height: 1;
-                          "
-                        >
-                          <span
-                            style="
-                              color: var(--text-muted);
-                              text-transform: uppercase;
-                              font-size: 10px;
-                              width: 25px;
-                              display: inline-block;
-                            "
-                            >RAM</span
-                          >
-                          <div
-                            style="
-                              width: 60px;
-                              height: 6px;
-                              background: var(--bg-surface);
-                              border-radius: 3px;
-                              overflow: hidden;
-                              flex-shrink: 0;
-                              border: 1px solid var(--border);
-                            "
-                          >
-                            <div
-                              :style="`width:${c.status === 'running' ? Math.min(100, (c.ram / 4096) * 100) : 0}%; background:var(--purple); height:100%; transition: width 0.3s ease;`"
-                            ></div>
-                          </div>
-                          <span
-                            style="
-                              color: var(--text-primary);
-                              font-weight: 500;
-                              font-size: 12px;
-                              text-align: left;
-                              width: 50px;
-                              display: inline-block;
-                            "
-                            x-text="c.status === 'running' ? `${Math.floor(c.ram)} MB` : '0 MB'"
-                          ></span>
-                        </div>
-                      </div>
-                    </td>
-                  </template>
-
-                  <template x-if="c.type === 'container'">
-                    <td
-                      class="col-adv"
-                      x-show="advancedView"
-                      style="
-                        padding: 0 16px 0 0;
-                        vertical-align: middle;
-                        width: 1%;
-                        white-space: nowrap;
-                      "
-                    >
-                      <div
+                    <template x-if="c.type === 'container'">
+                      <td
+                        class="col-adv"
+                        x-show="advancedView"
                         style="
-                          display: flex;
-                          justify-content: flex-end;
-                          align-items: center;
-                          gap: 8px;
+                          padding: 0 16px 0 0;
+                          vertical-align: middle;
+                          width: 1%;
                           white-space: nowrap;
-                          border-left: 1px solid var(--border);
-                          padding-left: 16px;
                         "
                       >
-                        <span
-                          style="
-                            color: var(--text-muted);
-                            text-transform: uppercase;
-                            font-size: 10px;
-                          "
-                          >Uptime</span
+                        <div
+                          class="flex flex-col gap-[4px] pl-4"
+                          style="align-items: flex-end; border-left: 1px solid var(--border)"
                         >
+                          <div
+                            class="flex items-center gap-[8px]"
+                            style="justify-content: flex-start; line-height: 1"
+                          >
+                            <span
+                              class="text-muted w-[25px] inline-block"
+                              style="text-transform: uppercase; font-size: 10px"
+                              >CPU</span
+                            >
+                            <div
+                              class="w-[60px] h-[6px] bg-surface overflow-hidden shrink-0 border border-[var(--border)]"
+                              style="border-radius: 3px"
+                            >
+                              <div
+                                :style="`width:${c.status === 'running' ? Math.min(100, c.cpu) : 0}%; background:var(--cyan); height:100%; transition: width 0.3s ease;`"
+                              ></div>
+                            </div>
+                            <span
+                              class="text-primary font-medium text-xs text-left w-[50px] inline-block"
+                              x-text="c.status === 'running' ? `${c.cpu.toFixed(1)}%` : '0.0%'"
+                            ></span>
+                          </div>
+
+                          <div
+                            class="flex items-center gap-[8px]"
+                            style="justify-content: flex-start; line-height: 1"
+                          >
+                            <span
+                              class="text-muted w-[25px] inline-block"
+                              style="text-transform: uppercase; font-size: 10px"
+                              >RAM</span
+                            >
+                            <div
+                              class="w-[60px] h-[6px] bg-surface overflow-hidden shrink-0 border border-[var(--border)]"
+                              style="border-radius: 3px"
+                            >
+                              <div
+                                :style="`width:${c.status === 'running' ? Math.min(100, (c.ram / 4096) * 100) : 0}%; background:var(--purple); height:100%; transition: width 0.3s ease;`"
+                              ></div>
+                            </div>
+                            <span
+                              class="text-primary font-medium text-xs text-left w-[50px] inline-block"
+                              x-text="c.status === 'running' ? `${Math.floor(c.ram)} MB` : '0 MB'"
+                            ></span>
+                          </div>
+                        </div>
+                      </td>
+                    </template>
+
+                    <template x-if="c.type === 'container'">
+                      <td
+                        class="col-adv"
+                        x-show="advancedView"
+                        style="
+                          padding: 0 16px 0 0;
+                          vertical-align: middle;
+                          width: 1%;
+                          white-space: nowrap;
+                        "
+                      >
+                        <div
+                          class="flex justify-end items-center gap-[8px] pl-4"
+                          style="white-space: nowrap; border-left: 1px solid var(--border)"
+                        >
+                          <span
+                            class="text-muted"
+                            style="text-transform: uppercase; font-size: 10px"
+                            >Uptime</span
+                          >
+                          <span
+                            class="text-primary font-medium text-xs inline-block w-[45px] text-right"
+                            x-text="c.status === 'running' ? '5 days' : '—'"
+                          ></span>
+                        </div>
+                      </td>
+                    </template>
+                  </tr>
+                </template>
+              </template>
+
+              <!-- Inline Folder Creation Row -->
+              <template x-if="isCreatingFolder">
+                <tr class="folder-row bg-surface" @click.outside="cancelNewFolder()">
+                  <td colspan="7" class="folder-cell">
+                    <div class="folder-title flex items-center w-full">
+                      <div class="flex items-center w-[280px] shrink-0" style="margin-right: 16px">
                         <span
+                          class="folder-icon shrink-0 items-center justify-center w-[24px] h-[24px] inline-flex"
+                          >📁</span
+                        >
+                        <input
+                          type="text"
+                          id="new-folder-input"
+                          aria-label="Ordnername"
+                          x-model="newFolderName"
+                          @click.stop
+                          @keydown.enter.prevent="saveNewFolder()"
+                          @keydown.escape.prevent="cancelNewFolder()"
+                          placeholder="Neuer Ordner..."
+                          class="form-input h-[32px] text-sm w-full border border-[var(--border)] bg-base text-primary outline-none"
                           style="
-                            color: var(--text-primary);
-                            font-weight: 500;
-                            font-size: 12px;
-                            display: inline-block;
-                            width: 45px;
-                            text-align: right;
+                            margin-left: 12px;
+                            border-radius: var(--radius-md);
+                            padding: 0 12px;
                           "
-                          x-text="c.status === 'running' ? '5 days' : '—'"
-                        ></span>
+                        />
                       </div>
-                    </td>
-                  </template>
+                      <button
+                        type="button"
+                        @click.stop="saveNewFolder()"
+                        class="btn btn-primary h-[32px] px-4 py-0 text-[13px] font-medium"
+                        style="margin-right: 8px"
+                      >
+                        OK
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               </template>
-            </template>
-
-            <!-- Inline Folder Creation Row -->
-            <template x-if="isCreatingFolder">
-              <tr class="folder-row" style="background: var(--bg-surface)">
-                <td colspan="7" class="folder-cell">
-                  <div class="folder-title" style="display: flex; align-items: center; width: 100%">
-                    <div
-                      @click.away="cancelNewFolder()"
-                      style="
-                        display: flex;
-                        align-items: center;
-                        width: 280px;
-                        flex-shrink: 0;
-                        margin-right: 16px;
-                      "
-                    >
-                      <span
-                        class="folder-icon"
-                        style="
-                          flex-shrink: 0;
-                          display: inline-flex;
-                          align-items: center;
-                          justify-content: center;
-                          width: 24px;
-                          height: 24px;
-                        "
-                        >📁</span
-                      >
-                      <input
-                        type="text"
-                        id="new-folder-input"
-                        aria-label="Ordnername"
-                        x-model="newFolderName"
-                        @keydown.enter.prevent="saveNewFolder()"
-                        @keydown.escape.prevent="cancelNewFolder()"
-                        class="form-input"
-                        placeholder="Neuer Ordner..."
-                        style="
-                          margin-left: 12px;
-                          height: 32px;
-                          font-size: 14px;
-                          width: 100%;
-                          border-radius: var(--radius-md);
-                          padding: 0 12px;
-                          border: 1px solid var(--border);
-                          background: var(--bg-base);
-                          color: var(--text-primary);
-                          outline: none;
-                        "
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      @click.stop="saveNewFolder()"
-                      style="
-                        height: 32px;
-                        padding: 0 16px;
-                        font-size: 13px;
-                        font-weight: 500;
-                        margin-right: 8px;
-                      "
-                    >
-                      OK
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </template>
 
   <!-- Bulk Action Bar -->
   <template x-teleport="body">
-    <section
-      class="bulk-action-bar"
-      :class="selected.length > 0 ? 'active' : ''"
-      aria-label="Bulk Actions"
-    >
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: var(--text-primary);
-          font-weight: 600;
-        "
-      >
-        <span class="material-icons-round" style="color: var(--text-accent)">check_circle</span>
+    <section class="bulk-action-bar selected.length > 0 ? 'active' : ''" aria-label="Bulk Actions">
+      <div class="flex items-center gap-[8px] text-primary font-semibold">
+        <span class="material-icons-round text-accent">check_circle</span>
         <span x-text="`${selected.length} ausgewählt`"></span>
       </div>
-      <div style="width: 1px; height: 24px; background: var(--border)"></div>
-      <div style="display: flex; gap: 8px">
+      <div class="w-[1px] h-[24px]" style="background: var(--border)"></div>
+      <div class="flex gap-[8px]">
         <button type="button" class="btn btn-primary" @click="bulkAction('start')">
           <span class="material-icons-round">play_arrow</span> Starten
         </button>
@@ -1514,29 +1261,17 @@
       x-transition.opacity.duration.200ms
     >
       <div
-        class="modal-content"
         @click.stop
+        class="modal-content bg-surface p-[24px] w-[800px] border border-[var(--border)]"
         style="
-          background: var(--bg-surface);
-          padding: 24px;
           border-radius: var(--radius-lg);
-          width: 800px;
           max-width: 90vw;
           box-shadow: 0 10px 25px rgb(0 0 0 / 50%);
-          border: 1px solid var(--border);
         "
       >
-        <h2 style="margin-bottom: 16px; font-size: 18px">Docker Compose Stack</h2>
-        <div style="margin-bottom: 16px">
-          <label
-            for="composeStackName"
-            style="
-              display: block;
-              margin-bottom: 8px;
-              font-size: 13px;
-              font-weight: 600;
-              color: var(--text-secondary);
-            "
+        <h2 class="mb-4 text-[18px]">Docker Compose Stack</h2>
+        <div class="mb-4">
+          <label for="composeStackName" class="block mb-2 text-[13px] font-semibold text-secondary"
             >Stack Name</label
           >
           <input
@@ -1544,40 +1279,24 @@
             id="composeStackName"
             name="composeStackName"
             x-model="composeStackName"
-            class="setting-input"
             placeholder="z.B. Nextcloud"
-            style="width: 100%"
+            class="setting-input w-full"
           />
         </div>
-        <div style="margin-bottom: 24px">
-          <label
-            for="composeContent"
-            style="
-              display: block;
-              margin-bottom: 8px;
-              font-size: 13px;
-              font-weight: 600;
-              color: var(--text-secondary);
-            "
+        <div class="mb-6">
+          <label for="composeContent" class="block mb-2 text-[13px] font-semibold text-secondary"
             >docker-compose.yml</label
           >
           <textarea
             id="composeContent"
             name="composeContent"
             x-model="composeContent"
-            class="setting-input"
             placeholder="version: '3'&#10;services:&#10;  ..."
-            style="
-              width: 100%;
-              height: 300px;
-              font-family: monospace;
-              resize: vertical;
-              white-space: pre;
-              background: var(--bg-input);
-            "
+            class="setting-input w-full h-[300px] font-mono bg-input"
+            style="resize: vertical; white-space: pre"
           ></textarea>
         </div>
-        <div style="display: flex; justify-content: flex-end; gap: 12px">
+        <div class="flex justify-end gap-[12px]">
           <button type="button" class="btn btn-ghost" @click="closeComposeModal()">
             Abbrechen
           </button>
@@ -1599,38 +1318,25 @@
       x-transition.opacity.duration.200ms
     >
       <div
-        class="modal-content"
         @click.stop
+        class="modal-content bg-surface p-[24px] w-[400px] border border-[var(--border)]"
         style="
-          background: var(--bg-surface);
-          padding: 24px;
           border-radius: var(--radius-lg);
-          width: 400px;
           max-width: 90vw;
           box-shadow: 0 10px 25px rgb(0 0 0 / 50%);
-          border: 1px solid var(--border);
         "
       >
-        <h3
-          style="
-            margin-top: 0;
-            color: var(--text-primary);
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-          "
-        >
+        <h3 class="mt-0 text-primary text-[18px] flex items-center gap-[8px]">
           <span class="material-icons-round" style="color: var(--danger)">warning</span>
           Ordner löschen
         </h3>
-        <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 24px">
+        <p class="text-muted text-sm leading-normal mb-6">
           Möchten Sie den Ordner
-          <strong style="color: var(--text-primary)" x-text="folderToDelete"></strong> wirklich
-          löschen? <br /><br />
+          <strong class="text-primary" x-text="folderToDelete"></strong> wirklich löschen?
+          <br /><br />
           Die Container darin bleiben erhalten und werden wieder in der normalen Liste angezeigt.
         </p>
-        <div style="display: flex; justify-content: flex-end; gap: 12px">
+        <div class="flex justify-end gap-[12px]">
           <button type="button" class="btn btn-ghost" @click="closeDeleteFolderModal()">
             Abbrechen
           </button>
@@ -1651,83 +1357,49 @@
       x-transition.opacity.duration.200ms
     >
       <div
-        class="modal-content"
         @click.stop
+        class="modal-content bg-surface p-[24px] w-[450px] border border-[var(--border)]"
         style="
-          background: var(--bg-surface);
-          padding: 24px;
           border-radius: var(--radius-lg);
-          width: 450px;
           max-width: 90vw;
           box-shadow: 0 10px 25px rgb(0 0 0 / 50%);
-          border: 1px solid var(--border);
         "
       >
         <h3
-          style="
-            margin-top: 0;
-            color: var(--text-primary);
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-          "
+          class="mt-0 text-primary text-[18px] flex items-center gap-[8px]"
+          style="margin-bottom: 20px"
         >
           <span class="material-icons-round">image</span>
           Ordner-Icon ändern (<span x-text="iconTargetFolder"></span>)
         </h3>
 
-        <div style="margin-bottom: 16px">
+        <div class="mb-4">
           <label
             for="folder-icon-url-input"
-            style="
-              display: block;
-              color: var(--text-muted);
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              margin-bottom: 8px;
-            "
+            class="block text-muted text-xs font-semibold mb-2"
+            style="text-transform: uppercase; letter-spacing: 0.5px"
             >Bild-URL</label
           >
           <input
             type="text"
             id="folder-icon-url-input"
             name="folderIconUrl"
-            class="form-input"
             x-model="iconInputValue"
             placeholder="https://beispiel.de/icon.png"
-            style="
-              width: 100%;
-              border-radius: var(--radius-md);
-              padding: 0 12px;
-              height: 38px;
-              border: 1px solid var(--border);
-              background: var(--bg-base);
-              color: var(--text-primary);
-              outline: none;
-            "
+            class="form-input w-full h-[38px] border border-[var(--border)] bg-base text-primary outline-none"
+            style="border-radius: var(--radius-md); padding: 0 12px"
           />
         </div>
 
-        <div style="margin-bottom: 24px">
+        <div class="mb-6">
           <label
             for="folder-icon-upload-input"
-            style="
-              display: block;
-              color: var(--text-muted);
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              margin-bottom: 8px;
-            "
+            class="block text-muted text-xs font-semibold mb-2"
+            style="text-transform: uppercase; letter-spacing: 0.5px"
             >Oder lokales Bild hochladen</label
           >
-          <div style="display: flex; align-items: center; gap: 12px">
-            <div class="btn btn-secondary cursor-pointer" style="margin: 0">
+          <div class="flex items-center gap-[12px]">
+            <div class="btn btn-secondary cursor-pointer m-0">
               <span class="material-icons-round">upload</span> Bild wählen
               <input
                 type="file"
@@ -1735,22 +1407,13 @@
                 name="folderIconUpload"
                 accept="image/*"
                 @change="handleIconUpload($event)"
-                style="display: none"
+                class="hidden"
               />
             </div>
             <template x-if="iconInputValue">
               <div
-                style="
-                  width: 38px;
-                  height: 38px;
-                  border-radius: 4px;
-                  border: 1px solid var(--border);
-                  overflow: hidden;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  background: var(--bg-base);
-                "
+                class="w-[38px] h-[38px] border border-[var(--border)] overflow-hidden flex items-center justify-center bg-base"
+                style="border-radius: 4px"
               >
                 <img
                   loading="lazy"
@@ -1765,11 +1428,11 @@
           </div>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 12px">
+        <div class="flex justify-end gap-[12px]">
           <button type="button" class="btn btn-ghost" @click="iconInputValue = ''">
             Icon entfernen
           </button>
-          <div style="flex: 1"></div>
+          <div class="flex-1"></div>
           <button type="button" class="btn btn-ghost" @click="closeIconModal()">Abbrechen</button>
           <button type="button" class="btn btn-primary" @click="saveIcon()">Speichern</button>
         </div>
@@ -1778,7 +1441,7 @@
   </template>
 
   <!-- Circular Menu SVG Filter -->
-  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none">
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="hidden">
     <defs>
       <filter id="goo">
         <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />

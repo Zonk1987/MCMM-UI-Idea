@@ -58,7 +58,7 @@ export const GameAdditions = {
 
     const grid = document.getElementById('mcGrid');
     if (grid) {
-      grid.innerHTML = `<div class="loading-grid" style="grid-column:1/-1">${this.skeletonGrid(8)}</div>`;
+      grid.innerHTML = `<div class="loading-grid col-span-full">${this.skeletonGrid(8)}</div>`;
     }
 
     const meta = document.getElementById('mcSearchMeta');
@@ -76,9 +76,9 @@ export const GameAdditions = {
     } catch (err) {
       console.error(err);
       if (grid) {
-        grid.innerHTML = `<div class="error-state" style="grid-column:1/-1;text-align:center;padding:40px;">
-          <span class="material-icons-round" style="font-size:48px;color:#ef4444">error_outline</span>
-          <p style="margin-top:10px;color:#ef4444;">${err.message}</p>
+        grid.innerHTML = `<div class="error-state col-span-full text-center p-10">
+          <span class="material-icons-round text-5xl text-red-500">error_outline</span>
+          <p class="mt-2.5 text-red-500">${err.message}</p>
         </div>`;
       }
       if (meta) meta.textContent = '0 Ergebnisse';
@@ -313,10 +313,10 @@ export const GameAdditions = {
     const grid = document.getElementById('mcGrid');
     const meta = document.getElementById('mcSearchMeta');
     if (grid) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:left;">
-        <span class="material-icons-round" style="font-size:36px;color:#f39c12">bug_report</span>
-        <p style="margin-top:10px;font-weight:bold;">Keine Ergebnisse gefunden</p>
-        <code style="display:block;margin-top:10px;color:#fff;font-size:11px;background:rgba(255,255,255,0.1);padding:10px;border-radius:4px;white-space:pre-wrap;word-break:break-all;">
+      grid.innerHTML = `<div class="empty-state col-span-full text-left">
+        <span class="material-icons-round text-4xl text-yellow-500">bug_report</span>
+        <p class="mt-2.5 font-bold">Keine Ergebnisse gefunden</p>
+        <code class="block mt-2.5 text-white text-xs bg-white/10 p-2.5 rounded whitespace-pre-wrap break-all">
 Request URL: https://api.curseforge.com/v1/mods/search?${paramsStr}
 
 Response Body:
@@ -331,13 +331,13 @@ ${JSON.stringify(body, null, 2)}
     const grid = document.getElementById('mcGrid');
     const meta = document.getElementById('mcSearchMeta');
     if (grid) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:center;">
-        <span class="material-icons-round" style="font-size:48px;color:#f59e0b">vpn_key</span>
-        <p style="margin-top:10px;font-size:16px;">CurseForge API Key fehlt</p>
-        <p style="color:var(--text-muted);font-size:14px;max-width:400px;margin:10px auto;">
+      grid.innerHTML = `<div class="empty-state col-span-full text-center">
+        <span class="material-icons-round text-5xl text-yellow-500">vpn_key</span>
+        <p class="mt-2.5 text-base">CurseForge API Key fehlt</p>
+        <p class="text-muted text-sm max-w-[400px] mx-auto my-2.5">
           Um auf reale CurseForge-Daten zuzugreifen, musst du deinen persönlichen API-Key in den Plugin-Einstellungen hinterlegen.
         </p>
-        <button class="settings-btn primary" onclick="document.querySelector('.tab-btn[data-tab=&quot;settings&quot;]').click();" style="margin-top:20px;">
+        <button class="settings-btn primary" onclick="document.querySelector('.tab-btn[data-tab=&quot;settings&quot;]').click();" class="mt-5">
           <span class="material-icons-round">settings</span> Zu den Einstellungen
         </button>
       </div>`;
@@ -356,7 +356,7 @@ ${JSON.stringify(body, null, 2)}
         <div class="mc-card-top">
           ${thumb ? `<img src="${thumb}" alt="${mod.name}" class="mc-card-icon" />` : `<div class="mc-card-icon-placeholder"><span class="material-icons-round">extension</span></div>`}
           <div class="mc-card-header-info">
-            <div class="mc-card-name" title="${mod.name}">${mod.name}</div>
+            <div class="mc-card-name text-primary" title="${mod.name}">${mod.name}</div>
             <div class="mc-card-author">by ${mod.authors && mod.authors.length > 0 ? mod.authors.map((a) => a.name).join(', ') : 'Unknown'}</div>
           </div>
         </div>
@@ -383,13 +383,13 @@ ${JSON.stringify(body, null, 2)}
 
     const maxPage = Math.ceil(state.total / state.perPage) - 1;
     const paginationHtml = `
-      <div class="mc-pagination" style="grid-column: 1 / -1; width: 100%; display:flex; justify-content:center; align-items:center; gap:16px; margin-top:32px; padding-bottom:24px;">
-        <button class="btn btn-ghost prev" style="display:flex; align-items:center; gap:4px;" ${state.page === 0 ? 'disabled' : ''}>
-          <span class="material-icons-round" style="font-size:18px;">chevron_left</span> Zurück
+      <div class="mc-pagination col-span-full w-full flex justify-center items-center gap-4 mt-8 pb-6">
+        <button class="btn btn-ghost prev flex items-center gap-1" ${state.page === 0 ? 'disabled' : ''}>
+          <span class="material-icons-round text-lg">chevron_left</span> Zurück
         </button>
-        <span class="page-info" style="font-size:14px; font-weight:500; color:var(--text-muted);">Seite ${state.page + 1} von ${maxPage + 1}</span>
-        <button class="btn btn-ghost next" style="display:flex; align-items:center; gap:4px;" ${state.page >= maxPage ? 'disabled' : ''}>
-          Weiter <span class="material-icons-round" style="font-size:18px;">chevron_right</span>
+        <span class="page-info text-sm font-medium text-muted">Seite ${state.page + 1} von ${maxPage + 1}</span>
+        <button class="btn btn-ghost next flex items-center gap-1" ${state.page >= maxPage ? 'disabled' : ''}>
+          Weiter <span class="material-icons-round text-lg">chevron_right</span>
         </button>
       </div>
     `;
@@ -401,16 +401,16 @@ ${JSON.stringify(body, null, 2)}
       .fill('')
       .map(
         () => `
-      <div class="mc-card skeleton" style="border:1px solid rgba(255,255,255,0.05); background:var(--bg-card);">
+      <div class="mc-card skeleton border border-white/5 bg-card">
         <div class="mc-card-header">
-          <div class="skeleton-icon" style="width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.1)"></div>
-          <div style="flex:1">
-            <div style="width:70%;height:16px;background:rgba(255,255,255,0.1);margin-bottom:8px;border-radius:4px;"></div>
-            <div style="width:40%;height:12px;background:rgba(255,255,255,0.05);border-radius:4px;"></div>
+          <div class="skeleton-icon w-12 h-12 rounded-lg bg-white/10"></div>
+          <div class="flex-1">
+            <div class="w-[70%] h-4 bg-white/10 mb-2 rounded"></div>
+            <div class="w-[40%] h-3 bg-white/5 rounded"></div>
           </div>
         </div>
-        <div style="width:100%;height:12px;background:rgba(255,255,255,0.05);margin-bottom:8px;border-radius:4px;margin-top:12px;"></div>
-        <div style="width:80%;height:12px;background:rgba(255,255,255,0.05);border-radius:4px;"></div>
+        <div class="w-full h-3 bg-white/5 mb-2 rounded mt-3"></div>
+        <div class="w-[80%] h-3 bg-white/5 rounded"></div>
       </div>
     `
       )

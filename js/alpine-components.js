@@ -109,7 +109,7 @@ export function registerAlpineComponents(Alpine) {
 
       let cmd = args.join(' \\\n  ');
 
-      return cmd.replaceAll('\\', String.raw`<span style="color:var(--text-muted)">\</span>`);
+      return cmd.replaceAll('\\', String.raw`<span class="text-muted">\</span>`);
     },
     copyCmd() {
       const rawCmd = this.getPreviewCmd()

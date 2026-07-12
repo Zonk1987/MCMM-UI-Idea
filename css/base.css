@@ -82,7 +82,7 @@
 /* ─── Light Theme Overrides ─── */
 [data-theme='light'] {
   --bg-base: #f0f2f5;
-  --bg-surface: #fff;
+  --bg-surface: #f1f5f9;
   --bg-card: #fff;
   --bg-card-hover: #f8fafc;
   --bg-input: #f8fafc;

@@ -10,7 +10,7 @@
     />
 
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/main.css?v=4" />
     <script>
       // Load WebKit-specific styles only if not Firefox, to prevent harmless console warnings
       if (!navigator.userAgent.toLowerCase().includes('firefox')) {
@@ -214,9 +214,7 @@
           <span x-text="$store.i18n.t('nav.gameservers')">GameServer</span>
         </button>
         <button type="button" class="settings-nav-btn" data-stab="minecraft">
-          <span style="font-size: 16px; width: 24px; text-align: center; display: inline-block"
-            >&#x26CF;</span
-          >
+          <span class="text-base w-[24px] text-center inline-block">&#x26CF;</span>
           Minecraft
         </button>
         <button type="button" class="settings-nav-btn" data-stab="modules">
@@ -231,17 +229,14 @@
         </button>
       </nav>
 
-      <form
-        onsubmit="return false;"
-        style="display: flex; flex-direction: column; flex: 1; overflow: hidden"
-      >
+      <form onsubmit="return false;" class="flex flex-col overflow-hidden flex-1">
         <!-- Hidden username field for accessibility/password manager compliance -->
         <input
           id="hiddenUsername"
           name="hiddenUsername"
           type="text"
           autocomplete="username"
-          style="display: none"
+          class="hidden"
           aria-label="Hidden Username"
         />
         <div class="settings-body" id="settingsBody">
@@ -281,52 +276,28 @@
               <div class="settings-group-title">
                 Ordner &amp; GameServer Zuweisung (DUMMY/DEBUG)
               </div>
-              <div style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary)">
+              <div class="text-[13px] text-secondary mb-3">
                 Weise Dummy-Container expliziten Ordnern zu oder markiere sie als GameServer für
                 Testzwecke.
               </div>
 
               <div
-                class="debug-container-list"
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  gap: 12px;
-                  max-height: calc(100vh - 250px);
-                  overflow-y: auto;
-                  padding-right: 8px;
-                "
+                class="debug-container-list flex flex-col gap-[12px] overflow-y-auto pr-2"
+                style="max-height: calc(100vh - 250px)"
               >
                 <template x-for="c in containers" :key="c.id">
-                  <div
-                    style="
-                      background: var(--bg-surface);
-                      padding: 12px;
-                      border-radius: 8px;
-                      border: 1px solid var(--border-color);
-                    "
-                  >
-                    <div style="font-weight: 500; margin-bottom: 8px" x-text="c.name"></div>
+                  <div class="bg-surface p-3 rounded-lg border border-[var(--border-color)]">
+                    <div class="font-medium mb-2" x-text="c.name"></div>
 
-                    <div style="display: flex; gap: 12px; align-items: center">
-                      <div style="flex: 1">
-                        <div
-                          style="
-                            font-size: 11px;
-                            color: var(--text-muted);
-                            display: block;
-                            margin-bottom: 4px;
-                          "
-                        >
-                          Ordner-Zuweisung
-                        </div>
+                    <div class="flex gap-[12px] items-center">
+                      <div class="flex-1">
+                        <div class="text-[11px] text-muted block mb-1">Ordner-Zuweisung</div>
                         <select
                           :id="'field_select_2_' + c.id"
                           :name="'field_select_2_' + c.id"
-                          class="setting-input"
                           x-bind:value="c.labels && c.labels['folder.view3'] ? c.labels['folder.view3'] : ''"
                           @change="updateLabel(c.id, 'folder.view3', $event.target.value)"
-                          style="width: 100%"
+                          class="setting-input w-full"
                         >
                           <option value="">Kein Ordner (Unassigned)</option>
                           <template x-if="$store.core && $store.core.customFolders">
@@ -336,24 +307,16 @@
                           </template>
                         </select>
                       </div>
-                      <div style="flex: 1">
-                        <div
-                          style="
-                            font-size: 11px;
-                            color: var(--text-muted);
-                            display: block;
-                            margin-bottom: 4px;
-                          "
-                        >
+                      <div class="flex-1">
+                        <div class="text-[11px] text-muted block mb-1">
                           Als GameServer verwalten
                         </div>
                         <select
                           :id="'field_select_3_' + c.id"
                           :name="'field_select_3_' + c.id"
-                          class="setting-input"
                           x-bind:value="c.labels && c.labels['mcmm.managed'] ? c.labels['mcmm.managed'] : ''"
                           @change="updateLabel(c.id, 'mcmm.managed', $event.target.value)"
-                          style="width: 100%"
+                          class="setting-input w-full"
                         >
                           <option value="">Nein</option>
                           <option value="true">Ja</option>
@@ -385,49 +348,43 @@
                   <button
                     type="button"
                     aria-label="Color Swatch"
-                    class="swatch active"
                     data-color="#f57c00"
-                    style="background: #f57c00"
+                    class="swatch active bg-orange-500"
                     title="Unraid Orange"
                   ></button>
                   <button
                     type="button"
                     aria-label="Color Swatch"
-                    class="swatch"
                     data-color="#3b82f6"
-                    style="background: #3b82f6"
+                    class="swatch bg-blue-500"
                     title="Blau"
                   ></button>
                   <button
                     type="button"
                     aria-label="Color Swatch"
-                    class="swatch"
                     data-color="#22c55e"
-                    style="background: #22c55e"
+                    class="swatch bg-green-500"
                     title="Grün"
                   ></button>
                   <button
                     type="button"
                     aria-label="Color Swatch"
-                    class="swatch"
                     data-color="#a855f7"
-                    style="background: #a855f7"
+                    class="swatch bg-purple-500"
                     title="Lila"
                   ></button>
                   <button
                     type="button"
                     aria-label="Color Swatch"
-                    class="swatch"
                     data-color="#ef4444"
-                    style="background: #ef4444"
+                    class="swatch bg-red-500"
                     title="Rot"
                   ></button>
                   <button
                     type="button"
                     aria-label="Color Swatch"
-                    class="swatch"
                     data-color="#06b6d4"
-                    style="background: #06b6d4"
+                    class="swatch bg-cyan-500"
                     title="Cyan"
                   ></button>
                   <input
@@ -512,13 +469,12 @@
                 <div class="setting-input-row">
                   <input
                     type="number"
-                    class="setting-input"
                     aria-label="Eingabe"
                     id="settingRefreshInterval"
                     value="5"
                     min="1"
                     max="60"
-                    style="width: 70px"
+                    class="setting-input w-[70px]"
                   />
                   <span class="setting-unit">Sek.</span>
                 </div>
@@ -556,11 +512,10 @@
                 </div>
                 <input
                   type="text"
-                  class="setting-input"
                   aria-label="Eingabe"
                   id="settingDockerSocket"
                   value="/var/run/docker.sock"
-                  style="width: 210px; font-family: monospace; font-size: 12px"
+                  class="setting-input w-[210px] font-mono text-xs"
                 />
               </div>
               <div class="setting-row">
@@ -570,11 +525,10 @@
                 </div>
                 <input
                   type="text"
-                  class="setting-input"
                   aria-label="Eingabe"
                   id="settingUnraidApi"
                   value="http://localhost/api"
-                  style="width: 210px; font-family: monospace; font-size: 12px"
+                  class="setting-input w-[210px] font-mono text-xs"
                 />
               </div>
             </div>
@@ -651,12 +605,11 @@
                 </div>
                 <input
                   type="text"
-                  class="setting-input"
                   aria-label="Eingabe"
                   id="settingGsDataPath"
                   value="/mnt/user/gameservers"
                   autocomplete="off"
-                  style="width: 210px; font-family: monospace; font-size: 12px"
+                  class="setting-input w-[210px] font-mono text-xs"
                 />
               </div>
               <div class="setting-row">
@@ -667,13 +620,12 @@
                 <div class="setting-input-row">
                   <input
                     type="number"
-                    class="setting-input"
                     aria-label="Eingabe"
                     id="settingGsRam"
                     value="4096"
                     min="512"
                     step="512"
-                    style="width: 90px"
+                    class="setting-input w-[90px]"
                   />
                   <span class="setting-unit">MB</span>
                 </div>
@@ -703,11 +655,10 @@
                 </div>
                 <input
                   type="number"
-                  class="setting-input"
                   aria-label="Eingabe"
                   id="settingRconPort"
                   value="25575"
-                  style="width: 90px"
+                  class="setting-input w-[90px]"
                 />
               </div>
               <div class="setting-row">
@@ -717,12 +668,11 @@
                 </div>
                 <input
                   type="password"
-                  class="setting-input"
                   aria-label="Eingabe"
                   id="settingRconPassword"
                   placeholder="••••••••"
                   autocomplete="new-password"
-                  style="width: 180px"
+                  class="setting-input w-[180px]"
                 />
               </div>
             </div>
@@ -739,12 +689,11 @@
                 </div>
                 <input
                   type="password"
-                  class="setting-input"
                   aria-label="Eingabe"
                   id="settingCfApiKey"
                   placeholder="Schlüssel eingeben..."
                   autocomplete="new-password"
-                  style="width: 190px"
+                  class="setting-input w-[190px]"
                 />
               </div>
               <div class="setting-row">
@@ -753,8 +702,7 @@
                   <div class="setting-desc">Öffentlich — kein Key erforderlich</div>
                 </div>
                 <span class="setting-badge ok"
-                  ><span class="material-icons-round" style="font-size: 14px">check_circle</span>
-                  Verbunden</span
+                  ><span class="material-icons-round text-sm">check_circle</span> Verbunden</span
                 >
               </div>
             </div>
@@ -793,13 +741,12 @@
                 </div>
                 <input
                   type="number"
-                  class="setting-input"
                   aria-label="Eingabe"
                   id="settingMcMaxPlayers"
                   value="20"
                   min="1"
                   max="500"
-                  style="width: 80px"
+                  class="setting-input w-[80px]"
                 />
               </div>
               <div class="setting-row">
@@ -847,14 +794,13 @@
                 <div class="setting-input-row">
                   <input
                     type="number"
-                    class="setting-input"
                     aria-label="Eingabe"
                     id="settingToastDuration"
                     value="3500"
                     min="1000"
                     max="10000"
                     step="500"
-                    style="width: 90px"
+                    class="setting-input w-[90px]"
                   />
                   <span class="setting-unit">ms</span>
                 </div>
@@ -926,7 +872,7 @@
           <div class="settings-section" id="stab-modules">
             <div class="settings-group">
               <div class="settings-group-title">Installierte Module</div>
-              <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px">
+              <p class="text-xs text-secondary mb-4">
                 Aktiviere oder deaktiviere installierte Game-Module im Hub. (Das Basis-Modul
                 "Minecraft" ist immer aktiv.)
               </p>
@@ -946,7 +892,7 @@
             <span class="material-icons-round">save</span> Speichern
           </button>
         </div>
-        <button type="submit" style="display: none" aria-hidden="true" tabindex="-1"></button>
+        <button type="submit" class="hidden" aria-hidden="true" tabindex="-1"></button>
       </form>
     </aside>
 
@@ -961,42 +907,20 @@
       aria-modal="true"
       aria-labelledby="welcomeModalTitle"
     >
-      <div class="modal modal-large glass-card" style="max-width: 500px; text-align: center">
-        <div
-          class="modal-body"
-          style="
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-          "
-        >
+      <div class="modal modal-large glass-card max-w-[500px] text-center">
+        <div class="modal-body p-[40px] flex flex-col items-center gap-[20px]">
           <!-- Step 1 -->
-          <div
-            x-show="step === 1"
-            style="display: flex; flex-direction: column; align-items: center; gap: 16px"
-          >
+          <div x-show="step === 1" class="flex flex-col items-center gap-[16px]">
             <div
-              style="
-                width: 80px;
-                height: 80px;
-                background: linear-gradient(135deg, var(--accent), #ff6d00);
-                border-radius: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 10px 25px var(--accent-glow);
-              "
+              class="w-[80px] h-[80px] flex items-center justify-center shadow-[0_10px_25px_var(--accent-glow)] rounded-[20px]"
+              style="background: linear-gradient(135deg, var(--accent), #ff6d00)"
             >
-              <span class="material-icons-round" style="font-size: 40px; color: #fff"
-                >sports_esports</span
-              >
+              <span class="material-icons-round text-[40px] text-white">sports_esports</span>
             </div>
-            <h1 id="welcomeModalTitle" style="margin: 0; font-size: 24px; margin-bottom: 8px">
-              Willkommen zum <span style="color: var(--text-accent)">MCMM</span> GameServer Hub
+            <h1 id="welcomeModalTitle" class="m-0 text-[24px] mb-2">
+              Willkommen zum <span class="text-accent">MCMM</span> GameServer Hub
             </h1>
-            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6">
+            <p class="text-secondary text-sm" style="line-height: 1.6">
               Dein zentrales Dashboard für alle Docker-basierten Gameserver auf Unraid. Verwalte
               deine Container, installiere neue Spiele mit einem Klick und bearbeite Dateien direkt
               im Browser.
@@ -1004,26 +928,15 @@
           </div>
 
           <!-- Step 2 -->
-          <div
-            x-show="step === 2"
-            style="flex-direction: column; align-items: center; gap: 16px; display: none"
-          >
+          <div x-show="step === 2" class="flex-col items-center gap-[16px] hidden">
             <div
-              style="
-                width: 80px;
-                height: 80px;
-                background: #1e3a8a;
-                color: #bfdbfe;
-                border-radius: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              "
+              class="w-[80px] h-[80px] flex items-center justify-center rounded-[20px]"
+              style="background: #1e3a8a; color: #bfdbfe"
             >
-              <span class="material-icons-round" style="font-size: 40px">extension</span>
+              <span class="material-icons-round text-[40px]">extension</span>
             </div>
-            <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px">Game Additions</h2>
-            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6">
+            <h2 class="text-[24px] mt-[10px] font-bold">Game Additions</h2>
+            <p class="text-secondary text-sm" style="line-height: 1.6">
               Egal ob Minecraft, CS2 oder Palworld – die Game Additions Module bieten dir
               maßgeschneiderte Dashboards für jedes Spiel. Lade Mods herunter, verwalte Spieler und
               passe Server-Properties an.
@@ -1031,55 +944,41 @@
           </div>
 
           <!-- Step 3 -->
-          <div
-            x-show="step === 3"
-            style="flex-direction: column; align-items: center; gap: 16px; display: none"
-          >
+          <div x-show="step === 3" class="flex-col items-center gap-[16px] hidden">
             <div
-              style="
-                width: 80px;
-                height: 80px;
-                background: #14532d;
-                color: #bbf7d0;
-                border-radius: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              "
+              class="w-[80px] h-[80px] flex items-center justify-center rounded-[20px]"
+              style="background: #14532d; color: #bbf7d0"
             >
-              <span class="material-icons-round" style="font-size: 40px">rocket_launch</span>
+              <span class="material-icons-round text-[40px]">rocket_launch</span>
             </div>
-            <h2 style="font-size: 24px; font-weight: 700; margin-top: 10px">Bereit zum Start!</h2>
-            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6">
+            <h2 class="text-[24px] mt-[10px] font-bold">
+              <span x-text="$store.i18n.t('wizard.ready')">Bereit zum Start!</span>
+            </h2>
+            <p class="text-secondary text-sm" style="line-height: 1.6">
               Alles ist eingerichtet. Du kannst den Hub nach deinen Wünschen über das Zahnrad-Symbol
               oben rechts anpassen. Viel Spaß beim Hosten!
             </p>
           </div>
 
-          <div style="display: flex; gap: 8px; margin-top: 10px">
+          <div class="flex gap-[8px] mt-[10px]">
             <div
-              :style="step === 1 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+              :class="step === 1 ? 'w-[24px] bg-accent' : 'w-[8px] bg-border'"
+              class="h-[8px] rounded-[4px]"
+              style="transition: all 0.3s ease"
             ></div>
             <div
-              :style="step === 2 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+              :class="step === 2 ? 'w-[24px] bg-accent' : 'w-[8px] bg-border'"
+              class="h-[8px] rounded-[4px]"
+              style="transition: all 0.3s ease"
             ></div>
             <div
-              :style="step === 3 ? 'background: var(--accent); width: 24px;' : 'background: var(--border); width: 8px;'"
-              style="height: 8px; border-radius: 4px; transition: all 0.3s ease"
+              :class="step === 3 ? 'w-[24px] bg-accent' : 'w-[8px] bg-border'"
+              class="h-[8px] rounded-[4px]"
+              style="transition: all 0.3s ease"
             ></div>
           </div>
         </div>
-        <div
-          class="modal-footer"
-          style="
-            justify-content: center;
-            border-top: none;
-            padding-bottom: 30px;
-            position: relative;
-          "
-        >
+        <div class="modal-footer justify-center border-t-0 pb-[30px] relative">
           <button
             type="button"
             class="btn btn-ghost"
@@ -1089,21 +988,14 @@
           >
             Zurück
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            x-show="step < 3"
-            @click="step++"
-            style="width: 200px"
-          >
+          <button type="button" x-show="step < 3" @click="step++" class="btn btn-primary w-[200px]">
             Weiter
           </button>
           <button
             type="button"
-            class="btn btn-primary"
             x-show="step === 3"
             @click="typeof window.finishOnboarding === 'function' ? window.finishOnboarding() : null"
-            style="width: 200px"
+            class="btn btn-primary w-[200px]"
           >
             Loslegen
           </button>
@@ -1113,10 +1005,10 @@
 
     <!-- Docker Config Modal (Alpine) -->
     <dialog
-      class="modal-backdrop"
       id="configModalAlpine"
       x-data
       x-show="$store.modals.config.open"
+      class="modal-backdrop"
       style="display: none"
       x-transition
       aria-modal="true"
@@ -1168,17 +1060,8 @@
             <label for="cfgContRestart">Restart Policy</label>
             <select
               id="cfgContRestart"
-              class="form-input"
-              style="
-                width: 100%;
-                background: var(--bg-input);
-                border: 1px solid var(--border);
-                color: var(--text-primary);
-                padding: 8px;
-                border-radius: 6px;
-                outline: none;
-                appearance: none;
-              "
+              class="form-input w-full border border-[var(--border)] text-primary bg-input p-2 outline-none appearance-none"
+              style="border-radius: 6px"
             >
               <option>unless-stopped</option>
               <option>always</option>
@@ -1186,7 +1069,7 @@
             </select>
           </div>
         </div>
-        <div class="modal-footer" style="margin-top: 20px">
+        <div class="modal-footer mt-5">
           <button type="button" class="btn btn-ghost" @click="$store.modals.config.open = false">
             <span x-text="$store.i18n.t('btn.cancel')">Abbrechen</span>
           </button>
@@ -1204,63 +1087,41 @@
 
     <!-- Game Server Install Modal (Alpine) -->
     <dialog
-      class="modal-backdrop"
       id="installModalAlpine"
       x-data="installModal()"
       @open-install-modal.window="openModal($event.detail)"
       x-show="open"
+      class="modal-backdrop"
       style="display: none"
       x-transition
       aria-modal="true"
       aria-labelledby="installModalTitle"
     >
       <div
-        class="modal-content"
         @click.away="open = false"
+        class="modal-content max-w-full overflow-hidden border border-[var(--border)] bg-base p-0"
         style="
-          max-width: 1050px;
-          padding: 0;
-          overflow: hidden;
+          width: 900px;
           border-radius: var(--radius-lg);
-          border: 1px solid var(--border);
           box-shadow: 0 24px 48px rgb(0 0 0 / 60%);
-          background: var(--bg-base);
           backdrop-filter: none;
         "
       >
         <!-- Header -->
         <div
-          class="modal-header"
-          style="
-            background: var(--bg-card);
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-          "
+          class="modal-header bg-card px-[24px] py-[20px] border-b border-[var(--border)] flex items-start gap-[16px]"
         >
           <div
-            style="
-              background: var(--accent-dim);
-              color: var(--text-accent);
-              width: 48px;
-              height: 48px;
-              border-radius: 12px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-shrink: 0;
-            "
+            class="bg-accent-dim text-accent w-[48px] h-[48px] rounded-xl flex items-center justify-center shrink-0"
           >
-            <span class="material-icons-round" style="font-size: 24px">dns</span>
+            <span class="material-icons-round text-[24px]">dns</span>
           </div>
-          <div style="flex: 1">
-            <h2 id="installModalTitle" style="margin: 0; font-size: 18px">
+          <div class="flex-1">
+            <h2 id="installModalTitle" class="m-0 text-[18px]">
               <span x-text="data.isEdit ? 'Einstellungen' : 'Neuen Server'"></span>:
               <span x-text="data.name"></span>
             </h2>
-            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px">
+            <div class="text-[13px] text-muted mt-[4px]">
               itzg/minecraft-server · von <span x-text="data.author"></span>
             </div>
           </div>
@@ -1269,50 +1130,43 @@
           </button>
         </div>
 
-        <div style="display: flex; height: 600px">
+        <div class="flex h-[600px]">
           <!-- Left: Form -->
-          <div
-            class="dc-form-col"
-            style="flex: 1.5; border-right: 1px solid var(--border); background: var(--bg-base)"
-          >
+          <div class="dc-form-col border-r border-[var(--border)] bg-base flex-[1.5]">
             <!-- Tab Navigation -->
-            <div class="dc-tab-nav" style="padding-left: 16px">
+            <div class="dc-tab-nav pl-4">
               <button
                 type="button"
-                class="dc-tab-btn"
                 @click="activeTab = 'config'"
                 :class="activeTab === 'config' ? 'active' : ''"
-                style="display: flex; align-items: center; gap: 6px"
+                class="dc-tab-btn flex items-center gap-[6px]"
               >
-                <span class="material-icons-round" style="font-size: 16px">dns</span> Basis
+                <span class="material-icons-round text-base">dns</span> Basis
               </button>
               <button
                 type="button"
-                class="dc-tab-btn"
                 @click="activeTab = 'gameplay'"
                 :class="activeTab === 'gameplay' ? 'active' : ''"
-                style="display: flex; align-items: center; gap: 6px"
+                class="dc-tab-btn flex items-center gap-[6px]"
               >
-                <span class="material-icons-round" style="font-size: 16px">sports_esports</span>
+                <span class="material-icons-round text-base">sports_esports</span>
                 Gameplay
               </button>
               <button
                 type="button"
-                class="dc-tab-btn"
                 @click="activeTab = 'performance'"
                 :class="activeTab === 'performance' ? 'active' : ''"
-                style="display: flex; align-items: center; gap: 6px"
+                class="dc-tab-btn flex items-center gap-[6px]"
               >
-                <span class="material-icons-round" style="font-size: 16px">speed</span> Performance
+                <span class="material-icons-round text-base">speed</span> Performance
               </button>
               <button
                 type="button"
-                class="dc-tab-btn"
                 @click="activeTab = 'cronjobs'"
                 :class="activeTab === 'cronjobs' ? 'active' : ''"
-                style="display: flex; align-items: center; gap: 6px"
+                class="dc-tab-btn flex items-center gap-[6px]"
               >
-                <span class="material-icons-round" style="font-size: 16px">schedule</span> Aufgaben
+                <span class="material-icons-round text-base">schedule</span> Aufgaben
               </button>
             </div>
 
@@ -1322,92 +1176,111 @@
               <div x-show="activeTab === 'config'">
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instSafeName">Container-Name</label>
-                    <div class="setting-desc">Eindeutiger Name in Docker</div>
+                    <label class="setting-label" for="instSafeName"
+                      ><span x-text="$store.i18n.t('dc.container_name')"
+                        >Container-Name</span
+                      ></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.container_name_desc')"
+                        >Eindeutiger Name in Docker</span
+                      >
+                    </div>
                   </div>
                   <input
                     type="text"
                     id="instSafeName"
                     name="instSafeName"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 240px"
+                    class="setting-input w-[240px]"
                     x-model="data.safeName"
                   />
                 </div>
 
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instServerName">Server-Name</label>
-                    <div class="setting-desc">Name im Spiel (server.properties)</div>
+                    <label class="setting-label" for="instServerName"
+                      ><span x-text="$store.i18n.t('dc.server_name')">Server-Name</span></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.server_name_desc')"
+                        >Name im Spiel (server.properties)</span
+                      >
+                    </div>
                   </div>
                   <input
                     type="text"
                     id="instServerName"
                     name="instServerName"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 240px"
+                    class="setting-input w-[240px]"
                     x-model="data.serverName"
                   />
                 </div>
 
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instPort">Server-Port</label>
-                    <div class="setting-desc">Minecraft Verbindungsport</div>
+                    <label class="setting-label" for="instPort"
+                      ><span x-text="$store.i18n.t('dc.server_port')">Server-Port</span></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.server_port_desc')"
+                        >Minecraft Verbindungsport</span
+                      >
+                    </div>
                   </div>
                   <input
                     type="number"
                     id="instPort"
                     name="instPort"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 240px"
+                    class="setting-input w-[240px]"
                     x-model="data.port"
                   />
                 </div>
 
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instIconUrl">Server-Icon URL</label>
-                    <div class="setting-desc">Optional (z.B. https://.../icon.png)</div>
+                    <label class="setting-label" for="instIconUrl"
+                      ><span x-text="$store.i18n.t('dc.server_icon')">Server-Icon URL</span></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.server_icon_desc')"
+                        >Optional (z.B. https://.../icon.png)</span
+                      >
+                    </div>
                   </div>
                   <input
                     type="text"
                     id="instIconUrl"
                     name="instIconUrl"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 240px"
+                    class="setting-input w-[240px]"
                     placeholder="URL zum Icon..."
                   />
                 </div>
 
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instRam">RAM (MB)</label>
-                    <div class="setting-desc">Für den Java-Heap (-Xms / -Xmx)</div>
+                    <label class="setting-label" for="instRam"
+                      ><span x-text="$store.i18n.t('dc.ram_mb')">RAM (MB)</span></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.ram_mb_desc')"
+                        >Für den Java-Heap (-Xms / -Xmx)</span
+                      >
+                    </div>
                   </div>
-                  <div style="position: relative; width: 240px">
+                  <div class="relative w-[240px]">
                     <input
                       type="number"
                       id="instRam"
                       name="instRam"
-                      class="setting-input"
                       aria-label="Eingabe"
-                      style="width: 100%; padding-right: 32px"
+                      class="setting-input w-full pr-8"
                       x-model="data.ram"
                     />
-                    <span
-                      style="
-                        position: absolute;
-                        right: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: 12px;
-                        color: var(--text-muted);
-                      "
+                    <span class="absolute text-xs text-muted right-[10px] top-1/2 -translate-y-1/2"
                       >MB</span
                     >
                   </div>
@@ -1415,16 +1288,21 @@
 
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instDataPath">Datenpfad (Host)</label>
-                    <div class="setting-desc">Bind-Mount für Serverdaten</div>
+                    <label class="setting-label" for="instDataPath"
+                      ><span x-text="$store.i18n.t('dc.data_path')">Datenpfad (Host)</span></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.data_path_desc')"
+                        >Bind-Mount für Serverdaten</span
+                      >
+                    </div>
                   </div>
                   <input
                     type="text"
                     id="instDataPath"
                     name="instDataPath"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 240px; font-family: 'JetBrains Mono', monospace; font-size: 11px"
+                    class="setting-input w-[240px] font-mono text-[11px]"
                     x-model="data.path"
                   />
                 </div>
@@ -1432,16 +1310,21 @@
                 <div class="setting-row">
                   <div class="setting-info">
                     <label class="setting-label" for="instServerType">Server-Typ</label>
-                    <div class="setting-desc">Servertyp (auto aus Modpack)</div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.server_type')"
+                        >Servertyp (auto aus Modpack)</span
+                      >
+                    </div>
                   </div>
                   <select
                     id="instServerType"
                     name="instServerType"
-                    class="setting-input"
-                    style="width: 240px"
+                    class="setting-input w-[240px]"
                     x-model="data.type"
                   >
-                    <option value="AUTO">Auto (aus Modpack)</option>
+                    <option value="AUTO">
+                      <span x-text="$store.i18n.t('dc.server_type_auto')">Auto (aus Modpack)</span>
+                    </option>
                     <option value="VANILLA">Vanilla</option>
                     <option value="PAPER">Paper</option>
                     <option value="FABRIC">Fabric</option>
@@ -1450,16 +1333,23 @@
                   </select>
                 </div>
 
-                <div class="setting-row" style="border-bottom: none">
+                <div class="setting-row border-b-0">
                   <div class="setting-info">
-                    <label class="setting-label" for="instRestartPolicy">Restart-Policy</label>
-                    <div class="setting-desc">Wann soll neugestartet werden?</div>
+                    <label class="setting-label" for="instRestartPolicy"
+                      ><span x-text="$store.i18n.t('dc.restart_policy')"
+                        >Restart-Policy</span
+                      ></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('dc.restart_policy_desc')"
+                        >Wann soll neugestartet werden?</span
+                      >
+                    </div>
                   </div>
                   <select
                     id="instRestartPolicy"
                     name="instRestartPolicy"
-                    class="setting-input"
-                    style="width: 240px"
+                    class="setting-input w-[240px]"
                     x-model="data.restart"
                   >
                     <option value="unless-stopped">unless-stopped</option>
@@ -1473,41 +1363,61 @@
               <div x-show="activeTab === 'gameplay'" style="display: none">
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instMaxPlayers">Max Players</label>
-                    <div class="setting-desc">Maximale Spieleranzahl</div>
+                    <label class="setting-label" for="instMaxPlayers"
+                      ><span x-text="$store.i18n.t('mc.max_players')">Max Players</span></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.max_players_desc')"
+                        >Maximale Spieleranzahl</span
+                      >
+                    </div>
                   </div>
                   <input
                     type="number"
                     id="instMaxPlayers"
                     name="instMaxPlayers"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 160px"
+                    class="setting-input w-[160px]"
                     x-model="data.maxPlayers"
                   />
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instDifficulty">Difficulty</label>
-                    <div class="setting-desc">Schwierigkeitsgrad</div>
+                    <label class="setting-label" for="instDifficulty"
+                      ><span x-text="$store.i18n.t('mc.difficulty')">Difficulty</span></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.difficulty_desc')">Schwierigkeitsgrad</span>
+                    </div>
                   </div>
                   <select
                     id="instDifficulty"
                     name="instDifficulty"
-                    class="setting-input"
-                    style="width: 160px"
+                    class="setting-input w-[160px]"
                     x-model="data.difficulty"
                   >
-                    <option value="easy">Easy</option>
-                    <option value="normal">Normal</option>
-                    <option value="hard">Hard</option>
-                    <option value="peaceful">Peaceful</option>
+                    <option value="easy">
+                      <span x-text="$store.i18n.t('mc.diff_easy')">Easy</span>
+                    </option>
+                    <option value="normal">
+                      <span x-text="$store.i18n.t('mc.diff_normal')">Normal</span>
+                    </option>
+                    <option value="hard">
+                      <span x-text="$store.i18n.t('mc.diff_hard')">Hard</span>
+                    </option>
+                    <option value="peaceful">
+                      <span x-text="$store.i18n.t('mc.diff_peaceful')">Peaceful</span>
+                    </option>
                   </select>
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <div class="setting-label">PVP</div>
-                    <div class="setting-desc">Spieler gegen Spieler</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.pvp')">PVP</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.pvp_desc')">Spieler gegen Spieler</span>
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1522,8 +1432,14 @@
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <div class="setting-label">Online Mode (Premium)</div>
-                    <div class="setting-desc">Nur gekaufte Accounts</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.online_mode')">Online Mode (Premium)</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.online_mode_desc')"
+                        >Nur gekaufte Accounts</span
+                      >
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1538,8 +1454,14 @@
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <div class="setting-label">Whitelist aktivieren</div>
-                    <div class="setting-desc">Nur eingetragene Spieler können beitreten</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.whitelist')">Whitelist aktivieren</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.whitelist_desc')"
+                        >Nur eingetragene Spieler können beitreten</span
+                      >
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1552,22 +1474,25 @@
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
-                <div
-                  class="setting-row"
-                  x-show="data.enableWhitelist"
-                  style="display: none; border-bottom: none"
-                >
+                <div x-show="data.enableWhitelist" class="setting-row hidden border-b-0">
                   <div class="setting-info">
-                    <label class="setting-label" for="instWhitelist">Erlaubte Spieler</label>
-                    <div class="setting-desc">Kommagetrennt (Spieler1,Spieler2)</div>
+                    <label class="setting-label" for="instWhitelist"
+                      ><span x-text="$store.i18n.t('mc.allowed_players')"
+                        >Erlaubte Spieler</span
+                      ></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.allowed_players_desc')"
+                        >Kommagetrennt (Spieler1,Spieler2)</span
+                      >
+                    </div>
                   </div>
                   <input
                     type="text"
                     id="instWhitelist"
                     name="instWhitelist"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 240px"
+                    class="setting-input w-[240px]"
                     placeholder="z.B. Spieler1,Spieler2"
                     x-model="data.whitelist"
                   />
@@ -1578,36 +1503,41 @@
               <div x-show="activeTab === 'performance'" style="display: none">
                 <div class="setting-row">
                   <div class="setting-info">
-                    <label class="setting-label" for="instInitRam">Initial RAM (-Xms)</label>
-                    <div class="setting-desc">Reservierter Startspeicher</div>
+                    <label class="setting-label" for="instInitRam"
+                      ><span x-text="$store.i18n.t('mc.initial_ram')"
+                        >Initial RAM (-Xms)</span
+                      ></label
+                    >
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.initial_ram_desc')"
+                        >Reservierter Startspeicher</span
+                      >
+                    </div>
                   </div>
-                  <div style="position: relative; width: 160px">
+                  <div class="relative w-[160px]">
                     <input
                       type="number"
                       id="instInitRam"
                       name="instInitRam"
-                      class="setting-input"
                       aria-label="Eingabe"
-                      style="width: 100%; padding-right: 32px"
+                      class="setting-input w-full pr-8"
                       x-model="data.initRam"
                     />
-                    <span
-                      style="
-                        position: absolute;
-                        right: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: 12px;
-                        color: var(--text-muted);
-                      "
+                    <span class="absolute text-xs text-muted right-[10px] top-1/2 -translate-y-1/2"
                       >MB</span
                     >
                   </div>
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <div class="setting-label">Aikar's Flags (G1GC)</div>
-                    <div class="setting-desc">Empfohlen für Paper/Spigot Server</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.aikar_flags')">Aikar's Flags (G1GC)</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.aikar_flags_desc')"
+                        >Empfohlen für Paper/Spigot Server</span
+                      >
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1623,8 +1553,14 @@
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <div class="setting-label">MeowIce Flags (ZGC)</div>
-                    <div class="setting-desc">Empfohlen für große Heaps (>12GB) / Fabric</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.zgc_flags')">MeowIce Flags (ZGC)</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.zgc_flags_desc')"
+                        >Empfohlen für große Heaps (>12GB) / Fabric</span
+                      >
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1640,8 +1576,14 @@
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <div class="setting-label">Befehlsblöcke</div>
-                    <div class="setting-desc">Command Blocks erlauben</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.command_blocks')">Befehlsblöcke</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.command_blocks_desc')"
+                        >Command Blocks erlauben</span
+                      >
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1656,8 +1598,14 @@
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
-                    <div class="setting-label">Fliegen erlauben</div>
-                    <div class="setting-desc">Verhindert Kicks bei Lags</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.allow_flight')">Fliegen erlauben</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.allow_flight_desc')"
+                        >Verhindert Kicks bei Lags</span
+                      >
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1670,10 +1618,16 @@
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </label>
                 </div>
-                <div class="setting-row" style="border-bottom: none">
+                <div class="setting-row border-b-0">
                   <div class="setting-info">
-                    <div class="setting-label">Rolling Logs</div>
-                    <div class="setting-desc">Server-Logs komprimieren und rotieren</div>
+                    <div class="setting-label">
+                      <span x-text="$store.i18n.t('mc.rolling_logs')">Rolling Logs</span>
+                    </div>
+                    <div class="setting-desc">
+                      <span x-text="$store.i18n.t('mc.rolling_logs_desc')"
+                        >Server-Logs komprimieren und rotieren</span
+                      >
+                    </div>
                   </div>
                   <label class="action-toggle">
                     <input
@@ -1689,138 +1643,112 @@
               </div>
 
               <!-- CRONJOBS TAB -->
-              <div x-show="activeTab === 'cronjobs'" style="display: none; padding: 16px">
-                <div style="margin-bottom: 24px" x-data="{ mode: 'preset' }">
-                  <label
-                    for="cronJobSelect"
-                    style="
-                      display: block;
-                      font-size: 14px;
-                      font-weight: 600;
-                      margin-bottom: 12px;
-                      color: var(--text-primary);
-                    "
-                    >Neuen Cronjob anlegen</label
+              <div x-show="activeTab === 'cronjobs'" class="p-4" style="display: none">
+                <div class="mb-6" x-data="{ mode: 'preset' }">
+                  <label for="cronJobSelect" class="text-sm font-semibold text-primary block mb-3"
+                    ><span x-text="$store.i18n.t('cron.new_cronjob')"
+                      >Neuen Cronjob anlegen</span
+                    ></label
                   >
-                  <div style="display: flex; gap: 12px; align-items: flex-start">
-                    <div style="flex: 1">
-                      <select
-                        id="cronJobSelect"
-                        class="setting-input"
-                        style="width: 100%; height: 40px; padding-top: 0; padding-bottom: 0"
-                      >
-                        <option value="restart">Server Neustart</option>
-                        <option value="backup">Automatisches Backup</option>
-                        <option value="update">Mod/Plugin Update</option>
+                  <div class="flex gap-[12px] items-start">
+                    <div class="flex-1">
+                      <select id="cronJobSelect" class="setting-input w-full h-[40px] pt-0 pb-0">
+                        <option value="restart">
+                          <span x-text="$store.i18n.t('cron.restart')">Server Neustart</span>
+                        </option>
+                        <option value="backup">
+                          <span x-text="$store.i18n.t('cron.backup')">Automatisches Backup</span>
+                        </option>
+                        <option value="update">
+                          <span x-text="$store.i18n.t('cron.update')">Mod/Plugin Update</span>
+                        </option>
                       </select>
                     </div>
-                    <div style="flex: 1.5">
+                    <div class="flex-[1.5]">
                       <select
                         id="cronJobMode"
                         name="cronJobMode"
-                        class="setting-input"
                         x-model="mode"
-                        style="width: 100%; height: 40px; padding-top: 0; padding-bottom: 0"
+                        class="setting-input w-full h-[40px] pt-0 pb-0"
                         aria-label="Cron Modus"
                       >
-                        <option value="preset">Täglich (04:00 Uhr)</option>
-                        <option value="preset2">Täglich (Mitternacht)</option>
-                        <option value="custom">Experte (Cron-Syntax)...</option>
+                        <option value="preset">
+                          <span x-text="$store.i18n.t('cron.daily_4am')">Täglich (04:00 Uhr)</span>
+                        </option>
+                        <option value="preset2">
+                          <span x-text="$store.i18n.t('cron.daily_midnight')"
+                            >Täglich (Mitternacht)</span
+                          >
+                        </option>
+                        <option value="custom">
+                          <span x-text="$store.i18n.t('cron.expert')"
+                            >Experte (Cron-Syntax)...</span
+                          >
+                        </option>
                       </select>
                       <input
                         type="text"
                         id="cronJobCustom"
                         name="cronJobCustom"
-                        class="setting-input"
                         aria-label="Eingabe"
                         placeholder="Cron-Syntax (z.B. 0 4 * * *)"
                         x-show="mode === 'custom'"
-                        style="width: 100%; margin-top: 8px; display: none"
+                        class="setting-input w-full mt-[8px] hidden"
                       />
                     </div>
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      style="padding: 0 16px; height: 40px"
-                    >
+                    <button type="button" class="btn btn-primary px-4 py-0 h-[40px]">
                       <span class="material-icons-round">add</span>
                     </button>
                   </div>
                 </div>
 
-                <div style="border: 1px solid var(--border); border-radius: 12px; overflow: hidden">
+                <div class="border border-[var(--border)] rounded-xl overflow-hidden">
                   <div
-                    style="
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                      padding: 16px;
-                      border-bottom: 1px solid var(--border);
-                      background: var(--bg-surface);
-                    "
+                    class="flex justify-between items-center p-4 border-b border-[var(--border)] bg-surface"
                   >
                     <div>
-                      <div style="font-size: 14px; font-weight: 600; color: var(--text-primary)">
-                        Automatisches Backup
-                      </div>
-                      <div
-                        style="
-                          font-size: 12px;
-                          color: var(--text-accent);
-                          font-family: 'JetBrains Mono', monospace;
-                          margin-top: 4px;
-                        "
-                      >
-                        0 * * * * <span style="color: var(--text-secondary)">(Stündlich)</span>
+                      <div class="text-sm font-semibold text-primary">Automatisches Backup</div>
+                      <div class="text-xs text-accent font-mono mt-[4px]">
+                        0 * * * *
+                        <span class="text-secondary"
+                          ><span x-text="$store.i18n.t('cron.hourly_label')"
+                            >(Stündlich)</span
+                          ></span
+                        >
                       </div>
                     </div>
                     <button
                       type="button"
-                      class="icon-btn"
-                      style="color: var(--red); opacity: 0.7"
+                      class="icon-btn text-red opacity-70"
                       onmouseover="this.style.opacity = 1"
                       onfocus="this.style.opacity = 1"
                       onmouseout="this.style.opacity = 0.7"
                       onblur="this.style.opacity = 0.7"
                     >
-                      <span class="material-icons-round" style="font-size: 20px">delete</span>
+                      <span class="material-icons-round text-xl">delete</span>
                     </button>
                   </div>
-                  <div
-                    style="
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                      padding: 16px;
-                      background: var(--bg-surface);
-                    "
-                  >
+                  <div class="flex justify-between items-center p-4 bg-surface">
                     <div>
-                      <div style="font-size: 14px; font-weight: 600; color: var(--text-primary)">
-                        Server Neustart
-                      </div>
-                      <div
-                        style="
-                          font-size: 12px;
-                          color: var(--text-accent);
-                          font-family: 'JetBrains Mono', monospace;
-                          margin-top: 4px;
-                        "
-                      >
+                      <div class="text-sm font-semibold text-primary">Server Neustart</div>
+                      <div class="text-xs text-accent font-mono mt-[4px]">
                         0 4 * * *
-                        <span style="color: var(--text-secondary)">(Täglich um 04:00)</span>
+                        <span class="text-secondary"
+                          ><span x-text="$store.i18n.t('cron.daily_label')"
+                            >(Täglich um 04:00)</span
+                          ></span
+                        >
                       </div>
                     </div>
                     <button
                       type="button"
-                      class="icon-btn"
-                      style="color: var(--red); opacity: 0.7"
+                      class="icon-btn text-red opacity-70"
                       onmouseover="this.style.opacity = 1"
                       onfocus="this.style.opacity = 1"
                       onmouseout="this.style.opacity = 0.7"
                       onblur="this.style.opacity = 0.7"
                     >
-                      <span class="material-icons-round" style="font-size: 20px">delete</span>
+                      <span class="material-icons-round text-xl">delete</span>
                     </button>
                   </div>
                 </div>
@@ -1829,65 +1757,38 @@
           </div>
 
           <!-- Right: Preview -->
-          <div style="flex: 1; padding: 24px; display: flex; flex-direction: column; min-height: 0">
+          <div class="p-[24px] flex flex-col min-h-0 flex-1 min-w-0">
             <div
-              style="
-                font-size: 11px;
-                font-weight: 700;
-                color: var(--text-muted);
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                margin-bottom: 16px;
-                flex-shrink: 0;
-              "
+              class="text-[11px] text-muted mb-4 shrink-0 font-bold"
+              style="text-transform: uppercase; letter-spacing: 1px"
             >
               Docker-Befehl Vorschau
             </div>
             <div
+              class="rounded-xl p-4 font-mono text-xs mb-4 min-h-0 flex-1 w-full"
               style="
                 background: #0d0f13;
                 border: 1px solid rgb(255 255 255 / 5%);
-                border-radius: 12px;
-                padding: 16px;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 12px;
                 color: var(--green);
                 line-height: 1.6;
-                overflow: auto;
-                margin-bottom: 16px;
+                overflow: hidden auto;
                 white-space: pre-wrap;
-                flex: 1;
-                min-height: 0;
+                word-break: break-all;
               "
               x-html="getPreviewCmd()"
             ></div>
             <div
-              style="
-                background: rgb(249 115 22 / 5%);
-                border: 1px solid rgb(249 115 22 / 30%);
-                border-radius: 8px;
-                padding: 16px;
-                flex-shrink: 0;
-              "
+              class="p-4 shrink-0 rounded-lg"
+              style="background: rgb(249 115 22 / 5%); border: 1px solid rgb(249 115 22 / 30%)"
             >
-              <div
-                style="
-                  display: flex;
-                  align-items: center;
-                  gap: 8px;
-                  color: var(--text-accent);
-                  font-weight: 600;
-                  font-size: 13px;
-                  margin-bottom: 8px;
-                "
-              >
-                <span class="material-icons-round" style="font-size: 16px">info</span>
+              <div class="flex items-center gap-[8px] text-accent font-semibold text-[13px] mb-2">
+                <span class="material-icons-round text-base">info</span>
                 itzg/minecraft-server
               </div>
-              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.5">
+              <div class="text-xs text-secondary leading-normal">
                 Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert. Modpack-ID
-                wird als <code style="color: var(--cyan)">CF_API_KEY</code> +
-                <code style="color: var(--cyan)">MODPACK_ID</code> übergeben.
+                wird als <code class="text-cyan">CF_API_KEY</code> +
+                <code class="text-cyan">MODPACK_ID</code> übergeben.
               </div>
             </div>
           </div>
@@ -1895,15 +1796,7 @@
 
         <!-- Footer -->
         <div
-          class="modal-footer"
-          style="
-            padding: 20px 24px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            background: var(--bg-base);
-          "
+          class="modal-footer px-[24px] py-[20px] border-t border-[var(--border)] flex justify-end gap-[12px] bg-base"
         >
           <button type="button" class="btn btn-ghost" @click="copyCmd()">
             <span class="material-icons-round">content_copy</span>
@@ -1914,8 +1807,7 @@
           </button>
           <button
             type="button"
-            class="btn btn-primary"
-            style="background: var(--accent); border-color: var(--text-accent)"
+            class="btn btn-primary border-[var(--text-accent)] bg-accent"
             aria-label="Aktion ausführen"
             @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');"
           >
@@ -1931,76 +1823,48 @@
 
     <!-- ─── SCRIPTS ──────────────────────────────────────────────────────────── -->
     <script src="js/vendor/alpine.min.js" defer></script>
-    <script type="module" src="js/utils.js"></script>
-    <script type="module" src="js/i18n.js"></script>
-    <script type="module" src="js/alpine-store.js"></script>
-    <script type="module" src="js/docker.js"></script>
-    <script type="module" src="js/gameserver.js"></script>
-    <script type="module" src="js/gameAdditions.js"></script>
+    <script type="module" src="js/utils.js?v=4"></script>
+    <script type="module" src="js/i18n.js?v=4"></script>
+    <script type="module" src="js/alpine-store.js?v=4"></script>
+    <script type="module" src="js/docker.js?v=4"></script>
+    <script type="module" src="js/gameserver.js?v=4"></script>
+    <script type="module" src="js/gameAdditions.js?v=4"></script>
     <script type="module" src="js/players.js"></script>
     <script type="module" src="js/settings.js"></script>
     <script type="module" src="js/main.js"></script>
     <!-- Folder Modal (FolderView3 Style - Redesigned) -->
     <dialog
-      class="modal-backdrop"
       id="folderModalAlpine"
       x-data="folderModal()"
       @open-folder-modal.window="openModal()"
       x-show="open"
+      class="modal-backdrop"
       style="display: none"
       x-transition
       aria-modal="true"
       aria-labelledby="folderModalTitle"
     >
       <div
-        class="modal-content"
         @click.away="open = false"
+        class="modal-content max-w-[900px] overflow-hidden border border-[var(--border)] bg-base p-0"
         style="
-          max-width: 900px;
-          padding: 0;
-          overflow: hidden;
           border-radius: var(--radius-lg);
-          border: 1px solid var(--border);
           box-shadow: 0 24px 48px rgb(0 0 0 / 60%);
-          background: var(--bg-base);
           backdrop-filter: none;
         "
       >
         <!-- Header -->
         <div
-          class="modal-header"
-          style="
-            background: var(--bg-card);
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-          "
+          class="modal-header bg-card px-[24px] py-[20px] border-b border-[var(--border)] flex items-start gap-[16px]"
         >
           <div
-            style="
-              background: var(--accent-dim);
-              color: var(--text-accent);
-              width: 48px;
-              height: 48px;
-              border-radius: 12px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-shrink: 0;
-            "
+            class="bg-accent-dim text-accent w-[48px] h-[48px] rounded-xl flex items-center justify-center shrink-0"
           >
-            <span class="material-icons-round" style="font-size: 24px">folder_special</span>
+            <span class="material-icons-round text-[24px]">folder_special</span>
           </div>
-          <div style="flex: 1">
-            <h2
-              id="folderModalTitle"
-              style="margin: 0; font-size: 18px; color: var(--text-primary)"
-            >
-              Ordner konfigurieren
-            </h2>
-            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px">
+          <div class="flex-1">
+            <h2 id="folderModalTitle" class="m-0 text-[18px] text-primary">Ordner konfigurieren</h2>
+            <div class="text-[13px] text-muted mt-[4px]">
               Organisiere deine Container mit FolderView3
             </div>
           </div>
@@ -2010,75 +1874,56 @@
         </div>
 
         <!-- Body with Tabs -->
-        <div
-          style="display: flex; flex-direction: column; height: 500px; background: var(--bg-base)"
-        >
+        <div class="flex flex-col h-[500px] bg-base">
           <!-- Tab Navigation -->
-          <div
-            class="dc-tab-nav"
-            style="
-              padding-left: 24px;
-              border-bottom: 1px solid var(--border);
-              background: var(--bg-card);
-            "
-          >
+          <div class="dc-tab-nav border-b border-[var(--border)] bg-card pl-6">
             <button
               type="button"
-              class="dc-tab-btn"
               @click="activeTab = 'basic'"
               :class="activeTab === 'basic' ? 'active' : ''"
-              style="display: flex; align-items: center; gap: 6px"
+              class="dc-tab-btn flex items-center gap-[6px]"
             >
-              <span class="material-icons-round" style="font-size: 16px">tune</span> Basic
+              <span class="material-icons-round text-base">tune</span> Basic
             </button>
             <button
               type="button"
-              class="dc-tab-btn"
               @click="activeTab = 'preview'"
               :class="activeTab === 'preview' ? 'active' : ''"
-              style="display: flex; align-items: center; gap: 6px"
+              class="dc-tab-btn flex items-center gap-[6px]"
             >
-              <span class="material-icons-round" style="font-size: 16px">visibility</span> Preview
+              <span class="material-icons-round text-base">visibility</span> Preview
             </button>
             <button
               type="button"
-              class="dc-tab-btn"
               @click="activeTab = 'behavior'"
               :class="activeTab === 'behavior' ? 'active' : ''"
-              style="display: flex; align-items: center; gap: 6px"
+              class="dc-tab-btn flex items-center gap-[6px]"
             >
-              <span class="material-icons-round" style="font-size: 16px">settings_suggest</span>
+              <span class="material-icons-round text-base">settings_suggest</span>
               Behavior
             </button>
             <button
               type="button"
-              class="dc-tab-btn"
               @click="activeTab = 'containers'"
               :class="activeTab === 'containers' ? 'active' : ''"
-              style="display: flex; align-items: center; gap: 6px"
+              class="dc-tab-btn flex items-center gap-[6px]"
             >
-              <span class="material-icons-round" style="font-size: 16px">view_list</span> Containers
-              / VMs
+              <span class="material-icons-round text-base">view_list</span> Containers / VMs
             </button>
             <button
               type="button"
-              class="dc-tab-btn"
               @click="activeTab = 'custom-actions'"
               :class="activeTab === 'custom-actions' ? 'active' : ''"
-              style="display: flex; align-items: center; gap: 6px"
+              class="dc-tab-btn flex items-center gap-[6px]"
             >
-              <span class="material-icons-round" style="font-size: 16px">extension</span> Custom
-              Actions
+              <span class="material-icons-round text-base">extension</span> Custom Actions
             </button>
           </div>
 
           <!-- Tab Content -->
-          <div class="dc-tab-content" style="flex: 1; overflow-y: auto; padding: 24px">
+          <div class="dc-tab-content overflow-y-scroll p-[24px] flex-1">
             <!-- BASIC TAB -->
-            <div
-              x-show="activeTab === 'basic'"
-              style="display: flex; flex-direction: column; gap: 20px"
-            >
+            <div x-show="activeTab === 'basic'" class="flex flex-col gap-[20px]">
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label has-tooltip">
@@ -2093,9 +1938,8 @@
                   id="folderName_12"
                   name="folderName_12"
                   type="text"
-                  class="setting-input"
                   aria-label="Eingabe"
-                  style="width: 320px"
+                  class="setting-input w-[320px]"
                   x-model="folderName"
                 />
               </div>
@@ -2115,20 +1959,9 @@
                     >
                   </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px">
+                <div class="flex items-center gap-[12px]">
                   <div
-                    style="
-                      width: 36px;
-                      height: 36px;
-                      border-radius: 8px;
-                      background: var(--bg-input);
-                      border: 1px solid var(--border);
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      font-size: 18px;
-                      color: var(--text-muted);
-                    "
+                    class="w-[36px] h-[36px] border border-[var(--border)] flex items-center justify-center text-[18px] text-muted rounded-lg bg-input"
                   >
                     ?
                   </div>
@@ -2136,9 +1969,8 @@
                     id="field_input_13"
                     name="field_input_13"
                     type="text"
-                    class="setting-input"
                     aria-label="Eingabe"
-                    style="width: 272px"
+                    class="setting-input w-[272px]"
                     placeholder="e.g. fas fa-server"
                   />
                 </div>
@@ -2202,19 +2034,15 @@
                   id="field_input_16"
                   name="field_input_16"
                   type="text"
-                  class="setting-input"
                   aria-label="Eingabe"
-                  style="width: 320px"
+                  class="setting-input w-[320px]"
                   placeholder="e.g. plex.* or ^my-stack-"
                 />
               </div>
             </div>
 
             <!-- PREVIEW TAB -->
-            <div
-              x-show="activeTab === 'preview'"
-              style="display: flex; flex-direction: column; gap: 20px"
-            >
+            <div x-show="activeTab === 'preview'" class="flex flex-col gap-[20px]">
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label has-tooltip">
@@ -2227,9 +2055,8 @@
                 <select
                   id="field_select_17"
                   name="field_select_17"
-                  class="setting-input"
                   aria-label="Preview"
-                  style="width: 240px"
+                  class="setting-input w-[240px]"
                 >
                   <option>Icon and label</option>
                   <option>Icon only</option>
@@ -2274,9 +2101,8 @@
                   id="field_input_19"
                   name="field_input_19"
                   type="text"
-                  class="setting-input"
                   aria-label="Eingabe"
-                  style="width: 240px"
+                  class="setting-input w-[240px]"
                 />
               </div>
 
@@ -2437,8 +2263,7 @@
                 <select
                   id="field_select_27"
                   name="field_select_27"
-                  class="setting-input"
-                  style="width: 240px"
+                  class="setting-input w-[240px]"
                   aria-label="Layout"
                 >
                   <option>Default</option>
@@ -2484,9 +2309,8 @@
                 <select
                   id="field_select_29"
                   name="field_select_29"
-                  class="setting-input"
                   aria-label="Popup Mode"
-                  style="width: 240px"
+                  class="setting-input w-[240px]"
                 >
                   <option>Default</option>
                   <option>Advanced</option>
@@ -2495,10 +2319,7 @@
             </div>
 
             <!-- BEHAVIOR TAB -->
-            <div
-              x-show="activeTab === 'behavior'"
-              style="display: flex; flex-direction: column; gap: 20px"
-            >
+            <div x-show="activeTab === 'behavior'" class="flex flex-col gap-[20px]">
               <div class="setting-row">
                 <div class="setting-info">
                   <div class="setting-label has-tooltip">
@@ -2606,13 +2427,12 @@
 
             <!-- CUSTOM ACTIONS TAB -->
             <div x-show="activeTab === 'custom-actions'">
-              <div style="display: flex; justify-content: center; margin-bottom: 8px">
+              <div class="flex justify-center mb-2">
                 <button type="button" class="fv3-add-action-btn">
-                  <span class="material-icons-round" style="font-size: 16px">add</span> Add a custom
-                  action
+                  <span class="material-icons-round text-base">add</span> Add a custom action
                 </button>
               </div>
-              <div class="fv3-info-box" style="margin-top: 0">
+              <div class="fv3-info-box mt-0">
                 <strong>Name:</strong> Just the name of the action.<br />
                 <strong>Type:</strong> Type of the action.<br />
                 <strong>Standard</strong> - normal action on docker containers (start, stop,
@@ -2634,45 +2454,17 @@
 
             <!-- CONTAINERS TAB -->
             <div x-show="activeTab === 'containers'">
-              <table
-                style="
-                  width: 100%;
-                  border-collapse: collapse;
-                  font-size: 13px;
-                  color: var(--text-secondary);
-                "
-              >
+              <table class="w-full border-collapse text-[13px] text-secondary">
                 <thead>
-                  <tr style="border-bottom: 2px solid var(--border)">
+                  <tr class="border-b-2 border-[var(--border)]">
+                    <th class="px-[16px] py-[12px] text-left font-semibold text-primary">NAME</th>
                     <th
-                      style="
-                        padding: 12px 16px;
-                        text-align: left;
-                        font-weight: 600;
-                        color: var(--text-primary);
-                      "
-                    >
-                      NAME
-                    </th>
-                    <th
-                      style="
-                        padding: 12px 16px;
-                        text-align: center;
-                        font-weight: 600;
-                        color: var(--text-primary);
-                        width: 120px;
-                      "
+                      class="px-[16px] py-[12px] text-center font-semibold text-primary w-[120px]"
                     >
                       INCLUDED
                     </th>
                     <th
-                      style="
-                        padding: 12px 16px;
-                        text-align: center;
-                        font-weight: 600;
-                        color: var(--text-primary);
-                        width: 120px;
-                      "
+                      class="px-[16px] py-[12px] text-center font-semibold text-primary w-[120px]"
                     >
                       HIDE PREVIEW
                     </th>
@@ -2681,26 +2473,17 @@
                 <tbody>
                   <template x-if="$store.core && $store.core.containers">
                     <template x-for="c in $store.core.containers" :key="c.id">
-                      <tr style="border-bottom: 1px solid var(--border)">
+                      <tr class="border-b border-[var(--border)]">
                         <td
-                          style="
-                            padding: 12px 16px;
-                            color: var(--text-primary);
-                            font-weight: 500;
-                            display: flex;
-                            align-items: center;
-                            gap: 12px;
-                          "
+                          class="px-[16px] py-[12px] text-primary font-medium flex items-center gap-[12px]"
                         >
-                          <span
-                            class="material-icons-round"
-                            style="font-size: 18px; color: var(--text-muted); cursor: grab"
+                          <span class="material-icons-round text-[18px] text-muted cursor-grab"
                             >drag_indicator</span
                           >
                           <span x-text="c.name"></span>
                         </td>
-                        <td style="padding: 12px 16px; text-align: center">
-                          <div style="display: flex; justify-content: center">
+                        <td class="px-[16px] py-[12px] text-center">
+                          <div class="flex justify-center">
                             <label class="setting-toggle">
                               <input
                                 aria-label="Einstellung umschalten"
@@ -2713,8 +2496,8 @@
                             </label>
                           </div>
                         </td>
-                        <td style="padding: 12px 16px; text-align: center">
-                          <div style="display: flex; justify-content: center">
+                        <td class="px-[16px] py-[12px] text-center">
+                          <div class="flex justify-center">
                             <label class="setting-toggle">
                               <input
                                 aria-label="Einstellung umschalten"
@@ -2737,15 +2520,7 @@
 
         <!-- Footer -->
         <div
-          class="modal-footer"
-          style="
-            padding: 16px 24px;
-            border-top: 1px solid var(--border);
-            background: var(--bg-card);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-          "
+          class="modal-footer px-[24px] py-[16px] border-t border-[var(--border)] bg-card flex justify-end gap-[12px]"
         >
           <button type="button" class="btn btn-ghost" @click="open = false">Abbrechen</button>
           <button type="button" class="btn btn-primary" @click="saveFolder()">

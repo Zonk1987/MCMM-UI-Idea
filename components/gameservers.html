@@ -22,7 +22,7 @@
 
   <div class="gs-grid">
     <template x-for="srv in instances" :key="srv.containerId">
-      <div class="gs-card">
+      <div class="gs-card flex flex-col" style="height: 510px !important">
         <div class="gs-card-banner">
           <div
             class="gs-card-banner-bg"
@@ -40,13 +40,13 @@
             <div :class="`gs-status-pill ${srv.status === 'online' ? 'online' : 'offline'}`">
               <span class="status-dot"></span>
               <span
-                x-text="srv.status === 'online' ? (t('general.online') || 'Online') : (t('general.offline') || 'Offline')"
+                x-text="srv.status === 'online' ? ($store.i18n.t('general.online') || 'Online') : ($store.i18n.t('general.offline') || 'Offline')"
               ></span>
             </div>
           </div>
         </div>
 
-        <div class="gs-card-body">
+        <div class="gs-card-body flex-1 flex flex-col">
           <div class="gs-metrics">
             <div class="gs-metric">
               <div
@@ -66,125 +66,167 @@
             </div>
           </div>
 
-          <div class="gs-resource-bar">
-            <div class="resource-bar-label">
-              <span x-text="$store.i18n.t('general.ram')">RAM</span>
-              <span
-                x-text="`${formatBytesLabel(srv.ram.used * 1024 * 1024)} / ${formatBytesLabel(srv.ram.max * 1024 * 1024)}`"
-              ></span>
-            </div>
+          <div class="flex-1 flex flex-col justify-center" style="gap: 12px; margin: 10px 0">
             <div
-              class="resource-bar-track"
               style="
-                height: 28px;
-                background: transparent;
-                border-bottom: 1px solid rgb(255 255 255 / 5%);
-                border-radius: 0;
+                background-color: var(--bg-surface);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 2px 14px 10px;
+                height: 110px !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
               "
             >
-              <template x-if="srv.status === 'online'">
+              <div class="resource-bar-label">
+                <span x-text="$store.i18n.t('general.ram')">RAM</span>
+                <span
+                  x-text="`${formatBytesLabel(srv.ram.used * 1024 * 1024)} / ${formatBytesLabel(srv.ram.max * 1024 * 1024)}`"
+                ></span>
+              </div>
+              <div class="flex items-center">
+                <div class="y-axis-scale">
+                  <span>100%</span>
+                  <span>75%</span>
+                  <span>50%</span>
+                  <span>25%</span>
+                  <span>0%</span>
+                </div>
                 <div
-                  style="height: 100%; width: 100%"
-                  x-html="getSparkline(srv.containerId + 'ram', getRamPct(srv), 'var(--blue)')"
-                ></div>
-              </template>
-              <template x-if="srv.status !== 'online'">
-                <div class="resource-bar-fill ram" style="width: 0%"></div>
-              </template>
+                  class="resource-bar-track h-[60px] flex-1"
+                  style="
+                    background: transparent;
+                    border-bottom: 1px solid rgb(255 255 255 / 5%);
+                    border-radius: 0;
+                  "
+                >
+                  <template x-if="srv.status === 'online'">
+                    <div
+                      class="h-full w-full"
+                      x-html="getSparkline(srv.containerId + 'ram', getRamPct(srv), 'var(--blue)')"
+                    ></div>
+                  </template>
+                  <template x-if="srv.status !== 'online'">
+                    <div class="resource-bar-fill ram" style="width: 0%"></div>
+                  </template>
+                </div>
+                <div class="y-axis-scale-right">
+                  <span>100%</span>
+                  <span>75%</span>
+                  <span>50%</span>
+                  <span>25%</span>
+                  <span>0%</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div class="gs-resource-bar">
-            <div class="resource-bar-label">
-              <span x-text="$store.i18n.t('general.cpu')">CPU</span>
-              <span
-                x-text="srv.status === 'online' ? `${parseFloat(srv.cpu.toFixed(2))}%` : '—'"
-              ></span>
-            </div>
             <div
-              class="resource-bar-track"
               style="
-                height: 28px;
-                background: transparent;
-                border-bottom: 1px solid rgb(255 255 255 / 5%);
-                border-radius: 0;
+                background-color: var(--bg-surface);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 2px 14px 10px;
+                height: 110px !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
               "
             >
-              <template x-if="srv.status === 'online'">
+              <div class="resource-bar-label">
+                <span x-text="$store.i18n.t('general.cpu')">CPU</span>
+                <span
+                  x-text="srv.status === 'online' ? `${parseFloat(srv.cpu.toFixed(2))}%` : '0%'"
+                ></span>
+              </div>
+              <div class="flex items-center">
+                <div class="y-axis-scale">
+                  <span>100%</span>
+                  <span>75%</span>
+                  <span>50%</span>
+                  <span>25%</span>
+                  <span>0%</span>
+                </div>
                 <div
-                  style="height: 100%; width: 100%"
-                  x-html="getSparkline(srv.containerId + 'cpu', srv.cpu, 'var(--accent)')"
-                ></div>
-              </template>
-              <template x-if="srv.status !== 'online'">
-                <div class="resource-bar-fill cpu" style="width: 0%"></div>
-              </template>
+                  class="resource-bar-track h-[60px] flex-1"
+                  style="
+                    background: transparent;
+                    border-bottom: 1px solid rgb(255 255 255 / 5%);
+                    border-radius: 0;
+                  "
+                >
+                  <template x-if="srv.status === 'online'">
+                    <div
+                      class="h-full w-full"
+                      x-html="getSparkline(srv.containerId + 'cpu', srv.cpu, 'var(--accent)')"
+                    ></div>
+                  </template>
+                  <template x-if="srv.status !== 'online'">
+                    <div class="resource-bar-fill cpu" style="width: 0%"></div>
+                  </template>
+                </div>
+                <div class="y-axis-scale-right">
+                  <span>100%</span>
+                  <span>75%</span>
+                  <span>50%</span>
+                  <span>25%</span>
+                  <span>0%</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="gs-resource-bar">
-            <div class="resource-bar-label" style="margin-bottom: 0">
-              <span style="color: var(--text-muted); font-size: 11px"
-                >Port: <span style="color: var(--cyan)" x-text="srv.port"></span
-              ></span>
-              <span
-                style="color: var(--text-muted); font-size: 11px"
-                x-text="`Uptime: ${srv.uptime}`"
-              ></span>
-            </div>
+          <div class="resource-bar-label" style="margin-top: auto; margin-bottom: 0">
+            <span class="text-muted">Port: <span class="text-cyan" x-text="srv.port"></span></span>
+            <span class="text-muted" x-text="`Uptime: ${srv.uptime}`"></span>
           </div>
 
-          <div
-            class="gs-card-actions"
-            style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px"
-          >
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px">
+          <div class="gs-card-actions mt-[14px] flex flex-col" style="gap: 8px !important">
+            <div
+              class="w-full"
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 6px !important;
+              "
+            >
               <template x-if="srv.status === 'online'">
                 <button
                   type="button"
-                  class="btn btn-danger gs-stop-btn"
+                  class="btn btn-danger gs-stop-btn h-[36px] items-center justify-center inline-flex"
                   style="
-                    height: 36px;
-                    padding: 0;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
+                    margin: 0 !important;
+                    border-radius: 8px !important;
+                    flex: 1 1 0% !important;
+                    width: 100% !important;
                   "
                   @click="toggleServer(srv.containerId)"
                 >
                   <span class="material-icons-round">stop</span>
-                  <span x-text="t('btn.stop') || 'Stoppen'"></span>
+                  <span x-text="$store.i18n.t('btn.stop') || 'Stoppen'"></span>
                 </button>
               </template>
               <template x-if="srv.status !== 'online'">
                 <button
                   type="button"
-                  class="btn btn-success gs-start-btn"
+                  class="btn btn-success gs-start-btn h-[36px] items-center justify-center inline-flex"
                   style="
-                    height: 36px;
-                    padding: 0;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
+                    margin: 0 !important;
+                    border-radius: 8px !important;
+                    flex: 1 1 0% !important;
+                    width: 100% !important;
                   "
                   @click="toggleServer(srv.containerId)"
                 >
                   <span class="material-icons-round">play_arrow</span>
-                  <span x-text="t('btn.start') || 'Starten'"></span>
+                  <span x-text="$store.i18n.t('btn.start') || 'Starten'"></span>
                 </button>
               </template>
               <button
                 type="button"
-                class="btn btn-ghost gs-players-btn"
-                style="
-                  height: 36px;
-                  padding: 0;
-                  display: inline-flex;
-                  align-items: center;
-                  justify-content: center;
-                "
+                class="btn btn-ghost gs-players-btn h-[36px] items-center justify-center inline-flex"
                 :disabled="srv.status !== 'online' || !srv.players || srv.players.current === 0"
-                :style="(srv.status !== 'online' || !srv.players || srv.players.current === 0) ? 'opacity:0.4;cursor:not-allowed' : ''"
+                :style="(srv.status !== 'online' || !srv.players || srv.players.current === 0) ? 'opacity:0.4;cursor:not-allowed;margin:0 !important;border-radius:8px !important;flex:1 1 0% !important;width:100% !important;' : 'margin:0 !important;border-radius:8px !important;flex:1 1 0% !important;width:100% !important;'"
                 @click="typeof window.switchTab === 'function' ? window.switchTab('players') : null; typeof window.selectPlayerServer === 'function' ? window.selectPlayerServer(srv.containerId) : null;"
               >
                 <span class="material-icons-round">group</span>
@@ -192,31 +234,36 @@
               </button>
               <button
                 type="button"
-                class="btn btn-ghost gs-edit-btn"
                 :title="$store.i18n.t('btn.edit')"
+                class="btn btn-ghost gs-edit-btn h-[36px] items-center justify-center inline-flex"
                 style="
-                  height: 36px;
-                  padding: 0;
-                  display: inline-flex;
-                  align-items: center;
-                  justify-content: center;
+                  margin: 0 !important;
+                  border-radius: 8px !important;
+                  flex: 1 1 0% !important;
+                  width: 100% !important;
                 "
                 @click="$dispatch('open-install-modal', {id: srv.game || srv.containerId, name: srv.serverName, author: 'Admin', isEdit: true})"
               >
                 <span class="material-icons-round">settings</span> Config
               </button>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px">
+            <div
+              class="w-full"
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 6px !important;
+              "
+            >
               <button
                 type="button"
-                class="btn btn-ghost gs-console-btn"
                 :title="$store.i18n.t('general.tooltip_terminal')"
+                class="btn btn-ghost gs-console-btn h-[36px] items-center justify-center inline-flex"
                 style="
-                  height: 36px;
-                  padding: 0;
-                  display: inline-flex;
-                  align-items: center;
-                  justify-content: center;
+                  margin: 0 !important;
+                  border-radius: 8px !important;
+                  flex: 1 1 0% !important;
+                  width: 100% !important;
                 "
                 @click="typeof window.openConsole === 'function' ? window.openConsole(srv) : null"
               >
@@ -225,14 +272,13 @@
               </button>
               <button
                 type="button"
-                class="btn btn-ghost gs-files-btn"
                 :title="$store.i18n.t('general.tooltip_files')"
+                class="btn btn-ghost gs-files-btn h-[36px] items-center justify-center inline-flex"
                 style="
-                  height: 36px;
-                  padding: 0;
-                  display: inline-flex;
-                  align-items: center;
-                  justify-content: center;
+                  margin: 0 !important;
+                  border-radius: 8px !important;
+                  flex: 1 1 0% !important;
+                  width: 100% !important;
                 "
                 @click="typeof window.toggleModal === 'function' ? window.toggleModal('fileManagerModal', true) : null"
               >
@@ -241,14 +287,13 @@
               </button>
               <button
                 type="button"
-                class="btn btn-ghost gs-backup-btn"
                 :title="$store.i18n.t('general.tooltip_backups')"
+                class="btn btn-ghost gs-backup-btn h-[36px] items-center justify-center inline-flex"
                 style="
-                  height: 36px;
-                  padding: 0;
-                  display: inline-flex;
-                  align-items: center;
-                  justify-content: center;
+                  margin: 0 !important;
+                  border-radius: 8px !important;
+                  flex: 1 1 0% !important;
+                  width: 100% !important;
                 "
                 @click="typeof window.toggleModal === 'function' ? window.toggleModal('backupModal', true) : null"
               >
@@ -286,12 +331,12 @@
             :class="wizardStep > 2 ? 'done' : wizardStep === 2 ? 'active' : ''"
           ></div>
         </div>
-        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px">
+        <div class="text-xs text-muted mb-4">
           <span x-text="$store.i18n.t('general.step')">Schritt</span>
           <span x-text="wizardStep + 1"></span> / 3:
           <strong
-            style="color: var(--text-primary)"
-            x-text="[t('step.choose_game') || 'Spiel wählen', t('step.config') || 'Konfiguration', t('step.preview') || 'Vorschau'][wizardStep]"
+            class="text-primary"
+            x-text="[$store.i18n.t('step.choose_game') || 'Spiel wählen', $store.i18n.t('step.config') || 'Konfiguration', $store.i18n.t('step.preview') || 'Vorschau'][wizardStep]"
           ></strong>
         </div>
 
@@ -310,7 +355,7 @@
                 </div>
               </template>
             </div>
-            <div style="display: flex; justify-content: flex-end; margin-top: 8px">
+            <div class="flex justify-end mt-2">
               <button
                 type="button"
                 class="btn btn-primary"
@@ -329,7 +374,7 @@
           <div>
             <div class="form-group">
               <label for="wFormName" x-text="$store.i18n.t('general.server_name')"
-                >Server-Name</label
+                ><span x-text="$store.i18n.t('dc.server_name')">Server-Name</span></label
               >
               <input
                 type="text"
@@ -360,7 +405,9 @@
               />
             </div>
             <div class="form-group">
-              <label for="wFormRam" x-text="$store.i18n.t('general.ram')">RAM (MB)</label>
+              <label for="wFormRam" x-text="$store.i18n.t('general.ram')"
+                ><span x-text="$store.i18n.t('dc.ram_mb')">RAM (MB)</span></label
+              >
               <input
                 class="form-input"
                 id="wFormRam"
@@ -379,7 +426,7 @@
                 x-model="wForm.path"
               />
             </div>
-            <div style="display: flex; gap: 8px; justify-content: flex-end">
+            <div class="flex gap-[8px] justify-end">
               <button type="button" class="btn btn-ghost" @click="prevWizardStep()">
                 <span class="material-icons-round">chevron_left</span>
                 <span x-text="$store.i18n.t('btn.back')">Zurück</span>
@@ -396,13 +443,13 @@
         <template x-if="wizardStep === 2">
           <div>
             <p
-              style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px"
+              class="text-secondary text-[13px] mb-3"
               x-text="$store.i18n.t('general.docker_cmd_preview')"
             >
               Der folgende Docker-Befehl wird ausgeführt:
             </p>
             <div class="code-preview" x-text="getWizardCmd()" style="white-space: pre-wrap"></div>
-            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px">
+            <div class="flex gap-[8px] justify-end mt-[16px]">
               <button type="button" class="btn btn-ghost" @click="prevWizardStep()">
                 <span class="material-icons-round">chevron_left</span>
                 <span x-text="$store.i18n.t('btn.back')">Zurück</span>
@@ -422,33 +469,26 @@
 
   <div class="modal-backdrop" id="consoleModal" hidden>
     <div
-      class="modal modal-large glass-card"
-      style="max-width: 860px; position: relative; top: 40px; overflow: hidden"
+      class="modal modal-large glass-card max-w-[860px] relative overflow-hidden"
+      style="top: 40px"
     >
       <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 10px">
+        <div class="flex items-center gap-[10px]">
           <span class="material-icons-round" style="color: var(--green)">terminal</span>
           <h2 id="consoleTitle" x-text="$store.i18n.t('general.tooltip_terminal')">
             Web-RCON Terminal
           </h2>
-          <span class="status-badge running" id="consoleStatus" style="font-size: 11px">
+          <span id="consoleStatus" class="status-badge running text-[11px]">
             <span class="dot"></span> Live
           </span>
         </div>
-        <div style="display: flex; align-items: center; gap: 16px">
+        <div class="flex items-center gap-[16px]">
           <label
-            style="
-              display: flex;
-              align-items: center;
-              gap: 6px;
-              font-size: 12px;
-              margin: 0;
-              cursor: pointer;
-              color: var(--text-secondary);
-            "
+            class="flex items-center gap-[6px] text-xs m-0 text-secondary"
+            style="cursor: pointer"
           >
             Auto-Scroll
-            <span class="setting-toggle" style="margin: 0">
+            <span class="setting-toggle m-0">
               <input
                 type="checkbox"
                 id="consoleAutoScroll"
@@ -462,12 +502,12 @@
           </label>
           <button
             type="button"
-            class="btn btn-ghost"
-            style="padding: 4px 8px; font-size: 12px"
+            class="btn btn-ghost text-xs"
+            style="padding: 4px 8px"
             onclick="if (window.clearConsole) window.clearConsole();"
             title="Clear"
           >
-            <span class="material-icons-round" style="font-size: 16px">delete_sweep</span>
+            <span class="material-icons-round text-base">delete_sweep</span>
           </button>
           <button
             type="button"
@@ -479,15 +519,10 @@
           </button>
         </div>
       </div>
-      <div
-        class="modal-body"
-        style="padding: 0; display: flex; flex-direction: column; overflow-y: hidden"
-      >
+      <div class="modal-body flex flex-col p-0" style="overflow-y: hidden">
         <div class="console-output" id="consoleOutput"></div>
         <div class="console-input-bar">
-          <label for="consoleInput" class="console-prompt" style="margin: 0; cursor: text"
-            >&gt;</label
-          >
+          <label for="consoleInput" class="console-prompt m-0" style="cursor: text">&gt;</label>
           <input
             type="text"
             id="consoleInput"
@@ -501,12 +536,12 @@
           />
           <button
             type="button"
-            class="btn btn-primary"
             id="consoleSendBtn"
-            style="padding: 6px 14px; font-size: 12px"
+            class="btn btn-primary text-xs"
+            style="padding: 6px 14px"
             @click="window.consoleSend()"
           >
-            <span class="material-icons-round" style="font-size: 16px">send</span>
+            <span class="material-icons-round text-base">send</span>
           </button>
         </div>
       </div>
@@ -523,51 +558,24 @@
     @dragover="typeof window.fmDragOver === 'function' ? window.fmDragOver($event) : null"
     @dragleave="typeof window.fmDragLeave === 'function' ? window.fmDragLeave($event) : null"
   >
-    <div
-      class="modal modal-large glass-card"
-      style="max-width: 900px; position: relative; overflow: hidden"
-    >
+    <div class="modal modal-large glass-card max-w-[900px] relative overflow-hidden">
       <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 10px">
+        <div class="flex items-center gap-[10px]">
           <span class="material-icons-round" style="color: var(--blue)">folder</span>
           <h2 id="fmTitle" x-text="$store.i18n.t('general.fm_title')">Dateimanager</h2>
-          <span
-            class="status-badge"
-            style="
-              background: var(--bg-input);
-              color: var(--text-muted);
-              border: 1px solid var(--border);
-            "
-            >/data/</span
-          >
+          <span class="status-badge bg-input text-muted border border-[var(--border)]">/data/</span>
         </div>
         <button type="button" class="icon-btn" id="closeFmModal" @click="window.closeFm()">
           <span class="material-icons-round">close</span>
         </button>
       </div>
-      <div class="modal-body" style="padding: 0; display: flex; height: 600px">
+      <div class="modal-body flex h-[600px] p-0">
         <!-- Sidebar: File Tree -->
-        <div
-          style="
-            width: 240px;
-            border-right: 1px solid var(--border);
-            background: var(--bg-base);
-            overflow-y: auto;
-            padding: 12px;
-          "
-        >
-          <div
-            style="
-              font-size: 11px;
-              font-weight: 600;
-              color: var(--text-muted);
-              margin-bottom: 8px;
-              text-transform: uppercase;
-            "
-          >
+        <div class="w-[240px] border-r border-[var(--border)] bg-base overflow-y-auto p-3">
+          <div class="text-[11px] font-semibold text-muted mb-2" style="text-transform: uppercase">
             Verzeichnis
           </div>
-          <div id="fmFileTree" style="display: flex; flex-direction: column; gap: 4px">
+          <div id="fmFileTree" class="flex flex-col gap-[4px]">
             <button
               type="button"
               class="settings-nav-btn active"
@@ -578,91 +586,75 @@
             </button>
             <button
               type="button"
-              class="settings-nav-btn"
               data-type="folder"
-              style="padding-left: 24px"
+              class="settings-nav-btn pl-6"
               @click="window.fmSelectFile($el)"
             >
               <span class="material-icons-round" style="color: var(--yellow)">folder</span> plugins
             </button>
             <button
               type="button"
-              class="settings-nav-btn"
               data-type="folder"
-              style="padding-left: 24px"
+              class="settings-nav-btn pl-6"
               @click="window.fmSelectFile($el)"
             >
               <span class="material-icons-round" style="color: var(--yellow)">folder</span> world
             </button>
             <button
               type="button"
-              class="settings-nav-btn"
               data-type="file"
-              style="padding-left: 24px"
+              class="settings-nav-btn pl-6"
               @click="window.fmSelectFile($el)"
             >
-              <span class="material-icons-round" style="color: var(--text-muted)">description</span>
+              <span class="material-icons-round text-muted">description</span>
               server.properties
             </button>
             <button
               type="button"
-              class="settings-nav-btn"
               data-type="file"
-              style="padding-left: 24px"
+              class="settings-nav-btn pl-6"
               @click="window.fmSelectFile($el)"
             >
-              <span class="material-icons-round" style="color: var(--text-muted)">description</span>
+              <span class="material-icons-round text-muted">description</span>
               eula.txt
             </button>
             <button
               type="button"
-              class="settings-nav-btn"
               data-type="file"
-              style="padding-left: 24px"
+              class="settings-nav-btn pl-6"
               @click="window.fmSelectFile($el)"
             >
-              <span class="material-icons-round" style="color: var(--text-muted)">description</span>
+              <span class="material-icons-round text-muted">description</span>
               ops.json
             </button>
           </div>
         </div>
         <!-- Right: Editor -->
-        <div style="flex: 1; display: flex; flex-direction: column; background: #0d0f13">
+        <div class="flex-1 flex flex-col" style="background: #0d0f13">
           <div
-            style="
-              padding: 8px 16px;
-              border-bottom: 1px solid var(--border);
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              background: var(--bg-card);
-            "
+            class="border-b border-[var(--border)] flex justify-between items-center bg-card"
+            style="padding: 8px 16px"
           >
-            <div
-              id="fmCurrentFile"
-              style="font-size: 12px; font-family: monospace; color: var(--text-secondary)"
-            >
-              server.properties
-            </div>
-            <div style="display: flex; gap: 8px">
+            <div id="fmCurrentFile" class="text-xs font-mono text-secondary">server.properties</div>
+            <div class="flex gap-[8px]">
               <button
                 type="button"
                 id="fmDownloadBtn"
-                class="btn btn-ghost"
-                style="padding: 4px 12px; font-size: 11px"
+                class="btn btn-ghost text-[11px]"
+                style="padding: 4px 12px"
                 @click="typeof window.fmDownload === 'function' ? window.fmDownload() : null"
               >
-                <span class="material-icons-round" style="font-size: 14px">download</span>
+                <span class="material-icons-round text-sm">download</span>
                 <span x-text="$store.i18n.t('btn.download')">Herunterladen</span>
               </button>
               <button
                 type="button"
                 id="fmSaveBtn"
-                class="btn btn-primary"
-                style="padding: 4px 12px; font-size: 11px"
+                class="btn btn-primary text-[11px]"
+                style="padding: 4px 12px"
                 @click="window.fmSave()"
               >
-                <span class="material-icons-round" style="font-size: 14px">save</span>
+                <span class="material-icons-round text-sm">save</span>
                 <span x-text="$store.i18n.t('btn.save')">Speichern</span>
               </button>
             </div>
@@ -670,27 +662,15 @@
           <textarea
             id="fmEditorTextarea"
             aria-label="Editor"
-            style="
-              flex: 1;
-              background: transparent;
-              border: none;
-              outline: none;
-              color: #a8b5cc;
-              font-family: 'JetBrains Mono', monospace;
-              font-size: 13px;
-              padding: 16px;
-              resize: none;
-            "
+            class="flex-1 outline-none font-mono text-[13px] p-4"
+            style="background: transparent; border: none; color: #a8b5cc; resize: none"
           ></textarea>
         </div>
       </div>
       <!-- Drag &amp; Drop Overlay -->
       <div id="fmDragOverlay" class="drag-overlay">
         <span class="material-icons-round">cloud_upload</span>
-        <h3
-          x-text="$store.i18n.t('general.fm_drag_drop')"
-          style="font-size: 20px; font-weight: 600"
-        >
+        <h3 x-text="$store.i18n.t('general.fm_drag_drop')" class="text-xl font-semibold">
           Dateien hier ablegen zum Hochladen
         </h3>
       </div>
@@ -699,9 +679,9 @@
 
   <!-- Backup Modal -->
   <div class="modal-backdrop" id="backupModal" hidden>
-    <div class="modal glass-card" style="max-width: 700px">
+    <div class="modal glass-card w-full" style="max-width: 890px">
       <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 10px">
+        <div class="flex items-center gap-[10px]">
           <span class="material-icons-round" style="color: var(--purple)">backup</span>
           <h2 id="backupTitle" x-text="$store.i18n.t('general.backup_title')">Backups</h2>
         </div>
@@ -710,18 +690,8 @@
         </button>
       </div>
       <div class="modal-body">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-          "
-        >
-          <p
-            style="color: var(--text-secondary); font-size: 13px; margin: 0"
-            x-text="$store.i18n.t('general.backup_desc')"
-          >
+        <div class="flex justify-between items-center mb-4">
+          <p class="text-secondary text-[13px] m-0" x-text="$store.i18n.t('general.backup_desc')">
             Automatische und manuelle Sicherungen von /data.
           </p>
           <button
@@ -741,20 +711,18 @@
                 <th x-text="$store.i18n.t('col.filename')">Dateiname</th>
                 <th x-text="$store.i18n.t('col.date')">Datum</th>
                 <th x-text="$store.i18n.t('col.size')">Größe</th>
-                <th style="width: 120px" x-text="$store.i18n.t('col.actions')">Aktionen</th>
+                <th class="w-[120px]" x-text="$store.i18n.t('col.actions')">Aktionen</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style="font-family: monospace; font-size: 12px; color: var(--text-primary)">
-                  backup_2023-10-02_14-30.tar.gz
-                </td>
-                <td style="color: var(--text-secondary); font-size: 12px">
+                <td class="font-mono text-xs text-primary">backup_2023-10-02_14-30.tar.gz</td>
+                <td class="text-secondary text-xs">
                   <span x-text="$store.i18n.t('general.backup_today')">Heute</span>, 21:00
                 </td>
-                <td style="color: var(--text-secondary); font-size: 12px">485 MB</td>
+                <td class="text-secondary text-xs">485 MB</td>
                 <td>
-                  <div style="display: flex; gap: 6px">
+                  <div class="flex gap-[6px]">
                     <button
                       type="button"
                       class="action-btn"
@@ -766,19 +734,17 @@
                     </button>
                     <button
                       type="button"
-                      class="action-btn"
                       :title="$store.i18n.t('btn.download')"
                       onclick="showToast('Download startet...', 'success')"
-                      style="color: var(--text-primary)"
+                      class="action-btn text-primary"
                     >
                       <span class="material-icons-round">download</span>
                     </button>
                     <button
                       type="button"
-                      class="action-btn"
                       :title="$store.i18n.t('btn.delete')"
                       onclick="showToast('Backup gelöscht', 'error')"
-                      style="color: var(--red)"
+                      class="action-btn text-red"
                     >
                       <span class="material-icons-round">delete</span>
                     </button>
@@ -786,15 +752,13 @@
                 </td>
               </tr>
               <tr>
-                <td style="font-family: monospace; font-size: 12px; color: var(--text-primary)">
-                  backup_2023-10-01_14-30.tar.gz
-                </td>
-                <td style="color: var(--text-secondary); font-size: 12px">
+                <td class="font-mono text-xs text-primary">backup_2023-10-01_14-30.tar.gz</td>
+                <td class="text-secondary text-xs">
                   <span x-text="$store.i18n.t('general.backup_yesterday')">Gestern</span>, 14:30
                 </td>
-                <td style="color: var(--text-secondary); font-size: 12px">480 MB</td>
+                <td class="text-secondary text-xs">480 MB</td>
                 <td>
-                  <div style="display: flex; gap: 6px">
+                  <div class="flex gap-[6px]">
                     <button
                       type="button"
                       class="action-btn"
@@ -807,21 +771,19 @@
                     </button>
                     <button
                       type="button"
-                      class="action-btn"
                       data-i18n="btn_download"
                       data-i18n-attr="title"
                       title="Herunterladen"
-                      style="color: var(--text-primary)"
+                      class="action-btn text-primary"
                     >
                       <span class="material-icons-round">download</span>
                     </button>
                     <button
                       type="button"
-                      class="action-btn"
                       data-i18n="btn_delete"
                       data-i18n-attr="title"
                       title="Löschen"
-                      style="color: var(--red)"
+                      class="action-btn text-red"
                     >
                       <span class="material-icons-round">delete</span>
                     </button>

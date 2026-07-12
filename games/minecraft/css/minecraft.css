@@ -138,3 +138,9 @@
   color: var(--red);
   border-color: var(--red-dim);
 }
+
+.ftb-placeholder {
+  background: linear-gradient(135deg, #c2410c, #9a3412);
+  color: #fff;
+  border: none;
+}

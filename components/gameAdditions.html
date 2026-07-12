@@ -5,8 +5,8 @@
   aria-labelledby="tab-game-additions"
   x-data
 >
-  <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 20px">
-    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center">
+  <div class="panel-header flex-col items-start gap-[20px]">
+    <div class="flex justify-between w-full items-center">
       <div class="panel-title-group">
         <h1 x-text="$store.i18n.t('general.ga_title')">Game Additions</h1>
         <p class="panel-subtitle" x-text="$store.i18n.t('general.ga_subtitle')">
@@ -25,7 +25,8 @@
     <!-- Multi-Game Selector (Filled dynamically by gameAdditions.js) -->
     <div
       id="hubGameSelector"
-      style="display: flex; gap: 12px; width: 100%; overflow-x: auto; padding-bottom: 4px"
+      class="flex gap-[12px] w-full"
+      style="overflow-x: auto; padding-bottom: 4px"
     ></div>
   </div>
 
@@ -106,7 +107,7 @@
     <!-- Content Area -->
     <div class="mc-content">
       <div class="mc-search-bar">
-        <label for="mcSearch" style="display: flex; align-items: center; cursor: text; margin: 0"
+        <label for="mcSearch" class="flex items-center m-0" style="cursor: text"
           ><span class="material-icons-round">search</span></label
         >
         <input
@@ -172,12 +173,10 @@
     <div class="modal modal-xl glass-card">
       <div class="modal-header">
         <div class="mod-modal-title">
-          <span class="material-icons-round" style="font-size: 28px; color: var(--text-accent)"
-            >dns</span
-          >
+          <span class="material-icons-round text-accent" style="font-size: 28px">dns</span>
           <div>
             <h2 id="dockerModalTitle">Neuen Minecraft-Server erstellen</h2>
-            <p id="dockerModalSubtitle" style="color: var(--text-muted); font-size: 12px">
+            <p id="dockerModalSubtitle" class="text-muted text-xs">
               itzg/minecraft-server · Docker Container
             </p>
           </div>
@@ -206,16 +205,17 @@
 
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-label">Container-Name</div>
+                <div class="setting-label">
+                  <span x-text="$store.i18n.t('dc.container_name')">Container-Name</span>
+                </div>
                 <div class="setting-desc">Eindeutiger Docker-Name</div>
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcName"
                 aria-label="dcName"
                 placeholder="mc-server-01"
-                style="width: 170px"
+                class="setting-input w-[170px]"
               />
             </div>
             <div class="setting-row">
@@ -225,32 +225,34 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcPort"
                 aria-label="dcPort"
                 value="25565"
                 min="1024"
                 max="65535"
-                style="width: 90px"
+                class="setting-input w-[90px]"
               />
             </div>
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-label">Datenpfad (Host)</div>
+                <div class="setting-label">
+                  <span x-text="$store.i18n.t('dc.data_path')">Datenpfad (Host)</span>
+                </div>
                 <div class="setting-desc">Bind-Mount /data</div>
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcDataPath"
                 aria-label="dcDataPath"
                 value="/mnt/user/gameservers"
-                style="width: 200px; font-family: monospace; font-size: 11px"
+                class="setting-input w-[200px] font-mono text-[11px]"
               />
             </div>
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-label">Restart-Policy</div>
+                <div class="setting-label">
+                  <span x-text="$store.i18n.t('dc.restart_policy')">Restart-Policy</span>
+                </div>
               </div>
               <select class="setting-select" id="dcRestart" aria-label="dcRestart">
                 <option value="unless-stopped" selected>unless-stopped</option>
@@ -260,7 +262,7 @@
               </select>
             </div>
 
-            <div class="dc-section-title" style="margin-top: 14px">Java / Server-Typ</div>
+            <div class="dc-section-title mt-[14px]">Java / Server-Typ</div>
 
             <div class="setting-row">
               <div class="setting-info">
@@ -268,7 +270,9 @@
                 <div class="setting-desc">auto aus Modpack bei CF/Modrinth</div>
               </div>
               <select class="setting-select" id="dcType" aria-label="dcType">
-                <option value="AUTO">Auto (aus Modpack)</option>
+                <option value="AUTO">
+                  <span x-text="$store.i18n.t('dc.server_type_auto')">Auto (aus Modpack)</span>
+                </option>
                 <option value="VANILLA">Vanilla</option>
                 <option value="PAPER">Paper</option>
                 <option value="FABRIC">Fabric</option>
@@ -285,11 +289,10 @@
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcVersion"
                 aria-label="dcVersion"
                 value="LATEST"
-                style="width: 100px"
+                class="setting-input w-[100px]"
               />
             </div>
             <div class="setting-row">
@@ -300,13 +303,12 @@
               <div class="setting-input-row">
                 <input
                   type="number"
-                  class="setting-input"
                   id="dcRam"
                   aria-label="dcRam"
                   value="4096"
                   min="512"
                   step="512"
-                  style="width: 90px"
+                  class="setting-input w-[90px]"
                 />
                 <span class="setting-unit">MB</span>
               </div>
@@ -336,7 +338,7 @@
               </label>
             </div>
 
-            <div class="dc-section-title" style="margin-top: 14px">JVM Optimizations</div>
+            <div class="dc-section-title mt-[14px]">JVM Optimizations</div>
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-label">USE_AIKAR_FLAGS</div>
@@ -394,8 +396,10 @@
           </div>
 
           <!-- Tab 2: Server -->
-          <div class="dc-tab-content" id="dctab-server" style="display: none">
-            <div class="dc-section-title">Basis</div>
+          <div id="dctab-server" class="dc-tab-content hidden">
+            <div class="dc-section-title">
+              <span x-text="$store.i18n.t('tabs.basic')">Basis</span>
+            </div>
 
             <div class="setting-row">
               <div class="setting-info">
@@ -404,11 +408,10 @@
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcServerName"
                 aria-label="dcServerName"
                 placeholder="Mein Minecraft-Server"
-                style="width: 200px"
+                class="setting-input w-[200px]"
               />
             </div>
             <div class="setting-row">
@@ -418,13 +421,12 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcMaxPlayers"
                 aria-label="dcMaxPlayers"
                 value="20"
                 min="1"
                 max="1000"
-                style="width: 80px"
+                class="setting-input w-[80px]"
               />
             </div>
             <div class="setting-row">
@@ -458,13 +460,12 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcViewDistance"
                 aria-label="dcViewDistance"
                 value="12"
                 min="2"
                 max="32"
-                style="width: 70px"
+                class="setting-input w-[70px]"
               />
             </div>
             <div class="setting-row">
@@ -474,17 +475,16 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcSimDistance"
                 aria-label="dcSimDistance"
                 value="10"
                 min="2"
                 max="32"
-                style="width: 70px"
+                class="setting-input w-[70px]"
               />
             </div>
 
-            <div class="dc-section-title" style="margin-top: 14px">Whitelist &amp; RCON</div>
+            <div class="dc-section-title mt-[14px]">Whitelist &amp; RCON</div>
 
             <div class="setting-row">
               <div class="setting-info">
@@ -497,18 +497,17 @@
                 </span>
               </label>
             </div>
-            <div class="setting-row" id="dcWhitelistNamesRow" style="display: none">
+            <div id="dcWhitelistNamesRow" class="setting-row hidden">
               <div class="setting-info">
                 <div class="setting-label">WHITELIST</div>
                 <div class="setting-desc">Spielernamen (kommagetrennt)</div>
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcWhitelistNames"
                 aria-label="dcWhitelistNames"
                 placeholder="Spieler1,Spieler2"
-                style="width: 200px"
+                class="setting-input w-[200px]"
               />
             </div>
             <div class="setting-row">
@@ -518,11 +517,10 @@
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcOps"
                 aria-label="dcOps"
                 placeholder="AdminName"
-                style="width: 200px"
+                class="setting-input w-[200px]"
               />
             </div>
             <div class="setting-row">
@@ -542,11 +540,10 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcRconPort"
                 aria-label="dcRconPort"
                 value="25575"
-                style="width: 90px"
+                class="setting-input w-[90px]"
               />
             </div>
             <form class="setting-row" onsubmit="return false;">
@@ -557,25 +554,24 @@
                 name="hiddenUsername_gameAdditions"
                 type="text"
                 autocomplete="username"
-                style="display: none"
+                class="hidden"
               />
               <div class="setting-info">
                 <div class="setting-label">RCON_PASSWORD</div>
               </div>
               <input
                 type="password"
-                class="setting-input"
                 id="dcRconPw"
                 aria-label="dcRconPw"
                 placeholder="sicheres Passwort"
                 autocomplete="new-password"
-                style="width: 170px"
+                class="setting-input w-[170px]"
               />
-              <button type="submit" style="display: none" aria-hidden="true" tabindex="-1"></button>
-              <button type="submit" style="display: none" aria-hidden="true" tabindex="-1"></button>
+              <button type="submit" class="hidden" aria-hidden="true" tabindex="-1"></button>
+              <button type="submit" class="hidden" aria-hidden="true" tabindex="-1"></button>
             </form>
 
-            <div class="dc-section-title" style="margin-top: 14px">Icon &amp; Textur</div>
+            <div class="dc-section-title mt-[14px]">Icon &amp; Textur</div>
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-label">ICON</div>
@@ -583,11 +579,10 @@
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcIcon"
                 aria-label="dcIcon"
                 placeholder="https://..."
-                style="width: 200px"
+                class="setting-input w-[200px]"
               />
             </div>
             <div class="setting-row">
@@ -597,11 +592,10 @@
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcResourcePack"
                 aria-label="dcResourcePack"
                 placeholder="https://..."
-                style="width: 200px"
+                class="setting-input w-[200px]"
               />
             </div>
             <div class="setting-row">
@@ -622,7 +616,7 @@
           </div>
 
           <!-- Tab 3: Gameplay -->
-          <div class="dc-tab-content" id="dctab-gameplay" style="display: none">
+          <div id="dctab-gameplay" class="dc-tab-content hidden">
             <div class="dc-section-title">Spielmodus</div>
 
             <div class="setting-row">
@@ -650,7 +644,7 @@
             </div>
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-label">PVP</div>
+                <div class="setting-label"><span x-text="$store.i18n.t('mc.pvp')">PVP</span></div>
                 <div class="setting-desc">Spieler-vs-Spieler Kämpfe</div>
               </div>
               <label class="setting-toggle"
@@ -685,7 +679,7 @@
               </label>
             </div>
 
-            <div class="dc-section-title" style="margin-top: 14px">Welt</div>
+            <div class="dc-section-title mt-[14px]">Welt</div>
 
             <div class="setting-row">
               <div class="setting-info">
@@ -693,7 +687,9 @@
                 <div class="setting-desc">Weltgenerierung</div>
               </div>
               <select class="setting-select" id="dcLevelType" aria-label="dcLevelType">
-                <option value="minecraft:normal" selected>Normal</option>
+                <option value="minecraft:normal" selected>
+                  <span x-text="$store.i18n.t('mc.diff_normal')">Normal</span>
+                </option>
                 <option value="minecraft:flat">Flat (Superflat)</option>
                 <option value="minecraft:large_biomes">Large Biomes</option>
                 <option value="minecraft:amplified">Amplified</option>
@@ -706,11 +702,10 @@
               </div>
               <input
                 type="text"
-                class="setting-input"
                 id="dcSeed"
                 aria-label="dcSeed"
                 placeholder="leer = zufällig"
-                style="width: 160px"
+                class="setting-input w-[160px]"
               />
             </div>
             <div class="setting-row">
@@ -720,12 +715,11 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcSpawnProtection"
                 aria-label="dcSpawnProtection"
                 value="16"
                 min="0"
-                style="width: 70px"
+                class="setting-input w-[70px]"
               />
             </div>
             <div class="setting-row">
@@ -753,7 +747,7 @@
           </div>
 
           <!-- Tab 4: Erweitert -->
-          <div class="dc-tab-content" id="dctab-advanced" style="display: none">
+          <div id="dctab-advanced" class="dc-tab-content hidden">
             <div class="dc-section-title">Befehle &amp; Features</div>
 
             <div class="setting-row">
@@ -786,12 +780,11 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcIdleTimeout"
                 aria-label="dcIdleTimeout"
                 value="0"
                 min="0"
-                style="width: 70px"
+                class="setting-input w-[70px]"
               />
             </div>
             <div class="setting-row">
@@ -801,15 +794,14 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcMaxTick"
                 aria-label="dcMaxTick"
                 value="60000"
-                style="width: 90px"
+                class="setting-input w-[90px]"
               />
             </div>
 
-            <div class="dc-section-title" style="margin-top: 14px">Auto-Pause / Auto-Stop</div>
+            <div class="dc-section-title mt-[14px]">Auto-Pause / Auto-Stop</div>
 
             <div class="setting-row">
               <div class="setting-info">
@@ -830,11 +822,10 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcAutopauseTimeout"
                 aria-label="dcAutopauseTimeout"
                 value="3600"
-                style="width: 90px"
+                class="setting-input w-[90px]"
               />
             </div>
             <div class="setting-row">
@@ -850,7 +841,7 @@
               </label>
             </div>
 
-            <div class="dc-section-title" style="margin-top: 14px">Netzwerk</div>
+            <div class="dc-section-title mt-[14px]">Netzwerk</div>
 
             <div class="setting-row">
               <div class="setting-info">
@@ -859,11 +850,10 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcNetworkCompression"
                 aria-label="dcNetworkCompression"
                 value="256"
-                style="width: 80px"
+                class="setting-input w-[80px]"
               />
             </div>
             <div class="setting-row">
@@ -872,11 +862,10 @@
               </div>
               <input
                 type="number"
-                class="setting-input"
                 id="dcMaxBuildHeight"
                 aria-label="dcMaxBuildHeight"
                 value="320"
-                style="width: 80px"
+                class="setting-input w-[80px]"
               />
             </div>
             <div class="setting-row">
@@ -900,30 +889,18 @@
           <pre id="dcCommandPreview">Konfiguration eingeben...</pre>
 
           <div class="dc-info-box">
-            <div
-              style="
-                font-size: 12px;
-                font-weight: 600;
-                color: var(--text-accent);
-                margin-bottom: 6px;
-              "
-            >
-              <span class="material-icons-round" style="font-size: 14px; vertical-align: middle"
-                >info</span
-              >
+            <div class="text-xs font-semibold text-accent" style="margin-bottom: 6px">
+              <span class="material-icons-round text-sm" style="vertical-align: middle">info</span>
               itzg/minecraft-server
             </div>
-            <p style="font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.5">
+            <p class="text-[11px] text-muted m-0 leading-normal">
               Nutzt das offizielle itzg Docker-Image. EULA wird automatisch akzeptiert. Nur
               geänderte Standardwerte werden ausgegeben.
             </p>
           </div>
 
-          <div
-            id="dcCopyStatus"
-            style="display: none; font-size: 12px; color: var(--green); margin-top: 6px"
-          >
-            <span class="material-icons-round" style="font-size: 14px; vertical-align: middle"
+          <div id="dcCopyStatus" class="hidden text-xs mt-[6px]" style="color: var(--green)">
+            <span class="material-icons-round text-sm" style="vertical-align: middle"
               >check_circle</span
             >
             In Zwischenablage kopiert!

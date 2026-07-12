@@ -209,12 +209,12 @@ export function fillSettingsForm() {
 
   // Populate modules
   const modContainer = document.getElementById('settingsModuleList');
-  if (modContainer && GameAdditions) {
+  if (modContainer && window.GameAdditions) {
     modContainer.innerHTML = '';
-    const allGames = Object.keys(GameAdditions.games);
+    const allGames = Object.keys(window.GameAdditions.games || {});
     allGames.forEach((gameId) => {
       if (gameId === 'minecraft') return; // skip default
-      const cfg = GameAdditions.games[gameId];
+      const cfg = window.GameAdditions.games[gameId];
       const isChecked = !(appSettings.disabledModules || []).includes(gameId);
 
       modContainer.insertAdjacentHTML(
@@ -293,8 +293,10 @@ export function readSettingsForm() {
 export function toggleSettingsPanel(show) {
   const panel = document.getElementById('settingsPanel');
   const backdrop = document.getElementById('settingsBackdrop');
+  if (!panel || !backdrop) return;
 
   if (show) {
+    fillSettingsForm(); // Populates modules before opening
     panel.hidden = false;
     backdrop.hidden = false;
     // Add open class in next tick for transition

@@ -3,22 +3,25 @@
 ═══════════════════════════════════════════════════════════ */
 
 @import url('./vendor/material-icons.css');
-@import url('./base.css');
-@import url('./layout.css');
-@import url('./modules/buttons.css');
-@import url('./modules/forms.css');
-@import url('./modules/stats.css');
-@import url('./modules/modals.css');
-@import url('./modules/console.css');
-@import url('./modules/badges.css');
-@import url('./modules/states.css');
-@import url('./modules/lists.css');
-@import url('./docker.css');
-@import url('./gameserver.css');
-@import url('./gameAdditions.css');
-@import url('./players.css');
-@import url('./settings.css');
-@import url('./toast.css');
+@import url('./base.css?v=2');
+@import url('./layout.css?v=2');
+@import url('./modules/buttons.css?v=2');
+@import url('./modules/forms.css?v=2');
+@import url('./modules/stats.css?v=2');
+@import url('./modules/modals.css?v=2');
+@import url('./modules/console.css?v=2');
+@import url('./modules/badges.css?v=2');
+@import url('./modules/states.css?v=2');
+@import url('./modules/lists.css?v=2');
+@import url('./docker.css?v=2');
+@import url('./gameserver.css?v=4');
+@import url('./gameAdditions.css?v=2');
+@import url('./players.css?v=2');
+@import url('./settings.css?v=2');
+@import url('./toast.css?v=2');
+
+/* Utilities must be loaded last to override components */
+@import url('./utilities.css?v=5');
 
 /* Game Specific Styles */
 @import url('../games/minecraft/css/minecraft.css');

@@ -4,9 +4,14 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 16px;
+  align-items: stretch;
 }
 
 .gs-card {
+  height: 100%;
+  min-height: 540px;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -114,6 +119,9 @@
 
 .gs-card-body {
   padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .gs-metrics {
@@ -147,6 +155,10 @@
 
 .gs-resource-bar {
   margin-bottom: 14px;
+  padding: 10px 14px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
 }
 
 .resource-bar-label {
@@ -158,7 +170,6 @@
 }
 
 .resource-bar-track {
-  height: 4px;
   background: var(--bg-surface);
   border-radius: 2px;
   overflow: hidden;
@@ -178,12 +189,127 @@
   background: linear-gradient(90deg, var(--green), var(--cyan));
 }
 
-.gs-card-actions {
-  display: flex;
-  gap: 6px;
-}
-
 .gs-card-actions .btn {
   flex: 1;
   justify-content: center;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}
+
+/* Y-Axis Scale for Resource Bars */
+.y-axis-scale {
+  position: relative;
+  width: 32px;
+  height: 60px;
+  border-right: 1px solid rgb(255 255 255 / 15%);
+  margin-right: 4px;
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to right, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to right, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to right, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to right, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%));
+  background-size: 5px 1px;
+  background-position:
+    right 0%,
+    right 25%,
+    right 50%,
+    right 75%,
+    right 100%;
+  background-repeat: no-repeat;
+}
+
+[data-theme='light'] .y-axis-scale {
+  border-right-color: rgb(0 0 0 / 15%);
+  background-image:
+    linear-gradient(to right, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to right, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to right, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to right, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to right, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%));
+}
+
+.y-axis-scale span {
+  position: absolute;
+  right: 8px;
+  font-size: 10px;
+  color: var(--text-muted);
+  transform: translateY(-50%) scale(0.85);
+  transform-origin: right center;
+  line-height: 1;
+}
+
+.y-axis-scale span:nth-child(1) {
+  top: 0%;
+}
+.y-axis-scale span:nth-child(2) {
+  top: 25%;
+}
+.y-axis-scale span:nth-child(3) {
+  top: 50%;
+}
+.y-axis-scale span:nth-child(4) {
+  top: 75%;
+}
+.y-axis-scale span:nth-child(5) {
+  top: 100%;
+}
+
+/* Mirrored Y-Axis Scale (Right Side) */
+.y-axis-scale-right {
+  position: relative;
+  width: 32px;
+  height: 60px;
+  border-left: 1px solid rgb(255 255 255 / 15%);
+  margin-left: 4px;
+  background-image:
+    linear-gradient(to left, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to left, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to left, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to left, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
+    linear-gradient(to left, rgb(255 255 255 / 30%), rgb(255 255 255 / 30%));
+  background-size: 5px 1px;
+  background-position:
+    left 0%,
+    left 25%,
+    left 50%,
+    left 75%,
+    left 100%;
+  background-repeat: no-repeat;
+}
+
+[data-theme='light'] .y-axis-scale-right {
+  border-left-color: rgb(0 0 0 / 15%);
+  background-image:
+    linear-gradient(to left, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to left, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to left, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to left, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)),
+    linear-gradient(to left, rgb(0 0 0 / 30%), rgb(0 0 0 / 30%));
+}
+
+.y-axis-scale-right span {
+  position: absolute;
+  left: 8px;
+  font-size: 10px;
+  color: var(--text-muted);
+  transform: translateY(-50%) scale(0.85);
+  transform-origin: left center;
+  line-height: 1;
+}
+
+.y-axis-scale-right span:nth-child(1) {
+  top: 0%;
+}
+.y-axis-scale-right span:nth-child(2) {
+  top: 25%;
+}
+.y-axis-scale-right span:nth-child(3) {
+  top: 50%;
+}
+.y-axis-scale-right span:nth-child(4) {
+  top: 75%;
+}
+.y-axis-scale-right span:nth-child(5) {
+  top: 100%;
 }

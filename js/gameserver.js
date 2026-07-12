@@ -294,7 +294,7 @@ export function generateSparkline(id, val, color) {
   const strokeD = `M${points[0]} L${points[1]} L${points[2]} L${points[3]} L${points[4]} L${points[5]}`;
 
   return `
-    <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 28" style="overflow:visible">
+    <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 28" class="overflow-visible">
       <defs>
         <linearGradient id="grad_${id}" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stop-color="${color}" stop-opacity="0.3"/>
@@ -451,13 +451,18 @@ export async function openConsole(srv) {
     return;
   }
   consoleServerId = srv.containerId;
-  document.getElementById('consoleTitle').textContent =
-    `${t('general.console') || 'Konsole'} — ${srv.serverName}`;
+  const tFn = document.querySelector('[x-data]')?.__x?.$data?.$store?.i18n?.t || window.t;
+  let consoleText = tFn('general.console');
+  if (consoleText === 'general.console') {
+    consoleText = tFn('console');
+    if (consoleText === 'console') consoleText = 'Konsole';
+  }
+  document.getElementById('consoleTitle').textContent = `${consoleText} - ${srv.serverName}`;
 
   const isOn = srv.status === 'online';
   const statusEl = document.getElementById('consoleStatus');
   statusEl.className = `status-badge ${isOn ? 'running' : 'stopped'}`;
-  statusEl.innerHTML = `<span class="dot"></span> ${isOn ? 'Live' : t('general.offline') || 'Offline'}`;
+  statusEl.innerHTML = `<span class="dot"></span> ${isOn ? 'Live' : tFn('general.offline') || 'Offline'}`;
 
   const output = document.getElementById('consoleOutput');
 

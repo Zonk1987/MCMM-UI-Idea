@@ -186,3 +186,66 @@
 .modal-body::-webkit-scrollbar {
   width: 4px;
 }
+
+/* ─── Welcome Modal (Onboarding) ─── */
+.welcome-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.welcome-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-icon .material-icons-round {
+  font-size: 40px;
+}
+
+.welcome-icon.step-1 {
+  background: var(--accent);
+  color: #fff;
+}
+
+.welcome-icon.step-2 {
+  background: #1e3a8a;
+  color: #bfdbfe;
+}
+
+.welcome-icon.step-3 {
+  background: #14532d;
+  color: #bbf7d0;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.welcome-desc {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.welcome-indicators {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.welcome-indicator {
+  height: 8px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}

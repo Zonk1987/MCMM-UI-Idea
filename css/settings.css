@@ -413,3 +413,20 @@
 .fv3-add-action-btn:hover {
   text-decoration: underline;
 }
+
+/* ─── Debug Container List ─── */
+.debug-container-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.debug-container-card {
+  background: var(--bg-surface);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}

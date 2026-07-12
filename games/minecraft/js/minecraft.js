@@ -114,7 +114,7 @@ GameAdditions.registerGame('minecraft', {
         <div class="mc-card-top">
           ${icon ? `<img src="${icon}" alt="${hit.title}" class="mc-card-icon" />` : `<div class="mc-card-icon-placeholder"><span class="material-icons-round">extension</span></div>`}
           <div class="mc-card-header-info">
-            <div class="mc-card-name" title="${hit.title}">${hit.title}</div>
+            <div class="mc-card-name text-primary" title="${hit.title}">${hit.title}</div>
             <div class="mc-card-author">by ${hit.author}</div>
           </div>
         </div>
@@ -259,11 +259,11 @@ GameAdditions.registerGame('minecraft', {
               (mod) => `
           <div class="mc-card" data-id="${mod.id}" data-name="${mod.name}" role="button" tabindex="0">
             <div class="mc-card-top">
-              <div class="mc-card-icon-placeholder" style="background:linear-gradient(135deg, #f97316, #ea580c);color:#fff;border:none;">
+              <div class="mc-card-icon-placeholder ftb-placeholder">
                 <span class="material-icons-round">widgets</span>
               </div>
-              <div class="mc-card-header-info">
-                <div class="mc-card-name" title="${mod.name}">${mod.name}</div>
+                  <div class="mc-card-header-info">
+                <div class="mc-card-name text-primary" title="${mod.name}">${mod.name}</div>
                 <div class="mc-card-author">by ${mod.author}</div>
               </div>
             </div>

@@ -50,7 +50,7 @@
               <span x-text="s.serverName"></span>
               <span
                 class="cso-status"
-                x-text="s.status === 'online' ? (t('general.online') || 'Online') : (t('general.offline') || 'Offline')"
+                x-text="s.status === 'online' ? ($store.i18n.t('general.online') || 'Online') : ($store.i18n.t('general.offline') || 'Offline')"
               ></span>
             </li>
           </template>
@@ -280,7 +280,7 @@
           >
             <span
               style="font-size: 13px; color: var(--text-secondary)"
-              x-text="activeData.whitelist.length + ' ' + (t('whitelist_players') || 'Spieler auf der Whitelist')"
+              x-text="activeData.whitelist.length + ' ' + ($store.i18n.t('general.whitelist_players') || 'Spieler auf der Whitelist')"
             ></span>
             <button
               type="button"
@@ -334,7 +334,7 @@
           <div style="padding: 14px 16px; border-bottom: 1px solid var(--border)">
             <span
               style="font-size: 13px; color: var(--text-secondary)"
-              x-text="activeData.bans.length + ' ' + (t('active_bans') || 'aktive Bans')"
+              x-text="activeData.bans.length + ' ' + ($store.i18n.t('general.active_bans') || 'aktive Bans')"
             ></span>
           </div>
           <template x-for="b in activeData.bans" :key="b.name">
@@ -344,7 +344,7 @@
                 <div class="list-entry-name" style="color: var(--red)" x-text="b.name"></div>
                 <div
                   class="list-entry-meta"
-                  x-text="(t('general.ban_reason_prefix') || 'Grund: ') + b.reason + ' · ' + b.date + ' · ' + b.duration"
+                  x-text="($store.i18n.t('general.ban_reason_prefix') || 'Grund: ') + b.reason + ' · ' + b.date + ' · ' + b.duration"
                 ></div>
               </div>
               <button
