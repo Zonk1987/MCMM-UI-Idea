@@ -12,7 +12,7 @@ export class ContainerWebUiResolver {
     if (!source) return '';
     const target = source.match(/\[PORT:(\d+)\]/i)?.[1] || this.literalPort(source);
     const selected = this.selectPort(container?.ports, target);
-    const address = this.address(container);
+    const address = this.address(container, selected);
     let resolved = source.replaceAll(/\[IP\]/gi, address);
     resolved = resolved.replaceAll(/\[PORT:\d+\]/gi, selected?.host || target || '');
     if (/\[(?:IP|PORT:)/i.test(resolved)) return '';
@@ -43,10 +43,12 @@ export class ContainerWebUiResolver {
     return tcp.length === 1 ? tcp[0] : null;
   }
 
-  address(container) {
+  address(container, selected) {
     const network = String(container?.network || '').toLowerCase();
     const value =
-      network !== 'bridge' && network !== 'host' && container?.ip
+      selected?.host && container?.lanIp
+        ? container.lanIp
+        : network !== 'bridge' && network !== 'host' && container?.ip
         ? container.ip
         : container?.lanIp || container?.ip || globalThis.location?.hostname || '';
     const host = String(value).replace(/^\[|\]$/g, '');
@@ -59,7 +61,7 @@ export class ContainerWebUiResolver {
       const mapped = this.mappingForUrl(container?.ports, url.port);
       if (mapped?.proto === 'udp' && selected) url.port = selected.host;
       if (this.dockerAddress(url.hostname)) {
-        url.hostname = this.address(container).replace(/^\[|\]$/g, '');
+        url.hostname = this.address(container, selected).replace(/^\[|\]$/g, '');
       }
       return url.href;
     } catch {
