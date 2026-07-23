@@ -1,8 +1,14 @@
 /* ═══════════════════════════════════════════════════════════
    gameserver.js — Game Server Hub Tab
-   Displays running game server containers with live stats,
-   and a wizard to create new ones via Docker.
+   Displays existing game server containers with live stats and management tools.
 ═══════════════════════════════════════════════════════════ */
+
+import { ContainerCommandClient } from './container-command-client.js?v=23';
+import { GameServerFileClient } from './game-server-file-client.js?v=23';
+import { GameServerFileManager } from './game-server-file-manager.js?v=23';
+import { MinecraftContentClient } from './minecraft-content-client.js?v=2';
+import { MinecraftContentManager } from './minecraft-content-manager.js?v=2';
+import { ModrinthClient } from './modrinth-client.js?v=2';
 
 export const GAME_TEMPLATES = [
   {
@@ -117,47 +123,36 @@ export const GAME_TEMPLATES = [
  *
  */
 export function gameserverApp() {
+  const commandClient = new ContainerCommandClient();
   return {
     get instances() {
       return Alpine.store('core').getGameservers();
     },
-    templates: GAME_TEMPLATES,
+    templates: GAME_TEMPLATES.filter((template) => template.id === 'minecraft'),
     wizardStep: 0,
     wizardGame: null,
+    creating: false,
+    pendingServerIds: new Set(),
     wForm: {
       name: '',
       image: '',
       port: '',
       ram: '',
       path: '',
+      type: 'PAPER',
+      version: 'LATEST',
+      javaRuntime: 'auto',
+      modpack: '',
+      modpackVersion: '',
+      loader: '',
+      projects: '',
+      maxPlayers: 20,
+      motd: 'Minecraft Server on Unraid',
+      eula: false,
     },
 
     init() {
-      this.syncStatus();
-
-      // Live simulation for CPU/RAM and sparkline animations
-      setInterval(() => {
-        this.instances.forEach((srv) => {
-          if (srv.status !== 'online') return;
-          srv.cpu = Math.max(5, Math.min(95, srv.cpu + (Math.random() - 0.5) * 8)); // NOSONAR
-          // Create new object to trigger Alpine's deep reactivity
-          srv.ram = {
-            ...srv.ram,
-            used: Math.max(512, Math.min(srv.ram.max, srv.ram.used + (Math.random() - 0.5) * 200)), // NOSONAR
-          };
-        });
-      }, 5000);
-    },
-
-    syncStatus() {
-      this.instances.forEach((srv) => {
-        // Find matching docker container
-        const c =
-          window.DOCKER_CONTAINERS !== undefined
-            ? window.DOCKER_CONTAINERS.find((d) => d.id === srv.containerId)
-            : null;
-        if (c) srv.status = c.status === 'running' ? 'online' : 'offline';
-      });
+      Alpine.store('core')?.refreshContainers(true);
     },
 
     get onlineCount() {
@@ -165,28 +160,34 @@ export function gameserverApp() {
     },
 
     getTemplate(gameId) {
-      return this.templates.find((t) => t.id === gameId);
+      return this.templates.find((template) => template.id === gameId) || this.templates[0];
     },
 
-    toggleServer(id) {
-      Alpine.store('core').toggleContainer(id);
-      if (typeof showToast === 'function') {
-        const s = this.instances.find((i) => i.containerId === id);
-        if (s) {
-          showToast(`${s.serverName} ${s.status === 'online' ? 'gestartet' : 'gestoppt'}`, 'info');
-        }
+    async toggleServer(id) {
+      const server = this.instances.find((entry) => entry.containerId === id);
+      if (!server || this.pendingServerIds.has(id)) return;
+      const action = server.status === 'online' ? 'stop' : 'start';
+      this.pendingServerIds.add(id);
+      try {
+        await commandClient.execute(action, server.container);
+        await Alpine.store('core').refreshContainers(true);
+        showToast(`${server.serverName} ${action === 'start' ? 'started' : 'stopped'}`, 'success');
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : String(error), 'error');
+      } finally {
+        this.pendingServerIds.delete(id);
       }
     },
 
     // Wizard Logic
     openCreateWizard() {
-      this.wizardStep = 0;
-      this.wizardGame = null;
-      document.getElementById('createServerModal').classList.add('active');
+      showToast('Minecraft server deployment is intentionally disabled.', 'info');
     },
 
     closeCreateWizard() {
-      document.getElementById('createServerModal').classList.remove('active');
+      const modal = document.getElementById('createServerModal');
+      modal.classList.remove('active');
+      modal.hidden = true;
     },
 
     selectWizardGame(id) {
@@ -200,6 +201,16 @@ export function gameserverApp() {
         this.wForm.port = this.wizardGame.defaultPort;
         this.wForm.ram = this.wizardGame.defaultRam;
         this.wForm.path = '/mnt/user/gameservers/' + this.wizardGame.name.toLowerCase();
+        this.wForm.type = 'PAPER';
+        this.wForm.version = 'LATEST';
+        this.wForm.javaRuntime = 'auto';
+        this.wForm.modpack = '';
+        this.wForm.modpackVersion = '';
+        this.wForm.loader = '';
+        this.wForm.projects = '';
+        this.wForm.maxPlayers = 20;
+        this.wForm.motd = 'Minecraft Server on Unraid';
+        this.wForm.eula = false;
         this.wizardStep = 1;
       } else if (this.wizardStep === 1) {
         this.wizardStep = 2;
@@ -211,27 +222,15 @@ export function gameserverApp() {
     },
 
     getWizardCmd() {
-      if (!this.wizardGame) return '';
-      const envs = (this.wizardGame.env || []).map((e) => `-e "${e}"`);
-      const args = [
-        'docker run -d',
-        `--name ${this.wForm.name.replaceAll(/\\s+/g, '_')}`,
-        '--restart unless-stopped',
-        `-p ${this.wForm.port}:${this.wizardGame.defaultPort}`,
-        `-v "${this.wForm.path}:/data"`,
-        `-m ${this.wForm.ram}m`,
-        ...envs,
-        this.wForm.image,
-      ];
-      return args.join(' \\\n  ');
+      return 'Minecraft server deployment is disabled.';
     },
 
-    createWizardServer() {
-      this.closeCreateWizard();
-      if (typeof showToast === 'function') {
-        showToast(`${this.wForm.name} wird gestartet...`, 'info');
-        setTimeout(() => showToast(`${this.wForm.name} erfolgreich erstellt! 🚀`, 'success'), 2000);
-      }
+    getJavaRuntimeRecommendation() {
+      return { value: '', label: 'Disabled', reason: 'Provisioning will use a different flow.' };
+    },
+
+    async createWizardServer() {
+      showToast('Minecraft server deployment is intentionally disabled.', 'info');
     },
 
     // Sparkline Helper
@@ -244,7 +243,7 @@ export function gameserverApp() {
     },
 
     getRamPct(srv) {
-      return Math.round((srv.ram.used / srv.ram.max) * 100);
+      return srv.ram.max > 0 ? Math.min(100, Math.round((srv.ram.used / srv.ram.max) * 100)) : 0;
     },
 
     formatBytesLabel(bytes) {
@@ -356,7 +355,7 @@ window.clearConsole = () => {
   }
 };
 
-import { toggleModal, formatBytes, showToast, debounce } from './utils.js';
+import { toggleModal, formatBytes, showToast, debounce } from './utils.js?v=22';
 
 let consoleTerminal = null;
 let consoleFitAddon = null;
@@ -369,9 +368,9 @@ class MockLogStreamer {
     this.msgCount = 0;
 
     setTimeout(() => {
-      this.onMessage(`[System] Verbinde mit Log-Stream für ${serverId}...`);
+      this.onMessage(`[System] ${t('general.log_connecting', { server: serverId })}`);
       setTimeout(() => {
-        this.onMessage(`[System] Verbunden. Live-Logs werden empfangen...`);
+        this.onMessage(`[System] ${t('general.log_connected')}`);
         this.startStreaming();
       }, 600);
     }, 200);
@@ -405,7 +404,7 @@ class MockLogStreamer {
 
   stop() {
     clearTimeout(this.interval);
-    this.onMessage(`[System] Verbindung zum Log-Stream getrennt.`);
+    this.onMessage(`[System] ${t('general.log_disconnected')}`);
   }
 }
 
@@ -503,7 +502,7 @@ export async function openConsole(srv) {
     });
   } else {
     consoleTerminal.writeln(
-      `\x1b[31m[Server]: ${t('general.no_logs') || 'Keine Logs für'} ${srv.serverName} ${t('general.available') || 'verfügbar'} (Server ist offline).\x1b[0m`
+      `\x1b[31m[Server]: ${t('general.no_logs')} ${srv.serverName} ${t('general.available')} (${t('general.offline')}).\x1b[0m`
     );
   }
 }
@@ -615,179 +614,48 @@ window.consoleSend = function () {
   }, 300);
 };
 
-window.closeFm = function () {
-  toggleModal('fileManagerModal', false);
-};
-
-window.fmSelectFile = function (btn) {
-  document
-    .querySelectorAll('#fmFileTree .settings-nav-btn')
-    .forEach((b) => b.classList.remove('active'));
-  btn.classList.add('active');
-  const type = btn.dataset.type;
-  const fileName = btn.textContent
-    .trim()
-    .replace(/^(?:folder|description)\s*/, '')
-    .trim();
-  const editor = document.getElementById('fmEditorTextarea');
-  const headerTitle = document.getElementById('fmCurrentFile');
-  if (headerTitle) headerTitle.textContent = fileName;
-  if (type === 'file') {
-    if (fileName === 'server.properties') {
-      editor.value =
-        '#Minecraft server properties\n#Mon Oct 02 12:00:00 2023\nenable-jmx-monitoring=false\nrcon.port=25575\nlevel-seed=\ngamemode=survival\nenable-command-block=false\nenable-query=false\ngenerator-settings={}\nenforce-secure-profile=true\nlevel-name=world\nmotd=Mein Unraid Minecraft Server\nquery.port=25565\npvp=true\ngenerate-structures=true\nmax-chained-neighbor-updates=1000000\ndifficulty=easy\nnetwork-compression-threshold=256\nmax-tick-time=60000\nrequire-resource-pack=false\nuse-native-transport=true\nmax-players=20\nonline-mode=true\nenable-status=true\nallow-flight=false\ninitial-disabled-packs=';
-    } else if (fileName === 'eula.txt') {
-      editor.value =
-        '#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Mon Oct 02 12:00:00 2023\neula=true';
-    } else if (fileName === 'ops.json') {
-      editor.value =
-        '[\n  {\n    "uuid": "d44...",\n    "name": "AdminPlayer",\n    "level": 4,\n    "bypassesPlayerLimit": false\n  }\n]';
-    } else {
-      editor.value = '// Inhalt von ' + fileName + ' wird geladen...';
-    }
-    editor.disabled = false;
-  } else {
-    editor.value = '// Ordner ausgewählt. Bitte wähle eine Datei zum Bearbeiten aus.';
-    editor.disabled = true;
-  }
-};
-
 window.closeBackup = function () {
   toggleModal('backupModal', false);
 };
 
-window.fmSave = function () {
-  if (typeof showToast === 'function') showToast('Datei erfolgreich gespeichert.', 'success');
-};
+const fileManager = new GameServerFileManager(new GameServerFileClient(), {
+  toggleModal: (id, open) => window.toggleModal(id, open),
+  toast: (message, type) => window.showToast(message, type),
+  translate: (key, variables) => window.t(key, variables),
+});
 
-let dragCounter = 0;
+window.openFileManager = (server) => fileManager.open(server);
+window.closeFm = () => fileManager.close();
+window.fmSave = () => fileManager.save();
+window.fmDownload = () => fileManager.download();
+window.fmRefresh = () => fileManager.refresh();
+window.fmCreateFile = () => fileManager.createFile();
+window.fmCreateFolder = () => fileManager.createDirectory();
+window.fmRename = () => fileManager.rename();
+window.fmDelete = () => fileManager.deleteSelected();
+window.fmChooseUpload = () => fileManager.chooseUpload();
+window.fmUploadSelected = (event) => fileManager.uploadSelected(event);
+window.fmDragEnter = (event) => fileManager.dragEnter(event);
+window.fmDragOver = (event) => fileManager.dragOver(event);
+window.fmDragLeave = (event) => fileManager.dragLeave(event);
+window.fmDrop = (event) => fileManager.drop(event);
+window.fmFilter = () => fileManager.filter();
+window.fmSort = () => fileManager.changeSort();
+window.fmFindNext = () => fileManager.findNext();
+window.fmReplace = () => fileManager.replace();
+window.fmKeyboard = (event) => fileManager.keyboard(event);
 
-window.fmDragOver = function (e) {
-  e.preventDefault();
-  dragCounter++;
-  const overlay = document.getElementById('fmDragOverlay');
-  if (overlay && !overlay.classList.contains('drag-active')) {
-    overlay.classList.add('drag-active');
+const minecraftContentManager = new MinecraftContentManager(
+  new MinecraftContentClient(),
+  new ModrinthClient(),
+  {
+    toggleModal: (id, open) => window.toggleModal(id, open),
+    toast: (message, type) => window.showToast(message, type),
+    translate: (key, variables) => window.t(key, variables),
   }
-};
+);
 
-window.fmDragLeave = function (e) {
-  e.preventDefault();
-  dragCounter--;
-  if (dragCounter <= 0) {
-    dragCounter = 0;
-    const overlay = document.getElementById('fmDragOverlay');
-    if (overlay) overlay.classList.remove('drag-active');
-  }
-};
-
-/**
- *
- * @param isFolder
- * @param fileName
- */
-function createFmTreeButton(isFolder, fileName) {
-  const newBtn = document.createElement('button');
-  newBtn.className = 'settings-nav-btn';
-  newBtn.dataset.type = isFolder ? 'folder' : 'file';
-  newBtn.style.paddingLeft = '24px';
-  newBtn.onclick = function () {
-    window.fmSelectFile(this);
-  };
-
-  const iconSpan = document.createElement('span');
-  iconSpan.className = 'material-icons-round';
-  iconSpan.style.color = isFolder ? 'var(--yellow)' : 'var(--text-muted)';
-  iconSpan.textContent = isFolder ? 'folder' : 'description';
-
-  newBtn.appendChild(iconSpan);
-  newBtn.appendChild(document.createTextNode(' ' + fileName));
-  return newBtn;
-}
-
-/**
- *
- * @param file
- * @param fileName
- * @param newBtn
- */
-function loadFileToFmEditor(file, fileName, newBtn) {
-  file.text().then((text) => {
-    const editor = document.getElementById('fmEditorTextarea');
-    const headerTitle = document.getElementById('fmCurrentFile');
-    if (editor) {
-      editor.value = text;
-      editor.disabled = false;
-    }
-    if (headerTitle) headerTitle.textContent = fileName;
-
-    document
-      .querySelectorAll('#fmFileTree .settings-nav-btn')
-      .forEach((b) => b.classList.remove('active'));
-    newBtn.classList.add('active');
-  });
-}
-
-/**
- *
- */
-function showFmUploadSuccessToast() {
-  if (typeof showToast !== 'function') return;
-  const t = document.querySelector('[x-data]')
-    ? document.querySelector('[x-data]').__x.$data.$store.i18n.t
-    : (k) => k;
-  showToast(t('general.fm_upload_success') || 'Erfolgreich hochgeladen', 'success');
-}
-
-window.fmDrop = function (e) {
-  e.preventDefault();
-  dragCounter = 0;
-  const overlay = document.getElementById('fmDragOverlay');
-  if (overlay) overlay.classList.remove('drag-active');
-
-  if (!e.dataTransfer?.items) return;
-
-  const fileTree = document.getElementById('fmFileTree');
-  let firstFileLoaded = false;
-
-  for (const item of e.dataTransfer.items) {
-    if (item.kind !== 'file') continue;
-
-    const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
-    if (!entry) continue;
-
-    const isFolder = entry.isDirectory;
-    const newBtn = createFmTreeButton(isFolder, entry.name);
-    if (fileTree) fileTree.appendChild(newBtn);
-
-    if (!isFolder && !firstFileLoaded) {
-      loadFileToFmEditor(item.getAsFile(), entry.name, newBtn);
-      firstFileLoaded = true;
-    }
-  }
-
-  showFmUploadSuccessToast();
-};
-
-window.fmDownload = function () {
-  const editor = document.getElementById('fmEditorTextarea');
-  const headerTitle = document.getElementById('fmCurrentFile');
-  if (!editor || !headerTitle) return;
-
-  const content = editor.value;
-  const fileName = headerTitle.textContent.trim() || 'config.txt';
-
-  const blob = new Blob([content], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-
-  setTimeout(() => {
-    a.remove();
-    URL.revokeObjectURL(url);
-  }, 100);
-};
+window.openMinecraftContent = (server) => minecraftContentManager.open(server);
+window.closeMinecraftContent = () => minecraftContentManager.close();
+window.refreshMinecraftContent = () => minecraftContentManager.load();
+window.filterMinecraftContent = () => minecraftContentManager.filter();

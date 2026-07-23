@@ -10,7 +10,7 @@
     />
 
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="css/main.css?v=4" />
+    <link rel="stylesheet" href="css/main.css?v=20" />
     <script>
       // Load WebKit-specific styles only if not Firefox, to prevent harmless console warnings
       if (!navigator.userAgent.toLowerCase().includes('firefox')) {
@@ -20,9 +20,6 @@
         document.head.appendChild(link);
       }
     </script>
-
-    <script type="module" src="js/main.js"></script>
-    <script defer src="js/alpine-store.js"></script>
   </head>
 
   <body>
@@ -1076,7 +1073,7 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings.saved') || 'Einstellungen gespeichert!') : 'Einstellungen gespeichert!', 'success');"
+            @click="$store.modals.config.open = false; if(typeof showToast === 'function') showToast(typeof t === 'function' ? (t('settings.saved') || 'Settings saved!') : 'Settings saved!', 'success');"
           >
             <span class="material-icons-round">save</span>
             <span x-text="$store.i18n.t('btn.save')">Speichern</span>
@@ -1118,11 +1115,20 @@
           </div>
           <div class="flex-1">
             <h2 id="installModalTitle" class="m-0 text-[18px]">
-              <span x-text="data.isEdit ? 'Einstellungen' : 'Neuen Server'"></span>:
+              <span
+                x-text="data.isEdit ? $store.i18n.t('settings.title') : (data.isAddition ? $store.i18n.t('nav.game_additions') : $store.i18n.t('btn.new_server'))"
+              ></span
+              >:
               <span x-text="data.name"></span>
             </h2>
             <div class="text-[13px] text-muted mt-[4px]">
               itzg/minecraft-server · von <span x-text="data.author"></span>
+            </div>
+            <div
+              class="text-[12px] text-accent mt-[4px]"
+              x-show="data.isAddition && data.targetServerName"
+            >
+              Target: <span x-text="data.targetServerName"></span>
             </div>
           </div>
           <button type="button" class="icon-btn" @click="open = false" aria-label="Schließen">
@@ -1809,29 +1815,23 @@
             type="button"
             class="btn btn-primary border-[var(--text-accent)] bg-accent"
             aria-label="Aktion ausführen"
-            @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? 'Änderungen gespeichert.' : 'Server wird gestartet...', 'success');"
+            @click="open = false; if (typeof showToast === 'function') showToast(data.isEdit ? $store.i18n.t('settings.saved') : `${data.serverName || data.name} ${$store.i18n.t('general.is_starting')}`, 'success');"
           >
             <span
               class="material-icons-round"
               x-text="data.isEdit ? 'save' : 'rocket_launch'"
             ></span>
-            <span x-text="data.isEdit ? 'Änderungen speichern' : 'Container starten'"></span>
+            <span
+              x-text="data.isEdit ? $store.i18n.t('btn.save') : $store.i18n.t('btn.start')"
+            ></span>
           </button>
         </div>
       </div>
     </dialog>
 
     <!-- ─── SCRIPTS ──────────────────────────────────────────────────────────── -->
-    <script src="js/vendor/alpine.min.js" defer></script>
-    <script type="module" src="js/utils.js?v=4"></script>
-    <script type="module" src="js/i18n.js?v=4"></script>
-    <script type="module" src="js/alpine-store.js?v=4"></script>
-    <script type="module" src="js/docker.js?v=4"></script>
-    <script type="module" src="js/gameserver.js?v=4"></script>
-    <script type="module" src="js/gameAdditions.js?v=4"></script>
-    <script type="module" src="js/players.js"></script>
-    <script type="module" src="js/settings.js"></script>
-    <script type="module" src="js/main.js"></script>
+    <script src="js/alpine-store.js?v=8"></script>
+    <script type="module" src="js/main.js?v=34"></script>
     <!-- Folder Modal (FolderView3 Style - Redesigned) -->
     <dialog
       id="folderModalAlpine"

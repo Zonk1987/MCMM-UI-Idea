@@ -2,7 +2,7 @@
    minecraft.js — Minecraft Module for Game Additions
 ═══════════════════════════════════════════════════════════ */
 
-import { GameAdditions } from '../../../js/gameAdditions.js';
+import { GameAdditions } from '../../../js/gameAdditions.js?v=24';
 import { appSettings } from '../../../js/settings.js';
 
 GameAdditions.registerGame('minecraft', {
@@ -92,12 +92,13 @@ GameAdditions.registerGame('minecraft', {
     });
 
     const res = await fetch(`${MODRINTH_API}/search?${params}`);
-    if (!res.ok) throw new Error(`Modrinth API Fehler: ${res.status}`);
+    if (!res.ok) throw new Error(`Modrinth API error: ${res.status}`);
     const data = await res.json();
 
     state.total = data.total_hits;
     const meta = document.getElementById('mcSearchMeta');
-    if (meta) meta.textContent = `${state.total.toLocaleString()} Ergebnisse (Modrinth)`;
+    if (meta)
+      meta.textContent = `${t('general.results_count', { count: state.total.toLocaleString() })} (Modrinth)`;
 
     this.renderModrinthCards(data.hits || []);
     GameAdditions.renderPagination(state);
@@ -110,22 +111,22 @@ GameAdditions.registerGame('minecraft', {
       .map((hit) => {
         const icon = hit.icon_url || '';
         return `
-      <div class="mc-card" data-id="${hit.project_id}" data-name="${hit.title}" role="button" tabindex="0">
+      <div class="mc-card" data-id="${hit.project_id}" data-name="${hit.title}" data-author="${hit.author}" role="button" tabindex="0">
         <div class="mc-card-top">
           ${icon ? `<img src="${icon}" alt="${hit.title}" class="mc-card-icon" />` : `<div class="mc-card-icon-placeholder"><span class="material-icons-round">extension</span></div>`}
           <div class="mc-card-header-info">
             <div class="mc-card-name text-primary" title="${hit.title}">${hit.title}</div>
-            <div class="mc-card-author">by ${hit.author}</div>
+            <div class="mc-card-author">${t('general.by')} ${hit.author}</div>
           </div>
         </div>
         
         <div class="mc-card-desc">${hit.description}</div>
         
         <div class="mc-card-meta">
-          <div class="mc-meta-item" title="Downloads">
+          <div class="mc-meta-item" title="${t('general.downloads')}">
             <span class="material-icons-round">download</span> ${hit.downloads.toLocaleString()}
           </div>
-          <div class="mc-meta-item" title="Zuletzt aktualisiert">
+          <div class="mc-meta-item" title="${t('general.last_update')}">
             <span class="material-icons-round">update</span> ${new Date(hit.date_modified).toLocaleDateString()}
           </div>
         </div>
@@ -208,7 +209,8 @@ GameAdditions.registerGame('minecraft', {
 
     state.total = body.pagination?.totalCount || data.length;
     const meta = document.getElementById('mcSearchMeta');
-    if (meta) meta.textContent = `${state.total.toLocaleString()} Ergebnisse (CurseForge)`;
+    if (meta)
+      meta.textContent = `${t('general.results_count', { count: state.total.toLocaleString() })} (CurseForge)`;
 
     GameAdditions.renderCurseForgeCards(data);
     GameAdditions.renderPagination(state);
@@ -250,7 +252,8 @@ GameAdditions.registerGame('minecraft', {
 
         state.total = results.length;
         const meta = document.getElementById('mcSearchMeta');
-        if (meta) meta.textContent = `${state.total.toLocaleString()} Ergebnisse (FTB)`;
+        if (meta)
+          meta.textContent = `${t('general.results_count', { count: state.total.toLocaleString() })} (FTB)`;
 
         const grid = document.getElementById('mcGrid');
         if (grid) {
@@ -264,14 +267,14 @@ GameAdditions.registerGame('minecraft', {
               </div>
                   <div class="mc-card-header-info">
                 <div class="mc-card-name text-primary" title="${mod.name}">${mod.name}</div>
-                <div class="mc-card-author">by ${mod.author}</div>
+                <div class="mc-card-author">${t('general.by')} ${mod.author}</div>
               </div>
             </div>
             
             <div class="mc-card-desc">${mod.desc}</div>
             
             <div class="mc-card-meta">
-              <div class="mc-meta-item" title="Downloads">
+              <div class="mc-meta-item" title="${t('general.downloads')}">
                 <span class="material-icons-round">download</span> ${mod.downloads.toLocaleString()}
               </div>
               <div class="mc-meta-item" title="Loader">

@@ -28,6 +28,50 @@
       class="flex gap-[12px] w-full"
       style="overflow-x: auto; padding-bottom: 4px"
     ></div>
+
+    <div
+      class="flex items-center gap-[12px] w-full p-3 rounded-lg border border-[var(--border)] bg-surface"
+    >
+      <span class="material-icons-round text-accent">dns</span>
+      <div class="flex-1 min-w-0">
+        <div
+          class="text-xs font-semibold text-primary"
+          x-text="$store.i18n.t('general.target_minecraft_server')"
+        >
+          Target Minecraft server
+        </div>
+        <div
+          class="text-[11px] text-muted"
+          x-text="$store.i18n.t('general.target_minecraft_server_desc')"
+        >
+          Detected from your current Unraid Docker containers
+        </div>
+      </div>
+      <template
+        x-if="$store.core.getGameservers().filter((server) => server.game === 'minecraft' && server.edition === 'java').length > 0"
+      >
+        <select
+          id="gameAdditionServer"
+          class="filter-select min-w-[260px]"
+          aria-label="Target Minecraft server"
+        >
+          <template
+            x-for="server in $store.core.getGameservers().filter((entry) => entry.game === 'minecraft' && entry.edition === 'java')"
+            :key="server.containerId"
+          >
+            <option
+              :value="server.containerId"
+              x-text="`${server.serverName} · ${server.status} · ${server.dataPath || $store.i18n.t('general.data_path_unavailable')}`"
+            ></option>
+          </template>
+        </select>
+      </template>
+      <template
+        x-if="$store.core.getGameservers().filter((server) => server.game === 'minecraft' && server.edition === 'java').length === 0"
+      >
+        <span class="text-xs text-muted">No existing Minecraft server detected</span>
+      </template>
+    </div>
   </div>
 
   <div class="mc-layout">
@@ -45,11 +89,15 @@
           <button type="button" class="filter-chip" data-cat="plugins">
             🔌 <span x-text="$store.i18n.t('general.filter_plugins')">Plugins</span>
           </button>
-          <button type="button" class="filter-chip" data-cat="datapacks">📋 Datenpakete</button>
-          <button type="button" class="filter-chip" data-cat="resourcepacks">
-            🎨 Resource Packs
+          <button type="button" class="filter-chip" data-cat="datapacks">
+            📋 <span x-text="$store.i18n.t('general.filter_datapacks')">Data packs</span>
           </button>
-          <button type="button" class="filter-chip" data-cat="shaders">✨ Shader</button>
+          <button type="button" class="filter-chip" data-cat="resourcepacks">
+            🎨 <span x-text="$store.i18n.t('general.filter_resourcepacks')">Resource packs</span>
+          </button>
+          <button type="button" class="filter-chip" data-cat="shaders">
+            ✨ <span x-text="$store.i18n.t('general.filter_shaders')">Shaders</span>
+          </button>
         </div>
       </div>
 

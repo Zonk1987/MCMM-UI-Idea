@@ -12,15 +12,20 @@
         Verwalte und erstelle Gameserver-Docker-Container
       </p>
     </div>
-    <div class="panel-actions">
-      <button type="button" class="btn btn-primary" @click="openCreateWizard()">
-        <span class="material-icons-round">add</span>
-        <span x-text="$store.i18n.t('btn.new_server')">Neuen Server erstellen</span>
-      </button>
-    </div>
   </div>
 
   <div class="gs-grid">
+    <template x-if="instances.length === 0">
+      <div class="empty-state col-span-full text-center p-10">
+        <span class="material-icons-round text-5xl text-accent">sports_esports</span>
+        <h2 class="mt-3 text-primary" x-text="$store.i18n.t('general.no_minecraft_servers')">
+          No Minecraft servers detected
+        </h2>
+        <p class="text-muted mt-2">
+          Existing Docker containers are detected automatically and will appear after refresh.
+        </p>
+      </div>
+    </template>
     <template x-for="srv in instances" :key="srv.containerId">
       <div class="gs-card flex flex-col" style="height: 510px !important">
         <div class="gs-card-banner">
@@ -32,10 +37,7 @@
             <div class="gs-game-icon" x-text="getTemplate(srv.game).icon"></div>
             <div class="gs-card-title">
               <div class="gs-server-name" x-text="srv.serverName"></div>
-              <div
-                class="gs-game-name"
-                x-text="`${getTemplate(srv.game).name} · ${srv.version}`"
-              ></div>
+              <div class="gs-game-name" x-text="`${srv.serverType} · ${srv.version}`"></div>
             </div>
             <div :class="`gs-status-pill ${srv.status === 'online' ? 'online' : 'offline'}`">
               <span class="status-dot"></span>
@@ -178,7 +180,10 @@
 
           <div class="resource-bar-label" style="margin-top: auto; margin-bottom: 0">
             <span class="text-muted">Port: <span class="text-cyan" x-text="srv.port"></span></span>
-            <span class="text-muted" x-text="`Uptime: ${srv.uptime}`"></span>
+            <span
+              class="text-muted"
+              x-text="srv.managed ? `${$store.i18n.t('col.uptime')}: ${srv.uptime}` : `${$store.i18n.t('general.detected')} · ${srv.uptime}`"
+            ></span>
           </div>
 
           <div class="gs-card-actions mt-[14px] flex flex-col" style="gap: 8px !important">
@@ -186,7 +191,7 @@
               class="w-full"
               style="
                 display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 6px !important;
               "
             >
@@ -201,6 +206,7 @@
                     width: 100% !important;
                   "
                   @click="toggleServer(srv.containerId)"
+                  :disabled="pendingServerIds.has(srv.containerId)"
                 >
                   <span class="material-icons-round">stop</span>
                   <span x-text="$store.i18n.t('btn.stop') || 'Stoppen'"></span>
@@ -217,6 +223,7 @@
                     width: 100% !important;
                   "
                   @click="toggleServer(srv.containerId)"
+                  :disabled="pendingServerIds.has(srv.containerId)"
                 >
                   <span class="material-icons-round">play_arrow</span>
                   <span x-text="$store.i18n.t('btn.start') || 'Starten'"></span>
@@ -280,7 +287,7 @@
                   flex: 1 1 0% !important;
                   width: 100% !important;
                 "
-                @click="typeof window.toggleModal === 'function' ? window.toggleModal('fileManagerModal', true) : null"
+                @click="typeof window.openFileManager === 'function' ? window.openFileManager(srv) : null"
               >
                 <span class="material-icons-round">folder</span>
                 <span x-text="$store.i18n.t('btn.files')">Dateien</span>
@@ -300,6 +307,21 @@
                 <span class="material-icons-round">backup</span>
                 <span x-text="$store.i18n.t('btn.backups')">Backups</span>
               </button>
+              <button
+                type="button"
+                :title="$store.i18n.t('general.mc_content_title')"
+                class="btn btn-ghost h-[36px] items-center justify-center inline-flex"
+                style="
+                  margin: 0 !important;
+                  border-radius: 8px !important;
+                  flex: 1 1 0% !important;
+                  width: 100% !important;
+                "
+                @click="window.openMinecraftContent(srv)"
+              >
+                <span class="material-icons-round">extension</span>
+                <span x-text="$store.i18n.t('general.mc_content')">Mods</span>
+              </button>
             </div>
           </div>
         </div>
@@ -309,7 +331,7 @@
 
   <!-- Create Server Wizard Modal -->
   <div class="modal-backdrop" id="createServerModal" hidden>
-    <div class="modal glass-card">
+    <div class="modal modal-large glass-card">
       <div class="modal-header">
         <h2 x-text="$store.i18n.t('btn.new_server')">Neuen Server erstellen</h2>
         <button type="button" class="icon-btn" @click="closeCreateWizard()">
@@ -394,6 +416,99 @@
                 x-model="wForm.image"
               />
             </div>
+            <div class="gs-install-grid">
+              <div class="form-group">
+                <label for="wFormType" x-text="$store.i18n.t('general.mc_server_type')"
+                  >Server type</label
+                >
+                <select class="form-input" id="wFormType" x-model="wForm.type">
+                  <option value="VANILLA">Vanilla</option>
+                  <option value="PAPER">Paper</option>
+                  <option value="PURPUR">Purpur</option>
+                  <option value="FABRIC">Fabric</option>
+                  <option value="FORGE">Forge</option>
+                  <option value="NEOFORGE">NeoForge</option>
+                  <option value="QUILT">Quilt</option>
+                  <option value="MODRINTH">Modrinth Modpack</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="wFormVersion" x-text="$store.i18n.t('general.mc_version')"
+                  >Minecraft version</label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="wFormVersion"
+                  x-model="wForm.version"
+                  placeholder="LATEST or 1.21.1"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="wFormJavaRuntime" x-text="$store.i18n.t('general.mc_java_runtime')"
+                >Java runtime</label
+              >
+              <select class="form-input" id="wFormJavaRuntime" x-model="wForm.javaRuntime">
+                <option value="auto" x-text="$store.i18n.t('general.mc_java_auto')">
+                  Auto (recommended)
+                </option>
+                <option value="8">Java 8</option>
+                <option value="11">Java 11</option>
+                <option value="16">Java 16</option>
+                <option value="17">Java 17</option>
+                <option value="21">Java 21</option>
+                <option value="25">Java 25</option>
+              </select>
+              <small
+                x-text="$store.i18n.t('general.mc_java_selected', { version: getJavaRuntimeRecommendation() })"
+                >The server will use Java 25.</small
+              >
+            </div>
+            <div x-show="wForm.type === 'MODRINTH'" class="gs-modpack-fields">
+              <div class="form-group">
+                <label for="wFormModpack" x-text="$store.i18n.t('general.mc_modpack_project')"
+                  >Modrinth modpack</label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="wFormModpack"
+                  x-model="wForm.modpack"
+                  placeholder="Project ID, slug, or URL"
+                />
+              </div>
+              <div class="gs-install-grid">
+                <div class="form-group">
+                  <label
+                    for="wFormModpackVersion"
+                    x-text="$store.i18n.t('general.mc_modpack_version')"
+                    >Modpack version</label
+                  >
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="wFormModpackVersion"
+                    x-model="wForm.modpackVersion"
+                    placeholder="Latest compatible"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="wFormLoader" x-text="$store.i18n.t('general.mc_loader')"
+                    >Loader</label
+                  >
+                  <select class="form-input" id="wFormLoader" x-model="wForm.loader">
+                    <option value="" x-text="$store.i18n.t('general.mc_loader_auto')">
+                      Auto detect
+                    </option>
+                    <option value="fabric">Fabric</option>
+                    <option value="forge">Forge</option>
+                    <option value="neoforge">NeoForge</option>
+                    <option value="quilt">Quilt</option>
+                  </select>
+                </div>
+              </div>
+            </div>
             <div class="form-group">
               <label for="wFormPort">Port (Host)</label>
               <input
@@ -408,13 +523,27 @@
               <label for="wFormRam" x-text="$store.i18n.t('general.ram')"
                 ><span x-text="$store.i18n.t('dc.ram_mb')">RAM (MB)</span></label
               >
-              <input
-                class="form-input"
-                id="wFormRam"
-                aria-label="wFormRam"
-                type="number"
-                x-model="wForm.ram"
-              />
+              <div class="memory-autocomplete">
+                <input
+                  class="form-input"
+                  id="wFormRam"
+                  aria-label="wFormRam"
+                  aria-autocomplete="list"
+                  aria-controls="wFormRamSuggestions"
+                  aria-expanded="false"
+                  autocomplete="off"
+                  inputmode="numeric"
+                  role="combobox"
+                  type="text"
+                  x-model="wForm.ram"
+                />
+                <div
+                  class="memory-autocomplete-list"
+                  id="wFormRamSuggestions"
+                  role="listbox"
+                  hidden
+                ></div>
+              </div>
             </div>
             <div class="form-group">
               <label for="wFormPath" x-text="$store.i18n.t('general.data_path')">Datenpfad</label>
@@ -426,12 +555,53 @@
                 x-model="wForm.path"
               />
             </div>
+            <div class="gs-install-grid">
+              <div class="form-group">
+                <label for="wFormMaxPlayers" x-text="$store.i18n.t('mc.max_players')"
+                  >Max players</label
+                >
+                <input
+                  class="form-input"
+                  id="wFormMaxPlayers"
+                  type="number"
+                  min="1"
+                  max="1000"
+                  x-model="wForm.maxPlayers"
+                />
+              </div>
+              <div class="form-group">
+                <label for="wFormMotd">MOTD</label>
+                <input class="form-input" id="wFormMotd" type="text" x-model="wForm.motd" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="wFormProjects" x-text="$store.i18n.t('general.mc_optional_projects')"
+                >Optional Modrinth mods/plugins</label
+              >
+              <textarea
+                class="form-input gs-project-list"
+                id="wFormProjects"
+                x-model="wForm.projects"
+                :placeholder="$store.i18n.t('general.mc_optional_projects_placeholder')"
+              ></textarea>
+            </div>
+            <label class="gs-eula-consent">
+              <input type="checkbox" x-model="wForm.eula" />
+              <span x-text="$store.i18n.t('general.mc_eula_consent')"
+                >I accept the Minecraft EULA</span
+              >
+            </label>
             <div class="flex gap-[8px] justify-end">
               <button type="button" class="btn btn-ghost" @click="prevWizardStep()">
                 <span class="material-icons-round">chevron_left</span>
                 <span x-text="$store.i18n.t('btn.back')">Zurück</span>
               </button>
-              <button type="button" class="btn btn-primary" @click="nextWizardStep()">
+              <button
+                type="button"
+                class="btn btn-primary"
+                :disabled="!wForm.eula"
+                @click="nextWizardStep()"
+              >
                 <span x-text="$store.i18n.t('step.preview')">Vorschau</span>
                 <span class="material-icons-round">chevron_right</span>
               </button>
@@ -446,7 +616,9 @@
               class="text-secondary text-[13px] mb-3"
               x-text="$store.i18n.t('general.docker_cmd_preview')"
             >
-              Der folgende Docker-Befehl wird ausgeführt:
+              <span x-text="$store.i18n.t('general.compose_deploy_preview')"
+                >This Compose definition will be deployed through Unraid:</span
+              >
             </p>
             <div class="code-preview" x-text="getWizardCmd()" style="white-space: pre-wrap"></div>
             <div class="flex gap-[8px] justify-end mt-[16px]">
@@ -454,9 +626,20 @@
                 <span class="material-icons-round">chevron_left</span>
                 <span x-text="$store.i18n.t('btn.back')">Zurück</span>
               </button>
-              <button type="button" class="btn btn-primary" @click="createWizardServer()">
-                <span class="material-icons-round">rocket_launch</span>
-                <span x-text="$store.i18n.t('btn.create')">Server erstellen</span>
+              <button
+                type="button"
+                class="btn btn-primary"
+                :disabled="creating"
+                @click="createWizardServer()"
+              >
+                <span
+                  class="material-icons-round"
+                  x-text="creating ? 'progress_activity' : 'rocket_launch'"
+                ></span>
+                <span
+                  x-text="creating ? $store.i18n.t('general.deploying') : $store.i18n.t('btn.create')"
+                  >Server erstellen</span
+                >
               </button>
             </div>
           </div>
@@ -548,134 +731,273 @@
     </div>
   </div>
 
-  <!-- File Manager Modal -->
-  <dialog
+  <div
+    class="modal-backdrop"
+    id="minecraftContentModal"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mcContentTitle"
+  >
+    <div class="modal modal-large glass-card mc-content-modal">
+      <div class="modal-header">
+        <div class="flex items-center gap-[10px] min-w-0">
+          <span class="material-icons-round text-accent">extension</span>
+          <h2 id="mcContentTitle">Installed Minecraft Content</h2>
+        </div>
+        <div class="flex items-center gap-[6px]">
+          <button
+            type="button"
+            class="icon-btn"
+            id="mcContentRefresh"
+            :aria-label="$store.i18n.t('btn.refresh')"
+            @click="window.refreshMinecraftContent()"
+          >
+            <span class="material-icons-round">refresh</span>
+          </button>
+          <button
+            type="button"
+            class="icon-btn"
+            :aria-label="$store.i18n.t('btn.close')"
+            @click="window.closeMinecraftContent()"
+          >
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="mc-content-toolbar">
+        <div id="mcContentSummary"></div>
+        <label class="fm-search mc-content-search">
+          <span class="material-icons-round">search</span>
+          <input
+            id="mcContentSearch"
+            type="search"
+            :placeholder="$store.i18n.t('general.mc_content_search')"
+            @input="window.filterMinecraftContent()"
+          />
+        </label>
+      </div>
+      <div class="mc-content-count" id="mcContentCount"></div>
+      <div class="modal-body mc-content-list" id="mcContentList"></div>
+    </div>
+  </div>
+
+  <div
     class="modal-backdrop"
     id="fileManagerModal"
     hidden
+    role="dialog"
+    aria-modal="true"
     aria-labelledby="fmTitle"
+    @keydown="typeof window.fmKeyboard === 'function' ? window.fmKeyboard($event) : null"
     @drop="typeof window.fmDrop === 'function' ? window.fmDrop($event) : null"
+    @dragenter="typeof window.fmDragEnter === 'function' ? window.fmDragEnter($event) : null"
     @dragover="typeof window.fmDragOver === 'function' ? window.fmDragOver($event) : null"
     @dragleave="typeof window.fmDragLeave === 'function' ? window.fmDragLeave($event) : null"
   >
-    <div class="modal modal-large glass-card max-w-[900px] relative overflow-hidden">
+    <div class="modal glass-card fm-modal">
       <div class="modal-header">
-        <div class="flex items-center gap-[10px]">
+        <div class="fm-title-group">
           <span class="material-icons-round" style="color: var(--blue)">folder</span>
-          <h2 id="fmTitle" x-text="$store.i18n.t('general.fm_title')">Dateimanager</h2>
-          <span class="status-badge bg-input text-muted border border-[var(--border)]">/data/</span>
+          <h2 id="fmTitle">File Manager</h2>
+          <span
+            id="fmCurrentPath"
+            class="status-badge bg-input text-muted border border-[var(--border)]"
+            >/</span
+          >
         </div>
-        <button type="button" class="icon-btn" id="closeFmModal" @click="window.closeFm()">
+        <button
+          type="button"
+          class="icon-btn"
+          id="closeFmModal"
+          :aria-label="$store.i18n.t('btn.close')"
+          @click="window.closeFm()"
+        >
           <span class="material-icons-round">close</span>
         </button>
       </div>
-      <div class="modal-body flex h-[600px] p-0">
-        <!-- Sidebar: File Tree -->
-        <div class="w-[240px] border-r border-[var(--border)] bg-base overflow-y-auto p-3">
-          <div class="text-[11px] font-semibold text-muted mb-2" style="text-transform: uppercase">
-            Verzeichnis
-          </div>
-          <div id="fmFileTree" class="flex flex-col gap-[4px]">
-            <button
-              type="button"
-              class="settings-nav-btn active"
-              data-type="folder"
-              @click="window.fmSelectFile($el)"
-            >
-              <span class="material-icons-round" style="color: var(--yellow)">folder</span> root
-            </button>
-            <button
-              type="button"
-              data-type="folder"
-              class="settings-nav-btn pl-6"
-              @click="window.fmSelectFile($el)"
-            >
-              <span class="material-icons-round" style="color: var(--yellow)">folder</span> plugins
-            </button>
-            <button
-              type="button"
-              data-type="folder"
-              class="settings-nav-btn pl-6"
-              @click="window.fmSelectFile($el)"
-            >
-              <span class="material-icons-round" style="color: var(--yellow)">folder</span> world
-            </button>
-            <button
-              type="button"
-              data-type="file"
-              class="settings-nav-btn pl-6"
-              @click="window.fmSelectFile($el)"
-            >
-              <span class="material-icons-round text-muted">description</span>
-              server.properties
-            </button>
-            <button
-              type="button"
-              data-type="file"
-              class="settings-nav-btn pl-6"
-              @click="window.fmSelectFile($el)"
-            >
-              <span class="material-icons-round text-muted">description</span>
-              eula.txt
-            </button>
-            <button
-              type="button"
-              data-type="file"
-              class="settings-nav-btn pl-6"
-              @click="window.fmSelectFile($el)"
-            >
-              <span class="material-icons-round text-muted">description</span>
-              ops.json
-            </button>
-          </div>
-        </div>
-        <!-- Right: Editor -->
-        <div class="flex-1 flex flex-col" style="background: #0d0f13">
-          <div
-            class="border-b border-[var(--border)] flex justify-between items-center bg-card"
-            style="padding: 8px 16px"
+      <div class="fm-toolbar">
+        <nav
+          id="fmBreadcrumbs"
+          class="fm-breadcrumbs"
+          :aria-label="$store.i18n.t('general.fm_current_directory')"
+        ></nav>
+        <div class="fm-toolbar-actions">
+          <button
+            type="button"
+            class="icon-btn"
+            :aria-label="$store.i18n.t('btn.refresh')"
+            @click="window.fmRefresh()"
           >
-            <div id="fmCurrentFile" class="text-xs font-mono text-secondary">server.properties</div>
-            <div class="flex gap-[8px]">
+            <span class="material-icons-round">refresh</span>
+          </button>
+          <button type="button" class="btn btn-ghost fm-action-btn" @click="window.fmCreateFile()">
+            <span class="material-icons-round">note_add</span>
+            <span x-text="$store.i18n.t('general.fm_new_file')">New file</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-ghost fm-action-btn"
+            @click="window.fmCreateFolder()"
+          >
+            <span class="material-icons-round">create_new_folder</span>
+            <span x-text="$store.i18n.t('general.fm_new_folder')">New folder</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary fm-action-btn"
+            @click="window.fmChooseUpload()"
+          >
+            <span class="material-icons-round">upload</span>
+            <span x-text="$store.i18n.t('general.fm_upload')">Upload</span>
+          </button>
+          <input
+            id="fmUploadInput"
+            type="file"
+            hidden
+            multiple
+            @change="window.fmUploadSelected($event)"
+          />
+        </div>
+      </div>
+      <div id="fmProgress" class="fm-progress" hidden>
+        <div id="fmProgressBar" class="fm-progress-bar"></div>
+      </div>
+      <div class="modal-body fm-body">
+        <aside class="fm-sidebar">
+          <div class="fm-sidebar-controls">
+            <label class="fm-search">
+              <span class="material-icons-round">search</span>
+              <input
+                id="fmSearchInput"
+                type="search"
+                :placeholder="$store.i18n.t('general.fm_search')"
+                placeholder="Search files"
+                @input="window.fmFilter()"
+              />
+            </label>
+            <select
+              id="fmSortSelect"
+              class="fm-sort"
+              :aria-label="$store.i18n.t('general.fm_sort')"
+              @change="window.fmSort()"
+            >
+              <option value="name" x-text="$store.i18n.t('general.fm_sort_name')">Name</option>
+              <option value="modified" x-text="$store.i18n.t('general.fm_sort_modified')">
+                Modified
+              </option>
+              <option value="size" x-text="$store.i18n.t('general.fm_sort_size')">Size</option>
+            </select>
+          </div>
+          <div id="fmFileTree" class="fm-file-list">
+            <div class="text-xs text-muted p-2" x-text="$store.i18n.t('general.loading')">
+              Loading...
+            </div>
+          </div>
+        </aside>
+        <section class="fm-editor-pane">
+          <div class="fm-editor-header">
+            <div class="fm-file-heading">
+              <div
+                id="fmCurrentFile"
+                class="fm-current-file"
+                x-text="$store.i18n.t('general.fm_select_file')"
+              >
+                Select a file
+              </div>
+              <div id="fmMetadata" class="fm-metadata"></div>
+            </div>
+            <div class="fm-file-actions">
               <button
                 type="button"
                 id="fmDownloadBtn"
-                class="btn btn-ghost text-[11px]"
-                style="padding: 4px 12px"
-                @click="typeof window.fmDownload === 'function' ? window.fmDownload() : null"
+                class="icon-btn"
+                :aria-label="$store.i18n.t('btn.download')"
+                disabled
+                @click="window.fmDownload()"
               >
-                <span class="material-icons-round text-sm">download</span>
-                <span x-text="$store.i18n.t('btn.download')">Herunterladen</span>
+                <span class="material-icons-round">download</span>
+              </button>
+              <button
+                type="button"
+                id="fmRenameBtn"
+                class="icon-btn"
+                :aria-label="$store.i18n.t('general.fm_rename')"
+                disabled
+                @click="window.fmRename()"
+              >
+                <span class="material-icons-round">drive_file_rename_outline</span>
+              </button>
+              <button
+                type="button"
+                id="fmDeleteBtn"
+                class="icon-btn text-red"
+                :aria-label="$store.i18n.t('btn.delete')"
+                disabled
+                @click="window.fmDelete()"
+              >
+                <span class="material-icons-round">delete</span>
               </button>
               <button
                 type="button"
                 id="fmSaveBtn"
-                class="btn btn-primary text-[11px]"
-                style="padding: 4px 12px"
+                class="btn btn-primary fm-action-btn"
+                disabled
                 @click="window.fmSave()"
               >
-                <span class="material-icons-round text-sm">save</span>
-                <span x-text="$store.i18n.t('btn.save')">Speichern</span>
+                <span class="material-icons-round">save</span>
+                <span x-text="$store.i18n.t('btn.save')">Save</span>
               </button>
             </div>
           </div>
-          <textarea
-            id="fmEditorTextarea"
-            aria-label="Editor"
-            class="flex-1 outline-none font-mono text-[13px] p-4"
-            style="background: transparent; border: none; color: #a8b5cc; resize: none"
-          ></textarea>
-        </div>
+          <div class="fm-find-bar">
+            <input
+              id="fmFindInput"
+              type="search"
+              :placeholder="$store.i18n.t('general.fm_find')"
+              placeholder="Find"
+            />
+            <button
+              type="button"
+              class="icon-btn"
+              :aria-label="$store.i18n.t('general.fm_find_next')"
+              @click="window.fmFindNext()"
+            >
+              <span class="material-icons-round">search</span>
+            </button>
+            <input
+              id="fmReplaceInput"
+              type="text"
+              :placeholder="$store.i18n.t('general.fm_replace')"
+              placeholder="Replace"
+            />
+            <button type="button" class="btn btn-ghost fm-action-btn" @click="window.fmReplace()">
+              <span x-text="$store.i18n.t('general.fm_replace')">Replace</span>
+            </button>
+          </div>
+          <div class="fm-editor-wrap">
+            <pre id="fmLineNumbers" class="fm-line-numbers" aria-hidden="true">1</pre>
+            <textarea
+              id="fmEditorTextarea"
+              :aria-label="$store.i18n.t('general.fm_editor')"
+              spellcheck="false"
+              disabled
+            ></textarea>
+          </div>
+          <div class="fm-status-bar">
+            <span id="fmStatus" role="status" aria-live="polite"></span>
+            <span id="fmValidation" class="fm-validation"></span>
+          </div>
+        </section>
       </div>
-      <!-- Drag &amp; Drop Overlay -->
       <div id="fmDragOverlay" class="drag-overlay">
         <span class="material-icons-round">cloud_upload</span>
         <h3 x-text="$store.i18n.t('general.fm_drag_drop')" class="text-xl font-semibold">
-          Dateien hier ablegen zum Hochladen
+          Drop files here to upload
         </h3>
       </div>
     </div>
-  </dialog>
+  </div>
 
   <!-- Backup Modal -->
   <div class="modal-backdrop" id="backupModal" hidden>
@@ -727,7 +1049,7 @@
                       type="button"
                       class="action-btn"
                       :title="$store.i18n.t('btn.restore')"
-                      onclick="showToast('Backup wird wiederhergestellt', 'info')"
+                      @click="showToast($store.i18n.t('general.backup_restoring'), 'info')"
                       style="color: var(--blue); border-color: var(--blue-dim)"
                     >
                       <span class="material-icons-round">restore</span>
@@ -735,7 +1057,7 @@
                     <button
                       type="button"
                       :title="$store.i18n.t('btn.download')"
-                      onclick="showToast('Download startet...', 'success')"
+                      @click="showToast($store.i18n.t('general.download_starting'), 'success')"
                       class="action-btn text-primary"
                     >
                       <span class="material-icons-round">download</span>
@@ -743,7 +1065,7 @@
                     <button
                       type="button"
                       :title="$store.i18n.t('btn.delete')"
-                      onclick="showToast('Backup gelöscht', 'error')"
+                      @click="showToast($store.i18n.t('general.backup_deleted'), 'success')"
                       class="action-btn text-red"
                     >
                       <span class="material-icons-round">delete</span>

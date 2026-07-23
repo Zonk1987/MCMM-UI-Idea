@@ -3,7 +3,7 @@
    Bootstraps all modules and wires top-level navigation.
 ═══════════════════════════════════════════════════════════ */
 
-import { loadLanguage, t, initI18n } from './i18n.js';
+import { loadLanguage, t, initI18n } from './i18n.js?v=21';
 import {
   toggleModal,
   showToast,
@@ -14,15 +14,15 @@ import {
   switchTab,
   pingClass,
   skeletonGrid,
-} from './utils.js';
-import { initSettings, applyVisualSettings, appSettings, debugApp } from './settings.js';
-import { initCoreStore } from './core-store.js';
-import { dockerApp } from './docker.js';
-import { foldersApp } from './folders.js';
-import { networksApp } from './networks.js';
-import { composeApp } from './compose.js';
-import { registerAlpineComponents } from './alpine-components.js';
-import autoAnimate from './vendor/auto-animate.min.js';
+} from './utils.js?v=32';
+import { initSettings, applyVisualSettings, appSettings, debugApp } from './settings.js?v=9';
+import { initCoreStore } from './core-store.js?v=24';
+import { dockerApp } from './docker.js?v=24';
+import { foldersApp } from './folders.js?v=7';
+import { networksApp } from './networks.js?v=7';
+import { composeApp } from './compose.js?v=7';
+import { registerAlpineComponents } from './alpine-components.js?v=21';
+import autoAnimate from './vendor/auto-animate.min.js?v=7';
 
 document.addEventListener('alpine:init', () => {
   if (window.Alpine) {
@@ -42,7 +42,7 @@ document.addEventListener('keydown', (e) => {
 
   if (e.key === 'Escape') {
     const closeBtn = topModal.querySelector(
-      '.modal-header .icon-btn, [aria-label="Schließen"], #closeModModal'
+      '.modal-header .icon-btn, [aria-label="Close"], [aria-label="Schließen"], #closeModModal'
     );
     if (closeBtn) closeBtn.click();
   } else if (e.key === 'Enter') {
@@ -133,10 +133,10 @@ document.getElementById('tabNav')?.addEventListener('click', (e) => {
 });
 
 // ── Refresh button ────────────────────────────────────
-document.getElementById('refreshBtn')?.addEventListener('click', () => {
+document.getElementById('refreshBtn')?.addEventListener('click', async () => {
   const active = document.querySelector('.tab-btn.active')?.dataset.tab;
   if (active === 'docker') {
-    /* Alpine handles it */
+    await Alpine.store('core')?.refreshContainers();
   }
   if (active === 'gameserver') {
     /* Alpine handles it */
@@ -170,14 +170,14 @@ if (!localStorage.getItem('gs_hub_onboarding_done')) {
 }
 // Dynamically load Alpine.js AFTER all modules are initialized
 const script = document.createElement('script');
-script.src = 'js/vendor/alpine.min.js';
+script.src = 'js/vendor/alpine.min.js?v=7';
 script.defer = true;
 document.head.appendChild(script);
 
 // Import game addition modules AFTER GameAdditions has been attached to window
 // (Wait, static imports are hoisted. To ensure they run AFTER GameAdditions is global,
 // we should just let them import GameAdditions directly, which we already did!)
-import '../games/minecraft/js/minecraft.js';
-import '../games/palworld/js/palworld.js';
-import '../games/valheim/js/valheim.js';
-import '../games/cs2/js/cs2.js';
+import '../games/minecraft/js/minecraft.js?v=24';
+import '../games/palworld/js/palworld.js?v=21';
+import '../games/valheim/js/valheim.js?v=21';
+import '../games/cs2/js/cs2.js?v=21';

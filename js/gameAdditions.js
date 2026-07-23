@@ -3,6 +3,10 @@
    Manages UI state, search, sources, pagination, and module registration.
 ═══════════════════════════════════════════════════════════ */
 
+import { MinecraftAdditionInstaller } from './minecraft-addition-installer.js?v=3';
+import { MinecraftContentClient } from './minecraft-content-client.js?v=2';
+import { ModrinthClient } from './modrinth-client.js?v=2';
+
 export const GameAdditions = {
   games: {},
   state: {
@@ -17,6 +21,7 @@ export const GameAdditions = {
     perPage: 24,
     total: 0,
     loading: false,
+    targetServerId: '',
   },
 
   /**
@@ -28,12 +33,41 @@ export const GameAdditions = {
     this.games[id] = config;
   },
 
+  minecraftServers() {
+    const store = globalThis.Alpine?.store('core');
+    return store
+      ? store
+          .getGameservers()
+          .filter((server) => server.game === 'minecraft' && server.edition === 'java')
+      : [];
+  },
+
+  selectedServer() {
+    const servers = this.minecraftServers();
+    return (
+      servers.find((server) => server.containerId === this.state.targetServerId) ||
+      servers[0] ||
+      null
+    );
+  },
+
   /**
    * Initialize the Game Additions hub
    */
   init() {
     this.buildGameSelector();
     this.bindEvents();
+    this.installer = new MinecraftAdditionInstaller(
+      new ModrinthClient(),
+      new MinecraftContentClient(),
+      {
+        toggleModal: (id, open) => window.toggleModal(id, open),
+        toast: (message, type) => window.showToast(message, type),
+        translate: (key, variables) => window.t(key, variables),
+        switchTab: (tab) => window.switchTab(tab),
+      }
+    );
+    this.installer.bind();
 
     // Set default game if not found
     if (!this.games[this.state.game]) {
@@ -62,8 +96,7 @@ export const GameAdditions = {
     }
 
     const meta = document.getElementById('mcSearchMeta');
-    if (meta)
-      meta.textContent = typeof t === 'function' ? t('general.loading') || 'Lädt...' : 'Lädt...';
+    if (meta) meta.textContent = t('general.loading');
 
     const gameModule = this.games[this.state.game];
 
@@ -71,7 +104,7 @@ export const GameAdditions = {
       if (gameModule?.fetchContent) {
         await gameModule.fetchContent(this.state);
       } else {
-        throw new Error('Kein fetchContent im Modul definiert.');
+        throw new Error(t('general.module_unavailable'));
       }
     } catch (err) {
       console.error(err);
@@ -81,7 +114,7 @@ export const GameAdditions = {
           <p class="mt-2.5 text-red-500">${err.message}</p>
         </div>`;
       }
-      if (meta) meta.textContent = '0 Ergebnisse';
+      if (meta) meta.textContent = t('general.results_count', { count: 0 });
     } finally {
       this.state.loading = false;
     }
@@ -211,6 +244,10 @@ export const GameAdditions = {
       });
     }
 
+    document.getElementById('panel-game-additions')?.addEventListener('change', (event) => {
+      if (event.target.id === 'gameAdditionServer') this.state.targetServerId = event.target.value;
+    });
+
     // 6. Pagination & Card Clicks
     const grid = document.getElementById('mcGrid');
     if (grid) {
@@ -225,13 +262,24 @@ export const GameAdditions = {
 
         const card = e.target.closest('.mc-card[data-id]');
         if (card) {
+          const target = this.selectedServer();
           window.dispatchEvent(
-            new CustomEvent('open-install-modal', {
+            new CustomEvent('open-minecraft-content-installer', {
               detail: {
                 id: card.dataset.id,
                 name: card.dataset.name,
                 author: card.dataset.author || 'Unknown',
                 isEdit: false,
+                isAddition: true,
+                source: this.state.source,
+                category: this.state.category,
+                targetServerId: target?.containerId || '',
+                targetServerName: target?.serverName || '',
+                targetPath: target?.dataPath || '',
+                targetVersion: target?.version || '',
+                targetLoader: target?.serverType || '',
+                minecraftVersion: this.state.version || '',
+                loader: this.state.loader === 'all' ? '' : this.state.loader,
               },
             })
           );
@@ -277,7 +325,9 @@ export const GameAdditions = {
 
     let res;
     try {
-      res = await fetch(`https://api.curseforge.com/v1/mods/search?${params}`, { headers });
+      res = await fetch(`https://api.curseforge.com/v1/mods/search?${params}`, {
+        headers,
+      });
     } catch (err) {
       throw new Error('CurseForge Network Error', {
         cause: err,
@@ -303,7 +353,8 @@ export const GameAdditions = {
 
     state.total = body.pagination?.totalCount || data.length;
     const meta = document.getElementById('mcSearchMeta');
-    if (meta) meta.textContent = `${state.total.toLocaleString()} Ergebnisse (CurseForge)`;
+    if (meta)
+      meta.textContent = `${t('general.results_count', { count: state.total.toLocaleString() })} (CurseForge)`;
 
     this.renderCurseForgeCards(data);
     this.renderPagination(state);
@@ -315,7 +366,7 @@ export const GameAdditions = {
     if (grid) {
       grid.innerHTML = `<div class="empty-state col-span-full text-left">
         <span class="material-icons-round text-4xl text-yellow-500">bug_report</span>
-        <p class="mt-2.5 font-bold">Keine Ergebnisse gefunden</p>
+        <p class="mt-2.5 font-bold">${t('general.no_results')}</p>
         <code class="block mt-2.5 text-white text-xs bg-white/10 p-2.5 rounded whitespace-pre-wrap break-all">
 Request URL: https://api.curseforge.com/v1/mods/search?${paramsStr}
 
@@ -324,7 +375,7 @@ ${JSON.stringify(body, null, 2)}
         </code>
       </div>`;
     }
-    if (meta) meta.textContent = `0 Ergebnisse`;
+    if (meta) meta.textContent = t('general.results_count', { count: 0 });
   },
 
   renderCurseForgeApiKeyWarning() {
@@ -333,16 +384,16 @@ ${JSON.stringify(body, null, 2)}
     if (grid) {
       grid.innerHTML = `<div class="empty-state col-span-full text-center">
         <span class="material-icons-round text-5xl text-yellow-500">vpn_key</span>
-        <p class="mt-2.5 text-base">CurseForge API Key fehlt</p>
+        <p class="mt-2.5 text-base">${t('general.cf_api_key_required')}</p>
         <p class="text-muted text-sm max-w-[400px] mx-auto my-2.5">
-          Um auf reale CurseForge-Daten zuzugreifen, musst du deinen persönlichen API-Key in den Plugin-Einstellungen hinterlegen.
+          ${t('general.cf_api_key_help')}
         </p>
         <button class="settings-btn primary" onclick="document.querySelector('.tab-btn[data-tab=&quot;settings&quot;]').click();" class="mt-5">
-          <span class="material-icons-round">settings</span> Zu den Einstellungen
+          <span class="material-icons-round">settings</span> ${t('general.open_settings')}
         </button>
       </div>`;
     }
-    if (meta) meta.textContent = `API Key benötigt`;
+    if (meta) meta.textContent = t('general.api_key_required');
   },
 
   renderCurseForgeCards(data) {
@@ -357,17 +408,17 @@ ${JSON.stringify(body, null, 2)}
           ${thumb ? `<img src="${thumb}" alt="${mod.name}" class="mc-card-icon" />` : `<div class="mc-card-icon-placeholder"><span class="material-icons-round">extension</span></div>`}
           <div class="mc-card-header-info">
             <div class="mc-card-name text-primary" title="${mod.name}">${mod.name}</div>
-            <div class="mc-card-author">by ${mod.authors && mod.authors.length > 0 ? mod.authors.map((a) => a.name).join(', ') : 'Unknown'}</div>
+            <div class="mc-card-author">${t('general.by')} ${mod.authors && mod.authors.length > 0 ? mod.authors.map((a) => a.name).join(', ') : t('general.unknown')}</div>
           </div>
         </div>
         
         <div class="mc-card-desc">${mod.summary || ''}</div>
         
         <div class="mc-card-meta">
-          <div class="mc-meta-item" title="Downloads">
+          <div class="mc-meta-item" title="${t('general.downloads')}">
             <span class="material-icons-round">download</span> ${mod.downloadCount ? mod.downloadCount.toLocaleString() : 0}
           </div>
-          <div class="mc-meta-item" title="Zuletzt aktualisiert">
+          <div class="mc-meta-item" title="${t('general.last_update')}">
             <span class="material-icons-round">update</span> ${new Date(mod.dateModified).toLocaleDateString()}
           </div>
         </div>
@@ -385,11 +436,11 @@ ${JSON.stringify(body, null, 2)}
     const paginationHtml = `
       <div class="mc-pagination col-span-full w-full flex justify-center items-center gap-4 mt-8 pb-6">
         <button class="btn btn-ghost prev flex items-center gap-1" ${state.page === 0 ? 'disabled' : ''}>
-          <span class="material-icons-round text-lg">chevron_left</span> Zurück
+          <span class="material-icons-round text-lg">chevron_left</span> ${t('btn.back')}
         </button>
-        <span class="page-info text-sm font-medium text-muted">Seite ${state.page + 1} von ${maxPage + 1}</span>
+        <span class="page-info text-sm font-medium text-muted">${t('general.page_of', { current: state.page + 1, total: maxPage + 1 })}</span>
         <button class="btn btn-ghost next flex items-center gap-1" ${state.page >= maxPage ? 'disabled' : ''}>
-          Weiter <span class="material-icons-round text-lg">chevron_right</span>
+          ${t('btn.next')} <span class="material-icons-round text-lg">chevron_right</span>
         </button>
       </div>
     `;

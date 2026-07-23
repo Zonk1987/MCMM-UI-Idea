@@ -321,3 +321,273 @@
 .y-axis-scale-right span:nth-child(5) {
   top: 100%;
 }
+
+.gs-install-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.gs-modpack-fields {
+  padding: 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-accent);
+  border-radius: 8px;
+  background: var(--accent-dim);
+}
+
+.gs-project-list {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.gs-eula-consent {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mc-content-modal {
+  overflow: hidden;
+  width: min(92vw, 920px);
+  max-width: 920px;
+  height: min(84vh, 760px);
+}
+
+.mc-content-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+#mcContentSummary {
+  overflow: hidden;
+  min-width: 0;
+}
+
+.mc-content-pack {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+}
+
+.mc-content-pack > .material-icons-round {
+  color: var(--text-accent);
+  font-size: 28px;
+}
+
+.mc-content-pack > div,
+.mc-content-row-body {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.mc-content-pack strong,
+.mc-content-pack span,
+.mc-content-row-body strong,
+.mc-content-row-body span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mc-content-pack strong {
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.mc-content-pack span,
+.mc-content-row-body span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.mc-content-search {
+  flex: 0 1 260px;
+}
+
+.mc-content-count {
+  min-height: 26px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.mc-content-list {
+  overflow-y: auto;
+  padding: 8px 12px;
+}
+
+.mc-content-row {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 11px;
+  padding: 9px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mc-content-row:hover {
+  background: var(--bg-surface);
+}
+
+.mc-content-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.mc-content-icon-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  font-size: 20px;
+}
+
+.mc-content-row-body strong {
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.mc-content-badges {
+  display: flex;
+  gap: 5px;
+}
+
+.mc-content-state {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  min-height: 220px;
+  gap: 10px;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.mc-content-state > .material-icons-round {
+  font-size: 36px;
+}
+
+.mc-install-detail {
+  display: grid;
+  gap: 14px;
+}
+
+.mc-install-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mc-install-facts > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.mc-install-facts .material-icons-round {
+  font-size: 15px;
+}
+
+@media (width <= 680px) {
+  .gs-install-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .mc-content-modal {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .mc-content-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mc-content-search {
+    flex-basis: auto;
+  }
+
+  .mc-content-badges .status-badge:last-child {
+    display: none;
+  }
+}
+
+.memory-autocomplete {
+  position: relative;
+}
+
+.memory-autocomplete-list {
+  position: absolute;
+  z-index: 90;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  max-height: 230px;
+  padding: 6px;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  box-shadow: 0 16px 36px rgb(0 0 0 / 45%);
+}
+
+.memory-autocomplete-list[hidden] {
+  display: none;
+}
+
+.memory-autocomplete-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 10px;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+}
+
+.memory-autocomplete-option span {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.memory-autocomplete-option:hover,
+.memory-autocomplete-option.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+}

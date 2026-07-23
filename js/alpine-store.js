@@ -1,3 +1,34 @@
+class I18nStoreFactory {
+  constructor(state = {}) {
+    this.locale = state.currentLang || 'en';
+    this.messages = state.translations || {};
+    this.fallbackMessages = state.fallbackTranslations || {};
+  }
+
+  create() {
+    return {
+      locale: this.locale,
+      messages: this.messages,
+      fallbackMessages: this.fallbackMessages,
+      t(key, variables = {}) {
+        const resolvePath = (obj, path) =>
+          path.split('.').reduce((value, segment) => (value ? value[segment] : undefined), obj);
+
+        let value = resolvePath(this.messages, key);
+        if (value === undefined && this.locale !== 'en') {
+          value = resolvePath(this.fallbackMessages, key);
+        }
+
+        if (typeof value === 'string' && Object.keys(variables).length > 0) {
+          return value.replace(/\{(\w+)\}/g, (match, name) => variables[name] ?? match);
+        }
+
+        return value ?? key;
+      },
+    };
+  }
+}
+
 document.addEventListener('alpine:init', () => {
   Alpine.store('global', {
     dockerCount: 0,
@@ -24,37 +55,7 @@ document.addEventListener('alpine:init', () => {
     },
   });
 
-  Alpine.store('i18n', {
-    locale: 'de',
-    messages: {},
-    fallbackMessages: {},
-    t(key, variables = {}) {
-      // Read to trigger Alpine reactivity tracking
-      const msgs = this.messages;
-      const fallback = this.fallbackMessages;
-
-      if (!msgs || Object.keys(msgs).length === 0) return key;
-
-      const resolvePath = (obj, path) =>
-        path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
-
-      let val = resolvePath(msgs, key);
-      if (val === undefined && this.locale !== 'en') {
-        val = resolvePath(fallback, key);
-      }
-
-      if (val !== undefined) {
-        if (typeof val === 'string' && Object.keys(variables).length > 0) {
-          return val.replace(/\{(\w+)\}/g, (match, p1) => {
-            return variables[p1] !== undefined ? variables[p1] : match;
-          });
-        }
-        return val;
-      }
-
-      return key;
-    },
-  });
+  Alpine.store('i18n', new I18nStoreFactory(window.mcmmI18nState).create());
 
   Alpine.store('modals', {
     config: { open: false, data: {} },

@@ -1,4 +1,4 @@
-import { GameAdditions } from './gameAdditions.js';
+import { GameAdditions } from './gameAdditions.js?v=24';
 
 /* ═══════════════════════════════════════════════════════════
    settings.js — Settings Panel Controller

@@ -116,7 +116,7 @@ export function registerAlpineComponents(Alpine) {
         .replaceAll(/<span[^>]*>/g, '')
         .replaceAll('</span>', '');
       navigator.clipboard.writeText(rawCmd);
-      if (typeof showToast === 'function') showToast('Kopiert!', 'success');
+      if (typeof showToast === 'function') showToast(t('general.copied'), 'success');
     },
   }));
 
@@ -175,7 +175,7 @@ export function registerAlpineComponents(Alpine) {
         });
 
         if (typeof showToast === 'function')
-          showToast('Ordner "' + fName + '" gespeichert', 'success');
+          showToast(t('general.folder_saved', { name: fName }), 'success');
       }
 
       this.open = false;

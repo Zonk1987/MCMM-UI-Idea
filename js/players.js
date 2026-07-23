@@ -148,7 +148,7 @@ export function playersApp() {
     },
 
     get serverLabel() {
-      if (!this.state.server) return 'Server auswählen...';
+      if (!this.state.server) return t('general.server_selector_default');
       return (
         this.servers.find((s) => s.containerId === this.state.server)?.serverName ||
         this.state.server
@@ -217,7 +217,7 @@ export function playersApp() {
           (typeof t === 'function'
             ? t('no_reason') || 'Kein Grund angegeben'
             : 'Kein Grund angegeben'),
-        date: new Date().toLocaleDateString('de-DE'),
+        date: new Date().toLocaleDateString(window.mcmmI18nState?.currentLang || 'en'),
         duration: durationStr,
       });
 
@@ -333,8 +333,8 @@ export function playersApp() {
     sendChat() {
       if (!this.state.chatInput.trim() || !this.activeData) return;
       this.activeData.chatlog.push({
-        time: new Date().toLocaleTimeString('de-DE'),
-        player: '[Konsole]',
+        time: new Date().toLocaleTimeString(window.mcmmI18nState?.currentLang || 'en'),
+        player: `[${t('general.console')}]`,
         msg: this.state.chatInput.trim(),
       });
       if (typeof showToast === 'function')

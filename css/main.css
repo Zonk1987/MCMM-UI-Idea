@@ -8,13 +8,13 @@
 @import url('./modules/buttons.css?v=2');
 @import url('./modules/forms.css?v=2');
 @import url('./modules/stats.css?v=2');
-@import url('./modules/modals.css?v=2');
-@import url('./modules/console.css?v=2');
+@import url('./modules/modals.css?v=3');
+@import url('./modules/console.css?v=17');
 @import url('./modules/badges.css?v=2');
 @import url('./modules/states.css?v=2');
 @import url('./modules/lists.css?v=2');
-@import url('./docker.css?v=2');
-@import url('./gameserver.css?v=4');
+@import url('./docker.css?v=3');
+@import url('./gameserver.css?v=6');
 @import url('./gameAdditions.css?v=2');
 @import url('./players.css?v=2');
 @import url('./settings.css?v=2');

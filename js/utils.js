@@ -188,29 +188,29 @@ export async function switchTab(tabId) {
           break;
         }
         case 'gameserver': {
-          const gs = await import('./gameserver.js');
+          const gs = await import('./gameserver.js?v=31');
           window.gameserverApp = gs.gameserverApp;
           window.openConsole = gs.openConsole;
-          await fetchComponent('panel-gameserver', 'components/gameservers.html');
+          await fetchComponent('panel-gameserver', 'components/gameservers.html?v=28');
           break;
         }
         case 'players': {
-          const pl = await import('./players.js');
+          const pl = await import('./players.js?v=21');
           window.playersApp = pl.playersApp;
           await fetchComponent('panel-players', 'components/players.html');
           break;
         }
         case 'game-additions': {
-          const ga = await import('./gameAdditions.js');
+          const ga = await import('./gameAdditions.js?v=24');
           window.GameAdditions = ga.GameAdditions;
-          await fetchComponent('panel-game-additions', 'components/gameAdditions.html');
+          await fetchComponent('panel-game-additions', 'components/gameAdditions.html?v=23');
           ga.GameAdditions?.init?.();
           break;
         }
       }
       loadedModules.add(tabId);
     } catch (error) {
-      console.error(`Fehler beim Laden des Moduls für ${tabId}:`, error);
+      console.error(`Failed to load the ${tabId} module:`, error);
     }
   }
 

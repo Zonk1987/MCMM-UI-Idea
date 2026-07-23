@@ -725,3 +725,13 @@
 .drawer-action-btn:hover .material-icons-round {
   color: var(--primary);
 }
+
+.docker-delete-modal-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+  z-index: 1000;
+}

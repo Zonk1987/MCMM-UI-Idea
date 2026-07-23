@@ -122,7 +122,12 @@
                 <span class="material-icons-round text-accent">create_new_folder</span>
                 <span x-text="$store.i18n.t('action.add_folder') || 'Add Folder'">Add Folder</span>
               </button>
-              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                x-show="tableType === 'docker'"
+                @click.stop="openAddContainer()"
+              >
                 <span class="material-icons-round text-accent">add_box</span>
                 <span x-text="$store.i18n.t('action.add_container') || 'Add Container'"
                   >Add Container</span
@@ -145,21 +150,43 @@
               <div class="my-1 h-[1px] bg-[var(--border)] w-full"></div>
 
               <!-- Both -->
-              <button type="button" class="drawer-action-btn">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                :disabled="actionBusy"
+                @click.stop="actionAll('start', tableType === 'docker' ? 'main' : 'stack')"
+              >
                 <span class="material-icons-round text-green-500">play_arrow</span>
                 <span x-text="$store.i18n.t('action.start_all') || 'Start All'">Start All</span>
               </button>
-              <button type="button" class="drawer-action-btn">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                :disabled="actionBusy"
+                @click.stop="actionAll('stop', tableType === 'docker' ? 'main' : 'stack')"
+              >
                 <span class="material-icons-round text-red-500">stop</span>
                 <span x-text="$store.i18n.t('action.stop_all') || 'Stop All'">Stop All</span>
               </button>
 
               <!-- Docker specifically -->
-              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                x-show="tableType === 'docker'"
+                :disabled="actionBusy"
+                @click.stop="actionAll('pause', 'main')"
+              >
                 <span class="material-icons-round text-yellow-500">pause</span>
                 <span x-text="$store.i18n.t('action.pause_all') || 'Pause All'">Pause All</span>
               </button>
-              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                x-show="tableType === 'docker'"
+                :disabled="actionBusy"
+                @click.stop="actionAll('resume', 'main')"
+              >
                 <span class="material-icons-round text-green-500">play_circle</span>
                 <span x-text="$store.i18n.t('action.resume_all') || 'Resume All'">Resume All</span>
               </button>
@@ -170,13 +197,23 @@
               ></div>
 
               <!-- Both -->
-              <button type="button" class="drawer-action-btn">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                :disabled="actionBusy"
+                @click.stop="checkUpdates()"
+              >
                 <span class="material-icons-round text-blue-500">sync</span>
                 <span x-text="$store.i18n.t('action.check_updates') || 'Check for Updates'"
                   >Check for Updates</span
                 >
               </button>
-              <button type="button" class="drawer-action-btn">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                :disabled="actionBusy"
+                @click.stop="updateAllContainers(tableType === 'docker' ? 'main' : 'stack')"
+              >
                 <span class="material-icons-round text-blue-500">system_update_alt</span>
                 <span x-text="$store.i18n.t('action.update_all') || 'Update All'">Update All</span>
               </button>
@@ -184,7 +221,13 @@
               <div class="my-1 h-[1px] bg-[var(--border)] w-full"></div>
 
               <!-- Docker specifically -->
-              <button type="button" class="drawer-action-btn" x-show="tableType === 'docker'">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                x-show="tableType === 'docker'"
+                :disabled="actionBusy"
+                @click.stop="showContainerSizes('main')"
+              >
                 <span class="material-icons-round text-purple-500">dns</span>
                 <span x-text="$store.i18n.t('action.container_size') || 'Container Size'"
                   >Container Size</span
@@ -196,13 +239,19 @@
                 <input
                   type="checkbox"
                   class="form-checkbox h-4 w-4 rounded"
+                  x-model="composeAutostartOnly"
                   style="accent-color: var(--primary); margin-left: 2px; margin-right: 2px"
                 />
                 <span x-text="$store.i18n.t('action.autostart_only') || 'Autostart only'"
                   >Autostart only</span
                 >
               </label>
-              <button type="button" class="drawer-action-btn" x-show="tableType === 'compose'">
+              <button
+                type="button"
+                class="drawer-action-btn"
+                x-show="tableType === 'compose'"
+                @click.stop="openSettings()"
+              >
                 <span class="material-icons-round text-gray-400">settings</span>
                 <span x-text="$store.i18n.t('action.settings') || 'Settings'">Settings</span>
               </button>
@@ -305,6 +354,7 @@
                   <tr
                     class="border-b border-[var(--border)]"
                     :class="{ 'folder-row': c.type === 'folder', 'sub-header-row': c.type === 'folder_header', 'drag-over': (c.type === 'folder' || c.type === 'folder_header') && dragOverFolder === c.name }"
+                    :data-group-name="c.type === 'folder' || c.type === 'folder_header' ? c.name : c.folder || ''"
                     x-show="c.type === 'folder' || (!c.folder || isFolderExpanded(c.folder))"
                     :style="{
                 'background': c.type === 'container' && selected.includes(c.id) ? 'var(--bg-card-hover)' : (c.type === 'folder_header' ? 'var(--bg-surface)' : ''),
@@ -457,7 +507,7 @@
                           <!-- Expand/Collapse Arrow -->
                           <button
                             type="button"
-                            @click.stop="toggleFolder(c.name)"
+                            @click.stop="toggleFolder(c.name, $event.currentTarget)"
                             class="btn btn-icon btn-ghost shrink-0 border border-[var(--border)]"
                             style="margin-right: 16px"
                             title="Ordner auf/zu klappen"
@@ -964,7 +1014,8 @@
                             <input
                               type="checkbox"
                               aria-label="Autostart"
-                              :checked="c.id==='nginx01' || c.id==='portainer01'"
+                              :checked="c.autostart"
+                              @change="setContainerAutostart(c, $event.target.checked)"
                             />
                             <span class="toggle-track">
                               <span class="toggle-thumb"></span>
@@ -1117,10 +1168,14 @@
 
   <!-- Bulk Action Bar -->
   <template x-teleport="body">
-    <section class="bulk-action-bar selected.length > 0 ? 'active' : ''" aria-label="Bulk Actions">
+    <section
+      class="bulk-action-bar"
+      :class="{ active: selected.length > 0 }"
+      aria-label="Bulk Actions"
+    >
       <div class="flex items-center gap-[8px] text-primary font-semibold">
         <span class="material-icons-round text-accent">check_circle</span>
-        <span x-text="`${selected.length} ausgewählt`"></span>
+        <span x-text="$store.i18n.t('general.selected_count', { count: selected.length })"></span>
       </div>
       <div class="w-[1px] h-[24px]" style="background: var(--border)"></div>
       <div class="flex gap-[8px]">
@@ -1182,18 +1237,29 @@
       <template x-if="contextMenu.container?.type !== 'folder'">
         <div>
           <template x-if="!contextMenu.container?.gsData">
-            <div class="ctx-item" @click="closeContextMenu()">
+            <div
+              class="ctx-item"
+              x-show="hasWebUi(contextMenu.container)"
+              @click="openWebUi(contextMenu.container); closeContextMenu()"
+            >
               <span class="material-icons-round">public</span> WebUI
             </div>
           </template>
           <div
             class="ctx-item"
-            @click="typeof openTerminal === 'function' ? openTerminal(contextMenu.container?.id) : null; closeContextMenu()"
+            x-show="contextMenu.container?.status === 'running'"
+            @click="openConsole(contextMenu.container); closeContextMenu()"
           >
             <span class="material-icons-round">terminal</span> Console
           </div>
+          <div class="ctx-item" @click="openLogs(contextMenu.container); closeContextMenu()">
+            <span class="material-icons-round">notes</span> Logs
+          </div>
           <template x-if="contextMenu.container?.upToDate === false">
-            <div class="ctx-item" @click="closeContextMenu()">
+            <div
+              class="ctx-item"
+              @click="updateContainer(contextMenu.container?.id); closeContextMenu()"
+            >
               <span class="material-icons-round">cloud_download</span> Update
             </div>
           </template>
@@ -1201,7 +1267,7 @@
           <template x-if="contextMenu.container?.status === 'running'">
             <div
               class="ctx-item"
-              @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"
+              @click="actionContainer('stop', contextMenu.container?.id); closeContextMenu()"
             >
               <span class="material-icons-round">stop</span> Stop
             </div>
@@ -1209,42 +1275,58 @@
           <template x-if="contextMenu.container?.status !== 'running'">
             <div
               class="ctx-item"
-              @click="toggleContainer(contextMenu.container?.id); closeContextMenu()"
+              @click="actionContainer(contextMenu.container?.status === 'paused' ? 'resume' : 'start', contextMenu.container?.id); closeContextMenu()"
             >
-              <span class="material-icons-round">play_arrow</span> Start
+              <span class="material-icons-round">play_arrow</span>
+              <span x-text="contextMenu.container?.status === 'paused' ? 'Resume' : 'Start'"></span>
             </div>
           </template>
           <template x-if="contextMenu.container?.status === 'running'">
             <div>
-              <div class="ctx-item" @click="closeContextMenu()">
+              <div
+                class="ctx-item"
+                @click="actionContainer('pause', contextMenu.container?.id); closeContextMenu()"
+              >
                 <span class="material-icons-round">pause</span> Pause
               </div>
-              <div class="ctx-item" @click="closeContextMenu()">
+              <div
+                class="ctx-item"
+                @click="actionContainer('restart', contextMenu.container?.id); closeContextMenu()"
+              >
                 <span class="material-icons-round">restart_alt</span> Restart
               </div>
             </div>
           </template>
           <div class="ctx-divider"></div>
-          <div class="ctx-item" @click="closeContextMenu()">
-            <span class="material-icons-round">notes</span> Logs
+          <div class="ctx-item" @click="editContainer(contextMenu.container); closeContextMenu()">
+            <span class="material-icons-round">build</span> Edit
           </div>
           <div
             class="ctx-item"
-            @click="$dispatch('open-config-modal', {id: contextMenu.container?.id, name: contextMenu.container?.name}); closeContextMenu()"
+            @click="actionContainer('remove', contextMenu.container?.id); closeContextMenu()"
           >
-            <span class="material-icons-round">build</span> Edit
-          </div>
-          <div class="ctx-item" @click="closeContextMenu()">
             <span class="material-icons-round">delete</span> Remove
           </div>
           <div class="ctx-divider"></div>
-          <div class="ctx-item" @click="closeContextMenu()">
+          <div
+            class="ctx-item"
+            x-show="contextMenu.container?.projectUrl"
+            @click="openExternal(contextMenu.container?.projectUrl); closeContextMenu()"
+          >
             <span class="material-icons-round">explore</span> Project Page
           </div>
-          <div class="ctx-item" @click="closeContextMenu()">
+          <div
+            class="ctx-item"
+            x-show="contextMenu.container?.supportUrl"
+            @click="openExternal(contextMenu.container?.supportUrl); closeContextMenu()"
+          >
             <span class="material-icons-round">help</span> Support
           </div>
-          <div class="ctx-item" @click="closeContextMenu()">
+          <div
+            class="ctx-item"
+            x-show="contextMenu.container?.registryUrl"
+            @click="openExternal(contextMenu.container?.registryUrl); closeContextMenu()"
+          >
             <span class="material-icons-round">info</span> More Info
           </div>
         </div>
@@ -1440,6 +1522,74 @@
     </div>
   </template>
 
+  <template x-teleport="body">
+    <div
+      class="docker-delete-modal-overlay"
+      x-show="terminalViewer.open"
+      @click="closeTerminal()"
+      @keydown.escape.window="closeTerminal()"
+      x-transition.opacity.duration.150ms
+    >
+      <div
+        class="terminal-dialog"
+        :class="terminalViewer.mode === 'console' ? 'terminal-dialog-console' : 'terminal-dialog-logs'"
+        @click.stop
+      >
+        <div class="terminal-titlebar">
+          <span
+            class="material-icons-round text-accent"
+            x-text="terminalViewer.mode === 'console' ? 'terminal' : 'notes'"
+          ></span>
+          <div class="flex-1 min-w-0">
+            <div
+              class="text-primary font-semibold text-[16px]"
+              x-text="terminalViewer.mode === 'console' ? 'Console' : 'Logs'"
+            ></div>
+            <div
+              class="text-muted text-xs truncate"
+              x-text="terminalViewer.container?.name || ''"
+            ></div>
+          </div>
+          <button
+            type="button"
+            class="icon-btn"
+            @click="refreshTerminal()"
+            :disabled="terminalViewer.loading"
+            :aria-label="terminalViewer.mode === 'console' ? 'Reconnect console' : 'Restart log stream'"
+          >
+            <span class="material-icons-round" :class="{ 'animate-spin': terminalViewer.loading }"
+              >refresh</span
+            >
+          </button>
+          <button
+            type="button"
+            class="icon-btn"
+            @click="clearTerminal()"
+            aria-label="Clear terminal"
+          >
+            <span class="material-icons-round">delete_sweep</span>
+          </button>
+          <button
+            type="button"
+            class="icon-btn"
+            @click="closeTerminal()"
+            aria-label="Close terminal"
+          >
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+        <div class="terminal-surface">
+          <div id="dockerCustomTerminal" class="docker-terminal-output"></div>
+          <div
+            class="terminal-error"
+            x-show="terminalViewer.error"
+            x-text="terminalViewer.error"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </template>
+
   <!-- Circular Menu SVG Filter -->
   <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="hidden">
     <defs>
@@ -1456,15 +1606,3 @@
     </defs>
   </svg>
 </section>
-
-<style>
-  .docker-delete-modal-overlay {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    inset: 0;
-    background: rgb(0 0 0 / 50%);
-    z-index: 1000;
-  }
-</style>

@@ -2,7 +2,7 @@
    cs2.js — CS2 Module for Game Additions
 ═══════════════════════════════════════════════════════════ */
 
-import { GameAdditions } from '../../../js/gameAdditions.js';
+import { GameAdditions } from '../../../js/gameAdditions.js?v=21';
 
 GameAdditions.registerGame('cs2', {
   name: 'CS2',

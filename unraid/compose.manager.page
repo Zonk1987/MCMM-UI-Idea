@@ -1,0 +1,9 @@
+Author="dcflachs"
+Title="Compose"
+Type="php"
+Menu="Docker:2"
+Cond="$var['fsState'] == 'Started' && exec('/etc/rc.d/rc.docker status | grep -v \"not\"') && (!file_exists('/boot/config/plugins/compose.manager/compose.manager.cfg') ? true : exec(\"grep '^SHOW_COMPOSE_IN_HEADER_MENU=' /boot/config/plugins/compose.manager/compose.manager.cfg 2>/dev/null | grep -v 'true'\"))"
+Markdown="false"
+Tabs="false"
+---
+<?PHP require "$docroot/plugins/mcmm-ui/unraid/loader.php"; ?>

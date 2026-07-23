@@ -4,16 +4,32 @@
    Currently uses realistic mock data.
 ═══════════════════════════════════════════════════════════ */
 
+import { ExpandedItemScroller } from './expanded-item-scroller.js';
+import { ContainerCommandClient } from './container-command-client.js?v=23';
+import { ComposeStackClient } from './compose-stack-client.js?v=23';
+import { ContainerTerminalController } from './container-terminal-controller.js?v=17';
+import { ContainerWebUiResolver } from './container-web-ui-resolver.js?v=24';
+import { ModalScrollLock } from './modal-scroll-lock.js?v=19';
+
 /**
  *
  */
 export function dockerApp() {
+  const expandedItemScroller = new ExpandedItemScroller();
+  const commandClient = new ContainerCommandClient();
+  const composeStackClient = new ComposeStackClient();
+  const terminalController = new ContainerTerminalController();
+  const webUiResolver = new ContainerWebUiResolver();
+  const terminalScrollLock = new ModalScrollLock();
+
   return {
     get containers() {
       return Alpine.store('core').containers;
     },
     folderViewEnabled: typeof appSettings !== 'undefined' ? appSettings.folderViewEnabled : true,
-    isLoading: false,
+    get isLoading() {
+      return Alpine.store('core').loading;
+    },
     searchQuery: '',
     sortCol: 'name',
     sortAsc: true,
@@ -29,6 +45,8 @@ export function dockerApp() {
     menuOpen: { docker: false, compose: false },
     selected: [],
     selectAll: false,
+    actionBusy: false,
+    composeAutostartOnly: false,
     isCreatingFolder: false,
     newFolderName: '',
     editingFolderName: null,
@@ -57,6 +75,14 @@ export function dockerApp() {
       x: 0,
       y: 0,
       container: null,
+    },
+
+    terminalViewer: {
+      open: false,
+      loading: false,
+      container: null,
+      mode: 'logs',
+      error: '',
     },
 
     openContextMenu(e, container) {
@@ -183,7 +209,7 @@ export function dockerApp() {
 
       this.filteredContainers.forEach((c) => {
         const sName = c.labels?.['com.docker.compose.project'];
-        if (sName) {
+        if (sName && (!this.composeAutostartOnly || c.autostart)) {
           if (!stackMap[sName]) stackMap[sName] = [];
           stackMap[sName].push({ type: 'container', ...c, folder: sName });
         }
@@ -213,11 +239,13 @@ export function dockerApp() {
 
     expandedFolders: {},
 
-    toggleFolder(fName) {
+    toggleFolder(fName, trigger) {
+      const expanded = !this.isFolderExpanded(fName);
       this.expandedFolders = {
         ...this.expandedFolders,
-        [fName]: !this.isFolderExpanded(fName),
+        [fName]: expanded,
       };
+      if (expanded) this.$nextTick(() => expandedItemScroller.reveal(trigger, fName));
     },
 
     isFolderExpanded(fName) {
@@ -284,7 +312,7 @@ export function dockerApp() {
           Alpine.store('core').removeFolder(this.folderToDelete);
           this.updateTick++; // Force reactivity
           if (typeof showToast === 'function') {
-            showToast(`Ordner "${this.folderToDelete}" gelöscht`, 'success');
+            showToast(t('general.folder_deleted', { name: this.folderToDelete }), 'success');
           }
         }
       }
@@ -421,6 +449,7 @@ export function dockerApp() {
         if (tIdx !== -1) folderInsertIdx = this.dragOverPosition === 'before' ? tIdx : tIdx + 1;
         cFolders.splice(folderInsertIdx, 0, this.draggedFolder);
         Alpine.store('core').customFolders = cFolders;
+        Alpine.store('core').persistLayout();
       } else if (this.draggedContainerId && this.dragOverTargetType === 'container') {
         let idsToMove = [this.draggedContainerId];
         if (this.selected.includes(this.draggedContainerId)) {
@@ -457,6 +486,7 @@ export function dockerApp() {
         allContainers.splice(insertIndex, 0, ...itemsToMove);
 
         Alpine.store('core').containers = allContainers;
+        Alpine.store('core').persistLayout();
       }
 
       this.sortCol = 'custom';
@@ -517,17 +547,17 @@ export function dockerApp() {
       }
 
       let moveCount = 0;
+      const store = Alpine.store('core');
       idsToMove.forEach((id) => {
-        const c = Alpine.store('core').containers.find((x) => x.id === id);
+        const c = store.containers.find((x) => x.id === id);
         if (c) {
-          if (!c.labels) c.labels = {};
           if (folderName) {
-            if (c.labels['folder.view3'] !== folderName) {
-              c.labels['folder.view3'] = folderName;
+            if (c.labels?.['folder.view3'] !== folderName) {
+              store.setLabel(id, 'folder.view3', folderName);
               moveCount++;
             }
-          } else if (c.labels['folder.view3']) {
-            delete c.labels['folder.view3'];
+          } else if (c.labels?.['folder.view3']) {
+            store.setLabel(id, 'folder.view3', '');
             moveCount++;
           }
         }
@@ -538,12 +568,10 @@ export function dockerApp() {
           if (typeof showToast === 'function')
             showToast(`${moveCount} Container verschoben nach "${folderName}"`, 'success');
         } else if (typeof showToast === 'function') {
-          showToast(`${moveCount} Container aus dem Ordner entfernt`, 'success');
+          showToast(t('general.containers_removed', { count: moveCount }), 'success');
         }
       }
 
-      // Trigger Alpine reactivity
-      Alpine.store('core').containers = [...Alpine.store('core').containers];
       this.updateTick++;
 
       this.draggedContainerId = null;
@@ -628,73 +656,252 @@ export function dockerApp() {
       return folderContainers.every((c) => this.selected.includes(c.id));
     },
 
-    bulkAction(action) {
-      if (this.selected.length === 0) return;
+    findContainers(ids) {
+      return ids
+        .map((id) => this.containers.find((container) => container.id === id))
+        .filter(Boolean);
+    },
 
-      const count = this.selected.length;
-
-      if (action === 'delete') {
-        if (!confirm(`${count} Container wirklich löschen?`)) return;
-        this.containers = this.containers.filter((c) => !this.selected.includes(c.id));
-        this.selected = [];
-        showToast(`${count} Container gelöscht`, 'success');
-        return;
+    async performAction(action, containers, message) {
+      if (this.actionBusy || containers.length === 0) return;
+      this.actionBusy = true;
+      try {
+        await commandClient.executeMany(action, containers);
+        await Alpine.store('core').refreshContainers();
+        if (typeof showToast === 'function') showToast(message, 'success');
+      } catch (error) {
+        if (typeof showToast === 'function') showToast(error.message || String(error), 'error');
+      } finally {
+        this.actionBusy = false;
       }
+    },
 
-      this.selected.forEach((id) => {
-        const c = this.containers.find((x) => x.id === id);
-        if (c) {
-          if (action === 'start') c.status = 'running';
-          if (action === 'stop') c.status = 'stopped';
-        }
-      });
-
-      const statusWord =
-        action === 'start' ? t('started') || 'gestartet' : t('stopped') || 'gestoppt';
-      showToast(`${count} Container ${statusWord}`, 'success');
+    async bulkAction(action) {
+      if (this.selected.length === 0) return;
+      const count = this.selected.length;
+      const containers = this.findContainers(this.selected);
+      const nativeAction = action === 'delete' ? 'remove' : action;
+      if (
+        nativeAction === 'remove' &&
+        !confirm(`Remove ${count} container${count === 1 ? '' : 's'}?`)
+      )
+        return;
+      await this.performAction(
+        nativeAction,
+        containers,
+        `${count} container${count === 1 ? '' : 's'} updated`
+      );
       this.selected = [];
     },
 
-    toggleContainer(id) {
-      const c = this.containers.find((x) => x.id === id);
-      if (c) {
-        c.status = c.status === 'running' ? 'stopped' : 'running';
-        const msg = c.status === 'running' ? 'gestartet' : 'gestoppt';
-        showToast(`Container ${c.name} ${msg}`, 'success');
-      }
+    async toggleContainer(id) {
+      const container = this.containers.find((item) => item.id === id);
+      if (!container) return;
+      const action =
+        container.status === 'running'
+          ? 'stop'
+          : container.status === 'paused'
+            ? 'resume'
+            : 'start';
+      await this.performAction(action, [container], `${container.name} ${action} complete`);
     },
 
-    actionAll(action, target) {
-      let count = 0;
-      this.containers.forEach((c) => {
-        const isStack = c.labels?.['com.docker.compose.project'];
-        if ((target === 'main' && !isStack) || (target === 'stack' && isStack)) {
-          if (action === 'start' && c.status !== 'running') {
-            c.status = 'running';
-            count++;
-          } else if (action === 'stop' && c.status === 'running') {
-            c.status = 'stopped';
-            count++;
-          }
-        }
+    async actionContainer(action, id) {
+      const container = this.containers.find((item) => item.id === id);
+      if (!container) return;
+      if (action === 'remove' && !confirm(`Remove ${container.name}?`)) return;
+      await this.performAction(action, [container], `${container.name} ${action} complete`);
+    },
+
+    async actionAll(action, target) {
+      const containers = this.containers.filter((container) => {
+        const isStack = Boolean(container.labels?.['com.docker.compose.project']);
+        if (!((target === 'main' && !isStack) || (target === 'stack' && isStack))) return false;
+        if (action === 'start') return container.status === 'stopped';
+        if (action === 'stop')
+          return container.status === 'running' || container.status === 'paused';
+        if (action === 'pause') return container.status === 'running';
+        if (action === 'resume') return container.status === 'paused';
+        return true;
       });
-
-      if (action === 'update') {
-        showToast('Suche nach Updates...', 'info');
-      } else {
-        const statusWord = action === 'start' ? 'gestartet' : 'gestoppt';
-        showToast(`${count} Container ${statusWord}`, 'success');
-      }
-
-      // Close menus
-      if (target === 'main') this.circularMenuMainOpen = false;
-      if (target === 'stack') this.circularMenuStackOpen = false;
+      await this.performAction(
+        action,
+        containers,
+        `${containers.length} containers ${action} complete`
+      );
     },
 
-    updateContainer(id) {
-      Alpine.store('core').updateContainer(id);
-      if (typeof showToast === 'function')
-        showToast(t('docker.update_started') || 'Update gestartet...', 'info');
+    async checkUpdates() {
+      if (this.actionBusy) return;
+      this.actionBusy = true;
+      try {
+        if (typeof showToast === 'function') showToast('Checking container updates...', 'info');
+        await commandClient.checkUpdates();
+        await Alpine.store('core').refreshContainers();
+        if (typeof showToast === 'function') showToast('Update check complete', 'success');
+      } catch (error) {
+        if (typeof showToast === 'function') showToast(error.message || String(error), 'error');
+      } finally {
+        this.actionBusy = false;
+      }
+    },
+
+    async updateContainers(containers) {
+      if (this.actionBusy || containers.length === 0) return;
+      if (!confirm(`Update ${containers.length} container${containers.length === 1 ? '' : 's'}?`))
+        return;
+      this.actionBusy = true;
+      try {
+        if (typeof showToast === 'function') showToast('Container update started...', 'info');
+        await commandClient.update(containers);
+        await Alpine.store('core').refreshContainers();
+        if (typeof showToast === 'function') showToast('Container update complete', 'success');
+      } catch (error) {
+        if (typeof showToast === 'function') showToast(error.message || String(error), 'error');
+      } finally {
+        this.actionBusy = false;
+      }
+    },
+
+    async updateContainer(id) {
+      const container = this.containers.find((item) => item.id === id);
+      if (container) await this.updateContainers([container]);
+    },
+
+    async updateAllContainers(target = 'main') {
+      const containers = this.containers.filter((container) => {
+        const isStack = Boolean(container.labels?.['com.docker.compose.project']);
+        return container.upToDate === false && (target === 'stack' ? isStack : !isStack);
+      });
+      await this.updateContainers(containers);
+    },
+
+    async setContainerAutostart(container, enabled) {
+      try {
+        await commandClient.setAutostart(container, enabled);
+        container.autostart = enabled;
+        if (typeof showToast === 'function')
+          showToast(`${container.name} autostart ${enabled ? 'enabled' : 'disabled'}`, 'success');
+      } catch (error) {
+        container.autostart = !enabled;
+        if (typeof showToast === 'function') showToast(error.message || String(error), 'error');
+      }
+    },
+
+    async openTerminal(container, mode) {
+      if (!container) return;
+      terminalScrollLock.lock();
+      this.terminalViewer = { open: true, loading: true, container, mode, error: '' };
+      try {
+        await this.$nextTick();
+        const output = document.getElementById('dockerCustomTerminal');
+        if (!output) throw new Error('Custom terminal surface is unavailable');
+        await terminalController.open(output, container, mode);
+      } catch (error) {
+        this.terminalViewer.error = error.message || String(error);
+      } finally {
+        this.terminalViewer.loading = false;
+      }
+    },
+
+    async openConsole(container) {
+      await this.openTerminal(container, 'console');
+    },
+
+    async openLogs(container) {
+      await this.openTerminal(container, 'logs');
+    },
+
+    closeTerminal() {
+      this.terminalViewer.open = false;
+      terminalController.dispose();
+      terminalScrollLock.unlock();
+    },
+
+    destroy() {
+      terminalController.dispose();
+      terminalScrollLock.unlock();
+    },
+
+    async refreshTerminal() {
+      this.terminalViewer.loading = true;
+      this.terminalViewer.error = '';
+      try {
+        await terminalController.refresh();
+      } catch (error) {
+        this.terminalViewer.error = error.message || String(error);
+      } finally {
+        this.terminalViewer.loading = false;
+      }
+    },
+
+    clearTerminal() {
+      terminalController.clear();
+    },
+
+    openExternal(url) {
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    },
+
+    hasWebUi(container) {
+      return webUiResolver.hasWebUi(container);
+    },
+
+    openWebUi(container) {
+      const url = webUiResolver.resolve(container);
+      if (url) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } else if (typeof showToast === 'function') {
+        showToast(t('general.webui_unavailable'), 'error');
+      }
+    },
+
+    openAddContainer() {
+      window.parent.location.assign('/Docker/AddContainer');
+    },
+
+    openSettings() {
+      document.getElementById('settingsBtn')?.click();
+    },
+
+    editContainer(container) {
+      if (!container?.template) {
+        if (typeof showToast === 'function')
+          showToast('No Unraid template is available for this container', 'error');
+        return;
+      }
+      window.parent.location.assign(
+        `/Docker/UpdateContainer?xmlTemplate=edit:${encodeURIComponent(container.template)}`
+      );
+    },
+
+    async showContainerSizes(target = 'main') {
+      if (this.actionBusy) return;
+      const containers = this.containers.filter((container) => {
+        const isStack = Boolean(container.labels?.['com.docker.compose.project']);
+        return target === 'stack' ? isStack : !isStack;
+      });
+      this.actionBusy = true;
+      try {
+        const sizes = await commandClient.sizes(containers);
+        const totals = Object.values(sizes).reduce(
+          (result, size) => ({
+            writable: result.writable + Number(size.writable || 0),
+            root: result.root + Number(size.root || 0),
+          }),
+          { writable: 0, root: 0 }
+        );
+        if (typeof showToast === 'function') {
+          showToast(
+            `Container size: ${globalThis.formatBytes(totals.root)} total, ${globalThis.formatBytes(totals.writable)} writable`,
+            'info'
+          );
+        }
+      } catch (error) {
+        if (typeof showToast === 'function') showToast(error.message || String(error), 'error');
+      } finally {
+        this.actionBusy = false;
+      }
     },
 
     openComposeModal() {
@@ -707,37 +914,26 @@ export function dockerApp() {
       this.showComposeModal = false;
     },
 
-    deployStack() {
+    async deployStack() {
       if (!this.composeStackName.trim() || !this.composeContent.trim()) {
-        if (typeof showToast === 'function') showToast('Bitte Namen und Inhalt angeben', 'error');
+        if (typeof showToast === 'function')
+          showToast('Stack name and Compose content are required', 'error');
         return;
       }
-
-      const store = Alpine.store('core');
-      if (store?.addStack) {
-        store.addStack(this.composeStackName.trim(), this.composeContent);
-        if (typeof showToast === 'function')
-          showToast(`Stack ${this.composeStackName} wird deployed...`, 'info');
-
-        // Simuliere Deployment durch Hinzufügen eines Mock-Containers nach kurzer Zeit
-        setTimeout(() => {
-          store.containers.push({
-            id: 'stack_' + Date.now(),
-            name: this.composeStackName.trim() + '-web',
-            image: 'nginx:latest',
-            status: 'running',
-            upToDate: true,
-            labels: {
-              'com.docker.compose.project': this.composeStackName.trim(),
-            },
-          });
-          // Update the list view
-          this.updateTick++;
-          if (typeof showToast === 'function')
-            showToast(`Stack ${this.composeStackName} erfolgreich gestartet!`, 'success');
-        }, 1500);
+      if (this.actionBusy) return;
+      const name = this.composeStackName.trim();
+      this.actionBusy = true;
+      try {
+        if (typeof showToast === 'function') showToast(`Deploying ${name}...`, 'info');
+        await composeStackClient.deploy(name, this.composeContent);
+        this.closeComposeModal();
+        await Alpine.store('core').refreshContainers();
+        if (typeof showToast === 'function') showToast(`${name} deployed`, 'success');
+      } catch (error) {
+        if (typeof showToast === 'function') showToast(error.message || String(error), 'error');
+      } finally {
+        this.actionBusy = false;
       }
-      this.closeComposeModal();
     },
   };
 }

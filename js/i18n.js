@@ -4,12 +4,18 @@
  * and applying translations to the Alpine global store.
  */
 
+import { DomLocalizationController } from './dom-localization-controller.js?v=21';
+
+const domLocalizationController = new DomLocalizationController();
+
 export const I18N = {
   currentLang: 'en',
   translations: {},
   fallbackTranslations: {},
   supportedLangs: ['en', 'de', 'es', 'fr', 'it'],
 };
+
+window.mcmmI18nState = I18N;
 
 /**
  * Loads a language file and applies translations to the document.
@@ -37,6 +43,7 @@ export async function loadLanguage(langCode) {
 
     I18N.translations = await response.json();
     I18N.currentLang = langCode;
+    domLocalizationController.setLanguage(langCode, I18N.translations);
 
     // Trigger reactivity in Alpine if available
     if (window.Alpine) {
@@ -106,4 +113,5 @@ export async function initI18n() {
     }
   }
   await loadLanguage(lang);
+  domLocalizationController.start();
 }

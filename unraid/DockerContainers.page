@@ -1,0 +1,8 @@
+Menu="Docker:1"
+Title="Docker Containers"
+Tag="cubes"
+Cond="is_file('/var/run/dockerd.pid')"
+Markdown="false"
+Tabs="false"
+---
+<?PHP require "$docroot/plugins/mcmm-ui/unraid/loader.php"; ?>
