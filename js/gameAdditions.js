@@ -6,6 +6,7 @@
 import { MinecraftAdditionInstaller } from './minecraft-addition-installer.js?v=3';
 import { MinecraftContentClient } from './minecraft-content-client.js?v=2';
 import { ModrinthClient } from './modrinth-client.js?v=2';
+import { gameModulePolicy } from './game-module-policy.js?v=1';
 
 export const GameAdditions = {
   games: {},
@@ -137,8 +138,7 @@ export const GameAdditions = {
     }
 
     for (const [id, game] of Object.entries(this.games)) {
-      const isBuiltIn = id === 'minecraft' || id === 'palworld';
-      if (!isBuiltIn && disabled.includes(id)) continue;
+      if (!gameModulePolicy.isEnabled(id, disabled)) continue;
 
       const el = document.createElement('div');
       el.className = `wizard-game-card ${this.state.game === id ? 'selected' : ''}`;
@@ -151,11 +151,7 @@ export const GameAdditions = {
       container.appendChild(el);
     }
 
-    if (
-      disabled.includes(this.state.game) &&
-      this.state.game !== 'minecraft' &&
-      this.state.game !== 'palworld'
-    ) {
+    if (!gameModulePolicy.isEnabled(this.state.game, disabled)) {
       this.state.game = 'minecraft';
       this.refresh();
     }

@@ -1,4 +1,5 @@
-import { GameAdditions } from './gameAdditions.js?v=25';
+import { GameAdditions } from './gameAdditions.js?v=26';
+import { gameModulePolicy } from './game-module-policy.js?v=1';
 
 /* ═══════════════════════════════════════════════════════════
    settings.js — Settings Panel Controller
@@ -65,8 +66,8 @@ export function loadSettings() {
         parsed.cfApiKey = DEFAULT_SETTINGS.cfApiKey;
       }
       Object.assign(appSettings, DEFAULT_SETTINGS, parsed);
-      appSettings.disabledModules = (appSettings.disabledModules || []).filter(
-        (moduleId) => moduleId !== 'palworld'
+      appSettings.disabledModules = gameModulePolicy.sanitizeDisabled(
+        appSettings.disabledModules
       );
     } catch (e) {
       console.warn('Failed to load settings', e);
@@ -216,7 +217,7 @@ export function fillSettingsForm() {
     modContainer.innerHTML = '';
     const allGames = Object.keys(window.GameAdditions.games || {});
     allGames.forEach((gameId) => {
-      if (gameId === 'minecraft' || gameId === 'palworld') return; // built-in modules
+      if (gameModulePolicy.isBuiltIn(gameId)) return;
       const cfg = window.GameAdditions.games[gameId];
       const isChecked = !(appSettings.disabledModules || []).includes(gameId);
 
