@@ -20,7 +20,7 @@ import { initCoreStore } from './core-store.js?v=24';
 import { dockerApp } from './docker.js?v=24';
 import { foldersApp } from './folders.js?v=7';
 import { networksApp } from './networks.js?v=7';
-import { composeApp } from './compose.js?v=7';
+import { composeApp } from './compose.js?v=8';
 import { registerAlpineComponents } from './alpine-components.js?v=21';
 import autoAnimate from './vendor/auto-animate.min.js?v=7';
 
