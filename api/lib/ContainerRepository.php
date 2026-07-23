@@ -65,6 +65,7 @@ final class ContainerRepository
         $labels = $this->labels($details, $name);
         $gameServer = $this->gameServer($container, $details, $name);
         $webUiTemplate = $this->webUiTemplate($container, $details, $metadata);
+        $ports = $this->ports($container['Ports'] ?? []);
         if (!empty($container['ComposeProject']) && !isset($labels['com.docker.compose.project'])) {
             $labels['com.docker.compose.project'] = $this->value($container['ComposeProject']);
         }
@@ -81,12 +82,12 @@ final class ContainerRepository
             'statusText' => $this->value($container['Status'] ?? ''),
             'upToDate' => ($metadata['updated'] ?? null) !== 'false',
             'autostart' => in_array($name, $autostart, true),
-            'ports' => $this->ports($container['Ports'] ?? []),
+            'ports' => $ports,
             'paths' => $this->paths($container['Volumes'] ?? $details['Mounts'] ?? []),
             'network' => $network,
             'ip' => $ip,
             'mac' => '',
-            'lanIp' => $network === 'host' || $network === 'bridge' ? $host : ($ip ?: $host),
+            'lanIp' => $ports !== [] || $network === 'host' || $network === 'bridge' ? $host : ($ip ?: $host),
             'labels' => $labels,
             'cpu' => (float)($stats['cpu'] ?? 0),
             'ram' => (float)($stats['ram'] ?? 0),
