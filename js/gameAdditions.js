@@ -137,7 +137,8 @@ export const GameAdditions = {
     }
 
     for (const [id, game] of Object.entries(this.games)) {
-      if (id !== 'minecraft' && disabled.includes(id)) continue;
+      const isBuiltIn = id === 'minecraft' || id === 'palworld';
+      if (!isBuiltIn && disabled.includes(id)) continue;
 
       const el = document.createElement('div');
       el.className = `wizard-game-card ${this.state.game === id ? 'selected' : ''}`;
@@ -150,7 +151,11 @@ export const GameAdditions = {
       container.appendChild(el);
     }
 
-    if (disabled.includes(this.state.game) && this.state.game !== 'minecraft') {
+    if (
+      disabled.includes(this.state.game) &&
+      this.state.game !== 'minecraft' &&
+      this.state.game !== 'palworld'
+    ) {
       this.state.game = 'minecraft';
       this.refresh();
     }

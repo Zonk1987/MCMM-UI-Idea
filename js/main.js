@@ -14,8 +14,8 @@ import {
   switchTab,
   pingClass,
   skeletonGrid,
-} from './utils.js?v=32';
-import { initSettings, applyVisualSettings, appSettings, debugApp } from './settings.js?v=9';
+} from './utils.js?v=33';
+import { initSettings, applyVisualSettings, appSettings, debugApp } from './settings.js?v=10';
 import { initCoreStore } from './core-store.js?v=24';
 import { dockerApp } from './docker.js?v=24';
 import { foldersApp } from './folders.js?v=7';
@@ -177,7 +177,7 @@ document.head.appendChild(script);
 // Import game addition modules AFTER GameAdditions has been attached to window
 // (Wait, static imports are hoisted. To ensure they run AFTER GameAdditions is global,
 // we should just let them import GameAdditions directly, which we already did!)
-import '../games/minecraft/js/minecraft.js?v=24';
-import '../games/palworld/js/palworld.js?v=21';
-import '../games/valheim/js/valheim.js?v=21';
-import '../games/cs2/js/cs2.js?v=21';
+import '../games/minecraft/js/minecraft.js?v=25';
+import '../games/palworld/js/palworld.js?v=22';
+import '../games/valheim/js/valheim.js?v=22';
+import '../games/cs2/js/cs2.js?v=22';

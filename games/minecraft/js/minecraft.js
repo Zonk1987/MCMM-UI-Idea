@@ -2,7 +2,7 @@
    minecraft.js — Minecraft Module for Game Additions
 ═══════════════════════════════════════════════════════════ */
 
-import { GameAdditions } from '../../../js/gameAdditions.js?v=24';
+import { GameAdditions } from '../../../js/gameAdditions.js?v=25';
 import { appSettings } from '../../../js/settings.js';
 
 GameAdditions.registerGame('minecraft', {
